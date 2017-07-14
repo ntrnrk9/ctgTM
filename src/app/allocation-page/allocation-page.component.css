@@ -1,0 +1,16 @@
+﻿h1 {
+    font-size: 300%;
+    color: #34495e;
+}
+.app-table {
+    width: 100%;
+}
+
+.app-table-tr {
+    padding: 15px;
+}
+
+.app-table tr {
+    height: 45px;
+    padding: 10px;
+}

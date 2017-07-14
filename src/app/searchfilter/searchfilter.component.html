@@ -1,0 +1,20 @@
+﻿<div class="dropdown pull-left pm-select-cont" style="border:1px solid silver;width:100%">
+    <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" style="width:89%"
+        value={{selectedItem}} (click)="resetSearch()"/>
+        <span class="caret pointer" data-toggle="dropdown"></span>
+    
+    <div class="dropdown-menu no-padding mulSel-dd">
+        <div class="input-group">
+            <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="search">
+            <div class="input-group-btn">
+                <button class="btn btn-default search-box" type="submit">
+                    <i class="glyphicon glyphicon-search"></i>
+                </button>
+            </div>
+        </div>
+        <ul class="mulSel-dd-ul">
+            <li *ngFor="let item of items|filterC:search:key" (click)="selectCompany(item)">{{item[key]}}</li>
+        </ul>
+    </div>
+</div>
+

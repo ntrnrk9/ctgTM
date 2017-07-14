@@ -1,0 +1,35 @@
+﻿<div class="page-container">
+    <div class="row">
+        <div class="col-md-12">
+            <div style="background: #d1deef;padding:15px;">
+                <input class="ctg-textbox" placeholder="Trailer ID" style="padding:0px;" />
+                <input class="ctg-textbox" placeholder="Choose state" style="margin-left:10px;padding:0px" />
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div style="background: white;">
+                <h5 style="padding:15px;margin:0px">Yard Management</h5>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <table class="app-table">
+                <thead>
+                    <tr bgcolor="#b3d4f" class="app-table-tr">
+                        <th style="text-align:center" *ngFor="let con of config.column">{{con}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of config.rows">
+                        <td style="text-align:center" *ngFor="let val of row">
+                            <span>{{val}}</span>
+                        </td>
+                        <td style="text-align:center">
+                            <button>Play</button>
+                            <button>Upload</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

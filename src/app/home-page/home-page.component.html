@@ -1,0 +1,51 @@
+﻿<div class="row page-container" style="margin:0px">
+
+    <div class="col-md-12 page-heading" style="position:relative">
+        <b>Locate Trailer</b>
+        <button *ngIf="mgToggleFlag" class="pull-right toggleBut" type="button" value="encode" (click)="toggleMG()"><img src="../../assets/images/markers/grid-view.png" /></button>
+        <button *ngIf="!mgToggleFlag" class="pull-right toggleBut" type="button" value="encode" (click)="toggleMG()"><img src="../../assets/images/markers/map-view.png" /></button>
+    </div><br />
+
+
+    <div class="col-md-12 page-body">
+        <div class="filter-container">
+            <input class="ctg-textbox pull-left" placeholder="Trailer ID" [(ngModel)]="selectedID" />
+            <!--<input class="ctg-textbox" placeholder="Choose state" [(ngModel)]="selectedState" style="margin-left:10px" />-->
+            <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
+                <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedState}} />
+                <span class="caret"></span>
+                <div class="dropdown-menu no-padding mulSel-dd">
+                    <div class="input-group">
+                        <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="stateFil">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default search-box" type="submit">
+                                <i class="glyphicon glyphicon-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <ul class="mulSel-dd-ul">
+                        <li *ngFor="let item of stateList|filterC:stateFil:'stateDesc'" (click)="selectedState=item.stateDesc;f.geocodeAddress(item.stateDesc)">
+                            {{item.stateDesc}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <select style="margin-left:10px;height:auto;width:auto;border-radius:0px;border:none" class="form-control pull-left pm-select" id="sel1" [ngModel]="selectedAvailability" (ngModelChange)="selectVarience($event)">
+                <option value=-1>All pools</option>
+                <option value=0>Available</option>
+                <option value=1>Unavailable</option>
+                <option value=-2>Planned</option>
+            </select>
+            <button class="pull-right resetBut" type="button" value="encode" (click)="f.geocodeAddress()"><img src="../../assets/images/markers/refresh.png" /></button>
+        </div>
+        <div style="padding-top:15px;">
+            <!--<gmaps></gmaps>-->
+            <gmapjs #f [state]="selectedState"></gmapjs>
+        </div>
+        <div style="padding-top:5px">
+            <img src="../../assets/images/markers/legend.png" class="pull-right"/>
+        </div>
+    </div>
+
+
+</div>

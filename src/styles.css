@@ -1,1 +1,56 @@
-/* You can add global styles to this file, and also import other style files */
+/*@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";*/
+/*@import "../node_modules/font-awesome/css/font-awesome.css";*/
+
+.ctg-textbox {
+    border: none;
+    padding: 10px;
+    height:30px;
+}
+
+body {
+    font-family: "Trebuchet MS" !important;
+    background-color:#fafafa;
+}
+
+.page-container {
+    border: 1px solid #22466f;
+    background-color: white;
+}
+
+.filter-container {
+    background: #ededed;
+    padding: 5px;
+    height: 40px;
+    position:relative;
+}
+
+
+.page-heading {
+    height: 40px;
+    background-color: #22466f;
+    padding: 10px;
+    color: #fff;
+}
+
+.container{
+    width:100%;
+}
+
+input[type="button"] {
+
+    outline: none;
+}
+
+input[type="text"] {
+    height: 30px;
+    padding: 5px !important;
+    border: 1px solid silver;
+}
+
+button{
+    outline: none;
+}
+
+select {
+    border: none;
+}

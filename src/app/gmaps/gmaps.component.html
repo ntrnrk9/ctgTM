@@ -1,0 +1,38 @@
+﻿<agm-map 
+         [latitude]="lat"
+         [longitude]="lng" 
+         [zoom]="zoom"
+         [scrollwheel]="false"
+         [fullscreenControl]="fullscreenControl"
+         [streetViewControl]="streetViewControl"
+         (mapClick)="mapClicked()">
+    <!--<agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>-->
+    <agm-marker *ngFor="let point of citymap" [latitude]="point.center.lat" [longitude]="point.center.lng"
+                [iconUrl]="point.icon"
+                [openInfoWindow]="true"
+                (markerClick)="clickedMarker(point.label, infoWindow, i)"
+                (mouseOver)="toggleIW(infoWindow)">
+        <agm-info-window #infoWindow [disableAutoPan]="true"> 
+            <div class="infowindow">
+                <div class="row header">
+                    <div class="row head1">CTG 45224</div>
+                    <div class="row head2">TR43</div>
+                    <div class="row head3">5th Wheel RV</div>
+                </div>
+                <div class="row title">
+                    <span class="vehicle-date">DOT Date:05/21/2017</span>
+                    <span class=" row vehicletype available">Available</span>
+                </div>
+                <div class="row content">Harney Country - ''</div>
+                <div class="row footer">
+                    <div class="status">
+                        <div class="row">Compliance: Fail</div>
+                        <div class="row">IOT Info: Active</div>
+                        <div class="row">Road Worthiness: Fail</div>
+                    </div>
+                    <div class="history-txt"><a href="#">More info</a></div>
+                </div>
+            </div>
+        </agm-info-window>
+    </agm-marker>
+</agm-map>

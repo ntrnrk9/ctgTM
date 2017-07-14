@@ -1,0 +1,12 @@
+﻿.app-table {
+    width: 100%;
+}
+
+.app-table-tr {
+    padding: 15px;
+}
+
+.app-table tr {
+    height: 45px;
+    padding: 10px;
+}

@@ -1,0 +1,29 @@
+﻿<div class="tabContainer">
+    <div class="container">
+        <ul style="list-style:none;float:left;padding-left:0px">
+            <li class="tab-li" [ngClass]="{'selected': toShowTab==1}">
+                <h4><a [ngClass]="{'selected-a': toShowTab==1}" href="#" (click)="toShowTab=1">Home</a></h4>
+            </li>
+            <li class="tab-li" [ngClass]="{'selected': toShowTab==2}">
+                <h4><a [ngClass]="{'selected-a': toShowTab==2}" href="#" (click)="toShowTab=2">Allocation</a></h4>
+            </li>
+            <li class="tab-li" [ngClass]="{'selected': toShowTab==3}">
+                <h4><a [ngClass]="{'selected-a': toShowTab==3}" href="#" (click)="toShowTab=3">Yard Management</a></h4>
+            </li>
+            <li class="tab-li-last" [ngClass]="{'selected': toShowTab==4}">
+                <h4><a [ngClass]="{'selected-a': toShowTab==4}" href="#" (click)="toShowTab=4">Pool Management</a></h4>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <div [ngSwitch]="toShowTab">
+            <home-page *ngSwitchCase=1></home-page>
+            <allocation-page *ngSwitchCase=2></allocation-page>
+            <yard-mang-page *ngSwitchCase=3></yard-mang-page>
+            <pool1-mang-page *ngSwitchCase=4></pool1-mang-page>
+        </div>
+
+
+    </div>
+</div>
