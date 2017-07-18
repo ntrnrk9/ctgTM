@@ -34,3 +34,21 @@
     overflow-y: scroll;
     margin: 5px 0px 5px 0px;
 }
+.mulSel-dd-ul li:hover {
+    background-color: #ededed;
+}
+
+.lblLI {
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 18px;
+    margin: 2px; cursor: pointer;
+}
+.pointer{
+    cursor: pointer;
+}
+
+.caretBut{
+    border:none;
+    background-color: white;
+}

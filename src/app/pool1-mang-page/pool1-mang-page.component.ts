@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FilterCPipe } from '../Filters/filterC.pipe';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
-
+declare var $: any;
 @Component({
     selector: 'pool1-mang-page',
     templateUrl: 'pool1-mang-page.component.html',
@@ -11,7 +11,7 @@ import 'rxjs/add/operator/map';
     //pipes: [FilterCPipe]
 })
 export class Pool1MangPageComponent {
-    reqPoolQat: any = "";
+    reqPoolQat: number = 0;
     rowLimit: any = 10;
     pageNumber: any = 0;
     lLimit: any = this.pageNumber * 4;
@@ -24,10 +24,11 @@ export class Pool1MangPageComponent {
     selectedState: any = "Select a state";
     selectedCity: any = "Select a city";
     updateReqPool: any;
-    selectedCsr: any = "Select a CSR";
+    selectedCsr: string = "Select a CSR";
     selectedPlanner: any = "Select a planner";
     allCsr: any;
     asc = true;
+    fieldvalidation = false;
     poolRecieved = false;
     //[name: string]: any;
 
@@ -367,6 +368,7 @@ export class Pool1MangPageComponent {
             }
         }
         //this.data = [];
+        this.masterFilter();
         this.data = JSON.parse(JSON.stringify(this.result));
         //this.data = JSON.parse(JSON.stringify(this.ob.groups));
         this.resetPage();
@@ -483,18 +485,18 @@ export class Pool1MangPageComponent {
 
     ob = {
         column: ["State", "City", "TMW", "Company", "CSR", "Planner", "Req Pool", "Current", "Variance", "Action"],
-        groups: [{'variance':0}]
+        groups: [{ 'variance': 0 }]
     };
 
-    
+
 
     private getAllCities() {
         //alert("hi");
         let headers = new Headers({ 'Content-Type': 'text/plain' });
         let options = new RequestOptions({ headers: headers });
         let obj = { 'stateCode': "AR" };
-        let url1 = "http://192.168.1.86:81/TrailersCheck.asmx/GetCityByState?stateCode='AR'";
-        let url = "http://192.168.1.86:81/TrailersCheck.asmx/GetAllCities";
+        let url1 = "http://61.16.133.244/CommonService/api/GetCityByState?stateCode='AR'";
+        let url = "http://61.16.133.244/CommonService/api/GetAllCities";
         this.http.get(url1).map(res => res.json())
             .subscribe(
             (data) => { console.log("getAllCities data recieved "); this.allCities = data; }, //For Success Response
@@ -506,7 +508,7 @@ export class Pool1MangPageComponent {
 
     private getAllStates() {
         //alert("hi");
-        this.http.get("http://192.168.1.86:81/TrailersCheck.asmx/GetAllStates").map(res => res.json())
+        this.http.get("http://61.16.133.244/CommonService/api/State").map(res => res.json())
             .subscribe(
             (data) => { console.log("getAllStates data recieved"); this.allStates1 = data; this.allStates = JSON.parse(JSON.stringify(this.allStates1)); }, //For Success Response
             (err) => { console.log("getAllStates error recieved"); } //For Error Response
@@ -517,7 +519,7 @@ export class Pool1MangPageComponent {
 
     private getAllCompany() {
         //alert("hi");
-        let url = "http://192.168.1.86:81/TrailersCheck.asmx/GetCompanyForFilter"
+        let url = "http://61.16.133.244/CommonService/api/Company"
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => { console.log("getAllCompany data recieved"); this.allCC1 = data; this.allCC = JSON.parse(JSON.stringify(this.allCC1)); }, //For Success Response
@@ -532,7 +534,7 @@ export class Pool1MangPageComponent {
         let headers = new Headers({ 'Content-Type': 'text/plain' });
         let options = new RequestOptions({ headers: headers });
         let obj = { 'csr': 0, 'csrCode': 0 };
-        let url = "http://192.168.1.86:81/TrailersCheck.asmx/GetAllCsr?csr=0&csrCode=0";
+        let url = "http://61.16.133.244/CommonService/api/Csr?csr=0&csrCode=0";
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => { console.log("getAllCsr data recieved"); this.allCsr = data; }, //For Success Response
@@ -542,7 +544,7 @@ export class Pool1MangPageComponent {
 
     private getAllPlanner() {
         //alert("hi");
-        let url = "http://192.168.1.86:81/TrailersCheck.asmx/GetAllPlanners?planner=0&plannerCode=0";
+        let url = "http://61.16.133.244/CommonService/api/Planner?planner=0&plannerCode=0";
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -556,7 +558,8 @@ export class Pool1MangPageComponent {
 
     private getAllPool() {
         //alert("hi");
-        let url = "http://192.168.1.86:81/TrailersCheck.asmx/GetAllPools";
+        this.poolRecieved = false;
+        let url = "http://61.16.133.244/PoolMGMTService/api/AllPools";
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => { console.log("getAllPlools data recieved"); this.allPools = data; this.ob.groups = data; this.selectVarience(1); this.poolRecieved = true; }, //For Success Response
@@ -566,11 +569,11 @@ export class Pool1MangPageComponent {
 
     private getAllCompanyForAddPool() {
         //alert("hi");
-        let url = "http://192.168.1.86:81/TrailersCheck.asmx/GetCompanyForAddPool";
+        let url = "http://61.16.133.244/CommonService/api/CompanyForAddPool";
         this.http.get(url).map(res => res.json())
             .subscribe(
-            (data) => { console.log("getAllPlools data recieved"); this.allCCForAdd = data; }, //For Success Response
-            (err) => { console.log("getAllPlools error recieved"); } //For Error Response
+            (data) => { console.log("getAllCompanyForAddPool data recieved"); this.allCCForAdd = data; }, //For Success Response
+            (err) => { console.log("getAllCompanyForAddPool error recieved"); } //For Error Response
             );
     }
 
@@ -631,29 +634,35 @@ export class Pool1MangPageComponent {
     }
 
     private updatePool() {
-        this.poolToEdit.csr = this.selectedCsr;
-        this.poolToEdit.planner = this.selectedPlanner;
-        this.poolToEdit.reqPoolCount = this.updateReqPool;
-        this.poolToEdit.variance = this.poolToEdit.reqPoolCount - this.poolToEdit.avaiPoolCount
 
-        let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
-        let options = new RequestOptions({ headers: headers });
+        if (!isNaN(Number(this.updateReqPool))) {
+            this.poolToEdit.csr = this.selectedCsr;
+            this.poolToEdit.planner = this.selectedPlanner;
+            this.poolToEdit.reqPoolCount = this.updateReqPool;
+            this.poolToEdit.variance = this.poolToEdit.reqPoolCount - this.poolToEdit.avaiPoolCount
 
-        console.log("add: " + this.selectedState);
-        console.log("add: " + this.selectedCity);
-        var data = { 'pool': this.poolToEdit };
-        let url = "http://192.168.1.86:81/TrailersCheck.asmx/updatePool";
-        this.http.post(url, data, options).map(res => res.json())
-            .subscribe(
-            (data) => { console.log("updatePool success msg recieved"); alert("Pool is updated") }, //For Success Response
-            (err) => { console.log("getAllPlanner error recieved"); } //For Error Response
-            );
+            let headers = new Headers({ 'Content-Type': 'application/json;', 'Accept': 'application/json' });
+            let options = new RequestOptions({ headers: headers });
+
+            console.log("add: " + this.selectedState);
+            console.log("add: " + this.selectedCity);
+            var data = { 'pool': this.poolToEdit };
+            let url = "http://61.16.133.244/PoolMGMTService/api/UpdatePool";
+            this.http.post(url, this.poolToEdit, options).map(res => res.json())
+                .subscribe(
+                (data) => { console.log("updatePool success msg recieved"); alert("Pool is updated") }, //For Success Response
+                (err) => { console.log("getAllPlanner error recieved"); } //For Error Response
+                );
+            $('#editModal').modal('hide');
+        } else {
+            this.fieldvalidation = true;
+        }
 
     }
 
     private cancelUpdatePool() {
-        this.selectedCsr;
-        this.selectedPlanner;
+        this.selectedCsr = "";
+        this.selectedPlanner = "";
         this.updateReqPool = 0;
 
     }
@@ -695,67 +704,88 @@ export class Pool1MangPageComponent {
     }
 
     add() {
+        this.validateFileds();
+        if (!this.fieldvalidation) {
+            let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
+            let options = new RequestOptions({ headers: headers });
+            var data = {
+                'poolID': '',
+                'cmpID': '',
+                'planner': '',
+                'csr': '',
+                'reqPoolCount': 0,
+                'stateCode': '',
+                'stateName': '',
+                'companyName': '',
+                'cityName': '',
+                'avaiPoolCount': 0,
+                'variance': 0
+            };
 
-        let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
-        let options = new RequestOptions({ headers: headers });
-        var data = {
-            'poolID': '',
-            'cmpID': '',
-            'planner': '',
-            'csr': '',
-            'reqPoolCount': 0,
-            'stateCode': '',
-            'stateName': '',
-            'companyName': '',
-            'cityName': '',
-            'avaiPoolCount': 0,
-            'variance': 0
-        };
+            data.cmpID = this.selectedCompany.cmpID;
+            data.csr = this.selectedCsr;
+            data.planner = this.selectedPlanner;
+            data.companyName = this.selectedCompany.cmpName;
+            data.reqPoolCount = this.reqPoolQat;
+            data.variance = this.reqPoolQat;
+            data.cityName = this.selectedCompany.cityName;
+            data.stateName = this.selectedCompany.stateName;
+            data.stateCode = this.selectedCompany.stateCode;
 
-        data.cmpID = this.selectedCompany.cmpID;
-        data.csr = this.selectedCsr;
-        data.planner = this.selectedPlanner;
-        data.companyName = this.selectedCompany.cmpName;
-        data.reqPoolCount = this.reqPoolQat;
-        data.variance = this.reqPoolQat;
-        data.cityName = this.selectedCompany.cityName;
-        data.stateName = this.selectedCompany.stateName;
-        data.stateCode = this.selectedCompany.stateCode;
+            console.log("add: " + this.selectedState);
+            console.log("add: " + this.selectedCity);
 
-        console.log("add: " + this.selectedState);
-        console.log("add: " + this.selectedCity);
-
-        console.log("add: " + this.ob.groups);
-        var payld = {pool:data};
-        let url = "http://192.168.1.86:81/TrailersCheck.asmx/insertPool";
-        this.http.post(url, payld, options).map(res => res.json())
-            .subscribe(
-            (data) => {
-                console.log("insertPool success recieved");
-                alert("New pool inserted");
-                this.ob.groups.push(data);
-                if (this.selectedVarience == 1 || this.selectedVarience == -1) {
-                    this.data.push(data);
-                }
-            }, //For Success Response
-            (err) => { console.log("insertPool error recieved"); alert("Error in adding pool") } //For Error Response
-            );
-        this.cancelAdd();
-        this.resetPage();
+            console.log("add: " + this.ob.groups);
+            var payld = { pool: data };
+            let url = "http://61.16.133.244/PoolMGMTService/api/InsertPool";
+            let object = this;
+            this.http.post(url, data, options).map(res => res.json())
+                .subscribe(
+                (resp) => {
+                    console.log("insertPool success recieved");
+                    alert("Pool inserted successfully");
+                    this.ob.groups.push(data);
+                    if (this.selectedVarience == 1 || this.selectedVarience == -1) {
+                        this.data.push(data);
+                    }
+                    object.getAllPool();
+                    object.getAllCompanyForAddPool();
+                    object.getAllCompany();
+                }, //For Success Response
+                (err) => { console.log("insertPool error recieved"); alert("Error in adding pool"); } //For Error Response
+                );
+            this.cancelAdd();
+            this.resetPage();
+            $('#addModal').modal('hide');
+        }
 
     }
 
     private cancelAdd() {
         this.reqPoolQat = 0;
-        this.selectedCompany = { cmpName: "Select a company"};
+        this.selectedCompany = { cmpName: "Select a company" };
         this.selectedCsr = "Select a CSR";
         this.selectedPlanner = "Select a planner";
+        this.fieldvalidation = false;
 
     }
 
     private toAdd() {
         this.cancelAdd();
     }
+
+    private validateFileds() {
+
+        if (this.selectedCompany.cmpName == "Select a company" || this.selectedCsr === "Select a CSR" || this.selectedPlanner === "Select a planner") {
+            this.fieldvalidation = true;
+        }
+        console.log(Number(this.reqPoolQat));
+        if (isNaN(Number(this.reqPoolQat))) {
+            console.log("reqPoolQat is not number");
+            this.fieldvalidation = true;
+        }
+    }
+
 }
 
 // This code copy to app.module.ts

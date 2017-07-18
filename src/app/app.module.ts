@@ -11,7 +11,7 @@ import { NgxPaginationModule, PaginatePipe, PaginationService } from 'ngx-pagina
 
 import { AppComponent } from './app.component';
 
-import { FooterComponent } from './footer/footer.component';
+
 import { HeaderComponent } from './header/header.component';
 import { MainTabsComponent } from './mainTabs/mainTabs.component';
 import { HomePageComponent } from './home-page/home-page.component';

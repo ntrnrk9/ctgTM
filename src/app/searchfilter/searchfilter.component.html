@@ -1,7 +1,7 @@
 ﻿<div class="dropdown pull-left pm-select-cont" style="border:1px solid silver;width:100%">
-    <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" style="width:89%"
+    <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" style="width:84%"
         value={{selectedItem}} (click)="resetSearch()"/>
-        <span class="caret pointer" data-toggle="dropdown"></span>
+        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
     
     <div class="dropdown-menu no-padding mulSel-dd">
         <div class="input-group">
@@ -13,7 +13,7 @@
             </div>
         </div>
         <ul class="mulSel-dd-ul">
-            <li *ngFor="let item of items|filterC:search:key" (click)="selectCompany(item)">{{item[key]}}</li>
+            <li *ngFor="let item of items|filterC:search:key" (click)="selectCompany(item)" class="pointer"><label class="lblLI">{{item[key]}}</label></li>
         </ul>
     </div>
 </div>

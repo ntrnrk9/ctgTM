@@ -8,14 +8,14 @@
                     <!--<input class="ctg-textbox pull-left" placeholder="Search by city" [(ngModel)]="cityFil" style="margin-left:10px;" /><span class="pull-left glyphicon glyphicon-search serch-gly"></span>-->
                     <!--<input class="ctg-textbox pull-left" placeholder="Company/Customer" [(ngModel)]="ccFil" style="margin-left:10px;" /><span class="pull-left glyphicon glyphicon-search serch-gly"></span>-->
                     <select style="margin-left:0px" class="form-control pull-left pm-select" id="sel1" [ngModel]="selectedVarience" (ngModelChange)="selectVarience($event)">
-                        <option value=1>Pools having variance</option>
-                        <option value=0>Pools having no variance</option>
-                        <option value=-1>All pools</option>
+                        <option class="lblLI" value=1>Pools having variance</option>
+                        <option class="lblLI" value=0>Pools having no variance</option>
+                        <option class="lblLI" value=-1>All pools</option>
                     </select>
 
                     <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
                         <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" (click)="restoreccList()" value={{ccSFlabel}} />
-                        <span class="caret pointer" data-toggle="dropdown"></span>
+                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
                         <div class="dropdown-menu no-padding mulSel-dd">
                             <div class="input-group">
                                 <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="ccFil">
@@ -30,11 +30,11 @@
                                 <input class="pull-right pu-selAll" type="button" (click)="ccClearAllFun()" value="Clear All" />
                             </div>
                             <form>
-                                <table class="ddTable">
+                                <table class="ddTable table-striped">
                                     <tbody class="ddtbody">
-                                        <tr *ngFor="let i=index;let item of allCC|filterC:ccFil:'cmpName'">
+                                        <tr *ngFor="let i=index;let item of allCC|filterC:ccFil:'cmpName'" class="pointer">
                                             <td style="vertical-align:top"><input class="pull-left inpLI" type="checkbox" id="cc_{{i}}" name="cc_{{i}}" value="" [(ngModel)]="item.isSelected" (change)="ccCheckEvent($event.target.checked,item.cmpName)" /></td>
-                                            <td><label class="lblLI" for="cc_{{i}}">{{item.cmpName}}</label></td>
+                                            <td class="full"><label class="lblLI"  for="cc_{{i}}">{{item.cmpName}}</label></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -48,7 +48,7 @@
 
                     <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
                         <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" (click)="restorePlannerList()" value={{plannerSFlabel}} />
-                        <span class="caret pointer" data-toggle="dropdown"></span>
+                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
                         <div class="dropdown-menu no-padding mulSel-dd">
 
                             <div class="input-group">
@@ -64,11 +64,11 @@
                                 <input class="pull-right pu-selAll" type="button" (click)="plannerClearAllFun()" value="Clear All" />
                             </div>
                             <form style="padding:5px 0px">
-                                <table class="ddTable">
+                                <table class="ddTable table-striped">
                                     <tbody class="ddtbody">
-                                        <tr *ngFor="let i=index;let item of allPlanners|filterC:plannerFil:'planner'">
+                                        <tr *ngFor="let i=index;let item of allPlanners|filterC:plannerFil:'planner'" class="pointer">
                                             <td style="vertical-align:top"><input class="pull-left inpLI" type="checkbox" id="planner_{{i}}" name="planner_{{i}}" value="" [(ngModel)]="item.isSelected" (change)="plannerCheckEvent($event.target.checked,item.planner)" /></td>
-                                            <td><label class="lblLI" for="planner_{{i}}">{{item.planner}}</label></td>
+                                            <td class="full"><label class="lblLI" for="planner_{{i}}">{{item.planner}}</label></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -81,14 +81,15 @@
                         </div>
                     </div>
 
-                    <!--<select class="form-control pull-left pm-select" id="sel1" [ngModel]="selectedSR" (ngModelChange)="selectSR($event)">
+                    <select class="form-control pull-left pm-select" id="sel1" [ngModel]="selectedSR" (ngModelChange)="selectSR($event)">
                         <option value=0>Shipper</option>
                         <option value=1>Receiver</option>
-                    </select>-->
+                        <option value=2>Both</option>
+                    </select>
 
                     <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
                         <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" (click)="restoreStateList()" value={{stateSFlabel}} />
-                        <span class="caret pointer" data-toggle="dropdown"></span>
+                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
                         <div class="dropdown-menu no-padding mulSel-dd">
                             <div class="input-group">
                                 <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="stateFil">
@@ -103,11 +104,11 @@
                                 <input class="pull-right pu-selAll" type="button" (click)="stateClearAllFun()" value="Clear All" />
                             </div>
                             <form style="padding:5px 0px">
-                                <table class="ddTable">
+                                <table class="ddTable table-striped">
                                     <tbody class="ddtbody">
-                                        <tr *ngFor="let i=index;let item of allStates|filterC:stateFil:'stateCode'">
+                                        <tr *ngFor="let i=index;let item of allStates|filterC:stateFil:'stateCode'" class="pointer">
                                             <td style="vertical-align:top"><input class="pull-left inpLI" type="checkbox" id="state_{{i}}" name="state_{{i}}" value="" [(ngModel)]="item.isSelected" (change)="stateCheckEvent($event.target.checked,item.stateCode)" /></td>
-                                            <td><label class="lblLI" for="state_{{i}}">{{item.stateCode}}</label></td>
+                                            <td class="full"><label class="lblLI" for="state_{{i}}">{{item.stateCode}}</label></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -219,7 +220,7 @@
                 <div style="text-align:center" *ngIf="data.length==0"><span class="pull-left">0-0 of 0</span><a *ngIf="lLimit!=0" (click)="prevPage()">Previous</a><a style="padding:0px 30px 0px 30px;color:black">{{pageNumber+1}}</a><a (click)="nextPage()" *ngIf="uLimit!=data.length">Next</a></div>
             </div>-->
             <div class="col-md-12">
-                <table class="app-table table table-striped table-hover table-bordered1">
+                <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
                     <thead>
                         <tr bgcolor="#f7f8fc" class="app-table-tr">
                             <ng-container *ngFor="let con of ob.column">
@@ -239,7 +240,7 @@
                         </tr>-->
                         <!--<tr *ngFor="let item of data| filterC:cityFil:'city'| filterC:stateFil:'state'| filterC:ccFil:'company'">
                         -->
-                        <ng-container *ngFor="let i=index;let item of data | paginate: { itemsPerPage: 50, currentPage: p }">
+                        <ng-container *ngFor="let i=index;let item of data | paginate: { itemsPerPage: 100, currentPage: p }">
                             <tr>
                                 <td style="text-align:center">
                                     <span>{{item.stateCode}}</span>
@@ -271,19 +272,20 @@
                                     <span>{{item.variance}}</span>
                                 </td>
                                 <td style="text-align:center">
-                                    <button type="button" class="action" data-toggle="modal" data-target="#editModal" (click)="toEdit(item)"><span class="glyphicon glyphicon-edit"></span></button>
-
-                                    <button class="action"><span class="glyphicon glyphicon-play"></span></button>
+                                    <button type="button" class="action" data-toggle="modal" data-target="#editModal" (click)="toEdit(item)"><img width="20px" src="../../assets/images/markers/edit.png" /></button>
+                                    <button class="action"><img width="20px" src="../../assets/images/markers/delete.png" /></button>
+                                    <button class="action"><img width="20px" src="../../assets/images/markers/reposition.png" /></button>
                                 </td>
                             </tr>
                         </ng-container>
                     </tbody>
                 </table>
                 <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="poolRecieved && data.length==0 ">No data found</div>
-                <div style="text-align:center" *ngIf="poolRecieved">
+                <div style="text-align:center;margin-top:10px" *ngIf="poolRecieved">
                     <pagination-controls (pageChange)="p = $event"></pagination-controls>
                 </div>
                 <div *ngIf="!poolRecieved" class="loader"><img src="../../assets/images/loader.gif" /></div>
+                
             </div>
             <!-- Add pool modal -->
 
@@ -300,12 +302,12 @@
                             <div class="modal-div">
                                 <div class="row pu-row">
                                     <div>
-                                        <label>Company Name</label><br>
+                                        <label>Company Name <span class="first">*</span></label><br>
                                         <div class="dropdown pull-left pm-select-cont" style="border:1px solid silver;width:100%">
 
-                                            <input class="filters dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="width:96%"
-                                                value={{selectedCompany.cmpName}} (click)="resetccFil()"/>
-                                                <span class="caret" data-toggle="dropdown"></span>
+                                            <input class="filters dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="width:92%"
+                                                value={{selectedCompany.cmpName}}-{{selectedCompany.cmpID}} (click)="resetccFil()"/>
+                                                <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
                                             
                                             <div class="dropdown-menu no-padding mulSel-dd" role="menu" aria-labelledby="menu1" style="width:100%">
                                                 <div class="input-group">
@@ -317,7 +319,7 @@
                                                     </div>
                                                 </div>
                                                 <ul class="mulSel-dd-ul">
-                                                    <li *ngFor="let item of allCCForAdd|filterC:ccFil:'cmpName'" (click)="selectCompany(item)">{{item.cmpName}}-{{item.cmpID}}</li>
+                                                    <li *ngFor="let item of allCCForAdd|filterC:ccFil:'cmpName'" (click)="selectCompany(item)"><label class="lblLI">{{item.cmpName}}-{{item.cmpID}}</label></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -336,10 +338,10 @@
                                 </div>
                                 <div class="row pu-row">
                                     <div class="col-md-6 orPad">
-                                        <label>CSR</label><br />
+                                        <label>CSR <span class="first"> *</span></label><br />
                                         <searchfilter [items]="allCsr" [(selectedItem)]="selectedCsr" [key]="'csr'"></searchfilter>
                                     </div><div class="col-md-6 olPad">
-                                        <label>Planner</label><br />
+                                        <label>Planner <span class="first"> *</span></label><br />
                                         <searchfilter [items]="allPlanners" [(selectedItem)]="selectedPlanner" [key]="'planner'"></searchfilter>
                                     </div>
                                 </div><div class="row pu-row">
@@ -347,6 +349,10 @@
                                         <label>Required</label><br>
                                         <input class="no-padding col-md-12" [(ngModel)]="reqPoolQat" type="text" />
                                     </div>
+                                </div>
+                                <div class="row pu-row no-padding">
+                                        <label *ngIf="fieldvalidation" class="redAlert">Mandatory fields are marked by *</label><br>
+                                        <label *ngIf="fieldvalidation" class="redAlert">Required to be a number</label><br>
                                 </div>
                                 <!--<div class="row pu-row">
                                     <div class="col-md-6 orPad">
@@ -361,7 +367,7 @@
                         </div>
                         <div class="modal-footer page-footer">
                             <button type="button" class="pm-whiteBut" style="height:30px" (click)="cancelAdd()" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="pm-addBut" data-dismiss="modal" (click)="add()">Save</button>
+                            <button type="button" class="pm-addBut" (click)="add()">Save</button>
                         </div>
                     </div>
 
@@ -405,16 +411,19 @@
                                         <input class="no-padding col-md-12" />
                                     </div>-->
                                     <div class="col-md-12 no-padding">
-                                        <label>Required Pool</label><br />
+                                        <label>Required</label><br />
                                         <input class="no-padding col-md-12" [(ngModel)]="updateReqPool" type="text" />
                                     </div>
                                     <!--<button class="pull-right add-trType"><span class="glyphicon glyphicon-plus-sign blue-but"></span></button>-->
+                                </div>
+                                <div class="row pu-row">
+                                        <label *ngIf="fieldvalidation" class="redAlert">Required to be a number</label><br>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer page-footer">
                             <button type="button" style="height:30px" class="pm-whiteBut" (click)="cancelUpdatePool()" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="pm-addBut" data-dismiss="modal" (click)="updatePool()">Save</button>
+                            <button type="button" class="pm-addBut" (click)="updatePool()">Save</button>
                         </div>
                     </div>
 
