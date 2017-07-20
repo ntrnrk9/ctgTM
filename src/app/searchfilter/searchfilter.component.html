@@ -1,4 +1,4 @@
-﻿<div class="dropdown pull-left pm-select-cont" style="border:1px solid silver;width:100%">
+﻿<div class="dropdown pull-left pm-select-cont" style="border:1px solid silver;width:100%" [ngClass]="{'redAlert':required }">
     <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" style="width:84%"
         value={{selectedItem}} (click)="resetSearch()"/>
         <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>

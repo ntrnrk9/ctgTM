@@ -52,3 +52,6 @@
     border:none;
     background-color: white;
 }
+.redAlert{
+    box-shadow: 0 0 5px red !important;
+}

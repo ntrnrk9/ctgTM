@@ -45,6 +45,7 @@ input[type="text"] {
     height: 30px;
     padding: 5px !important;
     border: 1px solid silver;
+    outline: none !important;
 }
 
 button{
@@ -53,4 +54,9 @@ button{
 
 select {
     border: none;
+}
+.form-control:focus {
+ box-shadow:none;
+ -webkit-box-shadow:none; 
+ border-color:#cccccc; 
 }

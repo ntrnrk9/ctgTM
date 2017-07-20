@@ -14,12 +14,11 @@
     }
 
 .app-table-tr {
-    padding: 15px;
+    padding: 15px 0px 15px 0px;
 }
 
 .app-table tr {
-  
-    padding: 10px;
+    padding: 0px;
 }
 
 .serch-gly {
@@ -165,6 +164,7 @@ li {
 .div-center{
     margin:auto;
     width:75%;
+    padding-top:10px; 
 }
 .mulSel-but-apply {
     height: 30px;
@@ -201,10 +201,7 @@ li {
 }
 
 .redAlert{
-    color: red;
-    font-weight: normal;
-    font-size: 11px;
-    margin: 0px;
+    box-shadow: 0 0 5px red !important;
 }
 
 .pointer{
@@ -269,17 +266,30 @@ li {
 
 
 .table-fixed thead {
-  width: 97%;
+  width: 100%;
 }
 .table-fixed tbody {
-  height: 230px;
+  max-height: 500px;
   overflow-y: auto;
   width: 100%;
 }
 .table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
-  display: block;
+  display: inline-block;
 }
 .table-fixed tbody td, .table-fixed thead > tr> th {
   float: left;
   border-bottom-width: 0;
+}
+
+.bordered{
+border:1px solid silver;
+}
+
+.addSelect{
+   width: 100%;
+    height: 31px;
+    border-radius: 0px;
+    padding-left: 1px;
+    cursor: pointer;
+    border: 1px solid silver;
 }
