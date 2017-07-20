@@ -73,3 +73,7 @@ html {
   width: 100%;
   height: 40px;
 }
+
+.modal-dialog{
+    margin-top: 10%;
+}

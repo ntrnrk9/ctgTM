@@ -11,7 +11,7 @@ declare var $: any;
     //pipes: [FilterCPipe]
 })
 export class Pool1MangPageComponent {
-    reqPoolQat: number = 0;
+    reqPoolQat: String;
     rowLimit: any = 10;
     pageNumber: any = 0;
     lLimit: any = this.pageNumber * 4;
@@ -27,6 +27,7 @@ export class Pool1MangPageComponent {
     updateReqPool: any;
     selectedCsr: string = "Select a CSR";
     selectedPlanner: any = "Select a planner";
+    toAddBrand: String = "";
     allCsr: any;
     asc = true;
     fieldvalidation = false;
@@ -38,11 +39,16 @@ export class Pool1MangPageComponent {
     private name = 'Pool1Mang-pageComponent';
     cityFil: String = "";
     stateFil: String = "";
+    accFil: String = "";
     ccFil: String = "";
     plannerFil: String = "";
-    selectedVarience: Number = 1;
-    selectedSR: Number = 0;
-    selectedBrand: String = "CVEN";
+    selectedVarience: any = { lable: "Pools having variance", value: 1 };
+    varianceList: any = [{ lable: "Pools having variance", value: 1 }, { lable: "Pools having no variance", value: 0 }, { lable: "All pools", value: -1 }]
+    selectedSR: any = { lable: "Shipper", value: 0 };
+    sRList: any = [{ lable: "Shipper", value: 0 }, { lable: "Receiver", value: 1 }, { lable: "Both", value: 2 }]
+    selectedBrand: any = { lable: "Covenant", value: "CVN" };
+    brandList: any = [{ lable: "Covenant", value: "CVN" }, { lable: "SRT", value: "SRT" }, { lable: "Both", value: "ALL" }];
+    brandListForAdd: any = [{ lable: "Covenant", value: "CVN" }, { lable: "SRT", value: "SRT" }]
     data: any[] = [];
     result: any[] = [];
     pageNum: Number = 1;
@@ -82,7 +88,7 @@ export class Pool1MangPageComponent {
     poolToAdd: any = {
         active: "",
         avaiPoolCount: 0,
-        brand: "SRT",
+        brand: "CVN",
         cityName: "",
         cmpID: "",
         companyName: "",
@@ -258,21 +264,21 @@ export class Pool1MangPageComponent {
 
         for (var i = 0; i < temp.length; i++) {
             var obj = temp[i];
-            if ((this.selectedSR == 0)) {
+            if ((this.selectedSR.value == 0)) {
                 if (temp[i].isShipper == "Y") {
 
                 } else {
                     temp.splice(i, 1); i--;
                 }
 
-            } else if ((this.selectedSR == 1)) {
+            } else if ((this.selectedSR.value == 1)) {
                 if ((temp[i].isReceiver == "Y")) {
 
                 } else {
                     temp.splice(i, 1); i--;
                 }
 
-            } else if ((this.selectedSR == 2)) {
+            } else if ((this.selectedSR.value == 2)) {
                 if ((temp[i].isReceiver == "Y") && (temp[i].isShipper == "Y")) {
 
                 } else {
@@ -289,21 +295,21 @@ export class Pool1MangPageComponent {
 
         for (var i = 0; i < temp.length; i++) {
             var obj = temp[i];
-            if ((this.selectedBrand == "CVEN")) {
+            if ((this.selectedBrand.value == "CVN")) {
                 if (temp[i].brand == "CVN") {
 
                 } else {
                     temp.splice(i, 1); i--;
                 }
 
-            } else if ((this.selectedBrand == "SRT")) {
+            } else if ((this.selectedBrand.value == "SRT")) {
                 if ((temp[i].brand == "SRT")) {
 
                 } else {
                     temp.splice(i, 1); i--;
                 }
 
-            } else if ((this.selectedBrand == "ALL")) {
+            } else if ((this.selectedBrand.value == "ALL")) {
                 if ((temp[i].brand == "CVN") || (temp[i].brand == "SRT")) {
 
                 } else {
@@ -419,13 +425,13 @@ export class Pool1MangPageComponent {
         return -1;
     }
 
-    selectSR(value: number) {
+    selectSR(value: any) {
         this.selectedSR = value;
         this.masterFilter();
 
     }
 
-    selectBrand(value: String) {
+    selectBrand(value: any) {
         this.selectedBrand = value;
         this.masterFilter();
 
@@ -436,9 +442,10 @@ export class Pool1MangPageComponent {
         console.log(this.selectedVarience);
         console.log(this.cityFil + " " + this.stateFil);
         this.selectedVarience = value;
+
         // ... do other stuff here ...
         for (var j of this.ob.groups) {
-            if (value == 0) {
+            if (this.selectedVarience.value == 0) {
                 if (j.variance == 0) {
                     //j.toShow = true;
                     this.result.push(j);
@@ -446,14 +453,14 @@ export class Pool1MangPageComponent {
                 } else {
                     //j.toShow = false;
                 }
-            } else if (value == 1) {
+            } else if (this.selectedVarience.value == 1) {
                 if (j.variance > 0 || j.variance < 0) {
                     //j.toShow = true;
                     this.result.push(j);
                 } else {
                     //j.toShow = false;
                 }
-            } else if (value == -1) {
+            } else if (this.selectedVarience.value == -1) {
                 //j.toShow = true;
                 this.result.push(j);
             }
@@ -575,8 +582,8 @@ export class Pool1MangPageComponent {
         }];
 
     ob = {
-        column: [{ name: "State", width: "6%" }, { name: "City", width: "10%" }, { name: "TMW", width: "10%" }, { name: "Customer", width: "20%" }, { name: "CSR", width: "10%" },
-        { name: "Planner", width: "10%" }, { name: "Req Pool", width: "8%" }, { name: "Current", width: "8%" }, { name: "Variance", width: "8%" }, { name: "Action", width: "10%" }],
+        column: [{ name: "State", width: "4%" }, { name: "City", width: "10%" }, { name: "TMW", width: "10%" }, { name: "Customer", width: "20%" }, { name: "CSR", width: "10%" },
+        { name: "Planner", width: "10%" }, { name: "Req Pool", width: "8%" }, { name: "Current", width: "8%" }, { name: "Variance", width: "8%" }, { name: "Action", width: "12%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVN" }]
     };
 
@@ -661,16 +668,24 @@ export class Pool1MangPageComponent {
 
     private getAllCompanyForAddPool() {
         //alert("hi");
-        let url = "http://61.16.133.244/CommonService/api/CompanyForAddPool";
-        this.http.get(url).map(res => res.json())
-            .subscribe(
-            (data) => { console.log("getAllCompanyForAddPool data recieved"); this.allCCForAdd = data; }, //For Success Response
-            (err) => { console.log("getAllCompanyForAddPool error recieved"); } //For Error Response
-            );
+        if (this.accFil.length > 3) {
+            //$('#cmpForAddPoolDD').find('[data-toggle=dropdown]').dropdown('toggle');
+            $('#cmpForAddPoolDD').addClass('open');
+            console.log($('#accFil').val());
+            $("#accFil").focus();
+
+            let url = "http://61.16.133.244/CommonService/api/CompanyForAddPool?companyName=" + this.accFil;
+            this.http.get(url).map(res => res.json())
+                .subscribe(
+                (data) => { console.log("getAllCompanyForAddPool data recieved"); this.allCCForAdd = data; }, //For Success Response
+                (err) => { console.log("getAllCompanyForAddPool error recieved"); } //For Error Response
+                );
+        }
     }
 
     private resetccFil() {
-        this.ccFil = "";
+        this.accFil = "";
+        this.selectedCmpLbl = "";
     }
 
     private restoreccList() {
@@ -706,7 +721,7 @@ export class Pool1MangPageComponent {
 
     constructor(private http: Http) {
         //this.ob['groups'] = [];
-        this.selectVarience(1);
+        this.selectVarience(this.selectedVarience);
         //this.getAllCities();
         this.getAllStates();
         this.getAllCompany();
@@ -737,11 +752,32 @@ export class Pool1MangPageComponent {
         this.selectedPlanner = this.poolToEdit.planner;
         this.selectedCsr = this.poolToEdit.csr;
         this.updateReqPool = this.poolToEdit.reqPoolCount;
+        this.fieldvalidation = true;
+        this.isValidFields.isValidReqPool = false;
+        this.isValidFields.isValidSR = false;
     }
 
     private updatePool() {
+        this.fieldvalidation = true;
+        this.isValidFields.isValidReqPool = false;
+        this.isValidFields.isValidSR = false;
+        
+        if ((this.poolToEdit.isShip || this.poolToEdit.isReciev)) {
+            this.isValidFields.isValidSR = false;
+        }else{
+            this.fieldvalidation = false;
+            this.isValidFields.isValidSR = true;
+        }
 
-        if (!isNaN(Number(this.updateReqPool))) {
+
+        if (!isNaN(Number(this.updateReqPool)) && (Number(this.updateReqPool) > 0)) {
+            this.isValidFields.isValidReqPool = false;
+        }else{
+            this.fieldvalidation = false;
+            this.isValidFields.isValidReqPool = true;
+        }
+
+        if (this.fieldvalidation) {
             this.poolToEdit.csr = this.selectedCsr;
             this.poolToEdit.planner = this.selectedPlanner;
             this.poolToEdit.reqPoolCount = this.updateReqPool;
@@ -773,7 +809,7 @@ export class Pool1MangPageComponent {
                 (data) => {
                     console.log("updatePool success msg recieved");
                     this.action.heading = "Update Pool";
-                    this.action.body = "Pool is updated";
+                    this.action.body = "Pool updated successfully!";
                     $('#result').modal('show');
                     //this.restoreEdit.csr = this.poolToEdit.csr;
                     //this.restoreEdit.planner = this.poolToEdit.planner;
@@ -784,7 +820,7 @@ export class Pool1MangPageComponent {
                 (err) => {
                     console.log("updatePool error recieved");
                     this.action.heading = "Update Pool";
-                    this.action.body = "Error is updating pool";
+                    this.action.body = "Error is updating pool.";
                     $('#result').modal('show');
                 } //For Error Response
                 );
@@ -792,6 +828,8 @@ export class Pool1MangPageComponent {
         } else {
             this.fieldvalidation = true;
         }
+
+        
 
     }
 
@@ -820,8 +858,10 @@ export class Pool1MangPageComponent {
 
     selectCompany(item: any) {
         console.log(item);
-        this.selectedCmpLbl = this.selectedCompany.cmpName + " - " + this.selectedCompany.cmpID;
         this.selectedCompany = item;
+        this.selectedCmpLbl = this.selectedCompany.cmpName + " - " + this.selectedCompany.cmpID;
+        this.accFil = "";
+
     }
 
     selectPlanner(item: any) {
@@ -883,8 +923,8 @@ export class Pool1MangPageComponent {
             data.csr = this.selectedCsr;
             data.planner = this.selectedPlanner;
             data.companyName = this.selectedCompany.cmpName;
-            data.reqPoolCount = this.reqPoolQat;
-            data.variance = this.reqPoolQat;
+            data.reqPoolCount = Number(this.reqPoolQat);
+            data.variance = Number(this.reqPoolQat);
             data.cityName = this.selectedCompany.cmpCity;
             data.stateName = this.selectedCompany.cmpState;
             data.stateCode = this.selectedCompany.cmpState;
@@ -913,7 +953,7 @@ export class Pool1MangPageComponent {
                     console.log("insertPool success recieved" + JSON.stringify(resp));
                     if (resp[0].status == "success") {
                         this.action.heading = "Add Pool";
-                        this.action.body = "Pool added successfully";
+                        this.action.body = "Pool added successfully!";
                         $('#result').modal('show');
                         object.getAllPool();
                         object.getAllCompanyForAddPool();
@@ -922,14 +962,14 @@ export class Pool1MangPageComponent {
                     else {
                         console.log("insertPool error recieved");
                         this.action.heading = "Add Pool";
-                        this.action.body = "Error is adding pool";
+                        this.action.body = "Error is adding pool.";
                         $('#result').modal('show');
                     }
                 }, //For Success Response
                 (err) => {
                     console.log("insertPool error recieved");
                     this.action.heading = "Add Pool";
-                    this.action.body = "Error is adding pool";
+                    this.action.body = "Error is adding pool.";
                     $('#result').modal('show');
                 } //For Error Response
                 );
@@ -941,8 +981,10 @@ export class Pool1MangPageComponent {
     }
 
     private cancelAdd() {
-        this.reqPoolQat = 0;
+        this.reqPoolQat = "";
         this.selectedCmpLbl = "Select a customer";
+        this.toAddBrand = "Covanent";
+        this.ccFil = "Select a customer";
         this.selectedCompany = { cmpName: "Select a customer" };
         this.selectedCsr = "Select a CSR";
         this.selectedPlanner = "Select a planner";
@@ -951,7 +993,7 @@ export class Pool1MangPageComponent {
         this.isValidFields["isValidCsr"] = false;
         this.isValidFields["isValidPlanner"] = false;
         this.isValidFields["isValidReqPool"] = false;
-        this.poolToAdd.brand = "SRT";
+        this.poolToAdd.brand = "CVN";
         this.poolToAdd.isShipper = "";
         this.poolToAdd.isReceiver = "";
 
@@ -963,7 +1005,7 @@ export class Pool1MangPageComponent {
 
     private validateFileds() {
         this.fieldvalidation = false;
-        if (this.selectedCompany.cmpName == "Select a cusitomer") {
+        if (this.selectedCompany.cmpName == "Select a customer") {
             this.fieldvalidation = true;
             this.isValidFields["isValidCompany"] = true;
         } else {
@@ -983,13 +1025,25 @@ export class Pool1MangPageComponent {
         } else {
             this.isValidFields["isValidPlanner"] = false;
         }
+
+        if (this.poolToAdd.isShipper || this.poolToAdd.isReceiver) {
+            this.isValidFields["isValidSR"] = false;
+        } else {
+            this.fieldvalidation = true;
+            this.isValidFields["isValidSR"] = true;
+        }
+
         console.log(Number(this.reqPoolQat));
 
         if (isNaN(Number(this.reqPoolQat))) {
             console.log("reqPoolQat is not number");
             this.fieldvalidation = true;
             this.isValidFields["isValidReqPool"] = true;
-        } else {
+        } else if (Number(this.reqPoolQat) <= 0) {
+            this.fieldvalidation = true;
+            this.isValidFields["isValidReqPool"] = true;
+        }
+        else {
             this.isValidFields["isValidReqPool"] = false;
         }
     }
@@ -1008,11 +1062,28 @@ export class Pool1MangPageComponent {
         this.http.post(url, this.poolToDel, options).map(res => res.json())
             .subscribe(
             (resp) => {
-                console.log("deletePool success recieved");
-                alert("Pool deletion successfull");
-                this.getAllPool();
+
+                if (resp[0].status == "success") {
+                    console.log("deletePool success recieved");
+                    this.action.heading = "Delete Pool";
+                    this.action.body = "Pool deleted successfully!";
+                    $('#result').modal('show');
+                    this.getAllPool();
+                }
+                else {
+                    console.log("deletePool error recieved");
+                    this.action.heading = "Delete Pool";
+                    this.action.body = "Error is deleting pool.";
+                    $('#result').modal('show');
+                }
+
             }, //For Success Response
-            (err) => { console.log("deletePool error recieved"); alert("Error in deleting pool"); } //For Error Response
+            (err) => {
+                console.log("deletePool error recieved");
+                this.action.heading = "Delete Pool";
+                this.action.body = "Error is deleting pool.";
+                $('#result').modal('show');
+            } //For Error Response
             );
     }
 

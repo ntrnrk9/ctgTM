@@ -7,11 +7,20 @@
                     <!--<input class="ctg-textbox pull-left" placeholder="Search by state" [(ngModel)]="stateFil" /><span class="pull-left glyphicon glyphicon-search serch-gly"></span>-->
                     <!--<input class="ctg-textbox pull-left" placeholder="Search by city" [(ngModel)]="cityFil" style="margin-left:10px;" /><span class="pull-left glyphicon glyphicon-search serch-gly"></span>-->
                     <!--<input class="ctg-textbox pull-left" placeholder="Company/Customer" [(ngModel)]="ccFil" style="margin-left:10px;" /><span class="pull-left glyphicon glyphicon-search serch-gly"></span>-->
-                    <select style="margin-left:0px" class="form-control pull-left pm-select" id="sel1" [ngModel]="selectedVarience" (ngModelChange)="selectVarience($event)">
+                    <!--<select style="margin-left:0px" class="form-control pull-left pm-select" id="sel1" [ngModel]="selectedVarience" (ngModelChange)="selectVarience($event)">
                         <option class="lblLI" value=1>Pools having variance</option>
                         <option class="lblLI" value=0>Pools having no variance</option>
                         <option class="lblLI" value=-1>All pools</option>
-                    </select>
+                    </select>-->
+                    <div class="dropdown pull-left pm-select-cont" style="width:auto;">
+                        <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedVarience.lable}}/>
+                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
+                        <div class="dropdown-menu no-padding sel-dd">
+                            <ul class="sel-dd-ul">
+                                <li *ngFor="let item of varianceList" (click)="selectVarience(item)" class="pointer"><label class="lblLI">{{item.lable}}</label></li>
+                            </ul>
+                        </div>
+                    </div>
 
                     <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
                         <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" (click)="restoreccList()" value={{ccSFlabel}}
@@ -125,17 +134,36 @@
                         </div>
                     </div>
 
-                    <select class="form-control pull-left pm-select" id="sel1" [ngModel]="selectedSR" (ngModelChange)="selectSR($event)">
+                    <!--<select class="form-control pull-left pm-select" id="sel1" [ngModel]="selectedSR" (ngModelChange)="selectSR($event)">
                         <option class="lblLI" value=0>Shipper</option>
                         <option class="lblLI" value=1>Receiver</option>
                         <option class="lblLI" value=2>Both</option>
-                    </select>
+                    </select>-->
+                     <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;width:auto;">
+                        <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedSR.lable}}/>
+                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
+                        <div class="dropdown-menu no-padding sel-dd">
+                            <ul class="sel-dd-ul">
+                                <li *ngFor="let item of sRList" (click)="selectSR(item)" class="pointer"><label class="lblLI">{{item.lable}}</label></li>
+                            </ul>
+                        </div>
+                    </div>
 
-                    <select class="form-control pull-left pm-select" id="sel1" [ngModel]="selectedBrand" (ngModelChange)="selectBrand($event)">
+                    <!--<select class="form-control pull-left pm-select" id="sel1" [ngModel]="selectedBrand" (ngModelChange)="selectBrand($event)">
                         <option class="lblLI" value="CVEN">Covenant</option>
                         <option class="lblLI" value="SRT">SRT</option>
                         <option class="lblLI" value="ALL">Both</option>
-                    </select>
+                    </select>-->
+
+                    <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;width:auto;">
+                        <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedBrand.lable}}/>
+                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
+                        <div class="dropdown-menu no-padding sel-dd">
+                            <ul class="sel-dd-ul">
+                                <li *ngFor="let item of brandList" (click)="selectBrand(item)" class="pointer"><label class="lblLI">{{item.lable}}</label></li>
+                            </ul>
+                        </div>
+                    </div>
 
                     <!--<div *ngIf="choosenState.length>0" class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
                         <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{citySFlabel}} (click)="restoreCityList()" />
@@ -260,7 +288,7 @@
                         <!--<ng-container *ngFor="let i=index;let item of data | paginate: { itemsPerPage: 100, currentPage: p }">-->
                         <ng-container *ngFor="let i=index;let item of data">
                             <tr class="full">
-                                <td style="text-align:center;width:6%">
+                                <td style="text-align:center;width:4%">
                                     <span>{{item.stateCode}}</span>
                                 </td>
                                 <td style="text-align:center;width:10%">
@@ -289,7 +317,7 @@
                                 <td style="text-align:center;width:8%" [ngClass]="{'first': item.variance<0}">
                                     <span>{{item.variance}}</span>
                                 </td>
-                                <td style="text-align:center;width:10%">
+                                <td style="text-align:center;width:12%">
                                     <button type="button" class="action" data-toggle="modal" data-target="#editModal" (click)="toEdit(item)"><img width="20px" src="../../assets/images/markers/edit.png" /></button>
                                     <button class="action" (click)="getConfirmationToDelete(item)"><img width="20px" src="../../assets/images/markers/delete.png" /></button>
                                     <button class="action"><img width="20px" src="../../assets/images/markers/reposition.png" /></button>
@@ -322,23 +350,23 @@
                                 <div class="row pu-row">
                                     <div>
                                         <label>Customer Name <span class="first">*</span></label><br>
-                                        <div class="dropdown pull-left pm-select-cont" style="border:1px solid silver;width:100%" [ngClass]="{'redAlert':isValidFields.isValidCompany}">
+                                        <div id="cmpForAddPoolDD" class="dropdown pull-left pm-select-cont" style="border:1px solid silver;width:100%" [ngClass]="{'redAlert':isValidFields.isValidCompany}">
 
-                                            <input class="filters dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="width:92%" value={{selectedCmpLbl}}
-                                                (click)="resetccFil()" />
-                                            <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
+                                            <input class="filters dropdown-toggle" id="accFil" type="text"  style="width:91%" [(ngModel)]="accFil" (ngModelChange)="getAllCompanyForAddPool()"
+                                                (click)="resetccFil()" placeholder="{{selectedCmpLbl}}"/>
+                                            <button class="caretBut" data-toggle="dropdown"><i class="glyphicon glyphicon-search"></i></button>
 
                                             <div class="dropdown-menu no-padding mulSel-dd" role="menu" aria-labelledby="menu1" style="width:100%">
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="ccFil">
+                                                <!--<div class="input-group">
+                                                    <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="ccFil" (ngModelChange)="getAllCompanyForAddPool()">
                                                     <div class="input-group-btn">
                                                         <button class="btn btn-default search-box" type="submit">
                                                             <i class="glyphicon glyphicon-search"></i>
                                                         </button>
                                                     </div>
-                                                </div>
+                                                </div>-->
                                                 <ul class="mulSel-dd-ul">
-                                                    <li *ngFor="let item of allCCForAdd|filterC:ccFil:'cmpName'" (click)="selectCompany(item)"><label class="lblLI">{{item.cmpName}}-{{item.cmpID}}</label></li>
+                                                    <li *ngFor="let item of allCCForAdd|filterC:accFil:'cmpName'" (click)="selectCompany(item)"><label class="lblLI">{{item.cmpName}}-{{item.cmpID}}</label></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -372,15 +400,24 @@
                                         />
                                     </div>
                                     <div class="col-md-6 olPad">
-                                        <label>Brand</label><br>
-                                        <select class="form-control addSelect col-mg-12" id="sel1" [(ngModel)]="poolToAdd.brand" [ngClass]="{'redAlert':isValidFields.isValidBrand }">
+                                        <label>Company</label><br>
+                                        <!--<select class="form-control addSelect col-mg-12" id="sel1" [(ngModel)]="poolToAdd.brand" [ngClass]="{'redAlert':isValidFields.isValidBrand }">
                                             <option class="lblLI" value="CVN">Covenant</option>
                                             <option class="lblLI" value="SRT">SRT</option>
-                                        </select>
+                                        </select>-->
+                                        <div class="dropdown pull-left pm-select-cont" style="border:1px solid silver;width:100%;">
+                                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{toAddBrand}}/>
+                                            <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
+                                            <div class="dropdown-menu no-padding sel-dd">
+                                                <ul class="sel-dd-ul">
+                                                    <li *ngFor="let item of brandListForAdd" (click)="poolToAdd.brand=item.value;toAddBrand=item.lable" class="pointer"><label class="lblLI">{{item.lable}}</label></li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row pu-row">
-                                    <div class="col-md-12 orPad">
+                                    <div class="col-md-6 orPad" [ngClass]="{'redAlert':isValidFields.isValidSR }" style="padding-left: 3px">
                                         <label class="normalfnt"><input type="checkbox"  style="margin-right:5px;" [(ngModel)]="poolToAdd.isShipper" />Shipper</label>
                                         <label class="normalfnt" style="margin-left:30px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isReceiver" />Receiver</label>
                                     </div>
@@ -388,7 +425,7 @@
                             </div>
                         </div>
                         <div class="modal-footer page-footer">
-                            <button type="button" class="pm-whiteBut" style="height:30px" (click)="cancelAdd()" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="pm-whiteBut" style="height:30px" (click)="cancelAdd()">Clear</button>
                             <button type="button" class="pm-addBut" (click)="add()">Save</button>
                         </div>
                     </div>
@@ -432,17 +469,17 @@
 
                                     <div class="col-md-6 orPad">
                                         <label>Required <span class="normalfnt">(Numeric only)</span><span class="first"> *</span></label><br>
-                                        <input class="no-padding col-md-12" [(ngModel)]="updateReqPool" type="text" [ngClass]="{'redAlert':fieldvalidation }" />
+                                        <input class="no-padding col-md-12" [(ngModel)]="updateReqPool" type="text" [ngClass]="{'redAlert':isValidFields.isValidReqPool }" />
                                     </div>
                                     <div class="col-md-6 olPad">
-                                        <label>Brand</label><br>
+                                        <label>Company</label><br>
                                         <input *ngIf="poolToEdit.brand=='CVN'" class="no-padding col-md-12" readonly placeholder='Covanent' type="text" />
                                         <input *ngIf="poolToEdit.brand!='CVN'" class="no-padding col-md-12" readonly placeholder={{poolToEdit.brand}} type="text"
                                         />
                                     </div>
                                 </div>
                                 <div class="row pu-row">
-                                    <div class="col-md-12 orPad">
+                                    <div class="col-md-6 orPad" [ngClass]="{'redAlert':isValidFields.isValidSR }" style="padding-left: 3px">
                                         <label class="normalfnt"><input type="checkbox"  style="margin-right:5px;" [(ngModel)]="poolToEdit.isShip" (change)="checkSRFun($event.target.checked)"/>Shipper</label>
                                         <label class="normalfnt" style="margin-left:30px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isReciev" (click)="checkSRFun($event.target.checked)" />Receiver</label>
                                     </div>
@@ -450,7 +487,7 @@
                             </div>
                         </div>
                         <div class="modal-footer page-footer">
-                            <button type="button" style="height:30px" class="pm-whiteBut" (click)="cancelUpdatePool()" data-dismiss="modal">Cancel</button>
+                            <!--<button type="button" style="height:30px" class="pm-whiteBut" (click)="cancelUpdatePool()" data-dismiss="modal">Cancel</button>-->
                             <button type="button" class="pm-addBut" (click)="updatePool()">Save</button>
                         </div>
                     </div>

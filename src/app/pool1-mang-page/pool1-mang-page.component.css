@@ -115,7 +115,7 @@
 }
 
 li {
-    padding: 5px 5px 5px 10px;
+    /*padding: 5px 5px 5px 10px;*/
     /*height: 25px;*/
     overflow: hidden;
     cursor:pointer;
@@ -152,12 +152,28 @@ li {
     padding-right: 10px;
     padding: 10px 10px 10px 10px;
 }
+
+.sel-dd {
+    width: 198px;
+    border-radius: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding: 0px 10px 0px 10px;
+}
+
 .mulSel-dd-ul {
-    padding: 5px 0px 5px 0px;
+    padding: 0px 0px 0px 0px;
     list-style: none;
     margin-bottom: 0px;
     height: 129px;
     overflow-y: scroll;
+    margin: 5px 0px 5px 0px;
+}
+
+.sel-dd-ul {
+    padding: 5px 0px 5px 0px;
+    list-style: none;
+    margin-bottom: 0px;
     margin: 5px 0px 5px 0px;
 }
 
@@ -237,6 +253,10 @@ li {
 }
 
 .mulSel-dd-ul li:hover {
+    background-color: #ededed;
+}
+
+.sel-dd-ul li:hover {
     background-color: #ededed;
 }
 
