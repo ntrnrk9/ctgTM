@@ -31,6 +31,7 @@ export class Pool1MangPageComponent {
     allCsr: any;
     asc = true;
     fieldvalidation = false;
+    poolForAddRecieved=false;
     isValidFields: any = {};
     poolRecieved = false;
     action: any = { heading: "", body: "" };
@@ -668,7 +669,9 @@ export class Pool1MangPageComponent {
 
     private getAllCompanyForAddPool() {
         //alert("hi");
-        if (this.accFil.length > 3) {
+        
+        if (this.accFil.length == 3) {
+            this.poolForAddRecieved=false;
             //$('#cmpForAddPoolDD').find('[data-toggle=dropdown]').dropdown('toggle');
             $('#cmpForAddPoolDD').addClass('open');
             console.log($('#accFil').val());
@@ -677,7 +680,7 @@ export class Pool1MangPageComponent {
             let url = "http://61.16.133.244/CommonService/api/CompanyForAddPool?companyName=" + this.accFil;
             this.http.get(url).map(res => res.json())
                 .subscribe(
-                (data) => { console.log("getAllCompanyForAddPool data recieved"); this.allCCForAdd = data; }, //For Success Response
+                (data) => { console.log("getAllCompanyForAddPool data recieved"); this.allCCForAdd = data;this.poolForAddRecieved=true; }, //For Success Response
                 (err) => { console.log("getAllCompanyForAddPool error recieved"); } //For Error Response
                 );
         }
@@ -983,7 +986,7 @@ export class Pool1MangPageComponent {
     private cancelAdd() {
         this.reqPoolQat = "";
         this.selectedCmpLbl = "Select a customer";
-        this.toAddBrand = "Covanent";
+        this.toAddBrand = "Covenant";
         this.ccFil = "Select a customer";
         this.selectedCompany = { cmpName: "Select a customer" };
         this.selectedCsr = "Select a CSR";
