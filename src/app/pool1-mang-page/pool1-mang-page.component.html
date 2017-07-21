@@ -403,18 +403,11 @@
                                     <div class="col-md-6 olPad">
                                         <label>Company</label><br>
                                         <!--<select class="form-control addSelect col-mg-12" id="sel1" [(ngModel)]="poolToAdd.brand" [ngClass]="{'redAlert':isValidFields.isValidBrand }">
-                                            <option class="lblLI" value="CVN">Covenant</option>
+                                            <option class="lblLI" value="CVEN">Covenant</option>
                                             <option class="lblLI" value="SRT">SRT</option>
                                         </select>-->
-                                        <div class="dropdown pull-left pm-select-cont" style="border:1px solid silver;width:100%;">
-                                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{toAddBrand}}/>
-                                            <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
-                                            <div class="dropdown-menu no-padding sel-dd">
-                                                <ul class="sel-dd-ul">
-                                                    <li *ngFor="let item of brandListForAdd" (click)="poolToAdd.brand=item.value;toAddBrand=item.lable" class="pointer"><label class="lblLI">{{item.lable}}</label></li>
-                                                </ul>
-                                            </div>
-                                        </div>
+                                        <input *ngIf="selectedCompany.cmpBrand=='CVEN'" class="no-padding col-md-12" readonly placeholder='Covenant' type="text" />
+                                        <input *ngIf="selectedCompany.cmpBrand!='CVEN'" class="no-padding col-md-12" readonly placeholder={{selectedCompany.cmpBrand}} type="text"/>
                                     </div>
                                 </div>
                                 <div class="row pu-row">
@@ -474,9 +467,8 @@
                                     </div>
                                     <div class="col-md-6 olPad">
                                         <label>Company</label><br>
-                                        <input *ngIf="poolToEdit.brand=='CVN'" class="no-padding col-md-12" readonly placeholder='Covenant' type="text" />
-                                        <input *ngIf="poolToEdit.brand!='CVN'" class="no-padding col-md-12" readonly placeholder={{poolToEdit.brand}} type="text"
-                                        />
+                                        <input *ngIf="poolToEdit.brand=='CVEN'" class="no-padding col-md-12" readonly placeholder='Covenant' type="text" />
+                                        <input *ngIf="poolToEdit.brand!='CVEN'" class="no-padding col-md-12" readonly placeholder={{poolToEdit.brand}} type="text"/>
                                     </div>
                                 </div>
                                 <div class="row pu-row">

@@ -47,9 +47,9 @@ export class Pool1MangPageComponent {
     varianceList: any = [{ lable: "Pools having variance", value: 1 }, { lable: "Pools having no variance", value: 0 }, { lable: "All pools", value: -1 }]
     selectedSR: any = { lable: "Shipper", value: 0 };
     sRList: any = [{ lable: "Shipper", value: 0 }, { lable: "Receiver", value: 1 }, { lable: "Both", value: 2 }]
-    selectedBrand: any = { lable: "Covenant", value: "CVN" };
-    brandList: any = [{ lable: "Covenant", value: "CVN" }, { lable: "SRT", value: "SRT" }, { lable: "Both", value: "ALL" }];
-    brandListForAdd: any = [{ lable: "Covenant", value: "CVN" }, { lable: "SRT", value: "SRT" }]
+    selectedBrand: any = { lable: "Covenant", value: "CVEN" };
+    brandList: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "Both", value: "ALL" }];
+    brandListForAdd: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }]
     data: any[] = [];
     result: any[] = [];
     pageNum: Number = 1;
@@ -89,7 +89,7 @@ export class Pool1MangPageComponent {
     poolToAdd: any = {
         active: "",
         avaiPoolCount: 0,
-        brand: "CVN",
+        brand: "CVEN",
         cityName: "",
         cmpID: "",
         companyName: "",
@@ -296,8 +296,8 @@ export class Pool1MangPageComponent {
 
         for (var i = 0; i < temp.length; i++) {
             var obj = temp[i];
-            if ((this.selectedBrand.value == "CVN")) {
-                if (temp[i].brand == "CVN") {
+            if ((this.selectedBrand.value == "CVEN")) {
+                if (temp[i].brand == "CVEN") {
 
                 } else {
                     temp.splice(i, 1); i--;
@@ -311,7 +311,7 @@ export class Pool1MangPageComponent {
                 }
 
             } else if ((this.selectedBrand.value == "ALL")) {
-                if ((temp[i].brand == "CVN") || (temp[i].brand == "SRT")) {
+                if ((temp[i].brand == "CVEN") || (temp[i].brand == "SRT")) {
 
                 } else {
                     temp.splice(i, 1); i--;
@@ -585,7 +585,7 @@ export class Pool1MangPageComponent {
     ob = {
         column: [{ name: "State", width: "4%" }, { name: "City", width: "10%" }, { name: "TMW", width: "10%" }, { name: "Customer", width: "20%" }, { name: "CSR", width: "10%" },
         { name: "Planner", width: "10%" }, { name: "Req Pool", width: "8%" }, { name: "Current", width: "8%" }, { name: "Variance", width: "8%" }, { name: "Action", width: "12%" }],
-        groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVN" }]
+        groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
 
@@ -931,7 +931,7 @@ export class Pool1MangPageComponent {
             data.cityName = this.selectedCompany.cmpCity;
             data.stateName = this.selectedCompany.cmpState;
             data.stateCode = this.selectedCompany.cmpState;
-            data.brand = this.poolToAdd.brand;
+            data.brand = this.selectedCompany.cmpBrand;
             if (this.poolToAdd.isReceiver) {
                 data.isReceiver = "Y";
             } else {
@@ -996,7 +996,7 @@ export class Pool1MangPageComponent {
         this.isValidFields["isValidCsr"] = false;
         this.isValidFields["isValidPlanner"] = false;
         this.isValidFields["isValidReqPool"] = false;
-        this.poolToAdd.brand = "CVN";
+        this.poolToAdd.brand = "CVEN";
         this.poolToAdd.isShipper = "";
         this.poolToAdd.isReceiver = "";
 
