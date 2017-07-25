@@ -9,9 +9,11 @@
 
     <div class="col-md-12 page-body">
         <div class="filter-container">
-            <input class="ctg-textbox pull-left" placeholder="Trailer ID" [(ngModel)]="selectedID" />
-            <!--<input class="ctg-textbox" placeholder="Choose state" [(ngModel)]="selectedState" style="margin-left:10px" />-->
-            <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
+            <input class="ctg-textbox pull-left" placeholder="Trailer ID" [(ngModel)]="searchID" />
+            <button class="pull-left" type="button" value="encode" (click)="searchByID();f.geocodeAddress(selectedID)">search</button>
+            <input class="ctg-textbox pull-left" placeholder="By location" id="ctgGeoCode" [(ngModel)]="bylocation" style="margin-left:10px" value="bylocation"/>
+            <button class="pull-left" type="button" value="encode" (click)="getvalue();f.geocodeAddress(bylocation)">code</button>
+            <!--<div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
                 <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedState}} />
                 <span class="caret"></span>
                 <div class="dropdown-menu no-padding mulSel-dd">
@@ -29,18 +31,68 @@
                         </li>
                     </ul>
                 </div>
-            </div>
-            <select style="margin-left:10px;height:auto;width:auto;border-radius:0px;border:none" class="form-control pull-left pm-select" id="sel1" [ngModel]="selectedAvailability" (ngModelChange)="selectVarience($event)">
-                <option value=-1>All pools</option>
-                <option value=0>Available</option>
-                <option value=1>Unavailable</option>
-                <option value=-2>Planned</option>
-            </select>
-            <button class="pull-right resetBut" type="button" value="encode" (click)="f.geocodeAddress()"><img src="../../assets/images/markers/refresh.png" /></button>
+            </div>-->
+            
+            <!--<button class="pull-right resetBut" type="button" value="encode" (click)="f.geocodeAddress()"><img src="../../assets/images/markers/refresh.png" /></button>-->
+            <button class="pull-right resetBut" type="button" value="encode" (click)="f.reset()"><img src="../../assets/images/markers/refresh.png" /></button>
         </div>
         <div style="padding-top:15px;">
             <!--<gmaps></gmaps>-->
-            <gmapjs #f [state]="selectedState"></gmapjs>
+            <div [hidden]="!mgToggleFlag"><gmapjs  #f [state]="selectedState" [trailerList]="allTrailers"></gmapjs></div>
+            <div *ngIf="!mgToggleFlag">
+                <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
+                    <thead>
+                        <tr bgcolor="#f7f8fc" class="app-table-tr full">
+                            <ng-container *ngFor="let con of ob.column">
+                                <th [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+                            </ng-container>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="poolRecieved">
+                        <ng-container *ngFor="let i=index;let item of data">
+                            <tr class="full">
+                                <td style="text-align:center;width:4%">
+                                    <span>{{item.stateCode}}</span>
+                                </td>
+                                <td style="text-align:center;width:10%">
+                                    <span>{{item.cityName}}</span>
+                                </td>
+                                <td style="text-align:center;width:10%">
+                                    <span>{{item.cmpID}}</span>
+                                </td>
+                                <td style="text-align:center;width:20%">
+                                    <span>{{item.companyName}}</span>
+                                </td>
+                                <td style="text-align:center;width:10%">
+                                    <span>{{item.csr}}</span>
+                                </td>
+                                <td style="text-align:center;width:10%">
+                                    <span>{{item.planner}}</span>
+                                </td>
+
+                                <td style="text-align:center;width:8%">
+                                    <span>{{item.reqPoolCount}}</span>
+                                </td>
+
+                                <td style="text-align:center;width:8%">
+                                    <span>{{item.avaiPoolCount}}</span>
+                                </td>
+                                <td style="text-align:center;width:8%" [ngClass]="{'first': item.variance<0}">
+                                    <span>{{item.variance}}</span>
+                                </td>
+                                <td style="text-align:center;width:12%">
+                                    <button type="button" class="action" data-toggle="modal" data-target="#editModal" (click)="toEdit(item)"><img width="20px" src="../../assets/images/markers/edit.png" /></button>
+                                    <button class="action" (click)="getConfirmationToDelete(item)"><img width="20px" src="../../assets/images/markers/delete.png" /></button>
+                                    <button class="action"><img width="20px" src="../../assets/images/markers/reposition.png" /></button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+                <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="poolRecieved && data.length==0 ">No data found</div>
+                <div *ngIf="poolRecieved" style="padding-top: 10px;">{{data.length}} records found</div>
+                <div *ngIf="!poolRecieved" class="loader"><img src="../../assets/images/loader.gif" /></div>
+            </div>
         </div>
         <div style="padding-top:5px">
             <img src="../../assets/images/markers/legend.png" class="pull-right"/>

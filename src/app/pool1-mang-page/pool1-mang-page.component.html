@@ -368,7 +368,7 @@
                                                 <ul *ngIf="poolForAddRecieved" class="mulSel-dd-ul">
                                                     <li *ngFor="let item of allCCForAdd|filterC:accFil:'cmpName'" (click)="selectCompany(item)"><label class="lblLI">{{item.cmpName}}-{{item.cmpID}}</label></li>
                                                 </ul>
-                                                <div *ngIf="!poolForAddRecieved" class="loader" style="border:none"><img src="../../assets/images/loader.gif" /></div>
+                                                <div *ngIf="!poolForAddRecieved" class="loader" style="border:none;"><img style="width: 34px;height: 34px;" src="../../assets/images/loader.gif" /></div>
                                             </div>
                                         </div>
 

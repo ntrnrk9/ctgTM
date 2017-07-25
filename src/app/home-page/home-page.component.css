@@ -74,3 +74,27 @@
     border: none;
     background-color: #062a53;
 }
+
+.app-table {
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+    .app-table thead tr {
+        background-color: #22466f;
+        color: #fff;
+    }
+
+.app-table-tr {
+    padding: 15px 0px 15px 0px;
+}
+
+.app-table tr {
+    padding: 0px;
+}
+.loader {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid silver;
+    border-top: none
+}

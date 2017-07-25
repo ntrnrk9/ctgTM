@@ -996,9 +996,11 @@ export class Pool1MangPageComponent {
         this.isValidFields["isValidCsr"] = false;
         this.isValidFields["isValidPlanner"] = false;
         this.isValidFields["isValidReqPool"] = false;
+        this.isValidFields["isValidSR"] = false;
         this.poolToAdd.brand = "CVEN";
         this.poolToAdd.isShipper = "";
         this.poolToAdd.isReceiver = "";
+        this.accFil="";
 
     }
 

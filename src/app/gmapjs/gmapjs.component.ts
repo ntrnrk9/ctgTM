@@ -12,11 +12,26 @@ export class GmapjsComponent {
     US_CENTER_LAT_LNG = { lat: 36.090240, lng: -95.712891 };
     markers: any = [];
     @Input() state: any = "Sydney, NSW";
+    @Input() trailerList: any = [];
+
+    ngOnChanges(changes: any) {
+        console.log("parameters changed " + this.trailerList.length);
+        //this.addTrailers(changes.trailerList.currentValue);
+        this.ngOnInit();
+
+    }
+
     constructor() { }
 
     map: any;
     geocoder: any = null;
     selectedState: any;
+    markerList: any = {
+        blueMark: '../../assets/images/markers/trailer-blue.png',
+        redMark: '../../assets/images/markers/trailer-red.png',
+        greenMark: '../../assets/images/markers/trailer-green.png',
+    };
+    selectedMark: any = { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" };
 
     citymap: any = [
         {
@@ -48,13 +63,15 @@ export class GmapjsComponent {
             label: 'D'
         }
     ];
+    infowindow: any;
+    infoWinContent: String;
 
     ngOnInit() {
         this.geocoder = new google.maps.Geocoder();
         var bounds = new google.maps.LatLngBounds();
         var mapProp = {
             center: new google.maps.LatLng(36.090240, -95.712891),
-            zoom: 5,
+            zoom: 4,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: true,
             panControl: true,
@@ -72,56 +89,148 @@ export class GmapjsComponent {
         var myCenter = new google.maps.LatLng(36.090240, -95.712891);
         var marker1 = new google.maps.Marker({ position: myCenter });
 
-
-
-        for (var i = 0; i < this.boundList1.length; i++) {
-            //var position = new google.maps.LatLng(this.citymap[i].center.lat, this.citymap[i].center.lng);
+        // for geocoader autoComplete 
+        var input = document.getElementById('ctgGeoCode');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+        var infowindow = new google.maps.InfoWindow({
+            content: this.infoWinContent
+        });
+        //this.addTrailers(bounds);
+        this.markers = [];
+        for (var i = 0; i < this.trailerList.length; i++) {
+            //var position = new google.maps.latlng(this.citymap[i].center.lat, this.citymap[i].center.lng);
             //bounds.extend(position);
+            var tr = this.trailerList[i];
+            var latLng = new google.maps.LatLng(this.trailerList[i].latitude,
+                this.trailerList[i].longitude);
             let marker = new google.maps.Marker({
-                position: this.boundList1[i].location,
-                map: this.map,
-                label: { text: '01234', color: '#000', fontSize:'11px' },
-                icon: '../../assets/images/markers/state-pointer.png'
+                position: latLng,
+                icon: this.mapIcon(this.trailerList[i]),
             });
 
-            this.markers.push(marker);
-            var ob = this;
-            marker.addListener('click', function () {
-                //alert("clicked");
-                this.map.setZoom(6);
+            var ob = this.createinfoWinContent(tr);
+            this.bindInfoWindow(marker, this.map, infowindow, this.createinfoWinContent(tr));  
+            
+            marker.addListener('click', function (tr) {
+                this.map.setZoom(15);
                 this.map.setCenter(marker.getPosition());
-                ob.addTrailers(bounds);
             });
+            this.markers.push(marker);
         }
 
+        // for (var i = 0; i < this.boundList1.length; i++) {
+        //     //var position = new google.maps.LatLng(this.citymap[i].center.lat, this.citymap[i].center.lng);
+        //     //bounds.extend(position);
+        //     let marker = new google.maps.Marker({
+        //         position: this.boundList1[i].location,
+        //         map: this.map,
+        //         label: { text: '01234', color: '#000', fontSize: '11px' },
+        //         icon: '../../assets/images/markers/state-pointer.png'
+        //     });
 
-        //var markerCluster = new MarkerClusterer(this.map, this.markers,
-        //    { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+        //     this.markers.push(marker);
+        //     var ob = this;
+        //     marker.addListener('click', function () {
+        //         //alert("clicked");
+        //         this.map.setZoom(6);
+        //         this.map.setCenter(marker.getPosition());
+        //         ob.addTrailers(bounds);
+        //     });
+        // }
+
+        var mcOptions = {
+            styles: [{
+                height: 53,
+                url: "../../assets/images/markers/running1.png",
+                width: 53
+            },
+            {
+                height: 56,
+                url: "../../assets/images/markers/running2.png",
+                width: 56
+            },
+            {
+                height: 66,
+                url: "../../assets/images/markers/running3.png",
+                width: 66
+            },
+            {
+                height: 78,
+                url: "../../assets/images/markers/running4.png",
+                width: 78
+            },
+            {
+                height: 90,
+                url: "../../assets/images/markers/running5.png",
+                width: 90
+            }]
+        }
+        var markerCluster = new MarkerClusterer(this.map, this.markers,
+            mcOptions);
 
 
 
     }
     address = "United States";
 
-    addTrailers(bounds:any) {
-        for (var i = 0; i < this.citymap.length; i++) {
+    mapIcon(trailer: any) {
+        if (trailer.trailerStatus == "Available") {
+            return this.markerList.greenMark;
+        } else if (trailer.trailerStatus == "Not Available") {
+            return this.markerList.redMark;
+        } else if (trailer.trailerStatus == "Planned") {
+            return this.markerList.blueMark;
+        }
+    }
+
+    addTrailers(bounds: any) {
+        this.markers = [];
+        for (var i = 0; i < this.trailerList.length; i++) {
             //var position = new google.maps.latlng(this.citymap[i].center.lat, this.citymap[i].center.lng);
             //bounds.extend(position);
+            var latLng = new google.maps.LatLng(this.trailerList[i].latitude,
+                this.trailerList[i].longitude);
             let marker = new google.maps.Marker({
-                position: { lat:this.citymap[i].center.lat, lng:this.citymap[i].center.lng},
-                icon: this.citymap[i].icon,
-                map:this.map
+                position: latLng,
+                icon: this.mapIcon(this.trailerList[i]),
             });
 
-            this.markers.push(marker);
-            
+
             marker.addListener('click', function () {
                 //alert("clicked");
                 this.map.setZoom(15);
                 this.map.setCenter(marker.getPosition());
-                
+                this.infowindow.open(this.map, marker);
             });
+            this.markers.push(marker);
         }
+    }
+
+    createinfoWinContent(tr: any) {
+        var content = '<div class="infowindow" style="width:200px;padding:0px;height:185px">' +
+            '<div class="row header" style="border-bottom: 2px solid gray;padding:0px 0px 0px 30px">' +
+            '<div class="row head1" style="font-weight:bold;font-size:16px:color:black">Trailer #: ' + tr.trailerID + '</div>' +
+            '<div class="row head2" style="font-weight:bold;font-size:14px:color:red">TR43</div>' +
+            '<div class="row head3" style="font-weight:bold;font-size:12px:color:black">' + tr.trailerType + '</div>' +
+            '</div>' +
+            '<div class="row title" style="border-bottom:1px solid silver;height:30px;padding:0px 30px 0px 15px">' +
+            '<span class="vehicle-date" style="font-size:10px;float:left;padding-top:5px">DOT Date:'+tr.dotDate+'</span>' +
+            '<span class=" row vehicletype available" style="float:right;font-size:14px;margin-top:4px;font-weight:bold">Available</span>' +
+            '</div>' +
+            '<div class="row content" style="border-bottom: 1px solid gray;padding:0px 30px 0px 15px">' +
+            '<span><b>Location</b></span><br>'+tr.location+
+            '<br><span><b>lat:'+tr.latitude+'</b><b>|lng:'+tr.longitude+'</b></span>' +
+            '</div>' +
+            '<div class="row footer" style="font-size:10px;padding:0px 15px 0px 15px;height:74px" >' +
+            '<div class="status">' +
+            '<div class="row" style="padding:0px 30px 0px 15px">Compliance: '+tr.compliance+'</div>' +
+            '<div class="row" style="padding:0px 30px 0px 15px">IOT Info: '+tr.iotInfo+'</div>' +
+            '<div class="row" style="padding:0px 30px 0px 15px">Road Worthiness: '+tr.roadWorthiness+'</div>' +
+            '</div>' +
+            '<div class="history-txt"><a href="#">More info</a></div>' +
+            '</div>' +
+            '</div>';
+        return content;
     }
 
     geocodeAddress(addr: any) {
@@ -145,7 +254,7 @@ export class GmapjsComponent {
                 let location = results[0].geometry.location;
                 bound.push({ state: state, bounds: bounds, code: code, location: location });
                 resultsMap.fitBounds(results[0].geometry.viewport);
-                resultsMap.setZoom(6);
+                resultsMap.setZoom(15);
                 this.map = resultsMap;
                 //ctrl.test(results[0].geometry.bounds);
             } else {
@@ -188,6 +297,12 @@ export class GmapjsComponent {
         }
     }
 
+    reset() {
+        this.map.setZoom(4);
+        var myCenter = new google.maps.LatLng(36.090240, -95.712891);
+        this.map.setCenter(myCenter);
+    }
+
     test() {
         console.log(JSON.stringify(this.boundList));
         //let bounds= { "south": 32.528832, "west": -124.48200300000002, "north": 42.0095169, "east": -114.13121100000001 };
@@ -211,6 +326,13 @@ export class GmapjsComponent {
         console.log(one);
         return one;
     }
+
+    bindInfoWindow(marker, map, infowindow, html) { 
+	google.maps.event.addListener(marker, 'mouseover', function() { 
+		infowindow.setContent(html); 
+		infowindow.open(map, marker); 
+	});
+    } 
 
     boundList: any = []; //[{ "state": "Alaska", "bounds": { "south": 51.175092, "west": 172.34784609999997, "north": 71.441059, "east": -129.97951090000004 }, "code": "AK" }, { "state": "Alabama", "bounds": { "south": 30.144425, "west": -88.47322689999999, "north": 35.008028, "east": -84.88824599999998 }, "code": "AL" }, { "state": "Arkansas", "bounds": { "south": 33.0041059, "west": -94.61791900000003, "north": 36.4997491, "east": -89.64483790000003 }, "code": "AR" }, { "state": "California", "bounds": { "south": 32.528832, "west": -124.48200300000002, "north": 42.0095169, "east": -114.13121100000001 }, "code": "CA" }, { "state": "Arizona", "bounds": { "south": 31.3321771, "west": -114.8165909, "north": 37.0042599, "east": -109.04522309999999 }, "code": "AZ" }, { "state": "Colorado", "bounds": { "south": 36.992424, "west": -109.06025599999998, "north": 41.0034439, "east": -102.04087800000002 }, "code": "CO" }, { "state": "Connecticut", "bounds": { "south": 40.950943, "west": -73.72777500000001, "north": 42.050587, "east": -71.787239 }, "code": "CT" }, { "state": "Delaware", "bounds": { "south": 38.451018, "west": -75.78914789999999, "north": 39.8394839, "east": -74.98416499999996 }, "code": "DE" }, { "state": "Georgia", "bounds": { "south": 30.3555908, "west": -85.60516489999998, "north": 35.0006589, "east": -80.75142900000003 }, "code": "GA" }, { "state": "Florida", "bounds": { "south": 24.396308, "west": -87.63489600000003, "north": 31.000968, "east": -79.97430600000001 }, "code": "FL" }, { "state": "Idaho", "bounds": { "south": 41.9880051, "west": -117.24302699999998, "north": 49.0011461, "east": -111.04349500000001 }, "code": "ID" }, { "state": "Iowa", "bounds": { "south": 40.375437, "west": -96.63953500000002, "north": 43.5011961, "east": -90.14006089999998 }, "code": "IA" }, { "state": "Washington", "bounds": { "south": 38.7916449, "west": -77.11975899999999, "north": 38.995548, "east": -76.90939300000002 }, "code": "Washington" }, { "state": "Illinois", "bounds": { "south": 36.970298, "west": -91.51307889999998, "north": 42.5083379, "east": -87.01993499999998 }, "code": "IL" }, { "state": "Kansas", "bounds": { "south": 36.9930159, "west": -102.05176879999999, "north": 40.0045419, "east": -94.58838700000001 }, "code": "KS" }, { "state": "Louisiana", "bounds": { "south": 28.8551271, "west": -94.04335200000003, "north": 33.019544, "east": -88.75838799999997 }, "code": "LA" }, { "state": "Maine", "bounds": { "south": 42.91712589999999, "west": -71.08433409999998, "north": 47.459686, "east": -66.8850751 }, "code": "ME" }, { "state": "Mississippi", "bounds": { "south": 30.146096, "west": -91.65500889999998, "north": 34.9961091, "east": -88.09788800000001 }, "code": "MS" }, { "state": "Minnesota", "bounds": { "south": 43.499361, "west": -97.2391958, "north": 49.384358, "east": -89.48338509999996 }, "code": "MN" }, { "state": "North Carolina", "bounds": { "south": 33.7528778, "west": -84.32186899999999, "north": 36.5881568, "east": -75.40011900000002 }, "code": "NC" }, { "state": "Nebraska", "bounds": { "south": 39.999932, "west": -104.053514, "north": 43.00170689999999, "east": -95.30829 }, "code": "NE" }, { "state": "New Mexico", "bounds": { "south": 31.332172, "west": -109.05017299999997, "north": 37.0002931, "east": -103.00196399999999 }, "code": "NM" }, { "state": "New York", "bounds": { "south": 40.4773991, "west": -74.25908989999999, "north": 40.9175771, "east": -73.7002721 }, "code": "New York" }, { "state": "Oklahoma", "bounds": { "south": 33.615787, "west": -103.002455, "north": 37.0023119, "east": -94.43066199999998 }, "code": "OK" }, { "state": "South Carolina", "bounds": { "south": 32.033454, "west": -83.353928, "north": 35.2155401, "east": -78.49930089999998 }, "code": "SC" }, { "state": "Pennsylvania", "bounds": { "south": 39.7197989, "west": -80.51989500000002, "north": 42.516072, "east": -74.68950180000002 }, "code": "PA" }, { "state": "Texas", "bounds": { "south": 25.8371638, "west": -106.64564610000002, "north": 36.5007041, "east": -93.50803889999997 }, "code": "TX" }, { "state": "Virginia", "bounds": { "south": 36.5407589, "west": -83.67541499999999, "north": 39.466012, "east": -75.16643490000001 }, "code": "VA" }, { "state": "Washington", "bounds": { "south": 45.543541, "west": -124.848974, "north": 49.0024305, "east": -116.91557999999998 }, "code": "WA" }, { "state": "Wyoming", "bounds": { "south": 40.994746, "west": -111.05688900000001, "north": 45.005904, "east": -104.0522449 }, "code": "WY" }];
     stateList: any = [{ "stateDesc": "Alaska", "stateCode": "AK", "country": "USA" }, { "stateDesc": "Alabama", "stateCode": "AL", "country": "USA" }, { "stateDesc": "Arkansas", "stateCode": "AR", "country": "USA" }, { "stateDesc": "Arizona", "stateCode": "AZ", "country": "USA" }, { "stateDesc": "California", "stateCode": "CA", "country": "USA" }, { "stateDesc": "Colorado", "stateCode": "CO", "country": "USA" }, { "stateDesc": "Connecticut", "stateCode": "CT", "country": "USA" }, { "stateDesc": "District of Columbia", "stateCode": "DC", "country": "USA" }, { "stateDesc": "Delaware", "stateCode": "DE", "country": "USA" }, { "stateDesc": "Florida", "stateCode": "FL", "country": "USA" }, { "stateDesc": "Georgia", "stateCode": "GA", "country": "USA" }, { "stateDesc": "Hawaii", "stateCode": "HA", "country": "USA" }, { "stateDesc": "Iowa", "stateCode": "IA", "country": "USA" }, { "stateDesc": "Idaho", "stateCode": "ID", "country": "USA" }, { "stateDesc": "Illinois", "stateCode": "IL", "country": "USA" }, { "stateDesc": "Indiana", "stateCode": "IN", "country": "USA" }, { "stateDesc": "Kansas", "stateCode": "KS", "country": "USA" }, { "stateDesc": "Kentucky", "stateCode": "KY", "country": "USA" }, { "stateDesc": "Louisiana", "stateCode": "LA", "country": "USA" }, { "stateDesc": "Massachusetts", "stateCode": "MA", "country": "USA" }, { "stateDesc": "Maryland", "stateCode": "MD", "country": "USA" }, { "stateDesc": "Maine", "stateCode": "ME", "country": "USA" }, { "stateDesc": "Michigan", "stateCode": "MI", "country": "USA" }, { "stateDesc": "Minnesota", "stateCode": "MN", "country": "USA" }, { "stateDesc": "Missouri", "stateCode": "MO", "country": "USA" }, { "stateDesc": "Mississippi", "stateCode": "MS", "country": "USA" }, { "stateDesc": "Montana", "stateCode": "MT", "country": "USA" }, { "stateDesc": "North Carolina", "stateCode": "NC", "country": "USA" }, { "stateDesc": "North Dakota", "stateCode": "ND", "country": "USA" }, { "stateDesc": "Nebraska", "stateCode": "NE", "country": "USA" }, { "stateDesc": "New Hampshire", "stateCode": "NH", "country": "USA" }, { "stateDesc": "New Jersey", "stateCode": "NJ", "country": "USA" }, { "stateDesc": "New Mexico", "stateCode": "NM", "country": "USA" }, { "stateDesc": "Nevada", "stateCode": "NV", "country": "USA" }, { "stateDesc": "New York", "stateCode": "NY", "country": "USA" }, { "stateDesc": "Ohio", "stateCode": "OH", "country": "USA" }, { "stateDesc": "Oklahoma", "stateCode": "OK", "country": "USA" }, { "stateDesc": "Oregon", "stateCode": "OR", "country": "USA" }, { "stateDesc": "Pennsylvania", "stateCode": "PA", "country": "USA" }, { "stateDesc": "Rhode Island", "stateCode": "RI", "country": "USA" }, { "stateDesc": "South Carolina", "stateCode": "SC", "country": "USA" }, { "stateDesc": "South Dakota", "stateCode": "SD", "country": "USA" }, { "stateDesc": "Tennessee", "stateCode": "TN", "country": "USA" }, { "stateDesc": "Texas", "stateCode": "TX", "country": "USA" }, { "stateDesc": "Utah", "stateCode": "UT", "country": "USA" }, { "stateDesc": "Virginia", "stateCode": "VA", "country": "USA" }, { "stateDesc": "Vermont", "stateCode": "VT", "country": "USA" }, { "stateDesc": "Washington", "stateCode": "WA", "country": "USA" }, { "stateDesc": "Wisconsin", "stateCode": "WI", "country": "USA" }, { "stateDesc": "West Virginia", "stateCode": "WV", "country": "USA" }, { "stateDesc": "Wyoming", "stateCode": "WY", "country": "USA" }];
