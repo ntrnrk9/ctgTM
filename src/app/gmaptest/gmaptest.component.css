@@ -1,0 +1,57 @@
+﻿h1 {
+    font-size: 300%;
+    color: #34495e;
+}
+.pm-select-cont {
+    background-color: white;
+    /*padding-right: 4px;*/
+}
+.filters {
+    background-color: white;
+    padding: 5px;
+    width: 180px;
+    text-align: left;
+    border: none;
+}
+.search-box {
+    height: 30px;
+    border-radius: 0px;
+}
+
+.mulSel-dd {
+    width: 198px;
+    border-radius: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding: 10px 10px 10px 10px;
+}
+
+.mulSel-dd-ul {
+    padding: 5px 0px 5px 0px;
+    list-style: none;
+    margin-bottom: 0px;
+    height: 129px;
+    overflow-y: scroll;
+    margin: 5px 0px 5px 0px;
+}
+.mulSel-dd-ul li:hover {
+    background-color: #ededed;
+}
+
+.lblLI {
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 18px;
+    margin: 2px; cursor: pointer;
+}
+.pointer{
+    cursor: pointer;
+}
+
+.caretBut{
+    border:none;
+    background-color: white;
+}
+.redAlert{
+    box-shadow: 0 0 5px red !important;
+}
