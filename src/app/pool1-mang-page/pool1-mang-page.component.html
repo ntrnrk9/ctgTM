@@ -12,6 +12,7 @@
                         <option class="lblLI" value=0>Pools having no variance</option>
                         <option class="lblLI" value=-1>All pools</option>
                     </select>-->
+                    <button class="pull-right resetBut" type="button" value="encode" (click)="reset()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
                     <div class="dropdown pull-left pm-select-cont" style="width:auto;">
                         <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedVarience.lable}}/>
                         <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
@@ -271,8 +272,8 @@
                             <ng-container *ngFor="let con of ob.column">
                                 <th [ngStyle]="{'width':con.width}" style="text-align:center" *ngIf="con.name=='Variance'">
                                     {{con.name}}
-                                    <span *ngIf="asc" class="caret" (click)="sort()"></span>
-                                    <span *ngIf="!asc" class="caret caret-reversed" (click)="sort()"></span>
+                                    <span *ngIf="asc" class="caret pointer" (click)="sort()"></span>
+                                    <span *ngIf="!asc" class="caret caret-reversed pointer" (click)="sort()"></span>
                                 </th>
                                 <th [ngStyle]="{'width':con.width}" style="text-align:center;" *ngIf="con.name!='Variance'">{{con.name}}</th>
                             </ng-container>
@@ -318,16 +319,16 @@
                                     <span>{{item.variance}}</span>
                                 </td>
                                 <td style="text-align:center;width:12%">
-                                    <button type="button" class="action" data-toggle="modal" data-target="#editModal" (click)="toEdit(item)"><img width="20px" src="../../assets/images/markers/edit.png" /></button>
-                                    <button class="action" (click)="getConfirmationToDelete(item)"><img width="20px" src="../../assets/images/markers/delete.png" /></button>
-                                    <button class="action"><img width="20px" src="../../assets/images/markers/reposition.png" /></button>
+                                    <button type="button" class="action" data-toggle="modal" data-target="#editModal" (click)="toEdit(item)"><img width="20px" src="../../assets/images/markers/edit.png" data-toggle="tooltip" title="Edit"/></button>
+                                    <button class="action" (click)="getConfirmationToDelete(item)"><img width="20px" src="../../assets/images/markers/delete.png" data-toggle="tooltip" title="Delete"/></button>
+                                    <button class="action"><img width="20px" src="../../assets/images/markers/reposition.png" data-toggle="tooltip" title="Reposition"/></button>
                                 </td>
                             </tr>
                         </ng-container>
                     </tbody>
                 </table>
                 <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="poolRecieved && data.length==0 ">No data found</div>
-                <div *ngIf="poolRecieved" style="padding-top: 10px;">{{data.length}} records found</div>
+                <div *ngIf="poolRecieved" style="padding-top: 10px;">{{data.length}} record(s) found</div>
                 <!--<div style="text-align:center;margin-top:10px" *ngIf="poolRecieved && data.length!=0 ">
                     <pagination-controls (pageChange)="p = $event"></pagination-controls>
                 </div>-->
@@ -352,7 +353,7 @@
                                         <label>Customer Name <span class="first">*</span></label><br>
                                         <div id="cmpForAddPoolDD" class="dropdown pull-left pm-select-cont" style="border:1px solid silver;width:100%" [ngClass]="{'redAlert':isValidFields.isValidCompany}">
 
-                                            <input class="filters dropdown-toggle" id="accFil" type="text"  style="width:91%" [(ngModel)]="accFil" (ngModelChange)="getAllCompanyForAddPool()"
+                                            <input class="filters dropdown-toggle" id="accFil" type="text"  style="width:90%" [(ngModel)]="accFil" (ngModelChange)="getAllCompanyForAddPool()"
                                                 (click)="resetccFil()" placeholder="{{selectedCmpLbl}}"/>
                                             <button class="caretBut" data-toggle="dropdown"><i class="glyphicon glyphicon-search"></i></button>
 
@@ -376,12 +377,12 @@
                                 </div>
                                 <div class="row pu-row">
                                     <div class="col-md-6 orPad">
-                                        <label>State</label><br />
-                                        <input class="no-padding col-md-12" readonly placeholder={{selectedCompany.cmpState}} type="text" />
+                                        <label>State: <span class="normalfnt">{{selectedCompany.cmpState}}</span></label><br />
+                                        <!--<input class="no-padding col-md-12 no-border" readonly placeholder={{selectedCompany.cmpState}} type="text" />-->
                                     </div>
                                     <div class="col-md-6 olPad">
-                                        <label>City</label><br />
-                                        <input class="no-padding col-md-12" readonly placeholder={{selectedCompany.cmpCity}} type="text" />
+                                        <label>City: <span class="normalfnt">{{selectedCompany.cmpCity}}</span></label><br />
+                                        <!--<input class="no-padding col-md-12 no-border" readonly placeholder={{selectedCompany.cmpCity}} type="text" />-->
                                     </div>
                                 </div>
                                 <div class="row pu-row">
@@ -406,14 +407,14 @@
                                             <option class="lblLI" value="CVEN">Covenant</option>
                                             <option class="lblLI" value="SRT">SRT</option>
                                         </select>-->
-                                        <input *ngIf="selectedCompany.cmpBrand=='CVEN'" class="no-padding col-md-12" readonly placeholder='Covenant' type="text" />
-                                        <input *ngIf="selectedCompany.cmpBrand!='CVEN'" class="no-padding col-md-12" readonly placeholder={{selectedCompany.cmpBrand}} type="text"/>
+                                        <input *ngIf="selectedCompany.cmpBrand=='CVEN'" class="no-padding col-md-12 no-border" readonly placeholder='Covenant' type="text" />
+                                        <input *ngIf="selectedCompany.cmpBrand!='CVEN'" class="no-padding col-md-12 no-border" readonly placeholder={{selectedCompany.cmpBrand}} type="text"/>
                                     </div>
                                 </div>
                                 <div class="row pu-row">
                                     <div class="col-md-6 orPad" [ngClass]="{'redAlert':isValidFields.isValidSR }" style="padding-left: 3px">
                                         <label class="normalfnt"><input type="checkbox"  style="margin-right:5px;" [(ngModel)]="poolToAdd.isShipper" />Shipper</label>
-                                        <label class="normalfnt" style="margin-left:30px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isReceiver" />Receiver</label>
+                                        <label class="normalfnt" style="margin-left:15px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isReceiver" />Receiver</label>
                                     </div>
                                 </div>
                             </div>
@@ -474,7 +475,7 @@
                                 <div class="row pu-row">
                                     <div class="col-md-6 orPad" [ngClass]="{'redAlert':isValidFields.isValidSR }" style="padding-left: 3px">
                                         <label class="normalfnt"><input type="checkbox"  style="margin-right:5px;" [(ngModel)]="poolToEdit.isShip" (change)="checkSRFun($event.target.checked)"/>Shipper</label>
-                                        <label class="normalfnt" style="margin-left:30px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isReciev" (click)="checkSRFun($event.target.checked)" />Receiver</label>
+                                        <label class="normalfnt" style="margin-left:15px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isReciev" (click)="checkSRFun($event.target.checked)" />Receiver</label>
                                     </div>
                                 </div>
                             </div>

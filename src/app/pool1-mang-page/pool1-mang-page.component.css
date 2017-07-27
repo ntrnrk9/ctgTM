@@ -313,3 +313,12 @@ border:1px solid silver;
     cursor: pointer;
     border: 1px solid silver;
 }
+
+.resetBut {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    padding: 9px;
+    border: none;
+    background-color: #d3d3d3;
+}

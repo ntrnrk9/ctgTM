@@ -2,7 +2,7 @@
 /*@import "../node_modules/font-awesome/css/font-awesome.css";*/
 
 .ctg-textbox {
-    border: none;
+    border: none !important;
     padding: 10px;
     height:30px;
 }
@@ -77,3 +77,29 @@ html {
 .modal-dialog{
     margin-top: 10%;
 }
+
+.no-border{
+    border:none !important;
+}
+.no-padding{
+    padding:0px;
+}
+
+/*remove google copywrites to be displayed on gmap --start*/
+a[href^="http://maps.google.com/maps"]{display:none !important}
+a[href^="https://maps.google.com/maps"]{display:none !important}
+
+.gmnoprint a, .gmnoprint span, .gm-style-cc {
+    display:none;
+}
+.gmnoprint div {
+    /*background:none !important;*/
+}
+
+.pac-container:after {
+    /* Disclaimer: not needed to show 'powered by Google' if also a Google Map is shown */
+
+    background-image: none !important;
+    height: 0px;
+}
+/*remove google copywrites to be displayed on gmap --end*/

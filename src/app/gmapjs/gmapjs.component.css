@@ -71,3 +71,12 @@
 .row{
     margin:0px;
 }
+
+.gm-style-iw > div > div
+{
+    overflow:hidden !important;
+}
+.gm-style-iw > div
+{
+    overflow:hidden !important;
+}

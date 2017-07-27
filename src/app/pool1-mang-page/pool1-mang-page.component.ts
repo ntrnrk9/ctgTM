@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FilterCPipe } from '../Filters/filterC.pipe';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
+import * as config from '../configs/configs';
 declare var $: any;
 @Component({
     selector: 'pool1-mang-page',
@@ -11,6 +12,7 @@ declare var $: any;
     //pipes: [FilterCPipe]
 })
 export class Pool1MangPageComponent {
+    test=1;
     reqPoolQat: String;
     rowLimit: any = 10;
     pageNumber: any = 0;
@@ -375,7 +377,7 @@ export class Pool1MangPageComponent {
             this.ccSFlabel = 'Customer';
             return result;
         } else {
-            this.ccSFlabel = this.choosenCC.length + " customers(s) selected";
+            this.ccSFlabel = this.choosenCC.length + " customer(s) selected";
             for (var i = 0; i < temp.length; i++) {
                 if (this.inArray(this.choosenCC, temp[i].companyName) != -1) {
 
@@ -595,8 +597,8 @@ export class Pool1MangPageComponent {
         let headers = new Headers({ 'Content-Type': 'text/plain' });
         let options = new RequestOptions({ headers: headers });
         let obj = { 'stateCode': "AR" };
-        let url1 = "http://61.16.133.244/CommonService/api/GetCityByState?stateCode='AR'";
-        let url = "http://61.16.133.244/CommonService/api/GetAllCities";
+        let url1 = "/CommonService/api/GetCityByState?stateCode='AR'";
+        let url = config.baseUrl+"/CommonService/api/GetAllCities";
         this.http.get(url1).map(res => res.json())
             .subscribe(
             (data) => { console.log("getAllCities data recieved "); this.allCities = data; }, //For Success Response
@@ -608,7 +610,8 @@ export class Pool1MangPageComponent {
 
     private getAllStates() {
         //alert("hi");
-        this.http.get("http://61.16.133.244/CommonService/api/State").map(res => res.json())
+        var url=config.baseUrl+"/CommonService/api/State";
+        this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => { console.log("getAllStates data recieved"); this.allStates1 = data; this.allStates = JSON.parse(JSON.stringify(this.allStates1)); }, //For Success Response
             (err) => { console.log("getAllStates error recieved"); } //For Error Response
@@ -619,7 +622,7 @@ export class Pool1MangPageComponent {
 
     private getAllCompany() {
         //alert("hi");
-        let url = "http://61.16.133.244/CommonService/api/CompanyForFilter"
+        let url = config.baseUrl+"/CommonService/api/CompanyForFilter"
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => { console.log("getAllCompany data recieved"); this.allCC1 = data; this.allCC = JSON.parse(JSON.stringify(this.allCC1)); }, //For Success Response
@@ -634,7 +637,7 @@ export class Pool1MangPageComponent {
         let headers = new Headers({ 'Content-Type': 'text/plain' });
         let options = new RequestOptions({ headers: headers });
         let obj = { 'csr': 0, 'csrCode': 0 };
-        let url = "http://61.16.133.244/CommonService/api/Csr?csr=0&csrCode=0";
+        let url = config.baseUrl+"/CommonService/api/Csr?csr=0&csrCode=0";
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => { console.log("getAllCsr data recieved"); this.allCsr = data; }, //For Success Response
@@ -644,7 +647,7 @@ export class Pool1MangPageComponent {
 
     private getAllPlanner() {
         //alert("hi");
-        let url = "http://61.16.133.244/CommonService/api/Planner?planner=0&plannerCode=0";
+        let url = config.baseUrl+"/CommonService/api/Planner?planner=0&plannerCode=0";
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -659,7 +662,7 @@ export class Pool1MangPageComponent {
     private getAllPool() {
         //alert("hi");
         this.poolRecieved = false;
-        let url = "http://61.16.133.244/PoolMGMTService/api/AllPools";
+        let url = config.baseUrl+"/PoolMGMTService/api/AllPools";
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => { console.log("getAllPlools data recieved"); this.allPools = data; this.ob.groups = data; this.selectVarience(this.selectedVarience); this.masterFilter(); this.poolRecieved = true; }, //For Success Response
@@ -677,7 +680,7 @@ export class Pool1MangPageComponent {
             console.log($('#accFil').val());
             $("#accFil").focus();
 
-            let url = "http://61.16.133.244/CommonService/api/CompanyForAddPool?companyName=" + this.accFil;
+            let url = config.baseUrl+"/CommonService/api/CompanyForAddPool?companyName=" + this.accFil;
             this.http.get(url).map(res => res.json())
                 .subscribe(
                 (data) => { console.log("getAllCompanyForAddPool data recieved"); this.allCCForAdd = data;this.poolForAddRecieved=true; }, //For Success Response
@@ -806,7 +809,7 @@ export class Pool1MangPageComponent {
             console.log("add: " + this.selectedState);
             console.log("add: " + this.selectedCity);
             var data = { 'pool': this.poolToEdit };
-            let url = "http://61.16.133.244/PoolMGMTService/api/UpdatePool";
+            let url = config.baseUrl+"/PoolMGMTService/api/UpdatePool";
             this.http.post(url, this.poolToEdit, options).map(res => res.json())
                 .subscribe(
                 (data) => {
@@ -948,7 +951,7 @@ export class Pool1MangPageComponent {
 
             console.log("add: " + this.ob.groups);
             var payld = { pool: data };
-            let url = "http://61.16.133.244/PoolMGMTService/api/InsertPool";
+            let url = config.baseUrl+"/PoolMGMTService/api/InsertPool";
             let object = this;
             this.http.post(url, data, options).map(res => res.json())
                 .subscribe(
@@ -1063,7 +1066,7 @@ export class Pool1MangPageComponent {
         let options = new RequestOptions({ headers: headers });
 
         //let url = "http://61.16.133.244/PoolMGMTService/api/DeletePool?pid="+item.pID+"&poolid="+item.poolID+"&cmpid="+item.cmpID;
-        let url = "http://61.16.133.244/PoolMGMTService/api/DeletePool";
+        let url = config.baseUrl+"/PoolMGMTService/api/DeletePool";
         this.http.post(url, this.poolToDel, options).map(res => res.json())
             .subscribe(
             (resp) => {
@@ -1090,6 +1093,21 @@ export class Pool1MangPageComponent {
                 $('#result').modal('show');
             } //For Error Response
             );
+    }
+
+    reset(){
+        
+        this.selectedVarience = { lable: "Pools having variance", value: 1 };
+        this.choosenCC=[];
+        this.choosenPlanner=[];
+        this.choosenState=[];
+        this.selectedSR = { lable: "Shipper", value: 0 };
+        this.selectedBrand = { lable: "Covenant", value: "CVEN" };
+        this.ccClearAllFun();
+        this.stateClearAllFun();
+        this.plannerClearAllFun();
+        this.selectVarience(this.selectedVarience);
+        this.masterFilter();
     }
 
 }
