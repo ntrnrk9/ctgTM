@@ -20,6 +20,7 @@ export class Gmtest {
     markers: any;
     map: any;
     infowindow: any;
+    index:any;
     markerList: any = {
         blueMark: '../../assets/images/markers/trailer-blue.png',
         redMark: '../../assets/images/markers/trailer-red.png',
@@ -176,6 +177,33 @@ export class Gmtest {
         this.itemChange.emit(this.item);
 
         //this.increment(item);
+    }
+
+    call(item: any) {
+        var obTemp = this;
+        for (var i = 0; i < this.trailers.length; i++) {
+            var obj = this.trailers[i];
+            if (obj.trailerID == item) {
+                console.log("id found");
+                var pos = new google.maps.LatLng(obj.latitude, obj.longitude)
+                this.map.setCenter(pos);
+                this.map.setZoom(25);
+                
+                //this.infowindow.setContent(this.createinfoWinContent(obj));
+                //this.infowindow.open(this.map, obTemp.markers[i]);
+                this.index = i;
+                console.log(this.markers[this.index]);
+                break;
+                //     setTimeout(() => {
+                //      google.maps.event.trigger(obTemp.markers[i], 'mouseover');
+                //  }, 50);
+                //google.maps.event.trigger(this.markers[i], 'mouseover');
+            }
+        }
+        setTimeout(function () {
+            console.log(obTemp.index);
+            google.maps.event.trigger(obTemp.markers[obTemp.index], 'mouseover');
+        }, 500);
     }
 
 }
