@@ -52,7 +52,7 @@ export class HomePageComponent {
     ];
 
     ob = {
-        column: [{ name: "Distance", width: "8%" },{ name: "Trailer ID", width: "8%" }, { name: "Trailer name", width: "7%" }, { name: "Trailer type", width: "7%" }, { name: "Location", width: "9%" },
+        column: [{ name: "Distance", width: "8%" }, { name: "Trailer ID", width: "8%" }, { name: "Trailer name", width: "7%" }, { name: "Trailer type", width: "7%" }, { name: "Location", width: "9%" },
         { name: "Allocation status", width: "8%" }, { name: "Compliance status", width: "9%" }, { name: "Road worthiness status", width: "9%" }, { name: "Last DOT inspection date", width: "9%" }, { name: "Accessory/IOT information", width: "9%" }, { name: "Last movement date", width: "9%" }, { name: "Location history", width: "8%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
@@ -84,6 +84,7 @@ export class HomePageComponent {
             this.disableLoc = true;
             this.disableStatus = false;
             this.disableTS = true;
+            this.gRowCount=100;
         }
     }
 
@@ -92,20 +93,20 @@ export class HomePageComponent {
             this.searchID = "";
             this.disableTS = true;
             this.disableLoc = false;
-            this.disableStatus=true;
-        } else if(item==3){
+            this.disableStatus = true;
+        } else if (item == 3) {
             this.searchID = "";
             this.bylocation = "";
             this.disableLoc = true;
             this.disableTS = true;
-            this.disableStatus=false;
+            this.disableStatus = false;
 
         }
-            else {
+        else {
             this.bylocation = "";
             this.disableLoc = true;
             this.disableTS = false;
-            this.disableStatus=true;
+            this.disableStatus = true;
         }
 
     }
@@ -138,14 +139,24 @@ export class HomePageComponent {
         this.bylocation = "";
         this.searchID = "";
         this.selectedID = "";
-        this.disableLoc = true;
-        this.disableStatus = false;
-        this.disableTS = true;
+
         this.getStateTrailersStatus();
         if (this.mgToggleFlag) {
             this.gmapJs.reset();
+            this.disableLoc = false;
+            this.disableTS = false;
         } else {
             this.selectedTrStatus = { status: "Available", value: 2 };
+            this.disableLoc = true;
+            this.disableStatus = false;
+            this.disableTS = true;
+        }
+    }
+    tableScrolled(this: any) {
+        console.log("scrolling");
+        var raw = document.getElementById('tgBody');
+        if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
+            this.gRowCount += 100;
         }
     }
 

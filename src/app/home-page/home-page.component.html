@@ -56,7 +56,8 @@
         </div>
         <div style="padding-top:15px;">
             <!--<gmaps></gmaps>-->
-            <div *ngIf="mgToggleFlag">{{item.trailerID}}-{{selectedMarker.trailerID}}
+            <div *ngIf="mgToggleFlag">
+                <!--{{item.trailerID}}-{{selectedMarker.trailerID}}-->
                 <!--<gmaptest *ngIf="trailerStatusResp" [trailers]="allTrailers" [(item)]="item" (itemChange)="showHistory(item)" ></gmaptest>-->
                 <gmapjs *ngIf="trailerStatusResp" #f [state]="selectedState" [trailerList]="allTrailers" [(selectedMarker)]="selectedMarker"
                     (selectedMarkerChange)="markerClicked()"></gmapjs>
@@ -73,7 +74,7 @@
                             </ng-container>
                         </tr>
                     </thead>
-                    <tbody *ngIf="trailerStatusResp" style="font-size: 12px">
+                    <tbody id="tgBody" *ngIf="trailerStatusResp" style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
                         <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
                             <tr class="full" *ngIf="i<gRowCount">
                                 <td style="text-align:center;width:8%">
