@@ -74,7 +74,7 @@
                             </ng-container>
                         </tr>
                     </thead>
-                    <tbody id="tgBody" *ngIf="trailerStatusResp" style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
+                    <tbody id="tgBody" *ngIf="trailerStatusResp && allTraillerSubSet.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
                         <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
                             <tr class="full" *ngIf="i<gRowCount">
                                 <td style="text-align:center;width:8%">
@@ -190,7 +190,7 @@
                                         </ng-container>
                                     </tr>
                                 </thead>
-                                <tbody *ngIf="historyRecv" style="max-height:180px">
+                                <tbody *ngIf="historyRecv && history.groups.length!=0 " style="max-height:180px">
                                     <ng-container *ngFor="let i=index;let item of history.groups">
                                         <tr class="full">
                                             <td style="text-align:center;width:25%">
