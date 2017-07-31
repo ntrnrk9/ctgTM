@@ -26,6 +26,7 @@ import { SearchfilterComponent } from './searchfilter/searchfilter.component';
 import { GmapjsComponent } from './gmapjs/gmapjs.component';
 //import { HttpInject } from './injectables/httpInject';
 import { Gmaptest } from './gmaptest/gmaptest.component';
+import { Gmtest } from './gmtest/gmtest.component';
 
 import { FilterCPipe } from './Filters/filterC.pipe';
 import { FilterArrayPipe } from './Filters/filterArray.pipe';
@@ -42,7 +43,7 @@ import { FilterArrayPipe } from './Filters/filterArray.pipe';
         AllocationPageComponent, PoolMangPageComponent,
         Pool1MangPageComponent, Footer1Component,
         FilterCPipe, FilterArrayPipe,
-        SearchfilterComponent, GmapjsComponent,Gmaptest
+        SearchfilterComponent, GmapjsComponent,Gmaptest,Gmtest
     ],
     //providers:[{ provide: RequestOptions, useClass: HttpInject }],
     bootstrap: [AppComponent]
