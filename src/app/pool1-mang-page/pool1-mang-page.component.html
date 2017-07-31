@@ -267,7 +267,7 @@
             </div>-->
             <div class="col-md-12">
                 <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
-                    <thead>
+                    <thead style="font-size: 12px">
                         <tr bgcolor="#f7f8fc" class="app-table-tr full">
                             <ng-container *ngFor="let con of ob.column">
                                 <th [ngStyle]="{'width':con.width}" style="text-align:center" *ngIf="con.name=='Variance'">
@@ -279,7 +279,7 @@
                             </ng-container>
                         </tr>
                     </thead>
-                    <tbody *ngIf="poolRecieved">
+                    <tbody *ngIf="poolRecieved" style="font-size: 12px">
                         <!--<tr *ngFor="let item of ob.groups">
                             <td>{{row.state}}</td>
                             <td>{{row.city}}</td>
@@ -397,7 +397,8 @@
                                 </div>
                                 <div class="row pu-row">
                                     <div class="col-md-6 orPad">
-                                        <label>Required <span class="normalfnt">(Numeric only)</span></label><br>
+                                        <label>Required <span class="normalfnt">(Numeric only)<span class="first"> *</span></span></label><br>
+                                        
                                         <input class="no-padding col-md-12" [(ngModel)]="reqPoolQat" type="text" [ngClass]="{'redAlert':isValidFields.isValidReqPool }"
                                         />
                                     </div>
@@ -413,6 +414,7 @@
                                 </div>
                                 <div class="row pu-row">
                                     <div class="col-md-6 orPad" [ngClass]="{'redAlert':isValidFields.isValidSR }" style="padding-left: 3px">
+                                        <label>Shipper\Receiver <span class="first"> *</span></label><br>
                                         <label class="normalfnt"><input type="checkbox"  style="margin-right:5px;" [(ngModel)]="poolToAdd.isShipper" />Shipper</label>
                                         <label class="normalfnt" style="margin-left:15px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isReceiver" />Receiver</label>
                                     </div>
@@ -474,6 +476,7 @@
                                 </div>
                                 <div class="row pu-row">
                                     <div class="col-md-6 orPad" [ngClass]="{'redAlert':isValidFields.isValidSR }" style="padding-left: 3px">
+                                        <label>Shipper\Receiver <span class="first"> *</span></label><br>
                                         <label class="normalfnt"><input type="checkbox"  style="margin-right:5px;" [(ngModel)]="poolToEdit.isShip" (change)="checkSRFun($event.target.checked)"/>Shipper</label>
                                         <label class="normalfnt" style="margin-left:15px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isReciev" (click)="checkSRFun($event.target.checked)" />Receiver</label>
                                     </div>

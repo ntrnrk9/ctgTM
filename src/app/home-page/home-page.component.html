@@ -9,51 +9,55 @@
 
     <div class="col-md-12 page-body">
         <div class="filter-container" (keyup.enter)="search()">
-            <input [ngClass]="{'disabled': disableTS}" class="ctg-textbox pull-left" type="text" placeholder="Trailer ID" [(ngModel)]="searchID"
-                (ngModelChange)="toggleSearch(1)" (click)="disableTS=false" />
-            <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
-            <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
-            <input [ngClass]="{'disabled': disableLoc}" class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode"
-                (ngModelChange)="toggleSearch(2)" [(ngModel)]="bylocation" style="margin-left:10px" (change)="setByLocation()"
-                value="bylocation" (click)="disableLoc=false" />
-            <!--<button class="pull-left" type="button" (click)="getvalue();">code</button>-->
-            
+            <div style="padding:5px;" class="pull-left">
+                <input [ngClass]="{'disabled': disableTS}" class="ctg-textbox pull-left" type="text" placeholder="Trailer ID" [(ngModel)]="searchID"
+                    (ngModelChange)="toggleSearch(1)" (click)="disableTS=false" />
+                <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
+                <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
+                <input [ngClass]="{'disabled': disableLoc}" class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode"
+                    (ngModelChange)="toggleSearch(2)" [(ngModel)]="bylocation" style="margin-left:10px" (change)="setByLocation()"
+                    value="bylocation" (click)="disableLoc=false" />
+                <!--<button class="pull-left" type="button" (click)="getvalue();">code</button>-->
 
 
-            <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;" *ngIf="!mgToggleFlag">
-                <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedMiles.lable}} />
-                <span class="caret"></span>
-                <div class="dropdown-menu no-padding sel-dd">
 
-                    <ul class="sel-dd-ul">
-                        <li *ngFor="let item of milesList" (click)="selectedMiles=item" style="cursor: pointer">
-                            {{item.lable}}
-                        </li>
-                    </ul>
+                <div [ngClass]="{'disabled': disableLoc}" (click)="disableLoc=false" class="dropdown pull-left pm-select-cont" style="margin-left:10px;"
+                    *ngIf="!mgToggleFlag">
+                    <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedMiles.lable}} (click)="disableLoc=false"
+                    />
+                    <span class="caret"></span>
+                    <div class="dropdown-menu no-padding sel-dd">
+
+                        <ul class="sel-dd-ul">
+                            <li *ngFor="let item of milesList" (click)="selectedMiles=item;toggleSearch(2)" style="cursor: pointer">
+                                {{item.lable}}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <span class="pull-left" style="margin-left:15px;padding-top:5px" *ngIf="!mgToggleFlag">Or</span>
-            <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;" *ngIf="!mgToggleFlag">
-                <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedTrStatus.status}} />
-                <span class="caret"></span>
-                <div class="dropdown-menu no-padding sel-dd">
+                <span class="pull-left" style="margin-left:15px;padding-top:5px" *ngIf="!mgToggleFlag">Or</span>
+                <div [ngClass]="{'disabled': disableStatus}" (ngModelChange)="toggleSearch(3)" (click)="disableStatus=false" class="dropdown pull-left pm-select-cont"
+                    style="margin-left:10px;" *ngIf="!mgToggleFlag">
+                    <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedTrStatus.status}} />
+                    <span class="caret"></span>
+                    <div class="dropdown-menu no-padding sel-dd">
 
-                    <ul class="sel-dd-ul">
-                        <li *ngFor="let item of trStatusList" (click)="selectTrStatus(item)" style="cursor: pointer">
-                            {{item.status}}
-                        </li>
-                    </ul>
+                        <ul class="sel-dd-ul">
+                            <li *ngFor="let item of trStatusList" (click)="selectTrStatus(item);toggleSearch(3)" style="cursor: pointer">
+                                {{item.status}}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+                <button class="pull-left pm-addBut" type="button" style="margin-left:15px">Search</button>
+                <!--<button class="pull-right resetBut" type="button" value="encode" (click)="f.geocodeAddress()"><img src="../../assets/images/markers/refresh.png" /></button>-->
             </div>
-            <button class="pull-left pm-addBut" type="button" style="margin-left:15px">Search</button>
-            <!--<button class="pull-right resetBut" type="button" value="encode" (click)="f.geocodeAddress()"><img src="../../assets/images/markers/refresh.png" /></button>-->
-
             <button class="pull-right resetBut" type="button" value="encode" (click)="reset()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
         </div>
         <div style="padding-top:15px;">
             <!--<gmaps></gmaps>-->
-            <div *ngIf="mgToggleFlag">
-                <gmaptest></gmaptest>
+            <div *ngIf="mgToggleFlag">{{item.trailerID}}-{{selectedMarker.trailerID}}
+                <!--<gmaptest *ngIf="trailerStatusResp" [trailers]="allTrailers" [(item)]="item" (itemChange)="showHistory(item)" ></gmaptest>-->
                 <gmapjs *ngIf="trailerStatusResp" #f [state]="selectedState" [trailerList]="allTrailers" [(selectedMarker)]="selectedMarker"
                     (selectedMarkerChange)="markerClicked()"></gmapjs>
 
@@ -71,20 +75,23 @@
                     </thead>
                     <tbody *ngIf="trailerStatusResp" style="font-size: 12px">
                         <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
-                            <tr class="full" *ngIf="i<100">
-                                <td style="text-align:center;width:9%">
+                            <tr class="full" *ngIf="i<gRowCount">
+                                <td style="text-align:center;width:8%">
                                     <span>{{item.trailerID}}</span>
                                 </td>
-                                <td style="text-align:center;width:9%">
+                                <td style="text-align:center;width:8%">
+                                    <span>{{item.trailerID}}</span>
+                                </td>
+                                <td style="text-align:center;width:7%">
                                     <span>{{item.trailerName}}</span>
                                 </td>
-                                <td style="text-align:center;width:9%">
+                                <td style="text-align:center;width:7%">
                                     <span>{{item.trailerType}}</span>
                                 </td>
                                 <td style="text-align:center;width:9%">
                                     <span>{{item.location}}</span>
                                 </td>
-                                <td style="text-align:center;width:9%">
+                                <td style="text-align:center;width:8%">
                                     <span>{{item.trailerStatus}}</span>
                                 </td>
                                 <td style="text-align:center;width:9%">
@@ -98,19 +105,19 @@
                                 <td style="text-align:center;width:9%">
                                     <span>{{item.lastMovementDate}}</span>
                                 </td>
-                                <td style="text-align:center;width:9%" [ngClass]="{'first': item.variance<0}">
+                                <td style="text-align:center;width:9%">
                                     <span>{{item.iotInfo}}</span>
                                 </td>
                                 <td style="text-align:center;width:9%">
                                     <span>{{item.lastMovementDate}}</span>
                                 </td>
-                                <td style="text-align:center;width:10%"><a (click)="showHistory(item)" style="cursor: pointer">History</a></td>
+                                <td style="text-align:center;width:8%"><a (click)="showHistory(item)" style="cursor: pointer">History</a></td>
                             </tr>
                         </ng-container>
                     </tbody>
                 </table>
                 <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="trailerStatusResp && allTraillerSubSet.length==0 ">No data found</div>
-                <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">{{allTraillerSubSet.length}} record(s) found</div>-->
+                <div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTraillerSubSet.length}} record(s) found</div>
                 <div *ngIf="!trailerStatusResp" class="loader"><img src="../../assets/images/loader.gif" /></div>
             </div>
         </div>
@@ -132,13 +139,13 @@
                     <div class="modal-div" style="font-size:12px">
                         <div style="border-bottom: 1px solid silver;padding-bottom: 5px;" class="col-lg-12 no-padding">
                             <div class="col-lg-6 no-padding">
-                                <span style="font-size:14px"><b>{{selectedMarker.trailerType}}</b></span><br>
+                                <span style="font-size:14px"><b>{{selectedMarker.trailerName}}</b></span><br>
                                 <span style="font-size:12px">{{selectedMarker.trailerType}}</span>
                             </div>
                             <div class="col-lg-6 no-padding" style="padding-top: 8px;" [ngSwitch]="selectedMarker.trailerStatus">
                                 <span *ngSwitchCase="'PLN'" class="pull-right" style="font-size:16px;color:#158cff"><b>PLANNED</b></span>
                                 <span *ngSwitchCase="'AVL'" class="pull-right" style="font-size:16px;color:#15c922"><b>AVAILABLE</b></span>
-                                <span *ngSwitchDefault class="pull-right" style="font-size:16px;color:#fb3447"><b>ALLOCATED</b></span>
+                                <span *ngSwitchDefault class="pull-right" style="font-size:16px;color:#fb3447"><b>CONFIRMED</b></span>
                             </div>
                         </div>
                         <div class="col-lg-12 no-padding" style="padding-top:15px">

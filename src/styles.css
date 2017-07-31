@@ -20,7 +20,7 @@ body {
 
 .filter-container {
     background: #ededed;
-    padding: 5px;
+    /*padding: 5px;*/
     height: 40px;
     position:relative;
 }

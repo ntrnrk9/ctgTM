@@ -26,13 +26,15 @@ export class HomePageComponent {
     selectedMarker: any = { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" };
     stateList: any = [{ "stateDesc": "Alaska", "stateCode": "AK", "country": "USA" }, { "stateDesc": "Alabama", "stateCode": "AL", "country": "USA" }, { "stateDesc": "Arkansas", "stateCode": "AR", "country": "USA" }, { "stateDesc": "Arizona", "stateCode": "AZ", "country": "USA" }, { "stateDesc": "California", "stateCode": "CA", "country": "USA" }, { "stateDesc": "Colorado", "stateCode": "CO", "country": "USA" }, { "stateDesc": "Connecticut", "stateCode": "CT", "country": "USA" }, { "stateDesc": "District of Columbia", "stateCode": "DC", "country": "USA" }, { "stateDesc": "Delaware", "stateCode": "DE", "country": "USA" }, { "stateDesc": "Florida", "stateCode": "FL", "country": "USA" }, { "stateDesc": "Georgia", "stateCode": "GA", "country": "USA" }, { "stateDesc": "Hawaii", "stateCode": "HA", "country": "USA" }, { "stateDesc": "Iowa", "stateCode": "IA", "country": "USA" }, { "stateDesc": "Idaho", "stateCode": "ID", "country": "USA" }, { "stateDesc": "Illinois", "stateCode": "IL", "country": "USA" }, { "stateDesc": "Indiana", "stateCode": "IN", "country": "USA" }, { "stateDesc": "Kansas", "stateCode": "KS", "country": "USA" }, { "stateDesc": "Kentucky", "stateCode": "KY", "country": "USA" }, { "stateDesc": "Louisiana", "stateCode": "LA", "country": "USA" }, { "stateDesc": "Massachusetts", "stateCode": "MA", "country": "USA" }, { "stateDesc": "Maryland", "stateCode": "MD", "country": "USA" }, { "stateDesc": "Maine", "stateCode": "ME", "country": "USA" }, { "stateDesc": "Michigan", "stateCode": "MI", "country": "USA" }, { "stateDesc": "Minnesota", "stateCode": "MN", "country": "USA" }, { "stateDesc": "Missouri", "stateCode": "MO", "country": "USA" }, { "stateDesc": "Mississippi", "stateCode": "MS", "country": "USA" }, { "stateDesc": "Montana", "stateCode": "MT", "country": "USA" }, { "stateDesc": "North Carolina", "stateCode": "NC", "country": "USA" }, { "stateDesc": "North Dakota", "stateCode": "ND", "country": "USA" }, { "stateDesc": "Nebraska", "stateCode": "NE", "country": "USA" }, { "stateDesc": "New Hampshire", "stateCode": "NH", "country": "USA" }, { "stateDesc": "New Jersey", "stateCode": "NJ", "country": "USA" }, { "stateDesc": "New Mexico", "stateCode": "NM", "country": "USA" }, { "stateDesc": "Nevada", "stateCode": "NV", "country": "USA" }, { "stateDesc": "New York", "stateCode": "NY", "country": "USA" }, { "stateDesc": "Ohio", "stateCode": "OH", "country": "USA" }, { "stateDesc": "Oklahoma", "stateCode": "OK", "country": "USA" }, { "stateDesc": "Oregon", "stateCode": "OR", "country": "USA" }, { "stateDesc": "Pennsylvania", "stateCode": "PA", "country": "USA" }, { "stateDesc": "Rhode Island", "stateCode": "RI", "country": "USA" }, { "stateDesc": "South Carolina", "stateCode": "SC", "country": "USA" }, { "stateDesc": "South Dakota", "stateCode": "SD", "country": "USA" }, { "stateDesc": "Tennessee", "stateCode": "TN", "country": "USA" }, { "stateDesc": "Texas", "stateCode": "TX", "country": "USA" }, { "stateDesc": "Utah", "stateCode": "UT", "country": "USA" }, { "stateDesc": "Virginia", "stateCode": "VA", "country": "USA" }, { "stateDesc": "Vermont", "stateCode": "VT", "country": "USA" }, { "stateDesc": "Washington", "stateCode": "WA", "country": "USA" }, { "stateDesc": "Wisconsin", "stateCode": "WI", "country": "USA" }, { "stateDesc": "West Virginia", "stateCode": "WV", "country": "USA" }, { "stateDesc": "Wyoming", "stateCode": "WY", "country": "USA" }];
     trStatusList: any = [{ status: "Confirmed", value: 0 }, { status: "Planned", value: 1 }, { status: "Available", value: 2 }]
-    milesList:any=[{lable:"50 Miles",value:50},{lable:"100 Miles",value:100},{lable:"150 Miles",value:150},{lable:"200 Miles",value:200}];
-    selectedMiles={lable:"150 Miles",value:150};
+    milesList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }, { lable: "200 Miles", value: 200 }];
+    selectedMiles = { lable: "150 Miles", value: 150 };
     mgToggleFlag = true;
     trailerStatusResp = false;
     historyRecv = false;
-    disableTS=false;
-    disableLoc=false;
+    disableTS = false;
+    disableLoc = false;
+    disableStatus = false;
+    gRowCount = 100;
 
     allTrailers: any = [
         { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
@@ -50,8 +52,8 @@ export class HomePageComponent {
     ];
 
     ob = {
-        column: [{ name: "Trailer ID", width: "9%" }, { name: "Trailer name", width: "9%" }, { name: "Trailer type", width: "9%" }, { name: "Location", width: "9%" },
-        { name: "Allocation status", width: "9%" }, { name: "Compliance status", width: "9%" }, { name: "Road worthiness status", width: "9%" }, { name: "Last DOT inspection date", width: "9%" }, { name: "Accessory/IOT information", width: "9%" }, { name: "Last movement date", width: "9%" }, { name: "Location history", width: "10%" }],
+        column: [{ name: "Distance", width: "8%" },{ name: "Trailer ID", width: "8%" }, { name: "Trailer name", width: "7%" }, { name: "Trailer type", width: "7%" }, { name: "Location", width: "9%" },
+        { name: "Allocation status", width: "8%" }, { name: "Compliance status", width: "9%" }, { name: "Road worthiness status", width: "9%" }, { name: "Last DOT inspection date", width: "9%" }, { name: "Accessory/IOT information", width: "9%" }, { name: "Last movement date", width: "9%" }, { name: "Location history", width: "8%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
@@ -70,17 +72,40 @@ export class HomePageComponent {
     }
     toggleMG() {
         this.mgToggleFlag = !this.mgToggleFlag;
+        if (this.mgToggleFlag) {
+            this.searchID = "";
+            this.bylocation = "";
+            this.disableLoc = false;
+            //this.disableStatus = false;
+            this.disableTS = false;
+        } else {
+            this.searchID = "";
+            this.bylocation = "";
+            this.disableLoc = true;
+            this.disableStatus = false;
+            this.disableTS = true;
+        }
     }
 
     toggleSearch(item: any) {
         if (item == 2) {
             this.searchID = "";
-            this.disableTS=true;
-            this.disableLoc=false;
-        } else {
+            this.disableTS = true;
+            this.disableLoc = false;
+            this.disableStatus=true;
+        } else if(item==3){
+            this.searchID = "";
             this.bylocation = "";
-            this.disableLoc=true;
-            this.disableTS=false;
+            this.disableLoc = true;
+            this.disableTS = true;
+            this.disableStatus=false;
+
+        }
+            else {
+            this.bylocation = "";
+            this.disableLoc = true;
+            this.disableTS = false;
+            this.disableStatus=true;
         }
 
     }
@@ -90,7 +115,7 @@ export class HomePageComponent {
         else
             this.searchByID();
     }
-    
+
     getvalue() {
         var input = $('#ctgGeoCode').val();
         console.log(input);
@@ -113,18 +138,21 @@ export class HomePageComponent {
         this.bylocation = "";
         this.searchID = "";
         this.selectedID = "";
+        this.disableLoc = true;
+        this.disableStatus = false;
+        this.disableTS = true;
         this.getStateTrailersStatus();
         if (this.mgToggleFlag) {
             this.gmapJs.reset();
         } else {
-            this.selectedTrStatus = { status: "Confirmed", value: 0 };
+            this.selectedTrStatus = { status: "Available", value: 2 };
         }
     }
 
     getStateTrailersStatus() {
         this.trailerStatusResp = false;
         //let url="http://61.16.133.244/HomeService/api/StatesTrailerCounts";
-        let url = config.baseUrl+"/HomeService/api/TrailerStatus?trailerStatus=0&trailerId=0";
+        let url = config.baseUrl + "/HomeService/api/TrailerStatus?trailerStatus=0&trailerId=0";
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -139,7 +167,7 @@ export class HomePageComponent {
 
     getTrailerDetailsByIdOrLocation() {
         //let url="http://61.16.133.244/HomeService/api/StatesTrailerCounts";
-        let url = config.baseUrl+"/HomeService/api/TrailerDetailsByIdOrLocation?trailerId=25007&location=0";
+        let url = config.baseUrl + "/HomeService/api/TrailerDetailsByIdOrLocation?trailerId=25007&location=0";
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -151,7 +179,7 @@ export class HomePageComponent {
 
     getTrailerHistory() {
         this.historyRecv = false;
-        let url = config.baseUrl+"/HomeService/api/TrailerHistory?trailerID=" + this.selectedMarker.trailerID;
+        let url = config.baseUrl + "/HomeService/api/TrailerHistory?trailerID=" + this.selectedMarker.trailerID;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -167,23 +195,23 @@ export class HomePageComponent {
     }
 
     searchByID() {
-        this.selectedID="";
-        var index=-1;
+        this.selectedID = "";
+        var index = -1;
         if (this.searchID && this.searchID != "") {
             if (this.mgToggleFlag) {
                 for (var i = 0; i < this.allTrailers.length; i++) {
                     let item = this.allTrailers[i];
                     if (item.trailerID == this.searchID) {
                         this.selectedID = item.latitude + "," + item.longitude;
-                        index=i;
+                        index = i;
                     }
                 }
-                if(index!=-1){
-                // this.gmapJs.geocodeAddress(this.selectedID);}
-                this.gmapJs.searchTrailer(index);
-                console.log("search trailer index: "+index);
-            }
-                else{
+                if (index != -1) {
+                    // this.gmapJs.geocodeAddress(this.selectedID);}
+                    this.gmapJs.searchTrailer(index);
+                    console.log("search trailer index: " + index);
+                }
+                else {
                     alert("Trailer id not found");
                 }
             } else {
@@ -191,7 +219,7 @@ export class HomePageComponent {
                 for (var i = 0; i < this.allTrailers.length; i++) {
                     let item = this.allTrailers[i];
                     if (item.trailerID == this.searchID) {
-                        
+
                         this.allTraillerSubSet.push(item);
                     }
                 }

@@ -73,9 +73,9 @@
 }
 
 .resetBut {
-    position: absolute;
+    /*position: absolute;
     right: 0px;
-    top: 0px;
+    top: 0px;*/
     padding: 9px;
     border: none;
     background-color: #d3d3d3;
