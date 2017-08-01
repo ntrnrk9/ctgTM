@@ -76,6 +76,12 @@
   float: left;
   border-bottom-width: 0;
 }
+
+.table-fixed tbody{
+    border:1px solid silver;
+  border-top:none;
+}
+
 .full{
     width:100%
 }

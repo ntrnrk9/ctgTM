@@ -115,6 +115,13 @@
     text-align: center;
     height: 100%;
 }
+
+.histLoader{
+    text-align: center;
+    padding: 20px;
+    border: 1px solid silver;
+    border-top: none
+}
 .transparent{
 opacity: 0 !important;
 }
@@ -142,6 +149,10 @@ opacity: 0 !important;
 .table-fixed tbody td, .table-fixed thead > tr> th {
   float: left;
   border-bottom-width: 0;
+}
+.table-fixed tbody{
+    border:1px solid silver;
+  border-top:none;
 }
 .full{
     width:100%

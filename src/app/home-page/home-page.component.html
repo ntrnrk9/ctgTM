@@ -122,7 +122,7 @@
                 </table>
                 <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="trailerStatusResp && allTraillerSubSet.length==0 ">No data found</div>
                 <div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTraillerSubSet.length}} record(s) found</div>
-                <div *ngIf="!trailerStatusResp" class="loader"><img src="../../assets/images/loader.gif" /></div>
+                <div *ngIf="!trailerStatusResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
             </div>
         </div>
         <div style="padding-top:5px">
@@ -214,7 +214,7 @@
                             </table>
                             <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="historyRecv && history.groups.length==0 ">No data found</div>
                             <div *ngIf="historyRecv" style="padding-top: 10px;">{{history.groups.length}} record(s) found</div>
-                            <div *ngIf="!historyRecv" class="loader"><img src="../../assets/images/loader.gif" /></div>
+                            <div *ngIf="!historyRecv" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
                         </div>
 
                         <div class="row pu-row">

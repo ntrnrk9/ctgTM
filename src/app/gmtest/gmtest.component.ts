@@ -152,7 +152,7 @@ export class Gmtest {
             color = "#fb3447";
             status = "CONFIRMED"
         }
-        var content = '<div class="infowindow" style="width:200px;padding:0px;height:162px;overflow:hidden;">' +
+        var content = '<div class="infowindow" style="width:200px;padding:0px;height:170px;overflow:hidden;">' +
             '<div class="row header" style="border-bottom: 2px solid gray;padding:0px 0px 0px 30px">' +
             '<div class="row head1" style="font-weight:bold;font-size:14px;color:black">Trailer #: ' + tr.trailerID + '</div>' +
             '<div class="row head2" style="font-weight:bold;font-size:13px;color:red">'+tr.trailerName+'</div>' +
@@ -242,7 +242,7 @@ export class Gmtest {
                 console.log("id found");
                 var pos = new google.maps.LatLng(obj.latitude, obj.longitude)
                 this.map.setCenter(pos);
-                this.map.setZoom(25);
+                this.map.setZoom(21);
                 var obTemp = this;
                 //this.infowindow.setContent(this.createinfoWinContent(obj));
                 //this.infowindow.open(this.map, obTemp.markers[i]);

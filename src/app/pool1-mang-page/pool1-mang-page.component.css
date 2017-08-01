@@ -300,6 +300,10 @@ li {
   float: left;
   border-bottom-width: 0;
 }
+.table-fixed tbody{
+    border:1px solid silver;
+  border-top:none;
+}
 
 .bordered{
 border:1px solid silver;
