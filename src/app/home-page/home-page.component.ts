@@ -3,6 +3,7 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { GmapjsComponent } from '../gmapjs/gmapjs.component';
+import { Gmtest } from '../gmtest/gmtest.component';
 declare var $: any;
 import * as config from '../configs/configs';
 @Component({
@@ -12,7 +13,8 @@ import * as config from '../configs/configs';
     moduleId: module.id
 })
 export class HomePageComponent {
-    @ViewChild(GmapjsComponent) gmapJs: any;
+    //@ViewChild(GmapjsComponent) gmapJs: any;
+    @ViewChild(Gmtest) gmapJs: any;
     //gmapJs: any;
     private name = 'HomePageComponent';
     selectedState: any = "alabama";
@@ -70,6 +72,17 @@ export class HomePageComponent {
         // }, 1000);
         // IntervalObservable.create(900000).subscribe((data) => { this.getStateTrailersStatus() });
     }
+
+    ngOnChange(val: number) {
+        // console.log(val);
+        // //this.showHistory(val);
+        // this.selectedMarker=val;
+        // var obj=this;
+        // setTimeout(function () {
+        //     $('#historyModal').modal('show');
+        // }, 500);
+    }
+
     toggleMG() {
         this.mgToggleFlag = !this.mgToggleFlag;
         if (this.mgToggleFlag) {
@@ -156,7 +169,11 @@ export class HomePageComponent {
         console.log("scrolling");
         var raw = document.getElementById('tgBody');
         if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
+            
             this.gRowCount += 100;
+            if(this.gRowCount>this.allTrailers.length){
+                this.gRowCount=this.allTrailers.length;
+            }
         }
     }
 
@@ -219,7 +236,8 @@ export class HomePageComponent {
                 }
                 if (index != -1) {
                     // this.gmapJs.geocodeAddress(this.selectedID);}
-                    this.gmapJs.searchTrailer(index);
+                    //this.gmapJs.searchTrailer(index);
+                    this.gmapJs.call(this.searchID);
                     console.log("search trailer index: " + index);
                 }
                 else {
@@ -251,7 +269,10 @@ export class HomePageComponent {
 
     showHistory(item) {
         this.selectedMarker = item;
-        $('#historyModal').modal('show');
+        //$('#historyModal').modal('show');
+        setTimeout(function () {
+             $('#historyModal').modal('show');
+         }, 500);
         this.getTrailerHistory();
     }
 

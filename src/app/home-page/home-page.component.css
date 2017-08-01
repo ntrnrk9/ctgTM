@@ -108,12 +108,16 @@
     padding: 0px;
 }
 .loader {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    padding-top: 25%;
     text-align: center;
-    padding: 20px;
-    border: 1px solid silver;
-    border-top: none
+    height: 100%;
 }
-
+.transparent{
+opacity: 0 !important;
+}
 .modal-dialog{
     margin-top: 5%;
 }
