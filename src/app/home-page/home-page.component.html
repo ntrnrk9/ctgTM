@@ -29,7 +29,7 @@
                     <div class="dropdown-menu no-padding sel-dd">
 
                         <ul class="sel-dd-ul">
-                            <li *ngFor="let item of milesList" (click)="selectedMiles=item;toggleSearch(2)" style="cursor: pointer">
+                            <li *ngFor="let item of milesList" (click)="selectMiles(item);toggleSearch(2)" style="cursor: pointer">
                                 {{item.lable}}
                             </li>
                         </ul>
@@ -81,7 +81,7 @@
                         <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
                             <tr class="full" *ngIf="i<gRowCount">
                                 <td style="text-align:center;width:8%">
-                                    <span>{{item.trailerID}}</span>
+                                    <span>{{item.distance}}</span>
                                 </td>
                                 <td style="text-align:center;width:8%">
                                     <span>{{item.trailerID}}</span>
@@ -107,7 +107,7 @@
                                 </td>
 
                                 <td style="text-align:center;width:9%">
-                                    <span>{{item.lastMovementDate}}</span>
+                                    <span>{{item.dotDate}}</span>
                                 </td>
                                 <td style="text-align:center;width:9%">
                                     <span>{{item.iotInfo}}</span>
@@ -121,7 +121,8 @@
                     </tbody>
                 </table>
                 <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="trailerStatusResp && allTraillerSubSet.length==0 ">No data found</div>
-                <div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTraillerSubSet.length}} record(s) found</div>
+                <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTraillerSubSet.length}} record(s) found</div>-->
+                <div *ngIf="trailerStatusResp" style="padding-top: 10px;">{{allTraillerSubSet.length}} record(s) found</div>
                 <div *ngIf="!trailerStatusResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
             </div>
         </div>
