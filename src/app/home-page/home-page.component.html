@@ -15,7 +15,7 @@
                 <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
                 <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
                 <input [ngClass]="{'disabled': disableLoc}" class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode"
-                    (ngModelChange)="toggleSearch(2)" [(ngModel)]="bylocation" style="margin-left:10px" (change)="setByLocation()"
+                    (ngModelChange)="toggleSearch(2)" [(ngModel)]="bylocation" style="margin-left:10px;width:230px"
                     value="bylocation" (click)="disableLoc=false" />
                 <!--<button class="pull-left" type="button" (click)="getvalue();">code</button>-->
 
@@ -80,9 +80,7 @@
                     <tbody id="tgBody" *ngIf="trailerStatusResp && allTraillerSubSet.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
                         <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
                             <tr class="full" *ngIf="i<gRowCount">
-                                <td style="text-align:center;width:8%">
-                                    <span>{{item.distance}}</span>
-                                </td>
+                                
                                 <td style="text-align:center;width:8%">
                                     <span>{{item.trailerID}}</span>
                                 </td>
@@ -96,24 +94,27 @@
                                     <span>{{item.location}}</span>
                                 </td>
                                 <td style="text-align:center;width:8%">
+                                    <span>{{item.distance}}</span>
+                                </td>
+                                <td style="text-align:center;width:8%">
                                     <span>{{item.trailerStatus}}</span>
                                 </td>
                                 <td style="text-align:center;width:9%">
-                                    <span>{{item.compliance}}</span>
+                                    <span>TBC</span>
                                 </td>
 
                                 <td style="text-align:center;width:9%">
-                                    <span>{{item.roadWorthiness}}</span>
+                                    <span>TBC</span>
                                 </td>
 
                                 <td style="text-align:center;width:9%">
-                                    <span>{{item.dotDate}}</span>
+                                    <span>TBC</span>
                                 </td>
                                 <td style="text-align:center;width:9%">
                                     <span>{{item.iotInfo}}</span>
                                 </td>
                                 <td style="text-align:center;width:9%">
-                                    <span>{{item.lastMovementDate}}</span>
+                                    <span>{{item.dotDate}}</span>
                                 </td>
                                 <td style="text-align:center;width:8%"><a (click)="showHistory(item)" style="cursor: pointer">History</a></td>
                             </tr>
@@ -168,18 +169,18 @@
                             </div>
                             <div class="col-lg-6" style="border-left: 1px solid silver;">
                                 <p>
-                                    <span><b>DOT Date: </b></span><br>
-                                    <span>{{selectedMarker.dotDate}}.</span><br><br>
+                                    <span><b>DOT Date: </b></span>
+                                    <span>TBC</span><br><br>
                                     <span><b>Last Movement Date: </b></span><br>
                                     <span>{{selectedMarker.lastMovementDate}}.</span><br><br>
                                     <span><b>Idle Duration: </b></span>
                                     <span>{{selectedMarker.idleDuration}}</span><br><br>
                                     <span><b>Compliance: </b></span>
-                                    <span>{{selectedMarker.compliance}}</span><br>
+                                    <span>TBC</span><br>
                                     <span><b>IOT Info: </b></span>
                                     <span>{{selectedMarker.iotInfo}}</span><br>
                                     <span><b>Road Worthiness: </b></span>
-                                    <span>{{selectedMarker.roadWorthiness}}</span><br>
+                                    <span>TBC</span><br>
                                 </p>
                             </div>
                         </div>
@@ -194,7 +195,7 @@
                                         </ng-container>
                                     </tr>
                                 </thead>
-                                <tbody *ngIf="historyRecv && history.groups.length!=0 " style="max-height:180px">
+                                <tbody *ngIf="historyRecv && history.groups.length!=0 " style="max-height:140px">
                                     <ng-container *ngFor="let i=index;let item of history.groups">
                                         <tr class="full">
                                             <td style="text-align:center;width:25%">
@@ -217,27 +218,27 @@
                             <div *ngIf="historyRecv" style="padding-top: 10px;">{{history.groups.length}} record(s) found</div>
                             <div *ngIf="!historyRecv" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
                         </div>
-
-                        <div class="row pu-row">
-
-                            <div class="col-md-6 orPad">
-
-                            </div>
-                            <div class="col-md-6 olPad">
-
-                            </div>
-                        </div>
-                        <div class="row pu-row">
-
-                        </div>
                     </div>
-                </div>
-                <div class="modal-footer page-footer">
-                    <!--<button type="button" style="height:30px" class="pm-whiteBut" (click)="cancelUpdatePool()" data-dismiss="modal">Cancel</button>-->
-                    <button type="button" class="pm-addBut" data-dismiss="modal">Close</button>
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <div class="modal fade" id="result" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header page-heading">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{action.heading}}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{{action.body}}</p>
+                </div>
+                <div class="modal-footer page-footer">
+                    <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
         </div>
     </div>
 

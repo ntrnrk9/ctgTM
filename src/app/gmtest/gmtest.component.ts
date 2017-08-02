@@ -37,6 +37,8 @@ export class Gmtest {
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
+    action: any = { heading: "", body: "" };
+
     mapIcon(trailer: any) {
         if (trailer.trailerStatus == "AVL") {
             return this.markerList.greenMark;
@@ -62,6 +64,33 @@ export class Gmtest {
     constructor(private http: Http) {}
 
     ngOnInit() {
+        var styles = [
+            {
+                "featureType": "administrative.province",
+                "elementType": "geometry.stroke",
+                "stylers": [
+                    { "visibility": "on" }
+                   
+                ]
+            }, {
+                "featureType": "road",
+                "elementType": "geometry",
+                "stylers": [
+                    { "visibility": "on" }
+                ]
+            }, {
+                "featureType": "administrative.locality",
+                "stylers": [
+                    { "visibility": "on" }
+                ]
+            }, {
+                "featureType": "road",
+                "elementType": "labels",
+                "stylers": [
+                    { "visibility": "on" }
+                ]
+            }
+        ];
         this.geocoder = new google.maps.Geocoder();
         this.markers = [];
         var mapProp = {
@@ -76,18 +105,19 @@ export class Gmtest {
             streetViewControl: true,
             overviewMapControl: true,
             rotateControl: true,
-            navigationControl: true
+            navigationControl: true,
+            styles:styles,
         };
         this.map = new google.maps.Map(document.getElementById("gmMap"), mapProp);
         this.infowindow = new google.maps.InfoWindow({
             content: ""
         });
 
-        var input = document.getElementById('ctgGeoCode');
-        var autoCompOptions = {
-            componentRestrictions: { country: 'us' }
-        };
-        var autocomplete = new google.maps.places.Autocomplete(input, autoCompOptions);
+        // var input = document.getElementById('ctgGeoCode');
+        // var autoCompOptions = {
+        //     componentRestrictions: { country: 'us' }
+        // };
+        // var autocomplete = new google.maps.places.Autocomplete(input, autoCompOptions);
 
         for (var i = 0; i < this.trailers.length; i++) {
             var tr = this.trailers[i];
@@ -202,7 +232,9 @@ export class Gmtest {
 
         //this.increment(item);
     }
-
+increment(item){
+    alert(this.map.getZoom());
+}
     geocodeAddress(addr: any) {
         //this.state = addr;
         //alert(this.state);
@@ -224,11 +256,18 @@ export class Gmtest {
                 let location = results[0].geometry.location;
                 //bound.push({ state: state, bounds: bounds, code: code, location: location });
                 resultsMap.fitBounds(results[0].geometry.viewport);
-                resultsMap.setZoom(10);
+                if (results[0].types[0] == "locality") {
+                    resultsMap.setZoom(7);
+                } else {
+                    resultsMap.setZoom(10);
+                }
                 this.map = resultsMap;
                 //ctrl.test(results[0].geometry.bounds);
             } else {
-                alert('Geocode was not successful for the following reason: ' + status);
+                console.log('Geocode was not successful for the following reason: ' + status);
+                ctrl.action.heading = "Geocode";
+                ctrl.action.body = 'Geocode was not successful for the following reason: ' + status;
+                $('#gmResult').modal('show');
 
             }
         });
@@ -236,6 +275,7 @@ export class Gmtest {
     }
 
     call(item: any) {
+        item=item.toUpperCase();
         for (var i = 0; i < this.trailers.length; i++) {
             var obj = this.trailers[i];
             if (obj.trailerID == item) {
@@ -243,6 +283,7 @@ export class Gmtest {
                 var pos = new google.maps.LatLng(obj.latitude, obj.longitude)
                 this.map.setCenter(pos);
                 this.map.setZoom(21);
+                this.map.setMapTypeId('satellite');
                 var obTemp = this;
                 //this.infowindow.setContent(this.createinfoWinContent(obj));
                 //this.infowindow.open(this.map, obTemp.markers[i]);
@@ -259,6 +300,13 @@ export class Gmtest {
             console.log(obTemp.index);
             google.maps.event.trigger(obTemp.markers[obTemp.index], 'mouseover');
         }, 500);
+    }
+
+    reset() {
+        this.map.setZoom(4);
+        var myCenter = new google.maps.LatLng(36.090240, -95.712891);
+        this.map.setCenter(myCenter);
+        this.map.setMapTypeId('roadmap');
     }
 
     getTrailerHistory() {
