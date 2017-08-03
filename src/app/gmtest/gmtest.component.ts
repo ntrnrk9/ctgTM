@@ -37,7 +37,7 @@ export class Gmtest {
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
-    action: any = { heading: "", body: "" };
+    action: any = { heading: "Geocode", body: "Please enter a valid location." };
 
     mapIcon(trailer: any) {
         if (trailer.trailerStatus == "AVL") {
@@ -217,7 +217,7 @@ export class Gmtest {
             ob.selectMarker(item);
             //console.log(ob.selectedMarker);
             //$('#historyModal').modal('show');
-            this.map.setZoom(10);
+            //this.map.setZoom(10);
             this.map.setCenter(marker.getPosition());
         });
     }
@@ -265,9 +265,9 @@ increment(item){
                 //ctrl.test(results[0].geometry.bounds);
             } else {
                 console.log('Geocode was not successful for the following reason: ' + status);
-                ctrl.action.heading = "Geocode";
-                ctrl.action.body = 'Geocode was not successful for the following reason: ' + status;
-                $('#gmResult').modal('show');
+                //ctrl.action.heading = "Geocode";
+                //ctrl.action.body = 'Please enter a valid location.';
+                //$('#gmResult').modal('show');
 
             }
         });

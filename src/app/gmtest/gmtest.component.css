@@ -113,3 +113,10 @@
 .modal-dialog{
     margin-top: 5%;
 }
+
+.pm-addBut {
+    border: none;
+    background: #d2232a;
+    color: white;
+    height: 30px;
+}
