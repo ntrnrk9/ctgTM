@@ -355,7 +355,7 @@
 
                                             <input class="filters dropdown-toggle" id="accFil" type="text"  style="width:90%" [(ngModel)]="accFil" (ngModelChange)="getAllCompanyForAddPool()"
                                                 (click)="resetccFil()" placeholder="{{selectedCmpLbl}}"/>
-                                            <button class="caretBut" data-toggle="dropdown"><i class="glyphicon glyphicon-search"></i></button>
+                                            <button class="caretBut" disabled data-toggle="dropdown"><i class="glyphicon glyphicon-search"></i></button>
 
                                             <div class="dropdown-menu no-padding mulSel-dd" role="menu" aria-labelledby="menu1" style="width:100%">
                                                 <!--<div class="input-group">
@@ -408,8 +408,8 @@
                                             <option class="lblLI" value="CVEN">Covenant</option>
                                             <option class="lblLI" value="SRT">SRT</option>
                                         </select>-->
-                                        <input *ngIf="selectedCompany.cmpBrand=='CVEN'" class="no-padding col-md-12 no-border" readonly placeholder='Covenant' type="text" />
-                                        <input *ngIf="selectedCompany.cmpBrand!='CVEN'" class="no-padding col-md-12 no-border" readonly placeholder={{selectedCompany.cmpBrand}} type="text"/>
+                                        <label *ngIf="selectedCompany.cmpBrand=='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">Covanent</label>
+                                        <label *ngIf="selectedCompany.cmpBrand!='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">{{selectedCompany.cmpBrand}}</label>
                                     </div>
                                 </div>
                                 <div class="row pu-row">
@@ -470,8 +470,8 @@
                                     </div>
                                     <div class="col-md-6 olPad">
                                         <label>Company</label><br>
-                                        <input *ngIf="poolToEdit.brand=='CVEN'" class="no-padding col-md-12 no-border" readonly placeholder='Covenant' type="text" />
-                                        <input *ngIf="poolToEdit.brand!='CVEN'" class="no-padding col-md-12 no-border" readonly placeholder={{poolToEdit.brand}} type="text"/>
+                                        <label *ngIf="poolToEdit.brand=='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">Covanent</label>
+                                        <label *ngIf="poolToEdit.brand!='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">{{poolToEdit.cmpBrand}}</label>
                                     </div>
                                 </div>
                                 <div class="row pu-row">
