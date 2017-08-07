@@ -40,25 +40,28 @@ export class HomePageComponent {
     disableTS = false;
     disableLoc = false;
     disableStatus = false;
+    ifFirst=true;
     gRowCount = 100;
     geocoder = new google.maps.Geocoder();
     zone:NgZone;
     action: any = { heading: "", body: "" };
-
-    allTrailers: any = [
-        { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-        { "trailerID": "25007", "trailerType": "UNK", "latitude": 36.11857, "longitude": -86.41091, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-        { "trailerID": "25010", "trailerType": "UNK", "latitude": 36.12121, "longitude": -86.41055, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-        { "trailerID": "35531", "trailerType": "DRY", "latitude": 40.6008, "longitude": -75.56779, "location": "South Whitehall Twp, Lehigh Co,PA", "landmark": "Cov Terminal,CM-130238,Allentown TERM", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-        { "trailerID": "37733", "trailerType": "DRY", "latitude": 28.42675, "longitude": -81.44616, "location": "Doctor Phillips,FL", "landmark": "Doctor Phillips", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" }
-    ];
-    allTraillerSubSet: any = [
-        { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-        { "trailerID": "25007", "trailerType": "UNK", "latitude": 36.11857, "longitude": -86.41091, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-        { "trailerID": "25010", "trailerType": "UNK", "latitude": 36.12121, "longitude": -86.41055, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-        { "trailerID": "35531", "trailerType": "DRY", "latitude": 40.6008, "longitude": -75.56779, "location": "South Whitehall Twp, Lehigh Co,PA", "landmark": "Cov Terminal,CM-130238,Allentown TERM", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-        { "trailerID": "37733", "trailerType": "DRY", "latitude": 28.42675, "longitude": -81.44616, "location": "Doctor Phillips,FL", "landmark": "Doctor Phillips", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" }
-    ];
+    mapConfig:any={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap',marker:-1};
+    //allTrailers: any=[];
+    // allTrailers: any = [
+    //     { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
+    //     { "trailerID": "25007", "trailerType": "UNK", "latitude": 36.11857, "longitude": -86.41091, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
+    //     { "trailerID": "25010", "trailerType": "UNK", "latitude": 36.12121, "longitude": -86.41055, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
+    //     { "trailerID": "35531", "trailerType": "DRY", "latitude": 40.6008, "longitude": -75.56779, "location": "South Whitehall Twp, Lehigh Co,PA", "landmark": "Cov Terminal,CM-130238,Allentown TERM", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
+    //     { "trailerID": "37733", "trailerType": "DRY", "latitude": 28.42675, "longitude": -81.44616, "location": "Doctor Phillips,FL", "landmark": "Doctor Phillips", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" }
+    // ];
+    allTraillerSubSet: any = [];
+    // allTraillerSubSet: any = [
+    //     { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
+    //     { "trailerID": "25007", "trailerType": "UNK", "latitude": 36.11857, "longitude": -86.41091, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
+    //     { "trailerID": "25010", "trailerType": "UNK", "latitude": 36.12121, "longitude": -86.41055, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
+    //     { "trailerID": "35531", "trailerType": "DRY", "latitude": 40.6008, "longitude": -75.56779, "location": "South Whitehall Twp, Lehigh Co,PA", "landmark": "Cov Terminal,CM-130238,Allentown TERM", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
+    //     { "trailerID": "37733", "trailerType": "DRY", "latitude": 28.42675, "longitude": -81.44616, "location": "Doctor Phillips,FL", "landmark": "Doctor Phillips", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" }
+    // ];
 
     ob = {
         column: [{ name: "Trailer ID", width: "8%" }, { name: "Trailer name", width: "7%" }, { name: "Trailer type", width: "7%" }, { name: "Location", width: "9%" },{ name: "Distance in miles", width: "8%" },
@@ -86,9 +89,9 @@ export class HomePageComponent {
             // User entered the name of a Place that was not suggested and
             // pressed the Enter key, or the Place Details request failed.
             //window.alert("No details available for input: '" + place.name + "'");
-            this.action.heading = "Geocode";
-            this.action.body = "No details available for input: '" + place.name + "'";
-            $('#result').modal('show');
+            //obj.action.heading = "Trailer search";
+            //obj.action.body = "Please enter a valid input!12";
+            //$('#result').modal('show');
             
             return;
           }
@@ -133,19 +136,21 @@ export class HomePageComponent {
     }
 
     toggleMG() {
+        console.log(JSON.stringify(this.mapConfig));
         this.mgToggleFlag = !this.mgToggleFlag;
         if (this.mgToggleFlag) {
-            this.searchID = "";
-            this.bylocation = "";
-            this.disableLoc = false;
+            //this.searchID = "";
+            //this.bylocation = "";
+            //this.disableLoc = false;
             //this.disableStatus = false;
-            this.disableTS = false;
+            //this.disableTS = false;
         } else {
-            this.searchID = "";
-            this.bylocation = "";
-            this.disableLoc = true;
-            this.disableStatus = false;
-            this.disableTS = true;
+            
+            //this.searchID = "";
+            //this.bylocation = "";
+            //this.disableLoc = true;
+            //this.disableStatus = false;
+            //this.disableTS = true;
             this.gRowCount=100;
         }
     }
@@ -153,32 +158,34 @@ export class HomePageComponent {
     toggleSearch(item: any) {
         if (item == 2) {
             this.searchID = "";
-            this.disableTS = true;
-            this.disableLoc = false;
-            this.disableStatus = true;
+            
             this.selectedTrStatus = { status: "Select a status", value: -1 };
+            //this.selectTrStatus(this.selectedTrStatus);
         } else if (item == 3) {
             this.searchID = "";
             this.bylocation = "";
-            this.disableLoc = true;
-            this.disableTS = true;
-            this.disableStatus = false;
+            
 
         }
         else {
             this.bylocation = "";
-            this.disableLoc = true;
-            this.disableTS = false;
-            this.disableStatus = true;
             this.selectedTrStatus = { status: "Select a status", value: -1 };
+            //this.selectTrStatus(this.selectedTrStatus);
         }
 
     }    
-     search() {
-        if (this.bylocation.length > 0)
+    search() {
+        if (this.bylocation.length > 0) {
             this.getvalue();
-        else
+        }else if (this.searchID.length > 0) {
             this.searchByID();
+        } else {
+            if (this.disableStatus) {
+                this.action.heading = "Trailer search";
+                this.action.body = 'Enter a valid input.';
+                $('#result').modal('show');
+            }
+        }
     }
 
     getLatLngByGeoCode(){
@@ -195,24 +202,32 @@ export class HomePageComponent {
                 var lat=results[0].geometry.location.lat();
                 var lng=results[0].geometry.location.lng();
                 combo="latitude="+lat+"&longitude="+lng;
+                ctrl.mapConfig.lat=lat;
+                ctrl.mapConfig.lng=lng;
+                ctrl.mapConfig.zoom=10;
                 ctrl.getTrailerStatusByFilter(combo);
             } else {
                 //alert('Geocode was not successful for the following reason: ' + status);
-                this.action.heading = "Geocode";
-                this.action.body = 'Geocode was not successful for the following reason: ' + status;
-                $('#result').modal('show');
-                console.log("no location to search");
+                $('#inValidRes').modal('show');
+                console.log("getLatLngByGeoCode:no location to search");
             }
         });
         
     }
+
+    
 
     getvalue() {
         var input = $('#ctgGeoCode').val();
         console.log(input);
         this.bylocation = input;
         if (this.bylocation != "") {
-            this.gmapJs.geocodeAddress(this.bylocation);
+            if (this.mgToggleFlag) {
+                this.gmapJs.geocodeAddress(this.bylocation);
+                this.getLatLngByGeoCode();
+            } else {
+                this.getLatLngByGeoCode();
+            }
         } else {
             //alert("Enter a location to search");
             this.action.heading = "Geocode";
@@ -226,9 +241,10 @@ export class HomePageComponent {
         var input = $('#ctgGeoCode').val();
         console.log(input);
         this.bylocation = input;
-        if(this.mgToggleFlag){
-        this.gmapJs.geocodeAddress(this.bylocation);
-        }else{
+        if (this.mgToggleFlag) {
+            this.gmapJs.geocodeAddress(this.bylocation);
+            this.getLatLngByGeoCode();
+        } else {
             this.getLatLngByGeoCode();
         }
     }
@@ -236,6 +252,7 @@ export class HomePageComponent {
         this.bylocation = "";
         this.searchID = "";
         this.selectedID = "";
+        this.mapConfig={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap'};
 
         this.getStateTrailersStatus();
         if (this.mgToggleFlag) {
@@ -326,16 +343,24 @@ export class HomePageComponent {
     searchByID() {
         this.selectedID = "";
         var index = -1;
-        this.searchID=this.searchID.toUpperCase();
+        this.searchID = this.searchID.toUpperCase();
+        this.allTraillerSubSet = [];
         if (this.searchID && this.searchID != "") {
-            if (this.mgToggleFlag) {
-                for (var i = 0; i < this.allTrailers.length; i++) {
-                    let item = this.allTrailers[i];
-                    if (item.trailerID == this.searchID) {
-                        this.selectedID = item.latitude + "," + item.longitude;
-                        index = i;
-                    }
+
+            for (var i = 0; i < this.allTrailers.length; i++) {
+                let item = this.allTrailers[i];
+                if (item.trailerID == this.searchID) {
+                    this.selectedID = item.latitude + "," + item.longitude;
+                    this.allTraillerSubSet.push(item);
+                    this.mapConfig.lat = item.latitude;
+                    this.mapConfig.lng = item.longitude;
+                    this.mapConfig.zoom = 19;
+                    this.mapConfig.mapType = 'satellite';
+                    this.mapConfig.marker=i;
+                    index = i;
                 }
+            }
+            if (this.mgToggleFlag) {
                 if (index != -1) {
                     // this.gmapJs.geocodeAddress(this.selectedID);}
                     //this.gmapJs.searchTrailer(index);
@@ -345,19 +370,19 @@ export class HomePageComponent {
                 else {
                     //alert("Trailer id not found");
                     this.action.heading = "Trailer search";
-                    this.action.body = 'Trailer id not found';
+                    this.action.body = 'Trailer not found!';
                     $('#result').modal('show');
                 }
-            } else {
-                this.allTraillerSubSet = [];
-                for (var i = 0; i < this.allTrailers.length; i++) {
-                    let item = this.allTrailers[i];
-                    if (item.trailerID == this.searchID) {
+            }
+            this.allTraillerSubSet = [];
+            for (var i = 0; i < this.allTrailers.length; i++) {
+                let item = this.allTrailers[i];
+                if (item.trailerID == this.searchID) {
 
-                        this.allTraillerSubSet.push(item);
-                    }
+                    this.allTraillerSubSet.push(item);
                 }
             }
+
         } else {
             //alert("Enter a trailer id");
             if (this.mgToggleFlag) {
@@ -410,6 +435,7 @@ export class HomePageComponent {
                             this.allTraillerSubSet.push(obj);
                     }
                     break;
+                    
             }
         }
     }
@@ -445,6 +471,10 @@ allTraillerSubSet1:any=[];
                         }
                     }
                     break;
+                    default:{
+
+                    }
+                    break;
             }
         }
         console.log("pln "+plm+" avl "+avl+" com "+com+" total "+this.allTrailers.length);
@@ -452,6 +482,103 @@ allTraillerSubSet1:any=[];
     
 
     }
+
+    allTrailers=[{
+        "trailerID": "42531",
+        "trailerType": "DRY",
+        "trailerName": "HYUND",
+        "latitude": 34.0449685,
+        "longitude": -117.3770988,
+        "location": "Bloomington,CA",
+        "landmark": "FEDEX Ground (FEDBLO) Bloomington, CA",
+        "trailerStatus": "OUT",
+        "idleDuration": 0.0,
+        "lastMovementDate": "12/24/2016",
+        "dotDate": "12/24/2016",
+        "iotInfo": "INACTIVE",
+        "compliance": "",
+        "roadWorthiness": ""
+    },
+    {
+        "trailerID": "42532",
+        "trailerType": "DRY",
+        "trailerName": "HYUND",
+        "latitude": 39.7409019470215,
+        "longitude": -86.2154922485352,
+        "location": "Indianapolis city (balance),IN",
+        "landmark": "Shop,McGlothlin & Son (MCGIND01) Indianapolis",
+        "trailerStatus": "OUT",
+        "idleDuration": 0.0,
+        "lastMovementDate": "06/10/2016",
+        "dotDate": "06/10/2016",
+        "iotInfo": "INACTIVE",
+        "compliance": "",
+        "roadWorthiness": ""
+    },
+    {
+        "trailerID": "42533",
+        "trailerType": "DRY",
+        "trailerName": "HYUND",
+        "latitude": 34.0622706,
+        "longitude": -117.5057201,
+        "location": "Fontana,CA",
+        "landmark": "DO NOT REMOVE - North American Trailer Fontana - Trade Trailer location (NORFON)",
+        "trailerStatus": "PLN",
+        "idleDuration": 0.0,
+        "lastMovementDate": "06/23/2017",
+        "dotDate": "06/23/2017",
+        "iotInfo": "ACTIVE",
+        "compliance": "",
+        "roadWorthiness": ""
+    },
+    {
+        "trailerID": "42534",
+        "trailerType": "DRY",
+        "trailerName": "HYUND",
+        "latitude": 35.0055011,
+        "longitude": -85.391794,
+        "location": "Chattanooga,TN",
+        "landmark": "Amazon Hill (BUFFET02) Chatt, TN TERM",
+        "trailerStatus": "OUT",
+        "idleDuration": 0.0,
+        "lastMovementDate": "03/07/2016",
+        "dotDate": "03/07/2016",
+        "iotInfo": "INACTIVE",
+        "compliance": "",
+        "roadWorthiness": ""
+    },
+    {
+        "trailerID": "42534",
+        "trailerType": "UNK",
+        "trailerName": "",
+        "latitude": 35.0055011,
+        "longitude": -85.391794,
+        "location": "Chattanooga,TN",
+        "landmark": "Amazon Hill (BUFFET02) Chatt, TN TERM",
+        "trailerStatus": "AVL",
+        "idleDuration": 0.0,
+        "lastMovementDate": "03/07/2016",
+        "dotDate": "03/07/2016",
+        "iotInfo": "INACTIVE",
+        "compliance": "",
+        "roadWorthiness": ""
+    },
+    {
+        "trailerID": "42536",
+        "trailerType": "DRY",
+        "trailerName": "HYUND",
+        "latitude": 35.0014228820801,
+        "longitude": -85.3906784057617,
+        "location": "Chattanooga,TN",
+        "landmark": "Chattanooga Body Shop TERM",
+        "trailerStatus": "OUT",
+        "idleDuration": 0.0,
+        "lastMovementDate": "06/15/2016",
+        "dotDate": "06/15/2016",
+        "iotInfo": "INACTIVE",
+        "compliance": "",
+        "roadWorthiness": ""
+    }];
 }
 
 // This code copy to app.module.ts

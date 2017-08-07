@@ -42,7 +42,7 @@
                             </div>
                             <form>
                                 <table class="ddTable">
-                                    <tbody class="ddtbody">
+                                    <tbody *ngIf="allCcRecev" class="ddtbody">
                                         <tr *ngFor="let i=index;let item of allCC|filterC:ccFil:'cmpName'" class="pointer">
                                             <td style="vertical-align:top"><input class="pull-left inpLI" type="checkbox" id="cc_{{i}}" name="cc_{{i}}"
                                                     value="" [(ngModel)]="item.isSelected" (change)="ccCheckEvent($event.target.checked,item.cmpName)"
@@ -51,6 +51,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                                <div *ngIf="!allCcRecev" class="loader" style="border:none;"><img style="width: 34px;height: 34px;" src="../../assets/images/loader.gif" /></div>
                             </form>
                             <div class="div-center">
                                 <input type="button" class="pm-addBut pm-whiteBut pull-left" data-toggle="dropdown" value="Cancel" />
@@ -408,7 +409,7 @@
                                             <option class="lblLI" value="CVEN">Covenant</option>
                                             <option class="lblLI" value="SRT">SRT</option>
                                         </select>-->
-                                        <label *ngIf="selectedCompany.cmpBrand=='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">Covanent</label>
+                                        <label *ngIf="selectedCompany.cmpBrand=='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">Covenant</label>
                                         <label *ngIf="selectedCompany.cmpBrand!='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">{{selectedCompany.cmpBrand}}</label>
                                     </div>
                                 </div>
@@ -470,7 +471,7 @@
                                     </div>
                                     <div class="col-md-6 olPad">
                                         <label>Company</label><br>
-                                        <label *ngIf="poolToEdit.brand=='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">Covanent</label>
+                                        <label *ngIf="poolToEdit.brand=='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">Covenant</label>
                                         <label *ngIf="poolToEdit.brand!='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">{{poolToEdit.cmpBrand}}</label>
                                     </div>
                                 </div>

@@ -36,6 +36,7 @@ export class Pool1MangPageComponent {
     poolForAddRecieved=false;
     isValidFields: any = {};
     poolRecieved = false;
+    allCcRecev=false;
     action: any = { heading: "", body: "" };
     //[name: string]: any;
 
@@ -48,7 +49,7 @@ export class Pool1MangPageComponent {
     selectedVarience: any = { lable: "Pools having variance", value: 1 };
     varianceList: any = [{ lable: "Pools having variance", value: 1 }, { lable: "Pools having no variance", value: 0 }, { lable: "All pools", value: -1 }]
     selectedSR: any = { lable: "Shipper", value: 0 };
-    sRList: any = [{ lable: "Shipper", value: 0 }, { lable: "Receiver", value: 1 }, { lable: "Both", value: 2 }]
+    sRList: any = [{ lable: "Shipper", value: 0 }, { lable: "Receiver", value: 1 }]
     selectedBrand: any = { lable: "Covenant", value: "CVEN" };
     brandList: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "Both", value: "ALL" }];
     brandListForAdd: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }]
@@ -622,11 +623,12 @@ export class Pool1MangPageComponent {
 
     private getAllCompany() {
         //alert("hi");
+        this.allCcRecev=false;
         let url = config.baseUrl+"/CommonService/api/CompanyForFilter"
         this.http.get(url).map(res => res.json())
             .subscribe(
-            (data) => { console.log("getAllCompany data recieved"); this.allCC1 = data; this.allCC = JSON.parse(JSON.stringify(this.allCC1)); }, //For Success Response
-            (err) => { console.log("getAllCompany error recieved"); } //For Error Response
+            (data) => { console.log("getAllCompany data recieved"); this.allCC1 = data; this.allCC = JSON.parse(JSON.stringify(this.allCC1));this.allCcRecev=true; }, //For Success Response
+            (err) => { console.log("getAllCompany error recieved"); this.allCcRecev=true;} //For Error Response
             );
         this.insertSelected(this.allCC);
         this.insertSelected(this.allCC1);

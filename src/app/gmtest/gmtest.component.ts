@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import * as config from '../configs/configs';
@@ -17,15 +17,16 @@ export class Gmtest {
     private search = '';
     @Input() item: any;
     @Input() loc: any;
+    @Input() config: any;
     @Input() trailers: any = [];
 
-    @Output() itemChange = new EventEmitter<any>();
+    @Output() configChange = new EventEmitter<any>();
     geocoder: any;
     markers: any;
     map: any;
     infowindow: any;
-    index: any;
-    historyRecv:any=false;
+    index: any=-1;
+    historyRecv: any = false;
     markerList: any = {
         blueMark: '../../assets/images/markers/trailer-blue.png',
         redMark: '../../assets/images/markers/trailer-red.png',
@@ -50,7 +51,8 @@ export class Gmtest {
     }
 
     emit() {
-        this.itemChange.emit(this.item);
+        this.configChange.emit(this.config);
+        console.log(this.config);
     }
 
     ngOnChanges(changes: any) {
@@ -61,8 +63,17 @@ export class Gmtest {
         }
 
     }
-    constructor(private http: Http) {}
+    constructor(private http: Http) { }
 
+    ngOnDestroy() {
+        console.log("gmTest componant destroyed");
+        this.config.lat = this.map.getCenter().lat();
+        this.config.lng = this.map.getCenter().lng();
+        this.config.zoom = this.map.getZoom();
+        console.log(JSON.stringify(this.config));
+        this.emit();
+
+    }
     ngOnInit() {
         var styles = [
             {
@@ -70,7 +81,7 @@ export class Gmtest {
                 "elementType": "geometry.stroke",
                 "stylers": [
                     { "visibility": "on" }
-                   
+
                 ]
             }, {
                 "featureType": "road",
@@ -94,9 +105,9 @@ export class Gmtest {
         this.geocoder = new google.maps.Geocoder();
         this.markers = [];
         var mapProp = {
-            center: new google.maps.LatLng(36.090240, -95.712891),
-            zoom: 4,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            center: new google.maps.LatLng(this.config.lat, this.config.lng),
+            zoom: this.config.zoom,
+            mapTypeId: this.config.mapType,
             mapTypeControl: true,
             panControl: true,
             zoomControl: true,
@@ -106,12 +117,14 @@ export class Gmtest {
             overviewMapControl: true,
             rotateControl: true,
             navigationControl: true,
-            styles:styles,
+            styles: styles,
         };
         this.map = new google.maps.Map(document.getElementById("gmMap"), mapProp);
         this.infowindow = new google.maps.InfoWindow({
             content: ""
         });
+
+        this.restrictZoom();
 
         // var input = document.getElementById('ctgGeoCode');
         // var autoCompOptions = {
@@ -122,6 +135,9 @@ export class Gmtest {
         for (var i = 0; i < this.trailers.length; i++) {
             var tr = this.trailers[i];
             var myLatLng = new google.maps.LatLng(tr.latitude, tr.longitude);
+            if (tr.trailerID == this.config.marker) {
+                this.index = i;
+            }
             var marker = new google.maps.Marker(
                 {
                     position: myLatLng,
@@ -163,11 +179,28 @@ export class Gmtest {
                 url: "../../assets/images/markers/running5.png",
                 width: 90,
                 textColor: "white"
-            }]
+            }],
+            maxZoom:18,
+            //minimumClusterSize:5
         }
+        var obj=this;
 
         var markerCluster = new MarkerClusterer(this.map, this.markers,
             mcOptions);
+        if(this.config.marker>0){
+        setTimeout(function () {
+            google.maps.event.trigger(obj.markers[obj.config.marker], 'mouseover');
+        }, 700);
+        }
+        
+
+    }
+
+    restrictZoom() {
+        var obj = this;
+        google.maps.event.addListener(this.map, 'zoom_changed', function () {
+            if (obj.map.getZoom() < 4) obj.map.setZoom(4);
+        });
     }
 
     createinfoWinContent(tr: any) {
@@ -185,7 +218,7 @@ export class Gmtest {
         var content = '<div class="infowindow" style="width:200px;padding:0px;height:170px;overflow:hidden;">' +
             '<div class="row header" style="border-bottom: 2px solid gray;padding:0px 0px 0px 30px">' +
             '<div class="row head1" style="font-weight:bold;font-size:14px;color:black">Trailer #: ' + tr.trailerID + '</div>' +
-            '<div class="row head2" style="font-weight:bold;font-size:13px;color:red">'+tr.trailerName+'</div>' +
+            '<div class="row head2" style="font-weight:bold;font-size:13px;color:red">' + tr.trailerName + '</div>' +
             '<div class="row head3" style="font-weight:bold;font-size:12px;color:black">' + tr.trailerType + '</div>' +
             '</div>' +
             '<div class="row title" style="border-bottom:1px solid silver;height:35px;padding:0px 30px 0px 15px">' +
@@ -232,9 +265,9 @@ export class Gmtest {
 
         //this.increment(item);
     }
-increment(item){
-    alert(this.map.getZoom());
-}
+    increment(item) {
+        alert(this.map.getZoom());
+    }
     geocodeAddress(addr: any) {
         //this.state = addr;
         //alert(this.state);
@@ -245,7 +278,7 @@ increment(item){
         //var bound: any = this.boundList;
 
 
-        geocoder.geocode({ 'address': address }, function (results: any, status: any) {
+        geocoder.geocode({ 'address': address}, function (results: any, status: any) {
             if (status === 'OK') {
                 var markerBounds = new google.maps.LatLngBounds();
                 resultsMap.setCenter(results[0].geometry.location);
@@ -274,32 +307,34 @@ increment(item){
 
     }
 
+    mapCenter(lat: any, lng: any, zoom: any) {
+        this.config.lat = lat;
+        this.config.lng = lng;
+        this.config.zoom = zoom;
+        this.emit();
+    }
     call(item: any) {
-        item=item.toUpperCase();
+        item = item.toUpperCase();
         for (var i = 0; i < this.trailers.length; i++) {
             var obj = this.trailers[i];
             if (obj.trailerID == item) {
                 console.log("id found");
                 var pos = new google.maps.LatLng(obj.latitude, obj.longitude)
                 this.map.setCenter(pos);
-                this.map.setZoom(21);
+                this.map.setZoom(19);
                 this.map.setMapTypeId('satellite');
                 var obTemp = this;
-                //this.infowindow.setContent(this.createinfoWinContent(obj));
-                //this.infowindow.open(this.map, obTemp.markers[i]);
                 this.index = i;
+                this.config.marker=i;
+                //this.markers[this.index].setAnimation(google.maps.Animation.BOUNCE);
                 console.log(this.markers[this.index]);
                 break;
-                //     setTimeout(() => {
-                //      google.maps.event.trigger(obTemp.markers[i], 'mouseover');
-                //  }, 50);
-                //google.maps.event.trigger(this.markers[i], 'mouseover');
             }
         }
         setTimeout(function () {
             console.log(obTemp.index);
             google.maps.event.trigger(obTemp.markers[obTemp.index], 'mouseover');
-        }, 500);
+        }, 700);
     }
 
     reset() {

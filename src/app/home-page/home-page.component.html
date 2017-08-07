@@ -8,23 +8,23 @@
 
 
     <div class="col-md-12 page-body">
-        <div class="filter-container" (keyup.enter)="search()">
+        <div class="filter-container" >
             <div style="padding:5px;" class="pull-left">
-                <input [ngClass]="{'disabled': disableTS}" class="ctg-textbox pull-left" type="text" placeholder="Trailer ID" [(ngModel)]="searchID"
-                    (ngModelChange)="toggleSearch(1)" (click)="disableTS=false" />
+                <span (keyup.enter)="searchByID()"><input  class="ctg-textbox pull-left" type="text" placeholder="Trailer ID" [(ngModel)]="searchID"
+                    (ngModelChange)="toggleSearch(1)"  /></span>
                 <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
                 <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
-                <input [ngClass]="{'disabled': disableLoc}" class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode"
+                <input  class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode"
                     (ngModelChange)="toggleSearch(2)" [(ngModel)]="bylocation" style="margin-left:10px;width:230px"
-                    value="bylocation" (click)="disableLoc=false" />
+                    value="bylocation" />
                 <!--<button class="pull-left" type="button" (click)="getvalue();">code</button>-->
 
 
 
-                <div [ngClass]="{'disabled': disableLoc}" (click)="disableLoc=false" class="dropdown pull-left pm-select-cont" style="margin-left:10px;"
+                <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;"
                     *ngIf="!mgToggleFlag">
-                    <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedMiles.lable}} (click)="disableLoc=false"
-                    />
+                    <input class="filters dropdown-toggle"  type="button" data-toggle="dropdown" value={{selectedMiles.lable}} 
+                    [disabled]="bylocation.length ==0 "/>
                     <span class="caret"></span>
                     <div class="dropdown-menu no-padding sel-dd">
 
@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <span class="pull-left" style="margin-left:15px;padding-top:5px" *ngIf="!mgToggleFlag">Or</span>
-                <div [ngClass]="{'disabled': disableStatus}" (ngModelChange)="toggleSearch(3)" (click)="disableStatus=false" class="dropdown pull-left pm-select-cont"
+                <div (ngModelChange)="toggleSearch(3)"  class="dropdown pull-left pm-select-cont"
                     style="margin-left:10px;" *ngIf="!mgToggleFlag">
                     <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedTrStatus.status}} />
                     <span class="caret"></span>
@@ -59,7 +59,7 @@
             <div  *ngIf="mgToggleFlag">
                 <!--{{selectedMarker.trailerID}}-->
                 <div [ngClass]="{'transparent': !trailerStatusResp}">
-                <gmtest   [trailers]="allTrailers" [(item)]="searchID" [(loc)]="bylocation"></gmtest>
+                <gmtest   [trailers]="allTrailers" [(item)]="searchID" [(loc)]="location" [(config)]="mapConfig"></gmtest>
                 </div>
                 <!--<gmaptest *ngIf="trailerStatusResp" [trailers]="allTrailers" [(item)]="item" (itemChange)="showHistory(item)" ></gmaptest>-->
                 <!--<gmapjs *ngIf="trailerStatusResp" #f [state]="selectedState" [trailerList]="allTrailers" [(selectedMarker)]="selectedMarker"
@@ -241,6 +241,21 @@
             </div>
         </div>
     </div>
-
+<div class="modal fade" id="inValidRes" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header page-heading">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Trailer search</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Please enter a valid input!</p>
+                </div>
+                <div class="modal-footer page-footer">
+                    <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
