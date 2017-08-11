@@ -419,6 +419,16 @@
                                         <label class="normalfnt"><input type="checkbox"  style="margin-right:5px;" [(ngModel)]="poolToAdd.isShipper" />Shipper</label>
                                         <label class="normalfnt" style="margin-left:15px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isReceiver" />Receiver</label>
                                     </div>
+                                    <!-- <div class="col-md-6 olPad" [ngClass]="{'redAlert':isValidFields.isValidTT }">
+                                        <label>Trailer type <span class="first"> *</span></label><br>
+                                        <label class="normalfnt"><input type="checkbox"  style="margin-right:5px;" [(ngModel)]="poolToAdd.isReef" />Reefer</label>
+                                        <label class="normalfnt" style="margin-left:15px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isDryvan" />Dryvan</label>
+                                    </div> -->
+                                    <div class="col-md-6 olPad" [ngClass]="{'redAlert':isValidFields.isValidTT }">
+                                        <label>Trailer Type <span class="first"> *</span></label><br>
+                                        <label class="normalfnt"><input type="checkbox"  style="margin-right:5px;" [(ngModel)]="poolToAdd.isReef" />Reefer</label>
+                                        <label class="normalfnt" style="margin-left:15px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isDryvan" />Dry van</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -480,6 +490,11 @@
                                         <label>Shipper\Receiver <span class="first"> *</span></label><br>
                                         <label class="normalfnt"><input type="checkbox"  style="margin-right:5px;" [(ngModel)]="poolToEdit.isShip" (change)="checkSRFun($event.target.checked)"/>Shipper</label>
                                         <label class="normalfnt" style="margin-left:15px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isReciev" (click)="checkSRFun($event.target.checked)" />Receiver</label>
+                                    </div>
+                                    <div class="col-md-6 olPad" [ngClass]="{'redAlert':isValidFields.isValidTT }">
+                                        <label>Trailer Type <span class="first"> *</span></label><br>
+                                        <label class="normalfnt"><input type="checkbox"  style="margin-right:5px;" [(ngModel)]="poolToEdit.isReef" (change)="checkTTFun($event.target.checked)"/>Reefer</label>
+                                        <label class="normalfnt" style="margin-left:15px;"><input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isDryvan" (click)="checkTTFun($event.target.checked)" />Dry van</label>
                                     </div>
                                 </div>
                             </div>

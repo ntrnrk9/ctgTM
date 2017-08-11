@@ -746,6 +746,8 @@ export class Pool1MangPageComponent {
         this.poolToEdit = JSON.parse(JSON.stringify(this.restoreEdit));
         this.poolToEdit['isShip'] = true;
         this.poolToEdit['isReciev'] = true;
+        this.poolToEdit['isReef'] = false;
+        this.poolToEdit['isDryvan'] = false;
 
         if (this.poolToEdit.isReceiver == "Y") {
             this.poolToEdit.isReciev = true;
@@ -756,6 +758,15 @@ export class Pool1MangPageComponent {
             this.poolToEdit.isShip = true;
         } else {
             this.poolToEdit.isShip = false;
+        }
+
+        if (this.poolToEdit.trailerType == 2) {
+            this.poolToEdit.isReef = true;
+        } else if(this.poolToEdit.trailerType == 1){
+            this.poolToEdit.isDryvan =true ;
+        } else if(this.poolToEdit.trailerType == 3){
+            this.poolToEdit.isDryvan =true ;
+            this.poolToEdit.isReef = true;
         }
         this.selectedPlanner = this.poolToEdit.planner;
         this.selectedCsr = this.poolToEdit.csr;
@@ -770,6 +781,13 @@ export class Pool1MangPageComponent {
         this.isValidFields.isValidReqPool = false;
         this.isValidFields.isValidSR = false;
         
+        if ((this.poolToEdit.isDryvan || this.poolToEdit.isReef)) {
+            this.isValidFields.isValidTT = false;
+        }else{
+            this.fieldvalidation = false;
+            this.isValidFields.isValidTT = true;
+        }
+
         if ((this.poolToEdit.isShip || this.poolToEdit.isReciev)) {
             this.isValidFields.isValidSR = false;
         }else{
@@ -802,8 +820,18 @@ export class Pool1MangPageComponent {
                 this.poolToEdit.isShipper = "N";
             }
 
+            if (this.poolToEdit.isDryvan && this.poolToEdit.isReef) {
+                this.poolToEdit.trailerType = 3;
+            } else if(this.poolToEdit.isDryvan) {
+                this.poolToEdit.trailerType = "1";
+            } else if(this.poolToEdit.isReef) {
+                this.poolToEdit.trailerType = "2";
+            }
+
             delete this.poolToEdit['isShip'];
             delete this.poolToEdit['isReciev'];
+            delete this.poolToEdit['isReef'];
+            delete this.poolToEdit['isDryvan'];
 
             let headers = new Headers({ 'Content-Type': 'application/json;', 'Accept': 'application/json' });
             let options = new RequestOptions({ headers: headers });
@@ -924,7 +952,8 @@ export class Pool1MangPageComponent {
                 reqPoolCount: 0,
                 stateCode: "",
                 stateName: "",
-                variance: 0
+                variance: 0,
+                trailerType:0
             };
 
             data.cmpID = this.selectedCompany.cmpID;
@@ -937,6 +966,7 @@ export class Pool1MangPageComponent {
             data.stateName = this.selectedCompany.cmpState;
             data.stateCode = this.selectedCompany.cmpState;
             data.brand = this.selectedCompany.cmpBrand;
+            
             if (this.poolToAdd.isReceiver) {
                 data.isReceiver = "Y";
             } else {
@@ -946,6 +976,14 @@ export class Pool1MangPageComponent {
                 data.isShipper = "Y";
             } else {
                 data.isShipper = "N";
+            }
+
+            if (this.poolToAdd.isReef && this.poolToAdd.isDryvan) {
+                data.trailerType = 3;
+            } else if(this.poolToAdd.isReef){
+                data.trailerType = 2;
+            }else if(this.poolToAdd.isDryvan){
+                data.trailerType = 1;
             }
 
             console.log("add: " + this.selectedState);
@@ -959,7 +997,7 @@ export class Pool1MangPageComponent {
                 .subscribe(
                 (resp) => {
                     console.log("insertPool success recieved" + JSON.stringify(resp));
-                    if (resp[0].status == "success") {
+                    if (resp[0].status == 1) {
                         this.action.heading = "Add Pool";
                         this.action.body = "Pool added successfully!";
                         $('#result').modal('show');
@@ -1041,6 +1079,13 @@ export class Pool1MangPageComponent {
         } else {
             this.fieldvalidation = true;
             this.isValidFields["isValidSR"] = true;
+        }
+
+        if (this.poolToAdd.isReef || this.poolToAdd.isDryvan) {
+            this.isValidFields["isValidTT"] = false;
+        } else {
+            this.fieldvalidation = true;
+            this.isValidFields["isValidTT"] = true;
         }
 
         console.log(Number(this.reqPoolQat));
