@@ -586,7 +586,7 @@ export class Pool1MangPageComponent {
         }];
 
     ob = {
-        column: [{ name: "State", width: "4%" }, { name: "City", width: "10%" }, { name: "TMW", width: "10%" }, { name: "Customer", width: "20%" }, { name: "CSR", width: "10%" },
+        column: [{ name: "Location", width: "8%" }, { name: "Trailer type", width: "11%" }, { name: "TMW", width: "5%" }, { name: "Customer", width: "20%" }, { name: "CSR", width: "10%" },
         { name: "Planner", width: "10%" }, { name: "Req Pool", width: "8%" }, { name: "Current", width: "8%" }, { name: "Variance", width: "8%" }, { name: "Action", width: "12%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
@@ -856,7 +856,7 @@ export class Pool1MangPageComponent {
                 (err) => {
                     console.log("updatePool error recieved");
                     this.action.heading = "Update Pool";
-                    this.action.body = "Error is updating pool.";
+                    this.action.body = "Error in updating pool.";
                     $('#result').modal('show');
                 } //For Error Response
                 );
@@ -1008,14 +1008,14 @@ export class Pool1MangPageComponent {
                     else {
                         console.log("insertPool error recieved");
                         this.action.heading = "Add Pool";
-                        this.action.body = "Error is adding pool.";
+                        this.action.body = "Error in adding pool.";
                         $('#result').modal('show');
                     }
                 }, //For Success Response
                 (err) => {
                     console.log("insertPool error recieved");
                     this.action.heading = "Add Pool";
-                    this.action.body = "Error is adding pool.";
+                    this.action.body = "Error in adding pool.";
                     $('#result').modal('show');
                 } //For Error Response
                 );
@@ -1118,7 +1118,7 @@ export class Pool1MangPageComponent {
             .subscribe(
             (resp) => {
 
-                if (resp[0].status == "success") {
+                if (resp[0].status == 1) {
                     console.log("deletePool success recieved");
                     this.action.heading = "Delete Pool";
                     this.action.body = "Pool deleted successfully!";
@@ -1128,7 +1128,7 @@ export class Pool1MangPageComponent {
                 else {
                     console.log("deletePool error recieved");
                     this.action.heading = "Delete Pool";
-                    this.action.body = "Error is deleting pool.";
+                    this.action.body = "Error in deleting pool.";
                     $('#result').modal('show');
                 }
 
@@ -1136,7 +1136,7 @@ export class Pool1MangPageComponent {
             (err) => {
                 console.log("deletePool error recieved");
                 this.action.heading = "Delete Pool";
-                this.action.body = "Error is deleting pool.";
+                this.action.body = "Error in deleting pool.";
                 $('#result').modal('show');
             } //For Error Response
             );

@@ -290,13 +290,15 @@
                         <!--<ng-container *ngFor="let i=index;let item of data | paginate: { itemsPerPage: 100, currentPage: p }">-->
                         <ng-container *ngFor="let i=index;let item of data">
                             <tr class="full">
-                                <td style="text-align:center;width:4%">
-                                    <span>{{item.stateCode}}</span>
+                                <td style="text-align:center;width:8%">
+                                    <span>{{item.cityName}},{{item.stateCode}}</span>
                                 </td>
-                                <td style="text-align:center;width:10%">
-                                    <span>{{item.cityName}}</span>
+                                <td style="text-align:center;width:11%">
+                                    <span *ngIf="item.trailerType==1">Dry van</span>
+                                    <span *ngIf="item.trailerType==2">Reefer</span>
+                                    <span *ngIf="item.trailerType==3">Dry van, Reefer</span>
                                 </td>
-                                <td style="text-align:center;width:10%">
+                                <td style="text-align:center;width:5%">
                                     <span>{{item.cmpID}}</span>
                                 </td>
                                 <td style="text-align:center;width:20%">
