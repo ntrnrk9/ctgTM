@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input } from '@angular/core';
 
 @Component({
     selector: 'gmaps',
@@ -7,10 +7,13 @@ import { Component, OnInit } from '@angular/core';
     moduleId: module.id
 })
 export class GmapsComponent {
+
+    @Input() config:any;
     private name = 'GmapsComponent';
     title: string = 'My first angular2-google-maps project';
     lat: number = 36.090240;
     lng: number = -95.712891;
+    icon="../../assets/images/markers/h-map-pointer.png"
     US_CENTER_LAT_LNG = { lat: 36.090240, lng: -95.712891 };
     infoWindowOpened: any = null;
     fullscreenControl: Boolean = true;
@@ -86,6 +89,20 @@ export class GmapsComponent {
     constructor() { }
 
     ngOnInit() {
+        if(this.config.length>0){
+            this.lat=this.config[0].latitude;
+            this.lng=this.config[0].longitude;
+            this.zoom=10;
+        }
+    }
+
+    ngOnChanges(changes: any) {
+        if(this.config.length>0){
+            this.lat=this.config[0].latitude;
+            this.lng=this.config[0].longitude;
+            this.zoom=10;
+        }
+
     }
 
 }
