@@ -103,3 +103,16 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     height: 0px;
 }
 /*remove google copywrites to be displayed on gmap --end*/
+
+.bordered{
+border:1px solid silver;
+}
+
+.adp, .mydp, .mydp{
+    border:none !important;
+}
+
+.adp, .mydp, .mydp, .selbtngroup, .selection {
+    height:30px !important;
+    border-radius: none !important;
+}

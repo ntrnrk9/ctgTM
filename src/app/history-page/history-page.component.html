@@ -1,0 +1,99 @@
+<div class="row page-container" style="margin:0px">
+
+    <div class="col-md-12 page-heading" style="position:relative">
+        <b>History | Trailer: {{config.trailer.trailerID}}</b> | {{config.trailer.trailerName}} | {{config.trailer.trailerType}}
+        <button type="button" (click)="close()" class="pull-right toggleBut close">&times;</button>
+    </div><br />
+    <div class="col-md-12 page-body">
+        <div class="filter-container" >
+            <div style="padding:5px;" class="pull-left">
+                <span class="pull-left" style="margin-left:15px;padding-top:5px">Date range: </span>
+                <span class="pull-left" style="margin-left:15px;padding-top:5px">From</span>
+                <div class="pull-left adp">
+                    <my-date-picker name="endDate" [options]="myDatePickerOptions" [(ngModel)]="endDate" required></my-date-picker>
+                </div>
+                <span class="pull-left" style="margin-left:15px;padding-top:5px"> To </span>
+                <div  class="pull-left adp">
+                    <my-date-picker name="fromDate" [options]="myDatePickerOptions" [(ngModel)]="fromDate" required></my-date-picker>
+                </div>
+                <button class="pm-addBut" style="margin-left:15px;" (click)="filter()">Search</button>
+            </div>
+            <button *ngIf="mgToggleFlag" class="pull-right mgToggleBut" type="button" value="encode" (click)="toggleMG()" data-toggle="tooltip" title="Grid view"><img src="../../assets/images/markers/grid-view.png" /></button>
+            <button *ngIf="!mgToggleFlag" class="pull-right mgToggleBut" type="button" value="encode" (click)="toggleMG()" data-toggle="tooltip" title="Map view"><img src="../../assets/images/markers/map-view.png" /></button>
+        </div>
+        <div style="padding-top:15px;">
+            <div *ngIf="mgToggleFlag">
+                <div class="col-md-10 no-padding">
+                    <!-- <gmaptest [trailers]="allTrailers" [(item)]="searchID"></gmaptest> -->
+                    <gmaps [config]="pingList"></gmaps>
+                </div>
+                <div class="col-md-2 no-padding">
+                    <ul class="bordered" style="height: 500px;margin-left: 20px;overflow-y: scroll;padding:6px">
+                        <ng-container *ngFor="let con of config.dataSet">
+                            <li style="padding:3px;text-align:left;height:30px;border-bottom: 1px solid silver;" (click)="plotMap(con)"><img style="padding-right:5px" src="../../assets/images/markers/h-map-pointer.png" />{{con.eventDate}}</li>
+                            <!-- <li *ngIf="filterByDate(con.eventDate)" style="padding:3px;text-align:left;height:30px;border-bottom: 1px solid silver;" (click)="plotMap(con)"><img style="padding-right:5px" src="../../assets/images/markers/h-map-pointer.png" />{{con.eventDate}}</li> -->
+                        </ng-container>
+
+                        <li *ngIf="config.dataSet.length==0" style="text-align:left;height:25px;" (click)="plotMap(con)">No data found</li>
+
+                    </ul>
+                </div>
+                <!-- <div  *ngIf="!trailerStatusResp" class="loader" ><img src="../../assets/images/loader.gif" /></div> -->
+            </div>
+
+            <div *ngIf="!mgToggleFlag">
+                <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
+                    <thead style="font-size: 12px">
+                        <tr bgcolor="#f7f8fc" class="app-table-tr full">
+                            <ng-container *ngFor="let con of ob.column">
+                                <th [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+                            </ng-container>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="config.thResp && config.allTraillerSubSet.length>0" id="tgBody"  style="font-size: 12px;border: 1px solid silver;border-top: none;">
+                        <ng-container *ngFor="let i=index;let item of config.allTraillerSubSet">
+                        <!-- <ng-container *ngIf="filterByDate(item.eDate)"> -->
+                            <tr class="full" >
+                                
+                                <td style="text-align:center;width:12%">
+                                    <span>{{item.eDate}}</span>
+                                </td>
+                                <td style="text-align:center;width:12%">
+                                    <span>{{item.latitude}}</span>
+                                </td>
+                                <td style="text-align:center;width:12%">
+                                    <span>{{item.longitude}}</span>
+                                </td>
+                                <td style="text-align:center;width:12%">
+                                    <span>{{item.location}}</span>
+                                </td>
+                                <td style="text-align:center;width:12%">
+                                    <span>{{item.landmark}}</span>
+                                </td>
+                                <td style="text-align:center;width:12%">
+                                    <span>{{item.idleDuration}}</span>
+                                </td>
+                                <td style="text-align:center;width:12%">
+                                    <span>{{item.moving}}</span>
+                                </td>
+
+                                <td style="text-align:center;width:16%">
+                                    <span>{{item.movingStartDate}}</span>
+                                </td>
+                                
+                            </tr>
+                        <!-- </ng-container> -->
+                        </ng-container>
+                    </tbody>
+                </table>
+                <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="config.thResp && config.allTraillerSubSet.length==0 ">No data found</div>
+                <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTraillerSubSet.length}} record(s) found</div>-->
+                <div *ngIf="config.thResp" style="padding-top: 10px;">{{config.allTraillerSubSet.length}} record(s) found</div>
+                <div *ngIf="!config.thResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+

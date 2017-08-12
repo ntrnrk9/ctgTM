@@ -30,9 +30,11 @@ import { Gmtest } from './gmtest/gmtest.component';
 
 import { FilterCPipe } from './Filters/filterC.pipe';
 import { FilterArrayPipe } from './Filters/filterArray.pipe';
+import { HistoryPageComponent } from './history-page/history-page.component';
+import { MyDatePickerModule } from 'mydatepicker';
 
 @NgModule({
-    imports: [BrowserModule, HttpModule, CommonModule, FormsModule, NgxPaginationModule,AlertModule.forRoot(),
+    imports: [BrowserModule, HttpModule, CommonModule, FormsModule,MyDatePickerModule, NgxPaginationModule,AlertModule.forRoot(),
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyAafsMtGWbhgmfXU1TV-K-VUh8y1d8jZjI'
         })],
@@ -43,7 +45,7 @@ import { FilterArrayPipe } from './Filters/filterArray.pipe';
         AllocationPageComponent, PoolMangPageComponent,
         Pool1MangPageComponent, Footer1Component,
         FilterCPipe, FilterArrayPipe,
-        SearchfilterComponent, GmapjsComponent,Gmaptest,Gmtest
+        SearchfilterComponent, GmapjsComponent,Gmaptest,Gmtest, HistoryPageComponent
     ],
     //providers:[{ provide: RequestOptions, useClass: HttpInject }],
     bootstrap: [AppComponent]
