@@ -36,6 +36,15 @@ export class HistoryPageComponent implements OnInit {
 
   constructor() {
     let fdate = new Date();
+    let sincedate = new Date();
+    sincedate.setDate(sincedate.getDate() + 1);
+    var sinceDate = {
+      date: {
+        year: sincedate.getFullYear(),
+        month: sincedate.getMonth() + 1,
+        day: sincedate.getDate()
+      }
+    };
     this.fromDate = {
       date: {
         year: fdate.getFullYear(),
@@ -45,6 +54,15 @@ export class HistoryPageComponent implements OnInit {
     };
     let edate = new Date();
     edate.setDate(edate.getDate() - 30);
+    let untildate = new Date();
+    untildate.setDate(untildate.getDate() - 31);
+    var untilDate = {
+      date: {
+        year: untildate.getFullYear(),
+        month: untildate.getMonth() + 1,
+        day: untildate.getDate()
+      }
+    };
     this.endDate = {
       date: {
         year: edate.getFullYear(),
@@ -52,8 +70,8 @@ export class HistoryPageComponent implements OnInit {
         day: edate.getDate()
       }
     };
-    this.myDatePickerOptions.disableUntil = this.endDate.date;
-    this.myDatePickerOptions.disableSince = this.fromDate.date;
+    this.myDatePickerOptions.disableUntil = untilDate.date;
+    this.myDatePickerOptions.disableSince = sinceDate.date;
 
   }
 
@@ -69,6 +87,7 @@ export class HistoryPageComponent implements OnInit {
     } else {
       eDate = new Date();
       eDate.setDate(eDate.getDate() - 30);
+      eDate.setHours(0,0,0,0);
     }
     var aDate = item.split('/');
     var newD = new Date(aDate[2], aDate[0] - 1, aDate[1]);
@@ -76,6 +95,18 @@ export class HistoryPageComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  formatDateTime(item:any){
+    if(item!=""){
+      var ary = item.split(' ');
+      var date=ary[0].split('-');
+      var newD = new Date(date[0], date[1] - 1, date[2]);
+      //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
+      var SDate=(newD.getMonth() + 1) + '/' + newD.getDate() + '/' +  newD.getFullYear();      
+      return SDate;
+    }
+
   }
 
   filter() {

@@ -162,3 +162,9 @@ opacity: 0 !important;
     background:white;
     opacity: 0.5;
 }
+
+.histBut {
+    border: none;
+    background: transparent;
+    color: #d2232a;
+}

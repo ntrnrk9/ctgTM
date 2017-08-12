@@ -46,6 +46,7 @@ export class HomePageComponent {
     zone:NgZone;
     action: any = { heading: "", body: "" };
     mapConfig:any={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap',marker:-1};
+    historyConfig:any={showHistory:false,allTraillerSubSet:[],dataSet:[],backupDS:[],backupATS:[]};
     //allTrailers: any=[];
     // allTrailers: any = [
     //     { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
@@ -65,7 +66,7 @@ export class HomePageComponent {
 
     ob = {
         column: [{ name: "Trailer ID", width: "8%" }, { name: "Trailer name", width: "7%" }, { name: "Trailer type", width: "7%" }, { name: "Location", width: "9%" },{ name: "Distance in miles", width: "8%" },
-        { name: "Allocation status", width: "8%" }, { name: "Compliance status", width: "9%" }, { name: "Road worthiness status", width: "9%" }, { name: "Last DOT inspection date", width: "9%" }, { name: "Accessory/IOT information", width: "9%" }, { name: "Last movement date", width: "9%" }, { name: "Location history", width: "8%" }],
+        { name: "Allocation status", width: "8%" }, { name: "Compliance status", width: "9%" }, { name: "Road worthiness status", width: "9%" }, { name: "Last DOT inspection date", width: "9%" }, { name: "Accessory/IOT information", width: "9%" }, { name: "Last movement date", width: "9%" }, { name: "History", width: "8%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
@@ -158,13 +159,13 @@ export class HomePageComponent {
     toggleSearch(item: any) {
         if (item == 2) {
             this.searchID = "";
-            
+
             this.selectedTrStatus = { status: "Select a status", value: -1 };
             //this.selectTrStatus(this.selectedTrStatus);
         } else if (item == 3) {
             this.searchID = "";
             this.bylocation = "";
-            
+
 
         }
         else {
@@ -253,6 +254,7 @@ export class HomePageComponent {
         this.searchID = "";
         this.selectedID = "";
         this.mapConfig={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap'};
+        this.selectedMiles = { lable: "150 Miles", value: 150 };
 
         this.getStateTrailersStatus();
         if (this.mgToggleFlag) {
@@ -340,6 +342,48 @@ export class HomePageComponent {
             );
     }
 
+    getTrailerPingHistory(item:any) {
+        this.historyConfig.allTraillerSubSet=[];
+        this.historyConfig.dataSet = [];
+        this.historyConfig.backupATS = [];
+        this.historyConfig.backupDS = [];
+        this.historyConfig.thResp = false;
+        let url = config.baseUrl + "/HomeService/api/TrailerPingHistory?trailerID="+item.trailerID;
+        //let url = config.baseUrl + "/HomeService/api/TrailerHistory?trailerID=" + this.selectedMarker.trailerID;
+        this.http.get(url).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("StatesTrailerCounts data recieved");
+                this.historyConfig.dataSet = data.dataSet;
+                this.historyConfig.backupDS = data.dataSet;
+                if (data.dataSet.length > 0) {
+                    
+                    for (let i = 0; i < data.dataSet.length; i++) {
+                        var item = data.dataSet[i];
+                        
+                        if(item.eventDateValues.length>0){
+                            for (let j = 0; j < item.eventDateValues.length; j++) {
+                                var ent=item.eventDateValues[j];
+                                ent['eDate']=item.eventDate;
+                                this.historyConfig.allTraillerSubSet.push(ent);
+                                this.historyConfig.backupATS.push(ent);
+
+                            }
+                        }
+                        
+                    }
+                }
+                console.log(this.historyConfig);
+                this.historyConfig.thResp = true;
+            }, //For Success Response
+            (err) => {
+                console.log("StatesTrailerCounts error recieved");
+                this.historyConfig.thResp = true;
+            } //For Error Response
+            );
+    }
+
+    
     searchByID() {
         this.selectedID = "";
         var index = -1;
@@ -410,6 +454,13 @@ export class HomePageComponent {
          }, 500);
         this.getTrailerHistory();
     }
+
+    showTrHistory(item){
+        this.historyConfig['trailer']=item;
+        this.historyConfig.showHistory=true;
+        this.getTrailerPingHistory(item);
+    }
+
 
     selectTrStatus(item: any) {
         this.allTraillerSubSet = [];
