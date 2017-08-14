@@ -28,7 +28,7 @@ export class Gmtest {
     index: any=-1;
     historyRecv: any = false;
     markerList: any = {
-        blueMark: '../../assets/images/markers/trailer-blue.png',
+        yellowMark: '../../assets/images/markers/trailer-yellow.png',
         redMark: '../../assets/images/markers/trailer-red.png',
         greenMark: '../../assets/images/markers/trailer-green.png',
     };
@@ -44,7 +44,7 @@ export class Gmtest {
         if (trailer.trailerStatus == "AVL") {
             return this.markerList.greenMark;
         } else if (trailer.trailerStatus == "PLN") {
-            return this.markerList.blueMark;
+            return this.markerList.yellowMark;
         } else {
             return this.markerList.redMark;
         }
