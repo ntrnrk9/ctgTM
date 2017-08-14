@@ -3,7 +3,7 @@
     <div class="page-body">
         <div class="row">
             <div class="col-md-12">
-                <div style="background: #ededed;padding:5px;height:40px">
+                <div style="background: #ededed;height:40px">
                     <!--<input class="ctg-textbox pull-left" placeholder="Search by state" [(ngModel)]="stateFil" /><span class="pull-left glyphicon glyphicon-search serch-gly"></span>-->
                     <!--<input class="ctg-textbox pull-left" placeholder="Search by city" [(ngModel)]="cityFil" style="margin-left:10px;" /><span class="pull-left glyphicon glyphicon-search serch-gly"></span>-->
                     <!--<input class="ctg-textbox pull-left" placeholder="Company/Customer" [(ngModel)]="ccFil" style="margin-left:10px;" /><span class="pull-left glyphicon glyphicon-search serch-gly"></span>-->
@@ -13,6 +13,7 @@
                         <option class="lblLI" value=-1>All pools</option>
                     </select>-->
                     <button class="pull-right resetBut" type="button" value="encode" (click)="reset()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
+                    <div class="pull-left" style="padding:5px">
                     <div class="dropdown pull-left pm-select-cont" style="width:auto;">
                         <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedVarience.lable}}/>
                         <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
@@ -192,7 +193,7 @@
                         </div>
                     </div>-->
                     <!--<button type="button" class="btn btn-info btn-lg"  data-toggle="modal" data-target="#myModal">Open Modal</button>-->
-                </div>
+                </div></div>
             </div>
             <div class="col-md-12" style="padding:15px">
                 <div style="background: white;">
@@ -273,10 +274,15 @@
                             <ng-container *ngFor="let con of ob.column">
                                 <th [ngStyle]="{'width':con.width}" style="text-align:center" *ngIf="con.name=='Variance'">
                                     {{con.name}}
-                                    <span *ngIf="asc" class="caret pointer" (click)="sort()"></span>
-                                    <span *ngIf="!asc" class="caret caret-reversed pointer" (click)="sort()"></span>
+                                    <span *ngIf="asc" class="caret pointer" (click)="sort('variance')"></span>
+                                    <span *ngIf="!asc" class="caret caret-reversed pointer" (click)="sort('variance')"></span>
                                 </th>
-                                <th [ngStyle]="{'width':con.width}" style="text-align:center;" *ngIf="con.name!='Variance'">{{con.name}}</th>
+                                <th [ngStyle]="{'width':con.width}" style="text-align:center" *ngIf="con.name=='Trailer type'">
+                                    {{con.name}}
+                                    <span *ngIf="ttAsc" class="caret pointer" (click)="sortByTT('trailerType')"></span>
+                                    <span *ngIf="!ttAsc" class="caret caret-reversed pointer" (click)="sortByTT('trailerType')"></span>
+                                </th>
+                                <th [ngStyle]="{'width':con.width}" style="text-align:center;" *ngIf="con.name!='Variance' && con.name!='Trailer type'">{{con.name}}</th>
                             </ng-container>
                         </tr>
                     </thead>
@@ -294,9 +300,9 @@
                                     <span>{{item.cityName}},{{item.stateCode}}</span>
                                 </td>
                                 <td style="text-align:center;width:11%">
-                                    <span *ngIf="item.trailerType==1">Dry van</span>
-                                    <span *ngIf="item.trailerType==2">Reefer</span>
-                                    <span *ngIf="item.trailerType==3">Dry van, Reefer</span>
+                                    <span *ngIf="item.trailerType==1">Dry van,{{item.trailerType}}</span>
+                                    <span *ngIf="item.trailerType==2">Reefer,{{item.trailerType}}</span>
+                                    <span *ngIf="item.trailerType==3">Dry van, Reefer,{{item.trailerType}}</span>
                                 </td>
                                 <td style="text-align:center;width:5%">
                                     <span>{{item.cmpID}}</span>
