@@ -105,6 +105,18 @@ export class GmapsComponent {
 
     }
 
+    formatDateTime(item:any){
+    if(item!=""){
+      var ary = item.split(' ');
+      var date=ary[0].split('-');
+      var newD = new Date(date[0], date[1] - 1, date[2]);
+      //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
+      var SDate=(newD.getMonth() + 1) + '/' + newD.getDate() + '/' +  newD.getFullYear()+" "+ary[1];      
+      return SDate;
+    }
+
+  }
+
 }
 
 // This code copy to app.module.ts

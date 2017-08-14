@@ -9,7 +9,7 @@
          [minZoom]="4"
          [usePanning]="true"
          (mapClick)="mapClicked()">
-    <agm-marker *ngFor="let point of config" [latitude]="point.latitude" [longitude]="point.longitude" [title]="point.eventDateTime"
+    <agm-marker *ngFor="let point of config" [latitude]="point.latitude" [longitude]="point.longitude" [title]="formatDateTime(point.eventDateTime)"
     ></agm-marker>
     <!-- <agm-marker *ngFor="let point of config" [latitude]="point.latitude" [longitude]="point.longitude"
                 [iconUrl]="point.icon"
