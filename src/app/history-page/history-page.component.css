@@ -86,7 +86,6 @@ h1 {
     position: absolute;
     right: 0px;
     top: 0px;
-    padding: 9px;
     border: none;
     background-color: #062a53;
 }
@@ -170,3 +169,10 @@ opacity: 0 !important;
     margin-left: 10px; 
 }
 
+.onHover:hover{
+    background-color: #fafafa;
+}
+
+.selected{
+    background-color: silver;
+}

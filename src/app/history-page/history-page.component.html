@@ -2,7 +2,7 @@
 
     <div class="col-md-12 page-heading" style="position:relative">
         <b>History | Trailer: {{config.trailer.trailerID}}</b> | {{config.trailer.trailerName}} | {{config.trailer.trailerType}}
-        <button type="button" (click)="close()" class="pull-right toggleBut close">&times;</button>
+        <button type="button" (click)="close()" class="pull-right toggleBut close" data-toggle="tooltip" title="Close">&times;</button>
     </div><br />
     <div class="col-md-12 page-body">
         <div class="filter-container" >
@@ -30,11 +30,11 @@
                 <div class="col-md-2 no-padding">
                     <ul class="bordered" style="height: 500px;margin-left: 20px;overflow-y: scroll;padding:6px">
                         <ng-container *ngFor="let con of config.dataSet">
-                            <li style="padding:3px;text-align:left;height:30px;border-bottom: 1px solid silver;" (click)="plotMap(con)"><img style="padding-right:5px" src="../../assets/images/markers/h-map-pointer.png" />{{con.eventDate}}</li>
+                            <li class="onHover" [ngClass]="{'selected': selected==con.eventDate}" style="padding:3px;text-align:left;height:30px;border-bottom: 1px solid silver;cursor: pointer" (click)="plotMap(con)"><img style="padding-right:5px" src="../../assets/images/markers/h-map-pointer.png" />{{con.eventDate}}</li>
                             <!-- <li *ngIf="filterByDate(con.eventDate)" style="padding:3px;text-align:left;height:30px;border-bottom: 1px solid silver;" (click)="plotMap(con)"><img style="padding-right:5px" src="../../assets/images/markers/h-map-pointer.png" />{{con.eventDate}}</li> -->
                         </ng-container>
 
-                        <li *ngIf="config.dataSet.length==0" style="text-align:left;height:25px;" (click)="plotMap(con)">No data found</li>
+                        <li *ngIf="config.dataSet.length==0" style="text-align:left;height:25px;">No data found</li>
 
                     </ul>
                 </div>
@@ -56,7 +56,7 @@
                             <tr class="full" >
                                 
                                 <td style="text-align:center;width:12%">
-                                    <span>{{item.eDate}}</span>
+                                    <span>{{formatDateTime(item.eventDateTime)}}</span>
                                 </td>
                                 <td style="text-align:center;width:12%">
                                     <span>{{item.latitude}}</span>

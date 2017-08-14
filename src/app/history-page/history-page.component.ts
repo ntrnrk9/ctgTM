@@ -14,6 +14,7 @@ export class HistoryPageComponent implements OnInit {
 
   newList = [];
   dayList = [];
+  selected="";
   endDate = { date: { year: 2018, month: 10, day: 9 } };
   fromDate: any = { date: { year: 20018, month: 10, day: 9 } };
   pingList = [];
@@ -22,14 +23,14 @@ export class HistoryPageComponent implements OnInit {
   mgToggleFlag = false;
 
   ob = {
-    column: [{ name: "Event Date", width: "12%" }, { name: "Latitude", width: "12%" }, { name: "Longitude", width: "12%" }, { name: "Location", width: "12%" }, { name: "Landmark", width: "12%" },
+    column: [{ name: "Event date", width: "12%" }, { name: "Latitude", width: "12%" }, { name: "Longitude", width: "12%" }, { name: "Location", width: "12%" }, { name: "Landmark", width: "12%" },
     { name: "Idle duration", width: "12%" }, { name: "Moving", width: "12%" }, { name: "Moving start date", width: "16%" }],
     groups: []
   };
 
   private myDatePickerOptions: IMyDpOptions = {
     // other options...
-    dateFormat: 'dd/mm/yyyy',
+    dateFormat: 'mm/dd/yyyy',
     disableUntil: this.endDate.date,
 
   };
@@ -91,6 +92,20 @@ export class HistoryPageComponent implements OnInit {
     }
     var aDate = item.split('/');
     var newD = new Date(aDate[2], aDate[0] - 1, aDate[1]);
+    this.fromDate = {
+      date: {
+        year: fDate.getFullYear(),
+        month: fDate.getMonth() + 1,
+        day: fDate.getDate()
+      }
+    };
+    this.endDate = {
+      date: {
+        year: eDate.getFullYear(),
+        month: eDate.getMonth() + 1,
+        day: eDate.getDate()
+      }
+    };
     if (newD <= fDate && newD >= eDate) {
       return true;
     }
@@ -103,7 +118,7 @@ export class HistoryPageComponent implements OnInit {
       var date=ary[0].split('-');
       var newD = new Date(date[0], date[1] - 1, date[2]);
       //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
-      var SDate=(newD.getMonth() + 1) + '/' + newD.getDate() + '/' +  newD.getFullYear();      
+      var SDate=(newD.getMonth() + 1) + '/' + newD.getDate() + '/' +  newD.getFullYear()+" "+ary[1];      
       return SDate;
     }
 
@@ -163,7 +178,7 @@ export class HistoryPageComponent implements OnInit {
 
   plotMap(con: any) {
     this.pingList = con.eventDateValues;
-
+this.selected=con.eventDate;
   }
 
 }
