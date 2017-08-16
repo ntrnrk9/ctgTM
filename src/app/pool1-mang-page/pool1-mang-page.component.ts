@@ -804,12 +804,14 @@ export class Pool1MangPageComponent {
         this.fieldvalidation = true;
         this.isValidFields.isValidReqPool = false;
         this.isValidFields.isValidSR = false;
+        this.isValidFields.isValidTT = false;
     }
 
     private updatePool() {
         this.fieldvalidation = true;
         this.isValidFields.isValidReqPool = false;
         this.isValidFields.isValidSR = false;
+        this.isValidFields.isValidTT = false;
         
         if ((this.poolToEdit.isDryvan || this.poolToEdit.isReef)) {
             this.isValidFields.isValidTT = false;
@@ -1070,6 +1072,7 @@ export class Pool1MangPageComponent {
         this.isValidFields["isValidPlanner"] = false;
         this.isValidFields["isValidReqPool"] = false;
         this.isValidFields["isValidSR"] = false;
+        this.isValidFields["isValidTT"] = false;
         this.poolToAdd.brand = "CVEN";
         this.poolToAdd.isShipper = "";
         this.poolToAdd.isReceiver = "";
