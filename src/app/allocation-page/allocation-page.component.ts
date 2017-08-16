@@ -34,35 +34,36 @@ export class AllocationPageComponent {
     bylocation: String = "";
     selectedID: any;
     searchID: String = "";
+    orderID:String="";
     trailHistory: any;
     test: Number = 9;
     selectedMarker: any = { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" };
     stateList: any = [{ "stateDesc": "Alaska", "stateCode": "AK", "country": "USA" }, { "stateDesc": "Alabama", "stateCode": "AL", "country": "USA" }, { "stateDesc": "Arkansas", "stateCode": "AR", "country": "USA" }, { "stateDesc": "Arizona", "stateCode": "AZ", "country": "USA" }, { "stateDesc": "California", "stateCode": "CA", "country": "USA" }, { "stateDesc": "Colorado", "stateCode": "CO", "country": "USA" }, { "stateDesc": "Connecticut", "stateCode": "CT", "country": "USA" }, { "stateDesc": "District of Columbia", "stateCode": "DC", "country": "USA" }, { "stateDesc": "Delaware", "stateCode": "DE", "country": "USA" }, { "stateDesc": "Florida", "stateCode": "FL", "country": "USA" }, { "stateDesc": "Georgia", "stateCode": "GA", "country": "USA" }, { "stateDesc": "Hawaii", "stateCode": "HA", "country": "USA" }, { "stateDesc": "Iowa", "stateCode": "IA", "country": "USA" }, { "stateDesc": "Idaho", "stateCode": "ID", "country": "USA" }, { "stateDesc": "Illinois", "stateCode": "IL", "country": "USA" }, { "stateDesc": "Indiana", "stateCode": "IN", "country": "USA" }, { "stateDesc": "Kansas", "stateCode": "KS", "country": "USA" }, { "stateDesc": "Kentucky", "stateCode": "KY", "country": "USA" }, { "stateDesc": "Louisiana", "stateCode": "LA", "country": "USA" }, { "stateDesc": "Massachusetts", "stateCode": "MA", "country": "USA" }, { "stateDesc": "Maryland", "stateCode": "MD", "country": "USA" }, { "stateDesc": "Maine", "stateCode": "ME", "country": "USA" }, { "stateDesc": "Michigan", "stateCode": "MI", "country": "USA" }, { "stateDesc": "Minnesota", "stateCode": "MN", "country": "USA" }, { "stateDesc": "Missouri", "stateCode": "MO", "country": "USA" }, { "stateDesc": "Mississippi", "stateCode": "MS", "country": "USA" }, { "stateDesc": "Montana", "stateCode": "MT", "country": "USA" }, { "stateDesc": "North Carolina", "stateCode": "NC", "country": "USA" }, { "stateDesc": "North Dakota", "stateCode": "ND", "country": "USA" }, { "stateDesc": "Nebraska", "stateCode": "NE", "country": "USA" }, { "stateDesc": "New Hampshire", "stateCode": "NH", "country": "USA" }, { "stateDesc": "New Jersey", "stateCode": "NJ", "country": "USA" }, { "stateDesc": "New Mexico", "stateCode": "NM", "country": "USA" }, { "stateDesc": "Nevada", "stateCode": "NV", "country": "USA" }, { "stateDesc": "New York", "stateCode": "NY", "country": "USA" }, { "stateDesc": "Ohio", "stateCode": "OH", "country": "USA" }, { "stateDesc": "Oklahoma", "stateCode": "OK", "country": "USA" }, { "stateDesc": "Oregon", "stateCode": "OR", "country": "USA" }, { "stateDesc": "Pennsylvania", "stateCode": "PA", "country": "USA" }, { "stateDesc": "Rhode Island", "stateCode": "RI", "country": "USA" }, { "stateDesc": "South Carolina", "stateCode": "SC", "country": "USA" }, { "stateDesc": "South Dakota", "stateCode": "SD", "country": "USA" }, { "stateDesc": "Tennessee", "stateCode": "TN", "country": "USA" }, { "stateDesc": "Texas", "stateCode": "TX", "country": "USA" }, { "stateDesc": "Utah", "stateCode": "UT", "country": "USA" }, { "stateDesc": "Virginia", "stateCode": "VA", "country": "USA" }, { "stateDesc": "Vermont", "stateCode": "VT", "country": "USA" }, { "stateDesc": "Washington", "stateCode": "WA", "country": "USA" }, { "stateDesc": "Wisconsin", "stateCode": "WI", "country": "USA" }, { "stateDesc": "West Virginia", "stateCode": "WV", "country": "USA" }, { "stateDesc": "Wyoming", "stateCode": "WY", "country": "USA" }];
     trStatusList: any = [{ status: "Select a status", value: -1 }, { status: "Confirmed", value: 0 }, { status: "Planned", value: 1 }, { status: "Available", value: 2 }]
-    cmpList: any = [{ lable: "SVN", value: "SVN" }, { lable: "Covenant", value: "CVN" }];
+    cmpList: any = [{ lable: "SVN", value: "SVN" }, { lable: "Covenant", value: "CVN" }, {lable: "Star", value: "STR" }];
     selectedCmp = { lable: "SVN", value: "SVN" };
     milesList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedMiles = { lable: "150 Miles", value: 150 };
     mgToggleFlag = true;
-    trailerStatusResp = false;
+    OrderDetailsResp = false;
     historyRecv = false;
     disableTS = false;
     disableLoc = false;
     disableStatus = false;
     ifFirst = true;
-    gRowCount = 100;
+    oRowCount = 100;
     geocoder = new google.maps.Geocoder();
     zone: NgZone;
     action: any = { heading: "", body: "" };
     mapConfig: any = { lat: 36.090240, lng: -95.712891, zoom: 4, mapType: 'roadmap', marker: -1 };
     historyConfig: any = { showHistory: false, allTraillerSubSet: [], dataSet: [], backupDS: [], backupATS: [] };
     
-    allTraillerSubSet: any = [];
+    orderList: any = [];
     
 
     orders = {
-        column: [{ name: "Order ID", width: "10%" }, { name: "Origin name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Service", width: "10%" },
-        { name: "Order date & time", width: "10%" }, { name: "Ref. #", width: "10%" }, { name: "Ref. Type", width: "10%" }, { name: "Order remark", width: "10%" }, { name: "Status", width: "10%" }],
+        column: [{ name: "Order ID", width: "10%" }, { name: "Origin name", width: "10%" },{ name: "Status", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Service", width: "10%" },
+        { name: "Order date & time", width: "10%" }, { name: "Ref. #", width: "10%" }, { name: "Ref. Type", width: "10%" }, { name: "Order remark", width: "10%" } ],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
@@ -83,6 +84,7 @@ export class AllocationPageComponent {
     }
 
     constructor(private http: Http, private cdr: ChangeDetectorRef) {
+        this.getOrderDetails();
     }
 
     ngOnChange(val: number) {
@@ -128,7 +130,7 @@ export class AllocationPageComponent {
             //this.disableLoc = true;
             //this.disableStatus = false;
             //this.disableTS = true;
-            this.gRowCount = 100;
+            this.oRowCount = 100;
         }
     }
 
@@ -161,6 +163,26 @@ export class AllocationPageComponent {
                 this.action.heading = "Trailer search";
                 this.action.body = 'Enter a valid input.';
                 $('#result').modal('show');
+            }
+        }
+    }
+
+    searchByOrderId() {
+        this.orderList = [];
+        for (let i = 0; i < this.orders.groups.length; i++) {
+            var obj = this.orders.groups[i];
+            if (this.orderID == obj['orderNumber']) {
+                this.orderList.push(obj);
+            }
+        }
+    }
+
+    filterByCmpType() {
+        this.orderList = [];
+        for (let i = 0; i < this.orders.groups.length; i++) {
+            var obj = this.orders.groups[i];
+            if (this.selectedCmp.value == obj['orderCompany']) {
+                this.orderList.push(obj);
             }
         }
     }
@@ -232,7 +254,7 @@ export class AllocationPageComponent {
         this.mapConfig = { lat: 36.090240, lng: -95.712891, zoom: 4, mapType: 'roadmap' };
         this.selectedCmp = { lable: "SVN", value: "SVN" };
 
-        this.getStateTrailersStatus();
+        this.getOrderDetails();
         if (this.mgToggleFlag) {
 
             this.disableLoc = false;
@@ -244,31 +266,34 @@ export class AllocationPageComponent {
             this.disableTS = true;
         }
     }
-    tableScrolled(this: any) {
+    
+    orderTableScrolled(this: any) {
         console.log("scrolling");
         var raw = document.getElementById('tgBody');
         if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
 
-            this.gRowCount += 100;
-            if (this.gRowCount > this.allTrailers.length) {
-                this.gRowCount = this.allTrailers.length;
+            this.oRowCount += 100;
+            if (this.oRowCount > this.orders.groups.length) {
+                this.oRowCount = this.orders.groups.length;
             }
         }
     }
 
-    getStateTrailersStatus() {
-        this.trailerStatusResp = false;
-        //let url="http://61.16.133.244/HomeService/api/StatesTrailerCounts";
-        let url = config.baseUrl + "/HomeService/api/TrailerStatus?trailerStatus=0&trailerId=0";
+    getOrderDetails() {
+        this.OrderDetailsResp = false;
+        //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
+        let url = config.baseUrl + "/AllocationService/api/OrderDetails";
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("StatesTrailerCounts data recieved");
+                this.orders.groups=data.dataSet;
+                this.orderList=data.dataSet;
+                this.OrderDetailsResp = true;
 
-                this.trailerStatusResp = true;
 
             }, //For Success Response
-            (err) => { console.log("StatesTrailerCounts error recieved"); this.trailerStatusResp = true; } //For Error Response
+            (err) => { console.log("StatesTrailerCounts error recieved"); this.OrderDetailsResp = true; } //For Error Response
             );
     }
 

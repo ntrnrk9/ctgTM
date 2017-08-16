@@ -22,7 +22,7 @@
             <div class="col-md-12 page-body">
                 <div class="filter-container">
                     <div style="padding:5px;" class="pull-left">
-                        <span (keyup.enter)="searchByOrderID()"><input  class="ctg-textbox pull-left" type="text" placeholder="Order ID" [(ngModel)]="orderID"
+                        <span (keyup.enter)="searchByOrderId()"><input  class="ctg-textbox pull-left" type="text" placeholder="Order ID" [(ngModel)]="orderID"
                     (ngModelChange)="toggleSearch(1)"  /></span>
                         <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
                         <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
@@ -35,7 +35,7 @@
                             <div class="dropdown-menu no-padding sel-dd">
 
                                 <ul class="sel-dd-ul">
-                                    <li *ngFor="let item of cmpList" (click)="selectCmp(item);" style="cursor: pointer">
+                                    <li *ngFor="let item of cmpList" (click)="selectCmp(item);filterByCmpType()" style="cursor: pointer">
                                         {{item.lable}}
                                     </li>
                                 </ul>
@@ -56,51 +56,51 @@
                                     </ng-container>
                                 </tr>
                             </thead>
-                            <tbody id="tgBody" *ngIf="trailerStatusResp && allTraillerSubSet.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;"
-                                (scroll)="tableScrolled(this)">
-                                <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
-                                    <tr class="full" *ngIf="i<gRowCount">
+                            <tbody id="tgBody" *ngIf="OrderDetailsResp && orderList.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;"
+                                (scroll)="orderTableScrolled(this)">
+                                <ng-container *ngFor="let i=index;let item of orderList">
+                                    <tr class="full" *ngIf="i<oRowCount">
 
                                         <td style="text-align:center;width:10%">
-                                            <span>{{item.trailerID}}</span>
-                                        </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.trailerName}}</span>
-                                        </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.trailerType}}</span>
-                                        </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.location}}</span>
-                                        </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.distance}}</span>
-                                        </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.trailerStatus}}</span>
+                                            <span>{{item.orderNumber}}</span>
                                         </td>
                                         <td style="text-align:center;width:10%">
                                             <span>TBC</span>
                                         </td>
-
                                         <td style="text-align:center;width:10%">
                                             <span>TBC</span>
+                                        </td>
+                                        <td style="text-align:center;width:10%">
+                                            <span>{{item.orderOrginCity}},{{item.orderOrginState}}</span>
+                                        </td>
+                                        <td style="text-align:center;width:10%">
+                                            <span>{{item.orderDestCity}},{{item.orderDestState}}</span>
+                                        </td>
+                                        <td style="text-align:center;width:10%">
+                                            <span>TBC</span>
+                                        </td>
+                                        <td style="text-align:center;width:10%">
+                                            <span>{{item.orderStartDate}}</span>
                                         </td>
 
                                         <td style="text-align:center;width:10%">
                                             <span>TBC</span>
                                         </td>
+
                                         <td style="text-align:center;width:10%">
-                                            <span>{{item.iotInfo}}</span>
+                                            <span>TBC</span>
+                                        </td>
+                                        <td style="text-align:center;width:10%">
+                                            <span>TBC</span>
                                         </td>
                                     </tr>
                                 </ng-container>
                             </tbody>
                         </table>
-                        <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="trailerStatusResp && allTraillerSubSet.length==0 ">No data found</div>
+                        <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="OrderDetailsResp && orderList.length==0 ">No data found</div>
                         <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTraillerSubSet.length}} record(s) found</div>-->
-                        <div *ngIf="trailerStatusResp" style="padding-top: 10px;">{{allTraillerSubSet.length}} record(s) found</div>
-                        <div *ngIf="!trailerStatusResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+                        <div *ngIf="OrderDetailsResp" style="padding-top: 10px;">{{orderList.length}} record(s) found</div>
+                        <div *ngIf="!OrderDetailsResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
                     </div>
                 </div>
             </div>
