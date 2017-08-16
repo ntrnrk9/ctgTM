@@ -3,6 +3,13 @@
     color: #34495e;
 }
 
+.page-heading {
+    height: 40px;
+    background-color: #22466f;
+    padding: 0px;
+    color: #fff;
+}
+
 .page-container {
     /* box-shadow: 1px 2px 5px grey; */
     /*border: 1px solid silver;*/
@@ -82,10 +89,7 @@
 }
 
 .toggleBut {
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    padding: 9px;
+    padding: 9px 15px 9px 15px;
     border: none;
     background-color: #062a53;
 }
