@@ -1,10 +1,10 @@
-﻿h1 {
+h1 {
     font-size: 300%;
     color: #34495e;
 }
 
 .page-container {
-    /* box-shadow: 1px 2px 5px grey; */
+    box-shadow: 1px 2px 5px grey;
     /*border: 1px solid silver;*/
 }
 
@@ -66,26 +66,26 @@
 .close{
     opacity:1;
     color:white;
+    padding: 9px 12px 9px 12px;
 }
 
 .normalfnt{
     font-weight:normal;
 }
 
-.resetBut {
+.mgToggleBut {
     /*position: absolute;
     right: 0px;
     top: 0px;*/
     padding: 9px;
     border: none;
-    background-color: #d3d3d3;
+    background-color: #d2232a;
 }
 
 .toggleBut {
     position: absolute;
     right: 0px;
     top: 0px;
-    padding: 9px;
     border: none;
     background-color: #062a53;
 }
@@ -163,8 +163,16 @@ opacity: 0 !important;
     opacity: 0.5;
 }
 
-.histBut {
-    border: none;
-    background: transparent;
-    color: #d2232a;
+
+.adp{
+    width:150px !important;
+    margin-left: 10px; 
+}
+
+.onHover:hover{
+    background-color: #fafafa;
+}
+
+.selected{
+    background-color: silver;
 }

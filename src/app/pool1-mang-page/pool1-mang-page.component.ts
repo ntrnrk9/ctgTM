@@ -32,6 +32,7 @@ export class Pool1MangPageComponent {
     toAddBrand: String = "";
     allCsr: any;
     asc = true;
+    ttAsc=true;
     fieldvalidation = false;
     poolForAddRecieved=false;
     isValidFields: any = {};
@@ -115,10 +116,39 @@ export class Pool1MangPageComponent {
     choosenCC: any = [];
     choosenPlanner: any = [];
 
-    private sort() {
+    private sort(prop) {
         this.asc = !this.asc;
-        this.data = this.data.reverse();
+        //this.data = this.data.reverse();
+        this.sortResults(prop,this.asc);
     }
+
+    private sortByTT(prop) {
+        this.ttAsc = !this.ttAsc;
+        this.sortResults(prop,this.ttAsc);
+    }
+
+    sortResults(prop, asc) {
+        this.data = this.data.sort((a: any, b: any) => {
+            if (asc) {
+                if (a[prop] < b[prop]) {
+                    return -1;
+                } else if (a[prop] > b[prop]) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } else {
+                if (a[prop] > b[prop]) {
+                    return -1;
+                } else if (a[prop] < b[prop]) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+        console.log(JSON.stringify(this.data));
+}
 
     private ccCheckAllFun() {
         this.ccCheckAll = true;
