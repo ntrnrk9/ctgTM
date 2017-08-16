@@ -7,7 +7,7 @@
             <li class="tab-li" [ngClass]="{'selected': toShowTab==4}" (click)="toShowTab=4">
                 <h4><a [ngClass]="{'selected-a': toShowTab==4}" href="#" >Pool Management</a></h4>
             </li>
-            <li class="tab-li" [ngClass]="{'selected': toShowTab==2}">
+            <li class="tab-li" [ngClass]="{'selected': toShowTab==2}" (click)="toShowTab=2">
                 <h4><a [ngClass]="{'selected-a': toShowTab==2}" href="#" style="cursor: default">Allocation</a></h4>
             </li>
             <li class="tab-li-last" [ngClass]="{'selected': toShowTab==3}">
