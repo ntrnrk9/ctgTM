@@ -218,6 +218,7 @@ export class HomePageComponent {
             } else {
                 //alert('Geocode was not successful for the following reason: ' + status);
                 $('#inValidRes').modal('show');
+                $('#ctgGeoCode').val("");
                 console.log("getLatLngByGeoCode:no location to search");
             }
         });
@@ -227,6 +228,7 @@ export class HomePageComponent {
     
 
     getvalue() {
+        this.mapConfig.marker=-1;
         var input = $('#ctgGeoCode').val();
         console.log(input);
         this.bylocation = input;
@@ -246,8 +248,26 @@ export class HomePageComponent {
         //f.geocodeAddress(this.bylocation);
     }
 
+    formatDateTime(item: any) {
+        if (item != "") {
+            //var str=item.toUpperCase();
+            if (item.toUpperCase() != "UNKNOWN") {
+                var ary = item.split(' ');
+                var date = ary[0].split('-');
+                var newD = new Date(date[0], date[1] - 1, date[2]);
+                //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
+                var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + ary[1];
+                return SDate;
+            }else{
+                return item;
+            }
+        }
+
+    }
+
     setByLocation() {
         var input = $('#ctgGeoCode').val();
+        this.mapConfig.marker=-1;
         console.log(input);
         this.bylocation = input;
         if (this.mgToggleFlag) {
@@ -408,12 +428,14 @@ export class HomePageComponent {
                     this.filterByBounds(poly);
                     }else{
                         this.filterByBounds(poly);
+                        this.mapConfig.polygon=poly;
                         this.mapConfig.lat=lat;
                         this.mapConfig.lng=lng;
                     }
 
                 }else{
-                    $('#inValidRes').modal('show');
+                    $('#inValidCustID').modal('show');
+                    this.custID="";
                 }
                 //this.historyRecv = true;
             }, //For Success Response
@@ -455,6 +477,7 @@ export class HomePageComponent {
                     //alert("Trailer id not found");
                     this.action.heading = "Trailer search";
                     this.action.body = 'Trailer not found!';
+                    this.searchID="";
                     $('#result').modal('show');
                 }
             }
@@ -507,6 +530,8 @@ export class HomePageComponent {
             //this.gmapJs.drawPoly();
             //this.allTraillerSubSet=[];
             //this.allTraillerSubSet=this.mapConfig.trailesInBound;
+            this.mapConfig.marker=-1;
+            this.custID=this.custID.toUpperCase();
             this.getTrailerDetailsByCustomerId(this.custID);
         
             

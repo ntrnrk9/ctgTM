@@ -163,6 +163,7 @@ export class HistoryPageComponent implements OnInit {
     this.mgToggleFlag = !this.mgToggleFlag;
     if (this.config.dataSet.length > 0) {
       this.pingList = this.config.dataSet[0].eventDateValues;
+      this.selected=this.config.dataSet[0].eventDate;
     }
   }
 
