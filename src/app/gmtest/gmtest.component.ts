@@ -222,7 +222,7 @@ export class Gmtest {
         }
         var content = '<div class="infowindow" style="width:200px;padding:0px;height:170px;overflow:hidden;">' +
             '<div class="row header" style="border-bottom: 2px solid gray;padding:0px 0px 0px 30px">' +
-            '<div class="row head1" style="font-weight:bold;font-size:14px;color:black">Trailer #: ' + tr.trailerID + '</div>' +
+            '<div class="row head1" style="font-weight:bold;font-size:14px;color:black">Trailer #: ' + tr.trailerID + ' ('+tr.company+')</div>' +
             '<div class="row head2" style="font-weight:bold;font-size:13px;color:red">' + tr.trailerName + '</div>' +
             '<div class="row head3" style="font-weight:bold;font-size:12px;color:black">' + tr.trailerType + '</div>' +
             '</div>' +
