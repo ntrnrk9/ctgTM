@@ -27,6 +27,8 @@ export class Gmtest {
     infowindow: any;
     index: any=-1;
     historyRecv: any = false;
+    polyBound:any;
+    
     markerList: any = {
         yellowMark: '../../assets/images/markers/trailer-yellow.png',
         redMark: '../../assets/images/markers/trailer-red.png',
@@ -70,7 +72,7 @@ export class Gmtest {
         this.config.lat = this.map.getCenter().lat();
         this.config.lng = this.map.getCenter().lng();
         this.config.zoom = this.map.getZoom();
-        console.log(JSON.stringify(this.config));
+        //console.log(JSON.stringify(this.config));
         this.emit();
 
     }
@@ -192,6 +194,9 @@ export class Gmtest {
             google.maps.event.trigger(obj.markers[obj.config.marker], 'mouseover');
         }, 700);
         }
+    if(this.config.polygon){
+        this.drawPoly(this.config.polygon,this.config.lat,this.config.lng);
+    }
         
 
     }
@@ -275,6 +280,7 @@ export class Gmtest {
         var geocoder = this.geocoder;
         var resultsMap = this.map;
         var address = addr;
+        this.config.polygon=undefined;
         //var bound: any = this.boundList;
 
 
@@ -359,6 +365,103 @@ export class Gmtest {
                 this.historyRecv = true;
             } //For Error Response
             );
+    }
+
+    drawGeoFence() {
+        // Define the LatLng coordinates for the polygon's path.
+        var triangleCoords = [
+            { lat: 25.774, lng: -80.190 },
+            { lat: 18.466, lng: -66.118 },
+            { lat: 32.321, lng: -64.757 },
+            { lat: 25.774, lng: -80.190 }
+        ];
+
+        var poly = [{ lat: -87.3363893237851, lng: 37.9295343693131 },
+        { lat: -87.336357727646828, lng: 37.929602093994617 },
+        { lat: -87.336400642991066, lng: 37.929534398019314 },
+        { lat: -87.3363893237851, lng: 37.9295343693131 }];
+        
+
+        // Construct the polygon.
+        var bermudaTriangle = new google.maps.Polygon({
+            //paths: triangleCoords,
+            paths: poly,
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35
+        });
+        bermudaTriangle.setMap(this.map);
+        this.map.setCenter(poly[0].lat,poly[0].lng);
+        this.map.setZoom(19);
+
+
+    }
+
+    
+
+    drawPoly(multipolygonWKT:any,lat:any,lng:any) {
+        var polylines = [];
+        var toReturn = [];
+        //var multipolygonWKT="POLYGON ((-106.29151225090025 31.719999517096294, -106.28837943077087 31.719944759613266, -106.28841161727905 31.721541839581246, -106.29127621650696 31.721468830811506, -106.29151225090025 31.719999517096294))";
+        this.polyBound = new google.maps.LatLngBounds();
+
+
+        var formattedValues = multipolygonWKT.replace("POLYGON", "");
+        console.log(formattedValues);
+        formattedValues = formattedValues.replace("))", "");
+        console.log(formattedValues);
+        formattedValues = formattedValues.replace("((", "");
+        console.log(formattedValues);
+
+
+        var linesCoords = formattedValues.split("),(");
+        console.log(linesCoords);
+
+
+
+        for (var i = 0; i < linesCoords.length; i++) {
+            polylines[i] = [];
+            var singleLine = linesCoords[i].split(",");
+            console.log(singleLine);
+
+            for (var j = 0; j < singleLine.length; j++) {
+                var strCoordinates = singleLine[j].trim();
+                var coordinates = strCoordinates.split(" ");
+                console.log(coordinates);
+                var latlng = new google.maps.LatLng(parseFloat(coordinates[1]), parseFloat(coordinates[0]));
+                console.log("{lat:"+parseFloat(coordinates[1])+",lng:"+ parseFloat(coordinates[0])+"}");
+                this.polyBound.extend(latlng);    
+                polylines[i].push(latlng);
+
+            }
+        }
+
+        //by now you should have the polylines array filled with arrays that hold the coordinates of the polylines of the multipolyline
+        //lets loop thru this array
+
+        for (var k = 0; k < polylines.length; k++) {
+            var line = polylines[k];
+            if (k > -1) {
+                
+                var poly=    new google.maps.Polygon({
+                        paths: line,
+                        strokeColor: 'red',
+                        strokeOpacity: 1,
+                        strokeWeight: 2,
+                        zIndex: 1
+                    });
+                    poly.setMap(this.map);
+                    this.config.polygon=multipolygonWKT;
+            }
+        }
+
+        this.emit();
+        var latlng = new google.maps.LatLng(lat,lng);
+        this.map.setCenter(latlng);
+        this.map.setZoom(15);
+        return toReturn;
     }
 
 

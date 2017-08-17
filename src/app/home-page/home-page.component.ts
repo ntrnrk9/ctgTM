@@ -27,6 +27,7 @@ export class HomePageComponent {
     bylocation: String="";
     selectedID: any;
     searchID: String="";
+    custID:String="";
     trailHistory: any;
     test: Number = 9;
     selectedMarker: any = { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" };
@@ -137,7 +138,7 @@ export class HomePageComponent {
     }
 
     toggleMG() {
-        console.log(JSON.stringify(this.mapConfig));
+        //console.log(JSON.stringify(this.mapConfig));
         this.mgToggleFlag = !this.mgToggleFlag;
         if (this.mgToggleFlag) {
             //this.searchID = "";
@@ -159,17 +160,22 @@ export class HomePageComponent {
     toggleSearch(item: any) {
         if (item == 2) {
             this.searchID = "";
-
+            this.custID="";
             this.selectedTrStatus = { status: "Select a status", value: -1 };
             //this.selectTrStatus(this.selectedTrStatus);
         } else if (item == 3) {
             this.searchID = "";
             this.bylocation = "";
+            this.custID="";
 
-
+        }else if(item==4){
+            this.searchID = "";
+            this.bylocation = "";
+            this.selectedTrStatus = { status: "Select a status", value: -1 };
         }
         else {
             this.bylocation = "";
+            this.custID="";
             this.selectedTrStatus = { status: "Select a status", value: -1 };
             //this.selectTrStatus(this.selectedTrStatus);
         }
@@ -180,6 +186,8 @@ export class HomePageComponent {
             this.getvalue();
         }else if (this.searchID.length > 0) {
             this.searchByID();
+        }else if(this.custID.length>0){
+            this.searchByCustID();
         } else {
             if (this.disableStatus) {
                 this.action.heading = "Trailer search";
@@ -197,7 +205,7 @@ export class HomePageComponent {
         var geocoder = this.geocoder;
         var combo = "";
         var address = this.bylocation;
-
+        this.mapConfig.polygon=undefined;
          this.geocoder.geocode({ 'address': address }, function (results: any, status: any) {
             if (status === 'OK') {
                 var lat=results[0].geometry.location.lat();
@@ -210,6 +218,7 @@ export class HomePageComponent {
             } else {
                 //alert('Geocode was not successful for the following reason: ' + status);
                 $('#inValidRes').modal('show');
+                $('#ctgGeoCode').val("");
                 console.log("getLatLngByGeoCode:no location to search");
             }
         });
@@ -219,6 +228,7 @@ export class HomePageComponent {
     
 
     getvalue() {
+        this.mapConfig.marker=-1;
         var input = $('#ctgGeoCode').val();
         console.log(input);
         this.bylocation = input;
@@ -238,8 +248,26 @@ export class HomePageComponent {
         //f.geocodeAddress(this.bylocation);
     }
 
+    formatDateTime(item: any) {
+        if (item != "") {
+            //var str=item.toUpperCase();
+            if (item.toUpperCase() != "UNKNOWN") {
+                var ary = item.split(' ');
+                var date = ary[0].split('-');
+                var newD = new Date(date[0], date[1] - 1, date[2]);
+                //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
+                var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + ary[1];
+                return SDate;
+            }else{
+                return item;
+            }
+        }
+
+    }
+
     setByLocation() {
         var input = $('#ctgGeoCode').val();
+        this.mapConfig.marker=-1;
         console.log(input);
         this.bylocation = input;
         if (this.mgToggleFlag) {
@@ -253,6 +281,7 @@ export class HomePageComponent {
         this.bylocation = "";
         this.searchID = "";
         this.selectedID = "";
+        this.custID="";
         this.mapConfig={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap'};
         this.selectedMiles = { lable: "150 Miles", value: 150 };
 
@@ -383,7 +412,39 @@ export class HomePageComponent {
             );
     }
 
-    
+        getTrailerDetailsByCustomerId(custID:any) {
+        //this.historyRecv = false;
+        let url = config.baseUrl + "/HomeService/api/TrailerDetailsByCustomerId?customerId="+custID;
+        this.http.get(url).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("StatesTrailerCounts data recieved");
+                if(data.dataSet.length>0){
+                    var poly=data.dataSet[0].yard;
+                    var lat=data.dataSet[0].latitude;
+                    var lng=data.dataSet[0].longitude;
+                    if(this.mgToggleFlag){
+                    this.gmapJs.drawPoly(poly,lat,lng);
+                    this.filterByBounds(poly);
+                    }else{
+                        this.filterByBounds(poly);
+                        this.mapConfig.polygon=poly;
+                        this.mapConfig.lat=lat;
+                        this.mapConfig.lng=lng;
+                    }
+
+                }else{
+                    $('#inValidCustID').modal('show');
+                    this.custID="";
+                }
+                //this.historyRecv = true;
+            }, //For Success Response
+            (err) => {
+                console.log("StatesTrailerCounts error recieved");
+                //this.historyRecv = true;
+            } //For Error Response
+            );
+    }
     searchByID() {
         this.selectedID = "";
         var index = -1;
@@ -401,6 +462,7 @@ export class HomePageComponent {
                     this.mapConfig.zoom = 19;
                     this.mapConfig.mapType = 'satellite';
                     this.mapConfig.marker=i;
+                    this.mapConfig.polygon=undefined;
                     index = i;
                 }
             }
@@ -415,6 +477,7 @@ export class HomePageComponent {
                     //alert("Trailer id not found");
                     this.action.heading = "Trailer search";
                     this.action.body = 'Trailer not found!';
+                    this.searchID="";
                     $('#result').modal('show');
                 }
             }
@@ -462,6 +525,71 @@ export class HomePageComponent {
     }
 
 
+    searchByCustID(){
+        
+            //this.gmapJs.drawPoly();
+            //this.allTraillerSubSet=[];
+            //this.allTraillerSubSet=this.mapConfig.trailesInBound;
+            this.mapConfig.marker=-1;
+            this.custID=this.custID.toUpperCase();
+            this.getTrailerDetailsByCustomerId(this.custID);
+        
+            
+        
+    }
+
+    filterByBounds(multipolygonWKT:any){
+        
+        var polylines = [];
+        var toReturn = [];
+        //var multipolygonWKT="POLYGON ((-106.29151225090025 31.719999517096294, -106.28837943077087 31.719944759613266, -106.28841161727905 31.721541839581246, -106.29127621650696 31.721468830811506, -106.29151225090025 31.719999517096294))";
+        var polyBound = new google.maps.LatLngBounds();
+
+
+        var formattedValues = multipolygonWKT.replace("POLYGON", "");
+        console.log(formattedValues);
+        formattedValues = formattedValues.replace("))", "");
+        console.log(formattedValues);
+        formattedValues = formattedValues.replace("((", "");
+        console.log(formattedValues);
+
+
+        var linesCoords = formattedValues.split("),(");
+        console.log(linesCoords);
+
+
+
+        for (var i = 0; i < linesCoords.length; i++) {
+            polylines[i] = [];
+            var singleLine = linesCoords[i].split(",");
+            console.log(singleLine);
+
+            for (var j = 0; j < singleLine.length; j++) {
+                var strCoordinates = singleLine[j].trim();
+                var coordinates = strCoordinates.split(" ");
+                console.log(coordinates);
+                var latlng = new google.maps.LatLng(parseFloat(coordinates[1]), parseFloat(coordinates[0]));
+                console.log("{lat:"+parseFloat(coordinates[1])+",lng:"+ parseFloat(coordinates[0])+"}");
+                polyBound.extend(latlng);    
+                polylines[i].push(latlng);
+
+            }
+        }
+
+        //by now you should have the polylines array filled with arrays that hold the coordinates of the polylines of the multipolyline
+        //lets loop thru this array
+        
+        var trailesInBound=[];
+        for(var i=0;i<this.allTrailers.length;i++){
+            var tr=this.allTrailers[i];
+            var latlng = new google.maps.LatLng(tr.latitude, tr.longitude);
+            if(polyBound.contains(latlng)){
+                
+                trailesInBound.push(tr);
+            }
+        }
+        this.allTraillerSubSet=trailesInBound;
+    }
     selectTrStatus(item: any) {
         this.allTraillerSubSet = [];
         this.selectedTrStatus = item;

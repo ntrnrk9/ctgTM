@@ -300,9 +300,9 @@
                                     <span>{{item.cityName}},{{item.stateCode}}</span>
                                 </td>
                                 <td style="text-align:center;width:11%">
-                                    <span *ngIf="item.trailerType==1">Dry van,{{item.trailerType}}</span>
-                                    <span *ngIf="item.trailerType==2">Reefer,{{item.trailerType}}</span>
-                                    <span *ngIf="item.trailerType==3">Dry van, Reefer,{{item.trailerType}}</span>
+                                    <span *ngIf="item.trailerType==1">Dry van</span>
+                                    <span *ngIf="item.trailerType==2">Reefer</span>
+                                    <span *ngIf="item.trailerType==3">Reefer, Dry van</span>
                                 </td>
                                 <td style="text-align:center;width:5%">
                                     <span>{{item.cmpID}}</span>
@@ -490,7 +490,7 @@
                                     <div class="col-md-6 olPad">
                                         <label>Company</label><br>
                                         <label *ngIf="poolToEdit.brand=='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">Covenant</label>
-                                        <label *ngIf="poolToEdit.brand!='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">{{poolToEdit.cmpBrand}}</label>
+                                        <label *ngIf="poolToEdit.brand!='CVEN'" class="no-padding col-md-12 no-border normalfnt"  style="padding-top:5px">{{poolToEdit.brand}}</label>
                                     </div>
                                 </div>
                                 <div class="row pu-row">
