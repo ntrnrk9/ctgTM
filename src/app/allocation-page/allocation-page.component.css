@@ -174,7 +174,7 @@ opacity: 0 !important;
 }
 
 .selected{
-    background-color: silver !important;
+    background-color: #d3d3d3 !important;
 }
 
 .sel-dd-ul li:hover {

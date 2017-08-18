@@ -20,40 +20,44 @@
 
             <div class="col-md-12 page-body">
                 <div class="filter-container">
-                    <div style="padding:5px;" class="pull-left">
-                        <div class="dropdown pull-left pm-select-cont">
-                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedOrStatus.lable}} />
-                            <span class="caret"></span>
-                            <div class="dropdown-menu no-padding sel-dd">
-                                <ul class="sel-dd-ul">
-                                    <li *ngFor="let item of orStatusList" (click)="selectOrStatus(item);filterByOrStatus()" style="cursor: pointer">
-                                        {{item.lable}}
-                                    </li>
-                                </ul>
+                    <div  class="pull-left">
+                        <div class="pull-left" style="padding:5px;background-color: #d3d3d3">
+                            <div class="dropdown pull-left pm-select-cont">
+                                <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedOrStatus.lable}} />
+                                <span class="caret"></span>
+                                <div class="dropdown-menu no-padding sel-dd">
+                                    <ul class="sel-dd-ul">
+                                        <li *ngFor="let item of orStatusList" (click)="selectOrStatus(item);filterByOrStatus()" style="cursor: pointer">
+                                            {{item.lable}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
+                                <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedCmp.lable}} />
+                                <span class="caret"></span>
+                                <div class="dropdown-menu no-padding sel-dd">
+
+                                    <ul class="sel-dd-ul">
+                                        <li *ngFor="let item of cmpList" (click)="selectCmp(item);filterByCmpType()" style="cursor: pointer">
+                                            {{item.lable}}
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                        <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
-                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedCmp.lable}} />
-                            <span class="caret"></span>
-                            <div class="dropdown-menu no-padding sel-dd">
+                        <div class="pull-left" style="padding:5px;">
+                            <span (keyup.enter)="searchByomID()">
+                                <input  class="ctg-textbox pull-left" style="margin-left:10px;" type="text" placeholder="Order ID \ Movement no." [(ngModel)]="omID" (ngModelChange)="orderToggleSearch(1)"  />
+                            </span>
+                            <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
+                            <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
+                            <input class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode" (ngModelChange)="orderToggleSearch(2)"
+                                [(ngModel)]="bylocation" style="margin-left:10px;width:230px" value="bylocation" />
 
-                                <ul class="sel-dd-ul">
-                                    <li *ngFor="let item of cmpList" (click)="selectCmp(item);filterByCmpType()" style="cursor: pointer">
-                                        {{item.lable}}
-                                    </li>
-                                </ul>
-                            </div>
+
+                            <!-- <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button> -->
                         </div>
-                        <span (keyup.enter)="searchByomID()"><input  class="ctg-textbox pull-left" style="margin-left:10px;" type="text" placeholder="Order ID \ Movement no." [(ngModel)]="omID"
-                    (ngModelChange)="orderToggleSearch(1)"  /></span>
-                        <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
-                        <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
-                        <input class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode" (ngModelChange)="orderToggleSearch(2)"
-                            [(ngModel)]="bylocation" style="margin-left:10px;width:230px" value="bylocation" />
-
-                        
-                        <!-- <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button> -->
-                        
                     </div>
                     <button class="pull-right resetBut" type="button" value="encode" (click)="resetOrderPage()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
                 </div>
@@ -100,8 +104,8 @@
                                             <span>TBC</span>
                                         </td>
 
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.orderRemark}}</span>
+                                        <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
+                                            <span>{{item.orderRemark.substring(0,10)}}..</span>
                                         </td>
                                         
                                     </tr>
