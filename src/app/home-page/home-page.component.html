@@ -14,60 +14,66 @@
 
         <div class="col-md-12 page-body">
             <div class="filter-container" >
-                <div style="padding:5px;" class="pull-left">
-                    <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
-                        <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedCmp.lable}}/>
-                        <span class="caret"></span>
-                        <div class="dropdown-menu no-padding sel-dd">
+                <div class="pull-left">
+                    <div class="pull-left" style="padding:5px 15px 5px 5px; background-color: #d3d3d3">
+                        <div class="dropdown pull-left pm-select-cont">
+                            <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedCmp.lable}}/>
+                            <span class="caret"></span>
+                            <div class="dropdown-menu no-padding sel-dd">
 
-                            <ul class="sel-dd-ul">
-                                <li *ngFor="let item of cmpList" (click)="selectCmp(item)" style="cursor: pointer">
-                                    {{item.lable}}
-                                </li>
-                            </ul>
+                                <ul class="sel-dd-ul">
+                                    <li *ngFor="let item of cmpList" (click)="selectCmp(item)" style="cursor: pointer">
+                                        {{item.lable}}
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                    <span class="pull-left" style="margin-left:15px;padding-top:0px;font-size: 20px"> | </span>
-                    <span (keyup.enter)="searchByID()"><input  class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Trailer ID" [(ngModel)]="searchID"
+                    <div class="pull-left" style="padding:5px;">
+                        
+                        <span (keyup.enter)="searchByID()"><input  class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Trailer ID" [(ngModel)]="searchID"
                     (ngModelChange)="toggleSearch(1)"  /></span>
-                    <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
-                    <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
-                    <input class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode" (ngModelChange)="toggleSearch(2)"
-                        [(ngModel)]="bylocation" style="margin-left:10px;width:230px" value="bylocation" />
-                    <!--<button class="pull-left" type="button" (click)="getvalue();">code</button>-->
+                        <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
+                        <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
+                        <input class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode" (ngModelChange)="toggleSearch(2)"
+                            [(ngModel)]="bylocation" style="margin-left:10px;width:230px" value="bylocation" />
+                        <!--<button class="pull-left" type="button" (click)="getvalue();">code</button>-->
 
 
 
-                    <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;" *ngIf="!mgToggleFlag">
-                        <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedMiles.lable}} [disabled]="bylocation.length ==0 "
-                        />
-                        <span class="caret"></span>
-                        <div class="dropdown-menu no-padding sel-dd">
+                        <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;" *ngIf="!mgToggleFlag">
+                            <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedMiles.lable}}
+                                [disabled]="bylocation.length ==0 " />
+                            <span class="caret"></span>
+                            <div class="dropdown-menu no-padding sel-dd">
 
-                            <ul class="sel-dd-ul">
-                                <li *ngFor="let item of milesList" (click)="selectMiles(item);toggleSearch(2)" style="cursor: pointer">
-                                    {{item.lable}}
-                                </li>
-                            </ul>
+                                <ul class="sel-dd-ul">
+                                    <li *ngFor="let item of milesList" (click)="selectMiles(item);toggleSearch(2)" style="cursor: pointer">
+                                        {{item.lable}}
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>  
-                    <span (keyup.enter)="searchByCustID()"><input  class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Customer ID" [(ngModel)]="custID"
-                    (ngModelChange)="toggleSearch(4)"  /></span> 
-                    <span class="pull-left" style="margin-left:15px;padding-top:5px" *ngIf="!mgToggleFlag">Or</span>
-                    <div (ngModelChange)="toggleSearch(3)" class="dropdown pull-left pm-select-cont" style="margin-left:10px;" *ngIf="!mgToggleFlag">
-                        <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedTrStatus.status}} />
-                        <span class="caret"></span>
-                        <div class="dropdown-menu no-padding sel-dd">
+                        <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
+                        <span (keyup.enter)="searchByCustID()"><input  class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Customer ID" [(ngModel)]="custID"
+                    (ngModelChange)="toggleSearch(4)"  /></span>
+                        <span class="pull-left" style="margin-left:15px;padding-top:5px" *ngIf="!mgToggleFlag">Or</span>
+                        <div (ngModelChange)="toggleSearch(3)" class="dropdown pull-left pm-select-cont" style="margin-left:10px;" *ngIf="!mgToggleFlag">
+                            <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedTrStatus.status}}
+                            />
+                            <span class="caret"></span>
+                            <div class="dropdown-menu no-padding sel-dd">
 
-                            <ul class="sel-dd-ul">
-                                <li *ngFor="let item of trStatusList" (click)="selectTrStatus(item);toggleSearch(3)" style="cursor: pointer">
-                                    {{item.status}}
-                                </li>
-                            </ul>
+                                <ul class="sel-dd-ul">
+                                    <li *ngFor="let item of trStatusList" (click)="selectTrStatus(item);toggleSearch(3)" style="cursor: pointer">
+                                        {{item.status}}
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
+                        <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button>
                     </div>
-                    <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button>
+                    
                     <!--<button class="pull-right resetBut" type="button" value="encode" (click)="f.geocodeAddress()"><img src="../../assets/images/markers/refresh.png" /></button>-->
                 </div>
                 <button class="pull-right resetBut" type="button" value="encode" (click)="reset()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
