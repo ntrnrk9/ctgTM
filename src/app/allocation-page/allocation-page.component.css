@@ -172,3 +172,11 @@ opacity: 0 !important;
     background: transparent;
     color: #d2232a;
 }
+
+.selected{
+    background-color: silver !important;
+}
+
+.sel-dd-ul li:hover {
+    background-color: #ededed;
+}

@@ -20,7 +20,7 @@
     <div class="container">
         <div [ngSwitch]="toShowTab">
             <home-page *ngSwitchCase=1></home-page>
-            <allocation-page *ngSwitchCase=2></allocation-page>
+            <allocation-page *ngSwitchCase=2 [config]="allocateConfig"></allocation-page>
             <yard-mang-page *ngSwitchCase=3></yard-mang-page>
             <pool1-mang-page *ngSwitchCase=4></pool1-mang-page>
         </div>

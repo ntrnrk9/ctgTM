@@ -8,6 +8,7 @@ import { Component } from '@angular/core';
 })
 export class MainTabsComponent {
     toShowTab = 2;
+    allocateConfig={page:0};
     private name = 'MainTabsComponent';
 }
 

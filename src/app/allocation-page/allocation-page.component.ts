@@ -1,4 +1,4 @@
-import { Component, ViewChild, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component,Input,Output, ViewChild, NgZone, ChangeDetectorRef } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
@@ -18,6 +18,7 @@ import * as config from '../configs/configs';
 })
 export class AllocationPageComponent {
     private name = 'AllocationPageComponent';
+    @Input() config:any;
     page=0;
     data = {
         rows: [
@@ -28,30 +29,33 @@ export class AllocationPageComponent {
     };
 
 
-    selectedState: any = "alabama";
+    selectedOrder: any = {orderNumber:-1};
     selectedTrStatus: any = { status: "Available", value: 2 };
     selectedAvailability: number = -1;
     bylocation: String = "";
     selectedID: any;
     searchID: String = "";
-    orderID:String="";
+    omID:String="";
     trailHistory: any;
     test: Number = 9;
-    selectedMarker: any = { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" };
-    stateList: any = [{ "stateDesc": "Alaska", "stateCode": "AK", "country": "USA" }, { "stateDesc": "Alabama", "stateCode": "AL", "country": "USA" }, { "stateDesc": "Arkansas", "stateCode": "AR", "country": "USA" }, { "stateDesc": "Arizona", "stateCode": "AZ", "country": "USA" }, { "stateDesc": "California", "stateCode": "CA", "country": "USA" }, { "stateDesc": "Colorado", "stateCode": "CO", "country": "USA" }, { "stateDesc": "Connecticut", "stateCode": "CT", "country": "USA" }, { "stateDesc": "District of Columbia", "stateCode": "DC", "country": "USA" }, { "stateDesc": "Delaware", "stateCode": "DE", "country": "USA" }, { "stateDesc": "Florida", "stateCode": "FL", "country": "USA" }, { "stateDesc": "Georgia", "stateCode": "GA", "country": "USA" }, { "stateDesc": "Hawaii", "stateCode": "HA", "country": "USA" }, { "stateDesc": "Iowa", "stateCode": "IA", "country": "USA" }, { "stateDesc": "Idaho", "stateCode": "ID", "country": "USA" }, { "stateDesc": "Illinois", "stateCode": "IL", "country": "USA" }, { "stateDesc": "Indiana", "stateCode": "IN", "country": "USA" }, { "stateDesc": "Kansas", "stateCode": "KS", "country": "USA" }, { "stateDesc": "Kentucky", "stateCode": "KY", "country": "USA" }, { "stateDesc": "Louisiana", "stateCode": "LA", "country": "USA" }, { "stateDesc": "Massachusetts", "stateCode": "MA", "country": "USA" }, { "stateDesc": "Maryland", "stateCode": "MD", "country": "USA" }, { "stateDesc": "Maine", "stateCode": "ME", "country": "USA" }, { "stateDesc": "Michigan", "stateCode": "MI", "country": "USA" }, { "stateDesc": "Minnesota", "stateCode": "MN", "country": "USA" }, { "stateDesc": "Missouri", "stateCode": "MO", "country": "USA" }, { "stateDesc": "Mississippi", "stateCode": "MS", "country": "USA" }, { "stateDesc": "Montana", "stateCode": "MT", "country": "USA" }, { "stateDesc": "North Carolina", "stateCode": "NC", "country": "USA" }, { "stateDesc": "North Dakota", "stateCode": "ND", "country": "USA" }, { "stateDesc": "Nebraska", "stateCode": "NE", "country": "USA" }, { "stateDesc": "New Hampshire", "stateCode": "NH", "country": "USA" }, { "stateDesc": "New Jersey", "stateCode": "NJ", "country": "USA" }, { "stateDesc": "New Mexico", "stateCode": "NM", "country": "USA" }, { "stateDesc": "Nevada", "stateCode": "NV", "country": "USA" }, { "stateDesc": "New York", "stateCode": "NY", "country": "USA" }, { "stateDesc": "Ohio", "stateCode": "OH", "country": "USA" }, { "stateDesc": "Oklahoma", "stateCode": "OK", "country": "USA" }, { "stateDesc": "Oregon", "stateCode": "OR", "country": "USA" }, { "stateDesc": "Pennsylvania", "stateCode": "PA", "country": "USA" }, { "stateDesc": "Rhode Island", "stateCode": "RI", "country": "USA" }, { "stateDesc": "South Carolina", "stateCode": "SC", "country": "USA" }, { "stateDesc": "South Dakota", "stateCode": "SD", "country": "USA" }, { "stateDesc": "Tennessee", "stateCode": "TN", "country": "USA" }, { "stateDesc": "Texas", "stateCode": "TX", "country": "USA" }, { "stateDesc": "Utah", "stateCode": "UT", "country": "USA" }, { "stateDesc": "Virginia", "stateCode": "VA", "country": "USA" }, { "stateDesc": "Vermont", "stateCode": "VT", "country": "USA" }, { "stateDesc": "Washington", "stateCode": "WA", "country": "USA" }, { "stateDesc": "Wisconsin", "stateCode": "WI", "country": "USA" }, { "stateDesc": "West Virginia", "stateCode": "WV", "country": "USA" }, { "stateDesc": "Wyoming", "stateCode": "WY", "country": "USA" }];
-    trStatusList: any = [{ status: "Select a status", value: -1 }, { status: "Confirmed", value: 0 }, { status: "Planned", value: 1 }, { status: "Available", value: 2 }]
-    cmpList: any = [{ lable: "SRT", value: "SRT" }, { lable: "Covenant", value: "CVEN" }, {lable: "Star", value: "STAR" }];
-    selectedCmp = { lable: "Covenant", value: "CVEN" };
+    
+    orStatusList: any = [{ lable: "Available", value: "AVL" },{ lable: "Planned", value: "PLN" }];
+    selectedOrStatus = { lable: "Available", value: "AVL" };
+    cmpList: any = [{ lable: "COVENANT", value: "CVEN" },{ lable: "SRT", value: "SRT" },{lable: "STAR", value: "STAR" }];
+    selectedCmp = { lable: "COVENANT", value: "CVEN" };
     milesList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedMiles = { lable: "150 Miles", value: 150 };
+    
     mgToggleFlag = true;
     OrderDetailsResp = false;
+    trucksDetailsResp = false;
     historyRecv = false;
     disableTS = false;
     disableLoc = false;
     disableStatus = false;
     ifFirst = true;
     oRowCount = 50;
+    truRowCount = 50;
     geocoder = new google.maps.Geocoder();
     zone: NgZone;
     action: any = { heading: "", body: "" };
@@ -59,17 +63,17 @@ export class AllocationPageComponent {
     historyConfig: any = { showHistory: false, allTraillerSubSet: [], dataSet: [], backupDS: [], backupATS: [] };
     
     orderList: any = [];
-    
+    truckList: any = [];
 
     orders = {
-        column: [{ name: "Order ID", width: "10%" }, { name: "Origin name", width: "10%" },{ name: "Status", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Service", width: "10%" },
-        { name: "Order date & time", width: "10%" }, { name: "Ref. #", width: "10%" }, { name: "Ref. Type", width: "10%" }, { name: "Order remark", width: "10%" } ],
+        column: [{ name: "Order ID", width: "10%" },{ name: "Movement no.", width: "10%" }, { name: "Ref. no.", width: "10%" },{ name: "Bill to name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Service", width: "10%" },
+        { name: "Order date & time", width: "10%" }, { name: "Ref. Type", width: "10%" }, { name: "Order remark", width: "10%" } ],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
     trucks = {
-        column: [{ name: "Truck ID", width: "10%" }, { name: "Company", width: "10%" }, { name: "Driver name", width: "10%" }, { name: "Driver2 name", width: "15%" },{ name: "Division", width: "10%" }, { name: "Last GPS location", width: "15%" },
-        { name: "Available date & time", width: "15%" },{ name: "Status", width: "15%" }],
+        column: [{ name: "Truck ID", width: "10%" }, { name: "Company", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model", width: "10%" },
+        { name: "Year", width: "15%" },{ name: "Type", width: "15%" },{ name: "Distance", width: "15%" },{ name: "Landmark", width: "15%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
     
@@ -80,7 +84,7 @@ export class AllocationPageComponent {
     };
 
     ngOnInit() {
-        
+        this.page=this.config.page;
     }
 
     constructor(private http: Http, private cdr: ChangeDetectorRef) {
@@ -99,6 +103,7 @@ export class AllocationPageComponent {
 
     goToTruck(){
         this.page=1;
+        this.getTractorsDetails();
     }
 
     goToOrder(){
@@ -111,6 +116,18 @@ export class AllocationPageComponent {
     
     goToSummary() {
         this.page = 3;
+    }
+
+    orderSelected(item:any){
+        this.selectedOrder=item;
+
+    }
+
+    resetOrderPage() {
+        this.bylocation = "";
+        this.omID = "";
+        this.selectedCmp = { lable: "COVENANT", value: "CVEN" };
+        this.getOrderDetails();
     }
 
 
@@ -134,25 +151,27 @@ export class AllocationPageComponent {
         }
     }
 
-    toggleSearch(item: any) {
-        if (item == 2) {
-            this.searchID = "";
-
-            this.selectedTrStatus = { status: "Select a status", value: -1 };
-            //this.selectTrStatus(this.selectedTrStatus);
-        } else if (item == 3) {
-            this.searchID = "";
+    orderToggleSearch(item: any) {
+        if (item == 1) {
             this.bylocation = "";
-
-
+        } else if (item == 2) {
+            this.omID = "";
+            
         }
-        else {
-            this.bylocation = "";
-            this.selectedTrStatus = { status: "Select a status", value: -1 };
-            //this.selectTrStatus(this.selectedTrStatus);
+    }
+
+    formatDateTime(item: any) {
+        if (item != "") {
+            var ary = item.split(' ');
+            var date = ary[0].split('-');
+            var newD = new Date(date[0], date[1] - 1, date[2]);
+            //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
+            var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + ary[1];
+            return SDate;
         }
 
     }
+
     search() {
         if (this.bylocation.length > 0) {
             this.getvalue();
@@ -167,22 +186,61 @@ export class AllocationPageComponent {
         }
     }
 
-    searchByOrderId() {
+    searchByomID() {
         this.orderList = [];
         for (let i = 0; i < this.orders.groups.length; i++) {
             var obj = this.orders.groups[i];
-            if (this.orderID == obj['orderNumber']) {
+            if (this.omID == obj['orderNumber']||this.omID == obj['movementNumber']) {
                 this.orderList.push(obj);
             }
         }
+        this.filterByCmpType();
     }
 
-    filterByCmpType() {
+    filterOrderByLocation() {
         this.orderList = [];
         for (let i = 0; i < this.orders.groups.length; i++) {
             var obj = this.orders.groups[i];
-            if (this.selectedCmp.value == obj['orderCompany']) {
+             var conCity=obj['orderOrginCity'].toLowerCase().includes(this.omID.toLowerCase())
+            if (conCity) {
                 this.orderList.push(obj);
+            }
+        }
+        this.filterByCmpType();
+    }
+
+    cloneObje(list:any){
+        var clone=JSON.parse(JSON.stringify(list));
+        return clone;
+    }
+
+    filterByCmpType() {
+        if (this.omID.length == 0 && this.bylocation.length == 0) {
+            this.orderList = [];
+            for (let i = 0; i < this.orders.groups.length; i++) {
+                var obj = this.orders.groups[i];
+                if (this.selectedCmp.value == obj['orderCompany']) {
+                    this.orderList.push(obj);
+                }
+            }
+        }else{
+            var bag = [];
+            for (let i = 0; i < this.orderList.length; i++) {
+                var objt = this.orderList[i];
+                if (this.selectedCmp.value == objt['orderCompany']) {
+                    bag.push(objt);
+                }
+            }
+            this.orderList=this.cloneObje(bag);
+        }
+    }
+
+    filterByOrder(){
+        this.truckList=[];
+        for(let i=0;i<this.trucks.groups.length;i++){
+            var obj=this.trucks.groups[i];
+            if(this.selectedOrder.orderCompany==obj['company']){
+                this.truckList.push(obj);
             }
         }
     }
@@ -273,10 +331,41 @@ export class AllocationPageComponent {
         if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
 
             this.oRowCount += 50;
-            if (this.oRowCount > this.orders.groups.length) {
-                this.oRowCount = this.orders.groups.length;
+            if (this.oRowCount > this.orderList.length) {
+                this.oRowCount = this.orderList.length;
             }
         }
+    }
+    trucktableScrolled(this:any){
+console.log("scrolling");
+        var raw = document.getElementById('tgBody');
+        if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
+
+            this.oRowCount += 50;
+            if (this.truRowCount > this.truckList) {
+                this.truRowCount = this.truckList;
+            }
+        }
+    }
+
+    getTractorsDetails() {
+        this.trucksDetailsResp = false;
+        //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
+        let url = config.ctgApiUrl + "/assets/tractors";
+        this.http.get(url).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("tractors data recieved");
+                this.trucks.groups=data.data;
+                this.truckList=data.data;
+                //this.filterByCmpType();
+                this.trucksDetailsResp = true;
+                this.filterByOrder();
+
+
+            }, //For Success Response
+            (err) => { console.log("tractors error recieved"); this.trucksDetailsResp = true; } //For Error Response
+            );
     }
 
     getOrderDetails() {
@@ -286,7 +375,7 @@ export class AllocationPageComponent {
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
-                console.log("StatesTrailerCounts data recieved");
+                console.log("OrderDetails data recieved");
                 this.orders.groups=data.dataSet;
                 this.orderList=data.dataSet;
                 this.filterByCmpType();
@@ -294,22 +383,8 @@ export class AllocationPageComponent {
 
 
             }, //For Success Response
-            (err) => { console.log("StatesTrailerCounts error recieved"); this.OrderDetailsResp = true; } //For Error Response
+            (err) => { console.log("OrderDetails error recieved"); this.OrderDetailsResp = true; } //For Error Response
             );
     }
 
-    showHistory(item) {
-        this.selectedMarker = item;
-        //$('#historyModal').modal('show');
-        setTimeout(function () {
-            $('#historyModal').modal('show');
-        }, 500);
-
-    }
-
-    showTrHistory(item) {
-        this.historyConfig['trailer'] = item;
-        this.historyConfig.showHistory = true;
-
-    }
 }
