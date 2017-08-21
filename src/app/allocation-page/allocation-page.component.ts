@@ -33,9 +33,12 @@ export class AllocationPageComponent {
     selectedTrStatus: any = { status: "Available", value: 2 };
     selectedAvailability: number = -1;
     bylocation: String = "";
+    orderBylocation: String = "";
+    truckBylocation: String = "";
     selectedID: any;
     searchID: String = "";
     omID:String="";
+    truckID:String="";
     trailHistory: any;
     test: Number = 9;
     
@@ -73,7 +76,7 @@ export class AllocationPageComponent {
 
     trucks = {
         column: [{ name: "Truck ID", width: "10%" }, { name: "Company", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model", width: "10%" },
-        { name: "Year", width: "15%" },{ name: "Type", width: "15%" },{ name: "Distance", width: "15%" },{ name: "Landmark", width: "15%" }],
+        { name: "Year", width: "15%" },{ name: "Type", width: "15%" },{ name: "Distance in miles", width: "15%" },{ name: "Landmark", width: "15%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
     
@@ -101,6 +104,11 @@ export class AllocationPageComponent {
         this.selectedMiles = item;
     }
 
+    selectOrStatus(item){
+        this.selectedOrStatus = item;
+    }
+
+
     goToTruck(){
         this.page=1;
         this.getTractorsDetails();
@@ -124,10 +132,17 @@ export class AllocationPageComponent {
     }
 
     resetOrderPage() {
-        this.bylocation = "";
+        this.orderBylocation = "";
         this.omID = "";
         this.selectedCmp = { lable: "COVENANT", value: "CVEN" };
         this.getOrderDetails();
+    }
+
+    resetTruckPage() {
+        this.truckBylocation = "";
+        this.truckID = "";
+        this.selectedMiles = { lable: "150 Miles", value: 150 };
+        this.getTractorsDetails();
     }
 
 
@@ -153,9 +168,18 @@ export class AllocationPageComponent {
 
     orderToggleSearch(item: any) {
         if (item == 1) {
-            this.bylocation = "";
+            this.orderBylocation = "";
         } else if (item == 2) {
             this.omID = "";
+            
+        }
+    }
+    
+    truckToggleSearch(item: any) {
+        if (item == 1) {
+            this.truckBylocation = "";
+        } else if (item == 2) {
+            this.truckID = "";
             
         }
     }
@@ -194,19 +218,29 @@ export class AllocationPageComponent {
                 this.orderList.push(obj);
             }
         }
-        this.filterByCmpType();
+        this.orderMasterAndFilter();
+    }
+
+    searchByTruckID() {
+        this.truckList = [];
+        for (let i = 0; i < this.trucks.groups.length; i++) {
+            var obj = this.trucks.groups[i];
+            if (this.truckID == obj['number']) {
+                this.truckList.push(obj);
+            }
+        }
     }
 
     filterOrderByLocation() {
         this.orderList = [];
         for (let i = 0; i < this.orders.groups.length; i++) {
             var obj = this.orders.groups[i];
-             var conCity=obj['orderOrginCity'].toLowerCase().includes(this.omID.toLowerCase())
+             var conCity=obj['orderOrginCity'].toLowerCase().includes(this.orderBylocation.toLowerCase())
             if (conCity) {
                 this.orderList.push(obj);
             }
         }
-        this.filterByCmpType();
+        this.orderMasterAndFilter();
     }
 
     cloneObje(list:any){
@@ -215,6 +249,27 @@ export class AllocationPageComponent {
     }
 
     filterByCmpType() {
+        if (this.omID.length == 0 && this.orderBylocation.length == 0) {
+            this.orderList = [];
+            for (let i = 0; i < this.orders.groups.length; i++) {
+                var obj = this.orders.groups[i];
+                if (this.selectedCmp.value == obj['orderCompany']) {
+                    this.orderList.push(obj);
+                }
+            }
+        }else{
+            var bag = [];
+            for (let i = 0; i < this.orderList.length; i++) {
+                var objt = this.orderList[i];
+                if (this.selectedCmp.value == objt['orderCompany']) {
+                    bag.push(objt);
+                }
+            }
+            this.orderList=this.cloneObje(bag);
+        }
+    }
+
+    filterByOrStatus() {
         if (this.omID.length == 0 && this.bylocation.length == 0) {
             this.orderList = [];
             for (let i = 0; i < this.orders.groups.length; i++) {
@@ -235,15 +290,77 @@ export class AllocationPageComponent {
         }
     }
 
-    filterByOrder(){
+    orderMasterAndFilter(){
+        if (this.omID.length == 0 && this.orderBylocation.length == 0) {
+            this.orderList = [];
+            for (let i = 0; i < this.orders.groups.length; i++) {
+                var obj = this.orders.groups[i];
+                if (this.selectedCmp.value == obj['orderCompany'] && this.selectedOrStatus.value == obj['orderStatus']) {
+                    this.orderList.push(obj);
+                }
+            }
+        }else{
+            var bag = [];
+            for (let i = 0; i < this.orderList.length; i++) {
+                var objt = this.orderList[i];
+                if (this.selectedCmp.value == objt['orderCompany'] && this.selectedOrStatus.value == obj['orderStatus']) {
+                    bag.push(objt);
+                }
+            }
+            this.orderList=this.cloneObje(bag);
+        }
+
+    }
+
+    filterTrucksByOrder(){
         this.truckList=[];
         for(let i=0;i<this.trucks.groups.length;i++){
             var obj=this.trucks.groups[i];
-            if(this.selectedOrder.orderCompany==obj['company']){
+            if(this.selectedOrder.orderCompany==obj['company'] && obj['status']=="AVL"){
                 this.truckList.push(obj);
             }
         }
     }
+
+    
+    
+
+    
+    calcTruckDistance(long1, lat1) {
+        let erdRadius = 6371e3;
+        let meineLatitude=this.selectedOrder.orderOrginCityLat;
+        let meineLongitude=0-this.selectedOrder.orderOrginCityLong;
+        
+        let gLat1=this.selectedOrder.orderOrginCityLat;
+        let gLng1=0-this.selectedOrder.orderOrginCityLong;
+
+        let gLat2=lat1;
+        let gLng2=long1;
+
+        meineLongitude = meineLongitude * (Math.PI / 180);
+        meineLatitude = meineLatitude * (Math.PI / 180);
+        long1 = long1 * (Math.PI / 180);
+        lat1 = lat1 * (Math.PI / 180);
+
+        let x0 = meineLongitude * erdRadius * Math.cos(meineLatitude);
+        let y0 = meineLatitude * erdRadius;
+
+        let x1 = long1 * erdRadius * Math.cos(lat1);
+        let y1 = lat1 * erdRadius;
+
+        let dx = x0 - x1;
+        let dy = y0 - y1;
+
+        let d = Math.sqrt((dx * dx) + (dy * dy));
+         var latLngA = new google.maps.LatLng(gLat1,gLng1);
+         var latLngB = new google.maps.LatLng(gLat2,gLng2);
+         var dis=google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
+        //return Math.round(dis*0.000621371192)+" -- "+Math.round(d*0.000621371192);
+        return Math.round(dis*0.000621371192);
+        //return Math.round(d);
+    }
+
+
 
     getLatLngByGeoCode() {
         var input = $('#ctgGeoCode').val();
@@ -336,6 +453,7 @@ export class AllocationPageComponent {
             }
         }
     }
+
     trucktableScrolled(this:any){
 console.log("scrolling");
         var raw = document.getElementById('tgBody');
@@ -348,6 +466,19 @@ console.log("scrolling");
         }
     }
 
+    sortTrucks(prop) {
+        this.truckList = this.truckList.sort((a: any, b: any) => {
+            if (a[prop] < b[prop]) {
+                return -1;
+            } else if (a[prop] > b[prop]) {
+                return 1;
+            } else {
+                return 0;
+            }
+
+        });
+    }
+
     getTractorsDetails() {
         this.trucksDetailsResp = false;
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
@@ -358,9 +489,15 @@ console.log("scrolling");
                 console.log("tractors data recieved");
                 this.trucks.groups=data.data;
                 this.truckList=data.data;
-                //this.filterByCmpType();
                 this.trucksDetailsResp = true;
-                this.filterByOrder();
+                for(var i=0;i<this.trucks.groups.length;i++){
+                    let obj=this.trucks.groups[i];
+                    obj['distance']=this.calcTruckDistance(obj['location']['position']['lng'],obj['location']['position']['lat']);
+                    this.trucks.groups[i]=obj;
+                    this.truckList[i]=obj;
+                }
+                this.filterTrucksByOrder();
+                this.sortTrucks('distance');
 
 
             }, //For Success Response
@@ -378,7 +515,7 @@ console.log("scrolling");
                 console.log("OrderDetails data recieved");
                 this.orders.groups=data.dataSet;
                 this.orderList=data.dataSet;
-                this.filterByCmpType();
+                this.orderMasterAndFilter();
                 this.OrderDetailsResp = true;
 
 

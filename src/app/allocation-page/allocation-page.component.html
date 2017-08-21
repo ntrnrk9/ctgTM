@@ -27,7 +27,7 @@
                                 <span class="caret"></span>
                                 <div class="dropdown-menu no-padding sel-dd">
                                     <ul class="sel-dd-ul">
-                                        <li *ngFor="let item of orStatusList" (click)="selectOrStatus(item);filterByOrStatus()" style="cursor: pointer">
+                                        <li *ngFor="let item of orStatusList" (click)="selectOrStatus(item);orderMasterAndFilter()" style="cursor: pointer">
                                             {{item.lable}}
                                         </li>
                                     </ul>
@@ -39,7 +39,7 @@
                                 <div class="dropdown-menu no-padding sel-dd">
 
                                     <ul class="sel-dd-ul">
-                                        <li *ngFor="let item of cmpList" (click)="selectCmp(item);filterByCmpType()" style="cursor: pointer">
+                                        <li *ngFor="let item of cmpList" (click)="selectCmp(item);orderMasterAndFilter()" style="cursor: pointer">
                                             {{item.lable}}
                                         </li>
                                     </ul>
@@ -52,8 +52,10 @@
                             </span>
                             <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
                             <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
-                            <input class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode" (ngModelChange)="orderToggleSearch(2)"
-                                [(ngModel)]="bylocation" style="margin-left:10px;width:230px" value="bylocation" />
+                            <span (keyup.enter)="filterOrderByLocation()">
+                                <input class="ctg-textbox pull-left" type="text" placeholder="By location" (ngModelChange)="orderToggleSearch(2)"
+                                [(ngModel)]="orderBylocation" style="margin-left:10px;width:230px"/>
+                            </span>
 
 
                             <!-- <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button> -->
@@ -77,7 +79,7 @@
                                     <tr class="full" *ngIf="i<oRowCount" (click)="orderSelected(item)" [ngClass]="{'selected': selectedOrder.orderNumber==item.orderNumber}">
 
                                         <td style="text-align:center;width:10%">
-                                            <span>{{item.orderNumber}}</span>
+                                            <span>{{item.orderNumber}}-{{item.orderCompany}}-{{item.orderStatus}}</span>
                                         </td>
                                         <td style="text-align:center;width:10%">
                                             <span>{{item.movementNumber}}</span>
@@ -137,14 +139,15 @@
                 <div class="filter-container">
                     <div style="padding:5px;" class="pull-left">
                         <span (keyup.enter)="searchByTruckID()"><input  class="ctg-textbox pull-left" type="text" placeholder="Truck ID" [(ngModel)]="truckID"
-                    (ngModelChange)="toggleSearch(1)"  /></span>
+                    (ngModelChange)="truckToggleSearch(1)"  /></span>
                         <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
                         <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
-                        <input class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode" (ngModelChange)="toggleSearch(2)"
-                            [(ngModel)]="bylocation" style="margin-left:10px;width:230px" value="bylocation" />
+                        <input class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode" (ngModelChange)="truckToggleSearch(2)"
+                            [(ngModel)]="truckBylocation" style="margin-left:10px;width:230px" />
 
                         <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
-                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedMiles.lable}} />
+                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedMiles.lable}} 
+                            [disabled]="truckBylocation.length ==0 "/>
                             <span class="caret"></span>
                             <div class="dropdown-menu no-padding sel-dd">
 
@@ -158,7 +161,7 @@
                         <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button>
                         <!--<button class="pull-right resetBut" type="button" value="encode" (click)="f.geocodeAddress()"><img src="../../assets/images/markers/refresh.png" /></button>-->
                     </div>
-                    <button class="pull-right resetBut" type="button" value="encode" (click)="reset()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
+                    <button class="pull-right resetBut" type="button" value="encode" (click)="resetTruckPage()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
                 </div>
                 <div style="padding-top:15px;">
                     <div>
@@ -191,14 +194,14 @@
                                             <span>{{item.year}}</span>
                                         </td>
                                         <td style="text-align:center;width:15%">
-                                            <span>TBC</span>
+                                            <span>{{item.type}}</span>
                                         </td>
                                         <td style="text-align:center;width:15%">
-                                            <span>{{item.location.landmark}}</span>
+                                            <span>{{item.distance}}</span>
                                         </td>
 
                                         <td style="text-align:center;width:15%">
-                                            <span>{{item.status}}</span>
+                                            <span>{{item.location.landmark}}</span>
                                         </td>
                                     </tr>
                                 </ng-container>
