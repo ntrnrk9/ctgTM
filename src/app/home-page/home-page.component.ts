@@ -35,6 +35,8 @@ export class HomePageComponent {
     trStatusList: any = [{ status: "Select a status", value: -1 },{ status: "Confirmed", value: 0 }, { status: "Planned", value: 1 }, { status: "Available", value: 2 }]
     milesList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedMiles = { lable: "150 Miles", value: 150 };
+    cmpList: any = [{ lable: "COVENANT", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "STAR", value: "STAR" }];
+    selectedCmp = { lable: "COVENANT", value: "CVEN" };
     mgToggleFlag = true;
     trailerStatusResp = false;
     historyRecv = false;
@@ -48,6 +50,7 @@ export class HomePageComponent {
     action: any = { heading: "", body: "" };
     mapConfig:any={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap',marker:-1};
     historyConfig:any={showHistory:false,allTraillerSubSet:[],dataSet:[],backupDS:[],backupATS:[]};
+    allTrailers_bu=[];
     //allTrailers: any=[];
     // allTrailers: any = [
     //     { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
@@ -284,6 +287,8 @@ export class HomePageComponent {
         this.custID="";
         this.mapConfig={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap'};
         this.selectedMiles = { lable: "150 Miles", value: 150 };
+        this.selectedCmp = { lable: "COVENANT", value: "CVEN" };
+        this.selectCmp(this.selectedCmp);
 
         this.getStateTrailersStatus();
         if (this.mgToggleFlag) {
@@ -309,6 +314,11 @@ export class HomePageComponent {
         }
     }
 
+    cloneObj(list:any){
+        var clone=JSON.parse(JSON.stringify(list));
+        return clone;
+    }
+
     getStateTrailersStatus() {
         this.trailerStatusResp = false;
         //let url="http://61.16.133.244/HomeService/api/StatesTrailerCounts";
@@ -318,7 +328,11 @@ export class HomePageComponent {
             (data) => {
                 console.log("StatesTrailerCounts data recieved");
                 this.allTrailers = data;
+                this.allTrailers_bu = data;
                 this.trailerStatusResp = true;
+                //this.selectCmp(this.selectedCmp);
+                this.filterMapByCmp();
+                this.allTraillerSubSet1=this.cloneObj(this.allTrailers);
                 this.selectTrStatus(this.selectedTrStatus);
             }, //For Success Response
             (err) => { console.log("StatesTrailerCounts error recieved"); this.trailerStatusResp = true; } //For Error Response
@@ -618,8 +632,50 @@ export class HomePageComponent {
             }
         }
     }
+    selectCmp(item) {
+        this.selectedCmp = item;
+        this.filterMapByCmp();
+        if(this.bylocation.length==0 && this.custID.length==0 && this.searchID.length==0){
+           this.selectTrStatus(this.selectedTrStatus);
+           //this.allTraillerSubSet=this.filterGridByCmp(this.allTrailers);
+        }else{
+            if(this.bylocation.length>0){
+                this.selectMiles(this.selectedMiles);
+            }else if(this.searchID.length>0){
+                this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet);
+            }else if(this.searchID.length>0){
+                this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet1);
+            }
+        }
+        
+        
 
-allTraillerSubSet1:any=[];
+    }
+
+    filterMapByCmp() {
+        this.allTrailers = [];
+        
+        for (var i = 0; i < this.allTrailers_bu.length; i++) {
+            var obj = this.allTrailers_bu[i];
+            if(obj['company']==this.selectedCmp.value){
+                this.allTrailers.push(obj);
+            }
+        }
+    }
+
+    filterGridByCmp(lists:any) {
+       //this.selectTrStatus(this.selectedTrStatus);
+       var bag=[]
+           for (var i = 0; i < lists.length; i++) {
+               var obj = lists[i];
+               if (obj['company'] == this.selectedCmp.value) {
+                   bag.push(obj);
+               }
+           }
+       return bag;
+    }
+
+    allTraillerSubSet1: any = [];
     selectMiles(item){
         this.allTraillerSubSet =[] ;
         this.selectedMiles = item;
@@ -656,6 +712,7 @@ allTraillerSubSet1:any=[];
                     break;
             }
         }
+        this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet);
         console.log("pln "+plm+" avl "+avl+" com "+com+" total "+this.allTrailers.length);
 
     
