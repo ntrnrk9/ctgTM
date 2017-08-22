@@ -130,8 +130,8 @@
 
             <div class="col-md-12 page-heading">
                 <div style="padding:10px" class="pull-left"><b>List of Trucks</b></div>
-                <button class="pull-right toggleBut" type="button" value="encode" (click)="goToTrailer()">Next</button>
-                <button style="margin-right:2px" class="pull-right toggleBut" type="button" value="encode" (click)="goToOrder()">Back</button>
+                <button class="pull-right toggleBut" [disabled]="selectedTruck.number==-1" type="button" value="encode" (click)="goToTrailer()">Next</button>
+                <button style="margin-right:2px"  class="pull-right toggleBut" type="button" value="encode" (click)="goToOrder()">Back</button>
             </div><br />
 
 
@@ -176,7 +176,7 @@
                             <tbody id="tgBody" *ngIf="trucksDetailsResp && truckList.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;"
                                 (scroll)="trucktableScrolled(this)">
                                 <ng-container *ngFor="let i=index;let item of truckList">
-                                    <tr class="full" *ngIf="i<truRowCount">
+                                    <tr class="full" *ngIf="i<truRowCount" (click)="truckSelected(item)" [ngClass]="{'selected': selectedTruck.number==item.number}">
 
                                         <td style="text-align:center;width:10%">
                                             <span>{{item.number}}</span>
@@ -231,20 +231,20 @@
             <div class="col-md-12 page-body">
                 <div class="filter-container">
                     <div style="padding:5px;" class="pull-left">
-                        <span (keyup.enter)="searchByOrderID()"><input  class="ctg-textbox pull-left" type="text" placeholder="Trailer ID" [(ngModel)]="orderID"
-                    (ngModelChange)="toggleSearch(1)"  /></span>
+                        <span (keyup.enter)="searchByTrailerID()"><input  class="ctg-textbox pull-left" type="text" placeholder="Trailer ID" [(ngModel)]="trailerID"
+                    (ngModelChange)="trailerToggleSearch(1)"  /></span>
                         <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
                         <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
-                        <input class="ctg-textbox pull-left" type="text" placeholder="By location" id="ctgGeoCode" (ngModelChange)="toggleSearch(2)"
-                            [(ngModel)]="bylocation" style="margin-left:10px;width:230px" value="bylocation" />
+                        <input class="ctg-textbox pull-left" type="text" placeholder="By location"  (ngModelChange)="trailerToggleSearch(2)"
+                            [(ngModel)]="trailerBylocation" style="margin-left:10px;width:230px" value="bylocation" />
 
                         <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
-                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedCmp.lable}} />
+                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedTrailerType.lable}} />
                             <span class="caret"></span>
                             <div class="dropdown-menu no-padding sel-dd">
 
                                 <ul class="sel-dd-ul">
-                                    <li *ngFor="let item of cmpList" (click)="selectCmp(item);" style="cursor: pointer">
+                                    <li *ngFor="let item of trailerTypeList" (click)="selectTrailerType(item);filterTrailerByType()" style="cursor: pointer">
                                         {{item.lable}}
                                     </li>
                                 </ul>
@@ -253,9 +253,12 @@
                         <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button>
                         <!--<button class="pull-right resetBut" type="button" value="encode" (click)="f.geocodeAddress()"><img src="../../assets/images/markers/refresh.png" /></button>-->
                     </div>
-                    <button class="pull-right resetBut" type="button" value="encode" (click)="reset()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
+                    <button class="pull-right resetBut" type="button" value="encode" (click)="resetTrailerPage()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
                 </div>
                 <div style="padding-top:15px;">
+                    <div>
+                        <allotrgmap   [trailers]="trailerList" [(item)]="trailerID" [(loc)]="trailerBylocation" [(config)]="trMapConfig"></allotrgmap>
+                    </div>
                     <div>
                         <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
                             <thead style="font-size: 12px">
@@ -265,51 +268,40 @@
                                     </ng-container>
                                 </tr>
                             </thead>
-                            <tbody id="tgBody" *ngIf="trailerStatusResp && allTraillerSubSet.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;"
-                                (scroll)="tableScrolled(this)">
-                                <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
-                                    <tr class="full" *ngIf="i<gRowCount">
+                            <tbody id="tgBody" *ngIf="trailerDetailsResp && trailerList.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;"
+                                (scroll)="trTableScrolled(this)">
+                                <ng-container *ngFor="let i=index;let item of trailerList">
+                                    <tr class="full" *ngIf="i<traRowCount" (click)="trailerSelected(item)" [ngClass]="{'selected': selectedTrailer.trailerID==item.trailerID}">
 
-                                        <td style="text-align:center;width:10%">
+                                        <td style="text-align:center;width:16%">
                                             <span>{{item.trailerID}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
+                                        <td style="text-align:center;width:14%">
                                             <span>{{item.trailerName}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
+                                        <td style="text-align:center;width:14%">
                                             <span>{{item.trailerType}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
+                                        <td style="text-align:center;width:14%">
                                             <span>{{item.location}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
+                                        <td style="text-align:center;width:14%">
                                             <span>{{item.distance}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
+                                        <td style="text-align:center;width:14%">
                                             <span>{{item.trailerStatus}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>TBC</span>
-                                        </td>
-
-                                        <td style="text-align:center;width:10%">
-                                            <span>TBC</span>
-                                        </td>
-
-                                        <td style="text-align:center;width:10%">
-                                            <span>TBC</span>
-                                        </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.iotInfo}}</span>
+                                        <td style="text-align:center;width:14%">
+                                            <span>{{item.lastMovementDate}}</span>
                                         </td>
                                     </tr>
                                 </ng-container>
                             </tbody>
                         </table>
-                        <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="trailerStatusResp && allTraillerSubSet.length==0 ">No data found</div>
+                        <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="trailerDetailsResp && trailerList.length==0 ">No data found</div>
                         <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTraillerSubSet.length}} record(s) found</div>-->
-                        <div *ngIf="trailerStatusResp" style="padding-top: 10px;">{{allTraillerSubSet.length}} record(s) found</div>
-                        <div *ngIf="!trailerStatusResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+                        <div *ngIf="trailerDetailsResp" style="padding-top: 10px;">{{trailerList.length}} record(s) found</div>
+                        <div *ngIf="!trailerDetailsResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
                     </div>
                 </div>
             </div>
@@ -331,10 +323,22 @@
                 <div class="col-md-4" style="border-right: 1px solid #ededed;">
                     <div class="filter-container">
                         <div style="padding:5px;" class="pull-left">
-                            <span class="pull-left" style="margin-left:15px;padding-top:5px">Order ID: </span>
+                            <span class="pull-left" style="margin-left:15px;padding-top:5px">Order ID: {{selectedOrder.orderNumber}}</span>
                         </div>
                     </div>
                     <div style="padding-top:15px;">
+                        <div>
+                            <span>Bill to name</span><br>
+                            <span>Bill to name</span>
+                        </div>
+                        <div>
+                            <span>Order city</span><br>
+                            <span>Bill to name</span>
+                        </div>
+                        <div>
+                            <span>Destination city</span><br>
+                            <span>Bill to name</span>
+                        </div>
 
                     </div>
 

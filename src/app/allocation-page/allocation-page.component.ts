@@ -30,17 +30,22 @@ export class AllocationPageComponent {
 
 
     selectedOrder: any = {orderNumber:-1};
+    selectedTruck: any = {number:-1};
+    selectedTrailer: any = {trailerID:-1};
     selectedTrStatus: any = { status: "Available", value: 2 };
     selectedAvailability: number = -1;
     bylocation: String = "";
     orderBylocation: String = "";
     truckBylocation: String = "";
+    trailerBylocation:String="";
     selectedID: any;
     searchID: String = "";
     omID:String="";
     truckID:String="";
+    trailerID:String="";
     trailHistory: any;
     test: Number = 9;
+    trMapConfig:any={lat:35.96494,lng:-83.95384,zoom:10,mapType:'roadmap',marker:-1};
     
     orStatusList: any = [{ lable: "Available", value: "AVL" },{ lable: "Planned", value: "PLN" }];
     selectedOrStatus = { lable: "Available", value: "AVL" };
@@ -48,10 +53,13 @@ export class AllocationPageComponent {
     selectedCmp = { lable: "COVENANT", value: "CVEN" };
     milesList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedMiles = { lable: "150 Miles", value: 150 };
-    
+    trailerTypeList: any = [{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" }];
+    selectedTrailerType = { lable: "Reefer", value: "REEFER" };
+
     mgToggleFlag = true;
     OrderDetailsResp = false;
     trucksDetailsResp = false;
+    trailerDetailsResp=false;
     historyRecv = false;
     disableTS = false;
     disableLoc = false;
@@ -59,6 +67,7 @@ export class AllocationPageComponent {
     ifFirst = true;
     oRowCount = 50;
     truRowCount = 50;
+    traRowCount = 50;
     geocoder = new google.maps.Geocoder();
     zone: NgZone;
     action: any = { heading: "", body: "" };
@@ -67,6 +76,7 @@ export class AllocationPageComponent {
     
     orderList: any = [];
     truckList: any = [];
+    trailerList:any=[];
 
     orders = {
         column: [{ name: "Order ID", width: "10%" },{ name: "Movement no.", width: "10%" }, { name: "Ref. no.", width: "10%" },{ name: "Bill to name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Service", width: "10%" },
@@ -81,8 +91,8 @@ export class AllocationPageComponent {
     };
     
     trailers = {
-        column: [{ name: "Trailer ID", width: "10%" }, { name: "Trailer name", width: "10%" }, { name: "Trailer type", width: "10%" }, { name: "Location", width: "10%" }, { name: "Allocation status", width: "10%" },
-        { name: "Compilance status", width: "10%" }, { name: "Road worthiness status", width: "10%" }, { name: "Last DOT inspection date ", width: "10%" },{ name: "Accessory/IOT information", width: "10%" },{ name: "Last movement date ", width: "10%" }],
+        column: [{ name: "Trailer ID", width: "16%" }, { name: "Trailer name", width: "14%" }, { name: "Trailer type", width: "14%" }, { name: "Location", width: "14%" }, { name: "Distance in miles", width: "14%" },
+        { name: "Available status", width: "14%" }, { name: "Last movement date ", width: "14%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
@@ -107,11 +117,16 @@ export class AllocationPageComponent {
     selectOrStatus(item){
         this.selectedOrStatus = item;
     }
+    selectTrailerType(item){
+        this.selectedTrailerType = item;
+    }
 
 
     goToTruck(){
         this.page=1;
         this.getTractorsDetails();
+        this.trMapConfig.lat=this.selectedOrder.orderOrginCityLat;
+        this.trMapConfig.lng=0-this.selectedOrder.orderOrginCityLong;
     }
 
     goToOrder(){
@@ -120,6 +135,9 @@ export class AllocationPageComponent {
 
     goToTrailer(){
         this.page=2;
+        this.getTrailersDetails();
+        this.trMapConfig['truckLat']=this.selectedTruck.location.position.lat;
+        this.trMapConfig['truckLng']=this.selectedTruck.location.position.lng;
     }
     
     goToSummary() {
@@ -129,6 +147,16 @@ export class AllocationPageComponent {
     orderSelected(item:any){
         this.selectedOrder=item;
 
+    }
+
+    truckSelected(item:any){
+        this.selectedTruck=item;
+    }
+
+    trailerSelected(item:any){
+        this.selectedTrailer=item;
+        this.trMapConfig['trailerLat']=this.selectedTrailer.latitude;
+        this.trMapConfig['trailerLng']=this.selectedTrailer.longitude;
     }
 
     resetOrderPage() {
@@ -144,6 +172,14 @@ export class AllocationPageComponent {
         this.selectedMiles = { lable: "150 Miles", value: 150 };
         this.getTractorsDetails();
     }
+
+    resetTrailerPage() {
+        this.trailerBylocation = "";
+        this.trailerID = "";
+        this.selectedTrailerType = { lable: "Reefer", value: "REEFER" };
+        this.getTrailersDetails();
+    }
+
 
 
     toggleMG() {
@@ -180,6 +216,15 @@ export class AllocationPageComponent {
             this.truckBylocation = "";
         } else if (item == 2) {
             this.truckID = "";
+            
+        }
+    }
+    
+    trailerToggleSearch(item: any) {
+        if (item == 1) {
+            this.trailerBylocation = "";
+        } else if (item == 2) {
+            this.trailerID = "";
             
         }
     }
@@ -227,6 +272,16 @@ export class AllocationPageComponent {
             var obj = this.trucks.groups[i];
             if (this.truckID == obj['number']) {
                 this.truckList.push(obj);
+            }
+        }
+    }
+
+    searchByTrailerID() {
+        this.trailerList = [];
+        for (let i = 0; i < this.trailers.groups.length; i++) {
+            var obj = this.trailers.groups[i];
+            if (this.trailerID == obj['trailerID']) {
+                this.trailerList.push(obj);
             }
         }
     }
@@ -318,6 +373,16 @@ export class AllocationPageComponent {
             var obj=this.trucks.groups[i];
             if(this.selectedOrder.orderCompany==obj['company'] && obj['status']=="AVL"){
                 this.truckList.push(obj);
+            }
+        }
+    }
+
+    filterTrailerByType(){
+        this.trailerList=[];
+        for(let i=0;i<this.trailers.groups.length;i++){
+            var obj=this.trailers.groups[i];
+            if(this.selectedTrailerType.value==obj['trailerType']){
+                this.trailerList.push(obj);
             }
         }
     }
@@ -502,6 +567,25 @@ console.log("scrolling");
 
             }, //For Success Response
             (err) => { console.log("tractors error recieved"); this.trucksDetailsResp = true; } //For Error Response
+            );
+    }
+
+    getTrailersDetails() {
+        this.trailerDetailsResp = false;
+        //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
+        let url = config.baseUrl + "/AllocationService/api/OrderTrailers?latitude="+this.selectedOrder.orderOrginCityLat
+        +"&longitude=-"+this.selectedOrder.orderOrginCityLong+"&distance=150&company="+this.selectedOrder.orderCompany;
+        this.http.get(url).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("trailers data recieved");
+                this.trailers.groups=data.dataSet;
+                this.trailerList=data.dataSet;
+                this.filterTrailerByType();
+                this.trailerDetailsResp = true;
+                
+            }, //For Success Response
+            (err) => { console.log("trailers error recieved"); this.trailerDetailsResp = true; } //For Error Response
             );
     }
 
