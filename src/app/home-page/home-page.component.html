@@ -42,9 +42,11 @@
 
 
                         <div class="dropdown pull-left pm-select-cont pointer" style="margin-left:10px;" *ngIf="!mgToggleFlag">
-                            <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedMiles.lable}}
-                                [disabled]="bylocation.length ==0 " />
-                            <span class="caret" data-toggle="dropdown"></span>
+                            <button class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedMiles.lable}}
+                                [disabled]="bylocation.length ==0 ">
+                                <span class="pull-left">{{selectedMiles.lable}}</span>
+                                <span class="caret pull-right" style="margin-top:9px" data-toggle="dropdown" ></span>
+                            </button>
                             <div class="dropdown-menu no-padding sel-dd">
 
                                 <ul class="sel-dd-ul">
