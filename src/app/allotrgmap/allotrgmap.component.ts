@@ -216,7 +216,8 @@ export class AlloTrGmap {
             destination: end,
             waypoints: waypts,
             optimizeWaypoints: true,
-            travelMode: google.maps.DirectionsTravelMode.DRIVING
+            travelMode: google.maps.DirectionsTravelMode.DRIVING,
+            //transitOptions:google.maps.TransitMode.BUS
         };
 
         var ctrl=this;

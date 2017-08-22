@@ -49,8 +49,8 @@ export class AllocationPageComponent {
     
     orStatusList: any = [{ lable: "Available", value: "AVL" },{ lable: "Planned", value: "PLN" }];
     selectedOrStatus = { lable: "Available", value: "AVL" };
-    cmpList: any = [{ lable: "COVENANT", value: "CVEN" },{ lable: "SRT", value: "SRT" },{lable: "STAR", value: "STAR" }];
-    selectedCmp = { lable: "COVENANT", value: "CVEN" };
+    cmpList: any = [{ lable: "Covenant", value: "CVEN" },{ lable: "SRT", value: "SRT" },{lable: "STAR", value: "STAR" }];
+    selectedCmp = { lable: "Covenant", value: "CVEN" };
     milesList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedMiles = { lable: "150 Miles", value: 150 };
     trailerTypeList: any = [{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" }];
@@ -162,7 +162,7 @@ export class AllocationPageComponent {
     resetOrderPage() {
         this.orderBylocation = "";
         this.omID = "";
-        this.selectedCmp = { lable: "COVENANT", value: "CVEN" };
+        this.selectedCmp = { lable: "Covenant", value: "CVEN" };
         this.getOrderDetails();
     }
 
