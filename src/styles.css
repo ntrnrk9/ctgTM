@@ -116,3 +116,8 @@ border:1px solid silver;
     height:30px !important;
     border-radius: none !important;
 }
+
+
+.pointer{
+    cursor: pointer;
+}
