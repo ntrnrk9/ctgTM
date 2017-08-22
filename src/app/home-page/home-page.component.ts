@@ -35,8 +35,8 @@ export class HomePageComponent {
     trStatusList: any = [{ status: "Select a status", value: -1 },{ status: "Confirmed", value: 0 }, { status: "Planned", value: 1 }, { status: "Available", value: 2 }]
     milesList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedMiles = { lable: "150 Miles", value: 150 };
-    cmpList: any = [{ lable: "COVENANT", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "STAR", value: "STAR" }];
-    selectedCmp = { lable: "COVENANT", value: "CVEN" };
+    cmpList: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "STAR", value: "STAR" }];
+    selectedCmp = { lable: "Covenant", value: "CVEN" };
     mgToggleFlag = true;
     trailerStatusResp = false;
     historyRecv = false;
@@ -287,7 +287,7 @@ export class HomePageComponent {
         this.custID="";
         this.mapConfig={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap'};
         this.selectedMiles = { lable: "150 Miles", value: 150 };
-        this.selectedCmp = { lable: "COVENANT", value: "CVEN" };
+        this.selectedCmp = { lable: "Covenant", value: "CVEN" };
         this.selectCmp(this.selectedCmp);
 
         this.getStateTrailersStatus();

@@ -18,7 +18,7 @@
                     <div class="pull-left" style="padding:5px 15px 5px 5px; background-color: #d3d3d3">
                         <div class="dropdown pull-left pm-select-cont">
                             <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedCmp.lable}}/>
-                            <span class="caret"></span>
+                            <span class="caret" data-toggle="dropdown"></span>
                             <div class="dropdown-menu no-padding sel-dd">
 
                                 <ul class="sel-dd-ul">
@@ -44,7 +44,7 @@
                         <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;" *ngIf="!mgToggleFlag">
                             <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedMiles.lable}}
                                 [disabled]="bylocation.length ==0 " />
-                            <span class="caret"></span>
+                            <span class="caret" data-toggle="dropdown"></span>
                             <div class="dropdown-menu no-padding sel-dd">
 
                                 <ul class="sel-dd-ul">
@@ -61,7 +61,7 @@
                         <div (ngModelChange)="toggleSearch(3)" class="dropdown pull-left pm-select-cont" style="margin-left:10px;" *ngIf="!mgToggleFlag">
                             <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedTrStatus.status}}
                             />
-                            <span class="caret"></span>
+                            <span class="caret" data-toggle="dropdown"></span>
                             <div class="dropdown-menu no-padding sel-dd">
 
                                 <ul class="sel-dd-ul">
