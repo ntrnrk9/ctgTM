@@ -174,7 +174,16 @@ opacity: 0 !important;
 }
 
 .selected{
-    background-color: #d3d3d3 !important;
+    background-color: #e9f3ff !important;
+}
+
+.selectedTrailer{
+background: #e9f3ff !important;
+    color: black !important;
+}
+.attachedTrailer{
+    background: #d2232a !important;
+    color: white !important;
 }
 
 .sel-dd-ul li:hover {

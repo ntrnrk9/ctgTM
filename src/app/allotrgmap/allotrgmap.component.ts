@@ -134,7 +134,7 @@ export class AlloTrGmap {
                 position: truckLatLng,
                 map: this.map,
                 //title: tr.trailerID,
-                icon: '../../assets/images/markers/available-truck.png'
+                icon: '../../assets/images/markers/truck-b.png'
             });
         markerBounds.extend(truckLatLng);
         //this.markers.push(truckMaker);
@@ -145,7 +145,7 @@ export class AlloTrGmap {
                 position: orderLatLng,
                 map: this.map,
                 //title: tr.trailerID,
-                //icon: '../../assets/images/markers/available-truck.png'
+                icon: '../../assets/images/markers/order-b.png'
             });
         markerBounds.extend(orderLatLng);
         //this.markers.push(orderMaker);
@@ -201,23 +201,26 @@ export class AlloTrGmap {
 
         let end = new google.maps.LatLng(this.config.lat, this.config.lng)
 
-        let orderStop = new google.maps.LatLng(this.config.trailerLat, this.config.trailerLng)
-        waypts.push({
-            location: orderStop,
-            stopover: true
-        });
+        if (this.config.trailerLat) {
+            let orderStop = new google.maps.LatLng(this.config.trailerLat, this.config.trailerLng)
+            waypts.push({
+                location: orderStop,
+                stopover: true
+            });
+        }
         //createMarker(stop);
 
         let start = new google.maps.LatLng(this.config.truckLat, this.config.truckLng)
 
-
+        let transitOptions;
+        transitOptions={modes:[google.maps.TransitMode.BUS]}
         var request = {
             origin: start,
             destination: end,
             waypoints: waypts,
             optimizeWaypoints: true,
-            travelMode: google.maps.DirectionsTravelMode.DRIVING,
-            //transitOptions:google.maps.TransitMode.BUS
+            travelMode: google.maps.DirectionsTravelMode.TRANSIT,
+            transitOptions:transitOptions
         };
 
         var ctrl=this;

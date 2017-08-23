@@ -30,7 +30,7 @@ export class AllocationPageComponent {
 
 
     selectedOrder: any = {orderNumber:-1};
-    selectedTruck: any = {number:-1};
+    selectedTruck: any = {number:-1,type:"",make:"",company:"",model:"",distance:0,location:{landmark:""}};
     selectedTrailer: any = {trailerID:-1};
     selectedTrStatus: any = { status: "Available", value: 2 };
     selectedAvailability: number = -1;
@@ -51,12 +51,12 @@ export class AllocationPageComponent {
     selectedOrStatus = { lable: "Available", value: "AVL" };
     cmpList: any = [{ lable: "Covenant", value: "CVEN" },{ lable: "SRT", value: "SRT" },{lable: "STAR", value: "STAR" }];
     selectedCmp = { lable: "Covenant", value: "CVEN" };
-    milesList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
-    selectedMiles = { lable: "150 Miles", value: 150 };
+    milesList: any = [{ lable: "Select distance", value: 0 },{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
+    selectedMiles = { lable: "Select distance", value: 0 };
     trailerTypeList: any = [{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" }];
     selectedTrailerType = { lable: "Reefer", value: "REEFER" };
 
-    mgToggleFlag = true;
+    mgToggle = false;
     OrderDetailsResp = false;
     trucksDetailsResp = false;
     trailerDetailsResp=false;
@@ -79,14 +79,14 @@ export class AllocationPageComponent {
     trailerList:any=[];
 
     orders = {
-        column: [{ name: "Order ID", width: "10%" },{ name: "Movement no.", width: "10%" }, { name: "Ref. no.", width: "10%" },{ name: "Bill to name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Service", width: "10%" },
+        column: [{ name: "Order ID", width: "10%" },{ name: "Movement no.", width: "10%" }, { name: "Ref. no.", width: "10%" },{ name: "Bill to name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Order origin point", width: "10%" },
         { name: "Order start date", width: "10%" }, { name: "Order end date", width: "10%" }, { name: "Order remark", width: "10%" } ],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
     trucks = {
         column: [{ name: "Truck ID", width: "10%" }, { name: "Company", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model", width: "10%" },
-        { name: "Year", width: "15%" },{ name: "Type", width: "15%" },{ name: "Distance in miles", width: "15%" },{ name: "Landmark", width: "15%" }],
+        { name: "Year", width: "10%" },{ name: "Type", width: "10%" },{ name: "Trailer", width: "10%" },{ name: "Distance in miles", width: "15%" },{ name: "Landmark", width: "15%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
     
@@ -125,8 +125,7 @@ export class AllocationPageComponent {
     goToTruck(){
         this.page=1;
         this.getTractorsDetails();
-        this.trMapConfig.lat=this.selectedOrder.orderOrginCityLat;
-        this.trMapConfig.lng=0-this.selectedOrder.orderOrginCityLong;
+        
     }
 
     goToOrder(){
@@ -136,21 +135,48 @@ export class AllocationPageComponent {
     goToTrailer(){
         this.page=2;
         this.getTrailersDetails();
-        this.trMapConfig['truckLat']=this.selectedTruck.location.position.lat;
-        this.trMapConfig['truckLng']=this.selectedTruck.location.position.lng;
     }
     
     goToSummary() {
         this.page = 3;
     }
 
+    getSubmitConfirm(){
+        $('#submitConfirm').modal('show');
+
+    }
+
+    orderSearch() {
+        if (this.omID.length > 0) {
+            this.searchByomID();
+        } else if (this.orderBylocation.length > 0) {
+            this.filterOrderByLocation();
+        }
+    }
+
+    truckSearch(){
+        if(this.truckID.length>0){
+            this.searchByTruckID();
+        }
+        
+    }
+
+    trailerSearch(){
+        if(this.trailerID.length>0){
+            this.searchByTrailerID();
+        }
+    }
+
     orderSelected(item:any){
         this.selectedOrder=item;
-
+        this.trMapConfig.lat=this.selectedOrder.orderOrginCityLat;
+        this.trMapConfig.lng=this.selectedOrder.orderOrginCityLong;
     }
 
     truckSelected(item:any){
         this.selectedTruck=item;
+        this.trMapConfig['truckLat']=this.selectedTruck.location.position.lat;
+        this.trMapConfig['truckLng']=this.selectedTruck.location.position.lng;
     }
 
     trailerSelected(item:any){
@@ -163,13 +189,16 @@ export class AllocationPageComponent {
         this.orderBylocation = "";
         this.omID = "";
         this.selectedCmp = { lable: "Covenant", value: "CVEN" };
+        this.selectedOrStatus = { lable: "Available", value: "AVL" };
+        this.selectedOrder= {orderNumber:-1};
         this.getOrderDetails();
     }
 
     resetTruckPage() {
         this.truckBylocation = "";
         this.truckID = "";
-        this.selectedMiles = { lable: "150 Miles", value: 150 };
+        this.selectedMiles = { lable: "Select distance", value: 0 };
+        this.selectedTruck = {number:-1};
         this.getTractorsDetails();
     }
 
@@ -177,6 +206,7 @@ export class AllocationPageComponent {
         this.trailerBylocation = "";
         this.trailerID = "";
         this.selectedTrailerType = { lable: "Reefer", value: "REEFER" };
+        this.selectedTrailer = {trailerID:-1};
         this.getTrailersDetails();
     }
 
@@ -184,8 +214,8 @@ export class AllocationPageComponent {
 
     toggleMG() {
         
-        this.mgToggleFlag = !this.mgToggleFlag;
-        if (this.mgToggleFlag) {
+        this.mgToggle = !this.mgToggle;
+        if (this.mgToggle) {
             //this.searchID = "";
             //this.bylocation = "";
             //this.disableLoc = false;
@@ -198,7 +228,7 @@ export class AllocationPageComponent {
             //this.disableLoc = true;
             //this.disableStatus = false;
             //this.disableTS = true;
-            this.oRowCount = 50;
+            this.traRowCount = 50;
         }
     }
 
@@ -231,12 +261,18 @@ export class AllocationPageComponent {
 
     formatDateTime(item: any) {
         if (item != "") {
-            var ary = item.split(' ');
-            var date = ary[0].split('-');
-            var newD = new Date(date[0], date[1] - 1, date[2]);
-            //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
-            var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + ary[1];
-            return SDate;
+            if (item != "UNKNOWN") {
+                var ary = item.split(' ');
+                var date = ary[0].split('-');
+                var time = ary[1].split(':');
+                var secs = time[2].split('.');
+                var newD = new Date(date[0], date[1] - 1, date[2]);
+                //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
+                var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + time[0] + ":" + time[1] + ":" + secs[0];
+                return SDate;
+            } else {
+                return item;
+            }
         }
 
     }
@@ -257,6 +293,7 @@ export class AllocationPageComponent {
 
     searchByomID() {
         this.orderList = [];
+        this.omID=this.omID.toUpperCase();
         for (let i = 0; i < this.orders.groups.length; i++) {
             var obj = this.orders.groups[i];
             if (this.omID == obj['orderNumber']||this.omID == obj['movementNumber']) {
@@ -268,9 +305,10 @@ export class AllocationPageComponent {
 
     searchByTruckID() {
         this.truckList = [];
+        this.truckID=this.truckID.toUpperCase();
         for (let i = 0; i < this.trucks.groups.length; i++) {
             var obj = this.trucks.groups[i];
-            if (this.truckID == obj['number']) {
+            if (this.truckID == obj['number'] && this.selectedOrder.orderCompany == obj['company'] && obj['status'] == "AVL") {
                 this.truckList.push(obj);
             }
         }
@@ -278,6 +316,7 @@ export class AllocationPageComponent {
 
     searchByTrailerID() {
         this.trailerList = [];
+        this.trailerID=this.trailerID.toUpperCase();
         for (let i = 0; i < this.trailers.groups.length; i++) {
             var obj = this.trailers.groups[i];
             if (this.trailerID == obj['trailerID']) {
@@ -367,24 +406,55 @@ export class AllocationPageComponent {
 
     }
 
-    filterTrucksByOrder(){
-        this.truckList=[];
-        for(let i=0;i<this.trucks.groups.length;i++){
-            var obj=this.trucks.groups[i];
-            if(this.selectedOrder.orderCompany==obj['company'] && obj['status']=="AVL"){
+    filterTrucksByOrder() {
+        this.truckList = [];
+        for (let i = 0; i < this.trucks.groups.length; i++) {
+            var obj = this.trucks.groups[i];
+            if (this.selectedOrder.orderCompany == obj['company'] && obj['status'] == "AVL") {
                 this.truckList.push(obj);
             }
         }
     }
 
-    filterTrailerByType(){
-        this.trailerList=[];
-        for(let i=0;i<this.trailers.groups.length;i++){
-            var obj=this.trailers.groups[i];
-            if(this.selectedTrailerType.value==obj['trailerType']){
-                this.trailerList.push(obj);
+    filterTrucksByDistance() {
+        this.truckID="";
+        this.truckList = [];
+        for (let i = 0; i < this.trucks.groups.length; i++) {
+            var obj = this.trucks.groups[i];
+            if (this.selectedMiles.value == 0) {
+                if (this.selectedOrder.orderCompany == obj['company'] && obj['status'] == "AVL") {
+                    this.truckList.push(obj);
+                }
+            } else {
+                if (this.selectedOrder.orderCompany == obj['company'] && obj['status'] == "AVL" && obj['distance'] <= this.selectedMiles.value) {
+                    this.truckList.push(obj);
+                }
             }
         }
+        this.sortList('distance',this.truckList);
+    }
+
+    filterTrailerByType(){
+        if (this.trailerID.length == 0) {
+            this.trailerList = [];
+            for (let i = 0; i < this.trailers.groups.length; i++) {
+                var obj = this.trailers.groups[i];
+                if (this.selectedTrailerType.value == obj['trailerType'] && this.selectedOrder.orderCompany == obj['company']) {
+                    this.trailerList.push(obj);
+                }
+            }
+        } else {
+            this.trailerList = [];
+            this.trailerID=this.trailerID.toUpperCase();
+            for (let i = 0; i < this.trailers.groups.length; i++) {
+                var objt = this.trailers.groups[i];
+                if (this.selectedTrailerType.value == objt['trailerType'] && this.selectedOrder.orderCompany == objt['company'] && this.trailerID==objt['trailerID']) {
+                    this.trailerList.push(objt);
+                }
+            }
+            //this.trailerList=this.cloneObje(bag);
+        }
+        //this.trailerList=this.sortList('distance',this.trailerList);
     }
 
     
@@ -394,10 +464,10 @@ export class AllocationPageComponent {
     calcTruckDistance(long1, lat1) {
         let erdRadius = 6371e3;
         let meineLatitude=this.selectedOrder.orderOrginCityLat;
-        let meineLongitude=0-this.selectedOrder.orderOrginCityLong;
+        let meineLongitude=this.selectedOrder.orderOrginCityLong;
         
         let gLat1=this.selectedOrder.orderOrginCityLat;
-        let gLng1=0-this.selectedOrder.orderOrginCityLong;
+        let gLng1=this.selectedOrder.orderOrginCityLong;
 
         let gLat2=lat1;
         let gLng2=long1;
@@ -461,7 +531,7 @@ export class AllocationPageComponent {
         console.log(input);
         this.bylocation = input;
         if (this.bylocation != "") {
-            if (this.mgToggleFlag) {
+            if (this.mgToggle) {
 
                 this.getLatLngByGeoCode();
             } else {
@@ -480,7 +550,7 @@ export class AllocationPageComponent {
         var input = $('#ctgGeoCode').val();
         console.log(input);
         this.bylocation = input;
-        if (this.mgToggleFlag) {
+        if (this.mgToggle) {
 
             this.getLatLngByGeoCode();
         } else {
@@ -495,7 +565,7 @@ export class AllocationPageComponent {
         this.selectedCmp = { lable: "SVN", value: "SVN" };
 
         this.getOrderDetails();
-        if (this.mgToggleFlag) {
+        if (this.mgToggle) {
 
             this.disableLoc = false;
             this.disableTS = false;
@@ -524,15 +594,27 @@ console.log("scrolling");
         var raw = document.getElementById('tgBody');
         if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
 
-            this.oRowCount += 50;
+            this.truRowCount += 50;
             if (this.truRowCount > this.truckList) {
                 this.truRowCount = this.truckList;
             }
         }
     }
+    
+    trailertableScrolled(this:any){
+console.log("scrolling");
+        var raw = document.getElementById('tgBody');
+        if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
 
-    sortTrucks(prop) {
-        this.truckList = this.truckList.sort((a: any, b: any) => {
+            this.traRowCount += 50;
+            if (this.traRowCount > this.trailerList) {
+                this.traRowCount = this.trailerList;
+            }
+        }
+    }
+
+    sortList(prop,list) {
+        var sortedlist = list.sort((a: any, b: any) => {
             if (a[prop] < b[prop]) {
                 return -1;
             } else if (a[prop] > b[prop]) {
@@ -542,6 +624,7 @@ console.log("scrolling");
             }
 
         });
+        return sortedlist;
     }
 
     getTractorsDetails() {
@@ -562,7 +645,7 @@ console.log("scrolling");
                     this.truckList[i]=obj;
                 }
                 this.filterTrucksByOrder();
-                this.sortTrucks('distance');
+                this.truckList=this.sortList('distance',this.truckList);
 
 
             }, //For Success Response
@@ -574,7 +657,7 @@ console.log("scrolling");
         this.trailerDetailsResp = false;
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         let url = config.baseUrl + "/AllocationService/api/OrderTrailers?latitude="+this.selectedOrder.orderOrginCityLat
-        +"&longitude=-"+this.selectedOrder.orderOrginCityLong+"&distance=150&company="+this.selectedOrder.orderCompany;
+        +"&longitude="+this.selectedOrder.orderOrginCityLong+"&distance=150&company="+this.selectedOrder.orderCompany;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -582,6 +665,7 @@ console.log("scrolling");
                 this.trailers.groups=data.dataSet;
                 this.trailerList=data.dataSet;
                 this.filterTrailerByType();
+                this.sortList('distance',this.trailers.groups);
                 this.trailerDetailsResp = true;
                 
             }, //For Success Response
@@ -606,6 +690,10 @@ console.log("scrolling");
             }, //For Success Response
             (err) => { console.log("OrderDetails error recieved"); this.OrderDetailsResp = true; } //For Error Response
             );
+    }
+
+    toSubmit(){
+      console.log("submit allocation");  
     }
 
 }
