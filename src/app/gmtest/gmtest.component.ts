@@ -296,9 +296,9 @@ export class Gmtest {
                 //bound.push({ state: state, bounds: bounds, code: code, location: location });
                 resultsMap.fitBounds(results[0].geometry.viewport);
                 if (results[0].types[0] == "locality") {
-                    resultsMap.setZoom(7);
+                    //resultsMap.setZoom(7);
                 } else {
-                    resultsMap.setZoom(10);
+                    //resultsMap.setZoom(10);
                 }
                 this.map = resultsMap;
                 //ctrl.test(results[0].geometry.bounds);
