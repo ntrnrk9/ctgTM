@@ -50,6 +50,10 @@
     margin: 5px 0px 5px 0px;
 }
 
+.sel-dd-ul li:hover {
+    background-color: #ededed;
+}
+
 .search-box {
     height: 30px;
     border-radius: 0px;
