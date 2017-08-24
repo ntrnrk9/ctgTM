@@ -14,7 +14,7 @@
 
             <div class="col-md-12 page-heading">
                 <div style="padding:10px" class="pull-left"><b>List of orders</b></div>
-                <button class="pull-right toggleBut" [disabled]="selectedOrder.orderNumber!=-1" type="button" value="encode" (click)="goToTruck()">Next</button>
+                <button class="pull-right toggleBut" [disabled]="selectedOrder.orderNumber==-1" type="button" value="encode" (click)="goToTruck()">Next</button>
             </div><br />
 
 
@@ -266,7 +266,7 @@
                 </div>
                 <div style="padding-top:15px;">
                     <div *ngIf="mgToggle">
-                        <allotrgmap [trailers]="trailerList" [(item)]="trailerID" [(loc)]="trailerBylocation" [(config)]="trMapConfig"></allotrgmap>
+                        <allotrgmap [trailers]="mapTrailers" [(item)]="trailerID" [(loc)]="trailerBylocation" [(config)]="trMapConfig"></allotrgmap>
                     </div>
                     <div *ngIf="!mgToggle">
                         <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
@@ -342,7 +342,7 @@
                             <span>Bill to name</span><br>
                             <span style="font-size: 16px"><b>{{selectedOrder.orderBillTo}}</b></span>
                         </div>
-                        <div>
+                        <div style="padding-top:10px">
                             <span>TMW</span><br>
                             <span style="font-size: 16px"><b>{{selectedOrder.orderOrginPoint}}</b></span>
                         </div>

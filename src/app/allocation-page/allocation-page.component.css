@@ -174,16 +174,20 @@ opacity: 0 !important;
 }
 
 .selected{
-    background-color: #e9f3ff !important;
+    /* background-color: #e9f3ff !important; */
+    background: #d2232a !important;
+    color: white !important; 
 }
 
 .selectedTrailer{
-background: #e9f3ff !important;
-    color: black !important;
-}
-.attachedTrailer{
     background: #d2232a !important;
     color: white !important;
+}
+.attachedTrailer{
+    /* background: #d2232a !important;
+    color: white !important; */
+    font-size: 13px;
+    font-weight: bold;
 }
 
 .sel-dd-ul li:hover {

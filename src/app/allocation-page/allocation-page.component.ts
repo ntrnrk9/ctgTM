@@ -53,8 +53,8 @@ export class AllocationPageComponent {
     selectedCmp = { lable: "Covenant", value: "CVEN" };
     milesList: any = [{ lable: "Select distance", value: 0 },{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedMiles = { lable: "Select distance", value: 0 };
-    trailerTypeList: any = [{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" }];
-    selectedTrailerType = { lable: "Reefer", value: "REEFER" };
+    trailerTypeList: any = [{ lable: "Select a type", value: "" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" }];
+    selectedTrailerType = { lable: "Select a type", value: "" };
 
     mgToggle = false;
     OrderDetailsResp = false;
@@ -77,6 +77,7 @@ export class AllocationPageComponent {
     orderList: any = [];
     truckList: any = [];
     trailerList:any=[];
+    mapTrailers:any=[];
 
     orders = {
         column: [{ name: "Order ID", width: "10%" },{ name: "Movement no.", width: "10%" }, { name: "Ref. no.", width: "10%" },{ name: "Bill to name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Order origin point", width: "10%" },
@@ -134,6 +135,7 @@ export class AllocationPageComponent {
 
     goToTrailer(){
         this.page=2;
+        this.mgToggle=false;
         this.getTrailersDetails();
     }
     
@@ -167,22 +169,45 @@ export class AllocationPageComponent {
         }
     }
 
-    orderSelected(item:any){
-        this.selectedOrder=item;
-        this.trMapConfig.lat=this.selectedOrder.orderOrginCityLat;
-        this.trMapConfig.lng=this.selectedOrder.orderOrginCityLong;
+    orderSelected(item: any) {
+        if (this.selectedOrder.orderNumber != item.orderNumber) {
+            this.selectedOrder = item;
+            this.trMapConfig.lat = this.selectedOrder.orderOrginCityLat;
+            this.trMapConfig.lng = this.selectedOrder.orderOrginCityLong;
+        } else {
+            this.selectedOrder = { orderNumber: -1 };
+            this.trMapConfig.lat = undefined;
+            this.trMapConfig.lng = undefined;
+        }
     }
 
-    truckSelected(item:any){
-        this.selectedTruck=item;
-        this.trMapConfig['truckLat']=this.selectedTruck.location.position.lat;
-        this.trMapConfig['truckLng']=this.selectedTruck.location.position.lng;
+    truckSelected(item: any) {
+        if (this.selectedTruck.number != item.number) {
+            this.selectedTruck = item;
+            this.trMapConfig['truckLat'] = this.selectedTruck.location.position.lat;
+            this.trMapConfig['truckLng'] = this.selectedTruck.location.position.lng;
+        } else {
+            this.selectedTruck = { number: -1, type: "", make: "", company: "", model: "", distance: 0, location: { landmark: "" } };
+            this.trMapConfig['truckLat'] = undefined;
+            this.trMapConfig['truckLng'] = undefined;
+        }
     }
 
-    trailerSelected(item:any){
-        this.selectedTrailer=item;
-        this.trMapConfig['trailerLat']=this.selectedTrailer.latitude;
-        this.trMapConfig['trailerLng']=this.selectedTrailer.longitude;
+    trailerSelected(item: any) {
+        if (this.selectedTrailer.trailerID != item.trailerID) {
+            this.selectedTrailer = item;
+            this.trMapConfig['trailerLat'] = this.selectedTrailer.latitude;
+            this.trMapConfig['trailerLng'] = this.selectedTrailer.longitude;
+            this.mapTrailers=[item];
+
+        } else {
+            this.selectedTrailer = { trailerID: -1 };
+            this.trMapConfig['trailerLat'] = undefined;
+            this.trMapConfig['trailerLng'] = undefined;
+            this.mapTrailers=this.cloneObje(this.trailerList);
+
+        }
+
     }
 
     resetOrderPage() {
@@ -205,7 +230,7 @@ export class AllocationPageComponent {
     resetTrailerPage() {
         this.trailerBylocation = "";
         this.trailerID = "";
-        this.selectedTrailerType = { lable: "Reefer", value: "REEFER" };
+        this.selectedTrailerType = { lable: "Select a type", value: "" };
         this.selectedTrailer = {trailerID:-1};
         this.getTrailersDetails();
     }
@@ -215,6 +240,16 @@ export class AllocationPageComponent {
     toggleMG() {
         
         this.mgToggle = !this.mgToggle;
+        if (this.selectedTrailer.trailerID != -1) {
+            this.trMapConfig['trailerLat'] = this.selectedTrailer.latitude;
+            this.trMapConfig['trailerLng'] = this.selectedTrailer.longitude;
+            this.mapTrailers=[this.selectedTrailer];
+
+        } else {
+            this.trMapConfig['trailerLat'] = undefined;
+            this.trMapConfig['trailerLng'] = undefined;
+            this.mapTrailers=this.cloneObje(this.trailerList);
+        }
         if (this.mgToggle) {
             //this.searchID = "";
             //this.bylocation = "";
@@ -297,10 +332,12 @@ export class AllocationPageComponent {
         for (let i = 0; i < this.orders.groups.length; i++) {
             var obj = this.orders.groups[i];
             if (this.omID == obj['orderNumber']||this.omID == obj['movementNumber']) {
+                if(this.selectedCmp.value == obj['orderCompany'] && this.selectedOrStatus.value == obj['orderStatus']){
                 this.orderList.push(obj);
+                }
             }
         }
-        this.orderMasterAndFilter();
+        //this.orderMasterAndFilter();
     }
 
     searchByTruckID() {
@@ -323,6 +360,7 @@ export class AllocationPageComponent {
                 this.trailerList.push(obj);
             }
         }
+        this.mapTrailers=this.cloneObje(this.trailerList);
     }
 
     filterOrderByLocation() {
@@ -331,10 +369,12 @@ export class AllocationPageComponent {
             var obj = this.orders.groups[i];
              var conCity=obj['orderOrginCity'].toLowerCase().includes(this.orderBylocation.toLowerCase())
             if (conCity) {
-                this.orderList.push(obj);
+                if (this.selectedCmp.value == obj['orderCompany'] && this.selectedOrStatus.value == obj['orderStatus']) {
+                    this.orderList.push(obj);
+                }
             }
         }
-        this.orderMasterAndFilter();
+        //this.orderMasterAndFilter();
     }
 
     cloneObje(list:any){
@@ -394,14 +434,19 @@ export class AllocationPageComponent {
                 }
             }
         }else{
-            var bag = [];
-            for (let i = 0; i < this.orderList.length; i++) {
-                var objt = this.orderList[i];
-                if (this.selectedCmp.value == objt['orderCompany'] && this.selectedOrStatus.value == obj['orderStatus']) {
-                    bag.push(objt);
-                }
+            if(this.omID.length>0){
+                this.searchByomID();
+            }else if(this.orderBylocation.length>0){
+                this.filterOrderByLocation();
             }
-            this.orderList=this.cloneObje(bag);
+            //var bag = [];
+            // for (let i = 0; i < this.orderList.length; i++) {
+            //     var objt = this.orderList[i];
+            //     if (this.selectedCmp.value == objt['orderCompany'] && this.selectedOrStatus.value == objt['orderStatus']) {
+            //         bag.push(objt);
+            //     }
+            // }
+            // this.orderList=this.cloneObje(bag);
         }
 
     }
@@ -439,8 +484,15 @@ export class AllocationPageComponent {
             this.trailerList = [];
             for (let i = 0; i < this.trailers.groups.length; i++) {
                 var obj = this.trailers.groups[i];
-                if (this.selectedTrailerType.value == obj['trailerType'] && this.selectedOrder.orderCompany == obj['company']) {
-                    this.trailerList.push(obj);
+                if (this.selectedTrailerType.value == "") {
+                    if (this.selectedOrder.orderCompany == obj['company']) {
+                        this.trailerList.push(obj);
+                    }
+
+                } else {
+                    if (this.selectedTrailerType.value == obj['trailerType'] && this.selectedOrder.orderCompany == obj['company']) {
+                        this.trailerList.push(obj);
+                    }
                 }
             }
         } else {
@@ -448,13 +500,20 @@ export class AllocationPageComponent {
             this.trailerID=this.trailerID.toUpperCase();
             for (let i = 0; i < this.trailers.groups.length; i++) {
                 var objt = this.trailers.groups[i];
-                if (this.selectedTrailerType.value == objt['trailerType'] && this.selectedOrder.orderCompany == objt['company'] && this.trailerID==objt['trailerID']) {
-                    this.trailerList.push(objt);
+                if (this.selectedTrailerType.value == "") {
+                    if (this.selectedOrder.orderCompany == obj['company']) {
+                        this.trailerList.push(obj);
+                    }
+
+                } else {
+                    if (this.selectedTrailerType.value == objt['trailerType'] && this.selectedOrder.orderCompany == objt['company'] && this.trailerID == objt['trailerID']) {
+                        this.trailerList.push(objt);
+                    }
                 }
             }
             //this.trailerList=this.cloneObje(bag);
         }
-        //this.trailerList=this.sortList('distance',this.trailerList);
+        this.mapTrailers=this.cloneObje(this.trailerList);
     }
 
     
@@ -657,7 +716,7 @@ console.log("scrolling");
         this.trailerDetailsResp = false;
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         let url = config.baseUrl + "/AllocationService/api/OrderTrailers?latitude="+this.selectedOrder.orderOrginCityLat
-        +"&longitude="+this.selectedOrder.orderOrginCityLong+"&distance=150&company="+this.selectedOrder.orderCompany;
+        +"&longitude="+this.selectedOrder.orderOrginCityLong+"&distance=150&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -666,6 +725,7 @@ console.log("scrolling");
                 this.trailerList=data.dataSet;
                 this.filterTrailerByType();
                 this.sortList('distance',this.trailers.groups);
+                this.mapTrailers=this.cloneObje(this.trailerList);
                 this.trailerDetailsResp = true;
                 
             }, //For Success Response

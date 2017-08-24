@@ -198,19 +198,21 @@ export class AlloTrGmap {
     calcRoute() {
 
         var waypts = [];
+        let start,end;
 
-        let end = new google.maps.LatLng(this.config.lat, this.config.lng)
-
-        if (this.config.trailerLat) {
-            let orderStop = new google.maps.LatLng(this.config.trailerLat, this.config.trailerLng)
-            waypts.push({
-                location: orderStop,
-                stopover: true
-            });
+        end = new google.maps.LatLng(this.config.lat, this.config.lng);
+        if (this.config.truckLat) {
+            start = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
+            if (this.config.trailerLat) {
+                let orderStop = new google.maps.LatLng(this.config.trailerLat, this.config.trailerLng)
+                waypts.push({
+                    location: orderStop,
+                    stopover: true
+                });
+            }
+        } else {
+            start = new google.maps.LatLng(this.config.trailerLat, this.config.trailerLng);
         }
-        //createMarker(stop);
-
-        let start = new google.maps.LatLng(this.config.truckLat, this.config.truckLng)
 
         let transitOptions;
         transitOptions={modes:[google.maps.TransitMode.BUS]}
@@ -219,8 +221,8 @@ export class AlloTrGmap {
             destination: end,
             waypoints: waypts,
             optimizeWaypoints: true,
-            travelMode: google.maps.DirectionsTravelMode.TRANSIT,
-            transitOptions:transitOptions
+            travelMode: google.maps.DirectionsTravelMode.DRIVING,
+            //transitOptions:transitOptions
         };
 
         var ctrl=this;
