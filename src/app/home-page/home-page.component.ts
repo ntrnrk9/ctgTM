@@ -491,7 +491,7 @@ export class HomePageComponent {
                     //alert("Trailer id not found");
                     this.action.heading = "Trailer search";
                     this.action.body = 'Trailer not found!';
-                    this.searchID="";
+                    // this.searchID="";
                     $('#result').modal('show');
                 }
             }
@@ -628,6 +628,12 @@ export class HomePageComponent {
                             this.allTraillerSubSet.push(obj);
                     }
                     break;
+                case -1:
+                    {
+                        
+                            this.allTraillerSubSet.push(obj);
+                    }
+                    break;    
                     
             }
         }
@@ -642,9 +648,11 @@ export class HomePageComponent {
             if(this.bylocation.length>0){
                 this.selectMiles(this.selectedMiles);
             }else if(this.searchID.length>0){
+                this.searchByID();
                 this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet);
-            }else if(this.searchID.length>0){
-                this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet1);
+            }else if(this.custID.length>0){
+                this.searchByCustID();
+                this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet);
             }
         }
         
