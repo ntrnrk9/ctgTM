@@ -134,7 +134,7 @@ export class AlloTrGmap {
                 position: truckLatLng,
                 map: this.map,
                 //title: tr.trailerID,
-                icon: '../../assets/images/markers/truck-b.png'
+                icon: '../../assets/images/Truck_icon.png'
             });
         markerBounds.extend(truckLatLng);
         //this.markers.push(truckMaker);
@@ -145,7 +145,7 @@ export class AlloTrGmap {
                 position: orderLatLng,
                 map: this.map,
                 //title: tr.trailerID,
-                icon: '../../assets/images/markers/order-b.png'
+                icon: '../../assets/images/order_icon.png'
             });
         markerBounds.extend(orderLatLng);
         //this.markers.push(orderMaker);
@@ -253,7 +253,8 @@ export class AlloTrGmap {
             color = "#158cff";
             status = "PLANNED";
         } else {
-            color = "#fb3447";
+            //color = "#fb3447";
+            color = "#15c922";
             status = "CONFIRMED"
         }
         var content = '<div class="infowindow" style="width:200px;padding:0px;height:170px;overflow:hidden;">' +
@@ -264,7 +265,7 @@ export class AlloTrGmap {
             '</div>' +
             '<div class="row title" style="border-bottom:1px solid silver;height:35px;padding:0px 30px 0px 15px">' +
             '<span class="vehicle-date" style="font-size:10px;float:left;padding-top:5px"><b>DOT Date:</b><br>' + tr.dotDate + '</span>' +
-            '<span class=" row vehicletype available" style="float:right;font-size:14px;margin-top:4px;font-weight:bold;color:' + color + '">' + status + '</span>' +
+            '<span class=" row vehicletype available" style="float:right;font-size:14px;margin-top:4px;font-weight:bold;color:' + color + '">' + tr.trailerStatus + '</span>' +
             '</div>' +
             '<div class="row content" style="padding:3px 30px 0px 15px">' +
             '<span><b>Location</b></span><br>' + tr.location +

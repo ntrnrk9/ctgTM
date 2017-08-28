@@ -51,8 +51,8 @@ export class AllocationPageComponent {
     selectedOrStatus = { lable: "Available", value: "AVL" };
     cmpList: any = [{ lable: "Covenant", value: "CVEN" },{ lable: "SRT", value: "SRT" },{lable: "STAR", value: "STAR" }];
     selectedCmp = { lable: "Covenant", value: "CVEN" };
-    milesList: any = [{ lable: "Select distance", value: 0 },{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
-    selectedMiles = { lable: "Select distance", value: 0 };
+    milesList: any = [{ lable: "Select radius", value: 0 },{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
+    selectedMiles = { lable: "Select radius", value: 0 };
     trailerTypeList: any = [{ lable: "Select a type", value: "" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" }];
     selectedTrailerType = { lable: "Select a type", value: "" };
 
@@ -87,12 +87,12 @@ export class AllocationPageComponent {
 
     trucks = {
         column: [{ name: "Truck ID", width: "10%" }, { name: "Company", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model", width: "10%" },
-        { name: "Year", width: "10%" },{ name: "Type", width: "10%" },{ name: "Trailer", width: "10%" },{ name: "Distance in miles", width: "15%" },{ name: "Landmark", width: "15%" }],
+        { name: "Year", width: "10%" },{ name: "Type", width: "10%" },{ name: "Trailer", width: "10%" },{ name: "Distance (Approx. radius in miles)", width: "15%" },{ name: "Landmark", width: "15%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
     
     trailers = {
-        column: [{ name: "Trailer ID", width: "16%" }, { name: "Trailer name", width: "14%" }, { name: "Trailer type", width: "14%" }, { name: "Location", width: "14%" }, { name: "Distance in miles", width: "14%" },
+        column: [{ name: "Trailer ID", width: "16%" }, { name: "Trailer name", width: "14%" }, { name: "Trailer type", width: "14%" }, { name: "Location", width: "14%" }, { name: "Distance (Approx. radius in miles)", width: "14%" },
         { name: "Available status", width: "14%" }, { name: "Last movement date ", width: "14%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
@@ -222,7 +222,7 @@ export class AllocationPageComponent {
     resetTruckPage() {
         this.truckBylocation = "";
         this.truckID = "";
-        this.selectedMiles = { lable: "Select distance", value: 0 };
+        this.selectedMiles = { lable: "Select radius", value: 0 };
         this.selectedTruck = {number:-1};
         this.getTractorsDetails();
     }
@@ -546,12 +546,27 @@ export class AllocationPageComponent {
         let dy = y0 - y1;
 
         let d = Math.sqrt((dx * dx) + (dy * dy));
-         var latLngA = new google.maps.LatLng(gLat1,gLng1);
-         var latLngB = new google.maps.LatLng(gLat2,gLng2);
-         var dis=google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
+        var latLngA = new google.maps.LatLng(gLat1,gLng1);
+        var latLngB = new google.maps.LatLng(gLat2,gLng2);
+        //var dis=google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
+        //return Math.round(dis*0.000621371192)+" -- "+Math.round(d*0.000621371192);
+        //return Math.round(dis*0.000621371192);
+        return Math.round(d*0.000621371192);
+    }
+
+    googleDistCalc(lat,lng){
+        let gLat1=this.selectedOrder.orderOrginCityLat;
+        let gLng1=this.selectedOrder.orderOrginCityLong;
+        
+        let gLat2=lat;
+        let gLng2=lng;
+
+        var latLngA = new google.maps.LatLng(gLat1,gLng1);
+        var latLngB = new google.maps.LatLng(gLat2,gLng2);
+        
+        var dis=google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
         //return Math.round(dis*0.000621371192)+" -- "+Math.round(d*0.000621371192);
         return Math.round(dis*0.000621371192);
-        //return Math.round(d);
     }
 
 
@@ -694,9 +709,10 @@ console.log("scrolling");
             .subscribe(
             (data) => {
                 console.log("tractors data recieved");
+                this.trucksDetailsResp = true;
                 this.trucks.groups=data.data;
                 this.truckList=data.data;
-                this.trucksDetailsResp = true;
+                
                 for(var i=0;i<this.trucks.groups.length;i++){
                     let obj=this.trucks.groups[i];
                     obj['distance']=this.calcTruckDistance(obj['location']['position']['lng'],obj['location']['position']['lat']);
@@ -752,8 +768,44 @@ console.log("scrolling");
             );
     }
 
-    toSubmit(){
-      console.log("submit allocation");  
+    toSubmit() {
+        console.log("submit allocation");
+        this.OrderDetailsResp = false;
+        let headers = new Headers({ 'Content-Type': 'application/json;', 'Accept': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+        let bo={
+            order: this.selectedOrder,
+            truck:this.selectedTruck,
+            trailer:this.selectedTrailer
+        }
+        let body = {
+            "orderID": this.selectedOrder.orderNumber,
+            "movementNumber":this.selectedOrder.movementNumber,
+            "orderName": this.selectedOrder.orderName, 
+            "orderOriginCity": this.selectedOrder.orderOrginCity, 
+            "orderDestinationCity": this.selectedOrder.orderDestCity,
+            
+            "truckID": this.selectedTruck.number, 
+            "truckCompany": this.selectedTruck.company, 
+            "trailerID": this.selectedTrailer.trailerID,
+            "trailerType": this.selectedTrailer.trailerType, 
+            "trailerName": this.selectedTrailer.trailerName,
+            
+        };
+        //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
+        let url = config.baseUrl + "/AllocationService/api/InsertOrderAllocation";
+        this.http.post(url,body,options).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("OrderDetails data recieved");
+                if(data.status==1){
+                    alert("success");
+                }else{
+                    alert("failed");
+                }
+            }, //For Success Response
+            (err) => { console.log("OrderDetails error recieved"); this.OrderDetailsResp = true; } //For Error Response
+            );
     }
 
 }
