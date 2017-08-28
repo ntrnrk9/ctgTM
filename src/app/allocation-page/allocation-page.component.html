@@ -383,27 +383,27 @@
                         </div>
                     </div>
                     <div style="padding:20px;">
-                        <div>
+                        <div style="height:42px">
                             <span>Company</span><br>
                             <span style="font-size: 16px"><b>{{selectedTruck.company}}</b></span>
                         </div>
-                        <div style="padding-top:10px">
+                        <div style="padding-top:10px;height:52px">
                             <span>Make</span><br>
                             <span style="font-size: 16px"><b>{{selectedTruck.make}}</b></span>
                         </div>
-                        <div style="padding-top:10px">
+                        <div style="padding-top:10px;height:52px">
                             <span>Model</span><br>
                             <span style="font-size: 16px"><b>{{selectedTruck.model}}</b></span>
                         </div>
-                        <div style="padding-top:10px">
+                        <div style="padding-top:10px;height:52px">
                             <span>Type</span><br>
                             <span style="font-size: 16px"><b>{{selectedTruck.type}}</b></span>
                         </div>
-                        <div style="padding-top:10px">
+                        <div style="padding-top:10px;height:52px">
                             <span>Distance (Approx. radius in miles)</span><br>
                             <span style="font-size: 16px"><b>{{selectedTruck.distance}}</b></span>
                         </div>
-                        <div style="padding-top:10px">
+                        <div style="padding-top:10px;height:52px">
                             <span>Landmark</span><br>
                             <span style="font-size: 16px"><b>{{selectedTruck.location.landmark}}</b></span>
                         </div>
@@ -462,7 +462,7 @@
     </div>
 
     <!-- submit conformation div -->
-    <div class="modal fade" id="submitResult" role="dialog">
+    <div class="modal fade" id="successResult" role="dialog">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header page-heading" style="padding:5px 15px 5px 15px">
@@ -470,13 +470,29 @@
                     <h4 class="modal-title">Allocation Status</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure?</p>
+                    <p>Order allocated successfully!</p>
                 </div>
                 <div class="modal-footer page-footer">
-                    <button type="button" class="pm-addBut" (click)="toSubmit()" data-dismiss="modal">Ok</button>
+                    <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
                 </div>
             </div>
         </div>
     </div>
-
+    <!-- submit conformation div -->
+    <div class="modal fade" id="failedResult" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header page-heading" style="padding:5px 15px 5px 15px">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Allocation Status</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Error in allocating order</p>
+                    </div>
+                    <div class="modal-footer page-footer">
+                        <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 </div>

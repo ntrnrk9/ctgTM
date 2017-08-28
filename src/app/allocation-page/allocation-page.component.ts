@@ -799,12 +799,14 @@ console.log("scrolling");
             (data) => {
                 console.log("OrderDetails data recieved");
                 if(data.status==1){
-                    alert("success");
+                    //alert("success");
+                    $('#successResult').modal('show');
                 }else{
-                    alert("failed");
+                    //alert("failed");
+                    $('#failedResult').modal('show');
                 }
             }, //For Success Response
-            (err) => { console.log("OrderDetails error recieved"); this.OrderDetailsResp = true; } //For Error Response
+            (err) => { console.log("OrderDetails error recieved"); this.OrderDetailsResp = true;$('#failedResult').modal('show'); } //For Error Response
             );
     }
 
