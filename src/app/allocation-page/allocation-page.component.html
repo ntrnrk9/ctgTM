@@ -64,12 +64,23 @@
                     <button class="pull-right resetBut" type="button" value="encode" (click)="resetOrderPage()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
                 </div>
                 <div style="padding-top:15px;">
-                    <div>
+                    <!-- <button (click)="showPlannedOrder(itemObj)">click</button> -->
+                    <div *ngIf="omgToggle">
+                        <div class="page-heading">
+                                <button type="button" (click)="closeOrderMap()" class="pull-right toggleBut close" data-toggle="tooltip" title="Close">&times;</button>
+                        </div>
+                        <div>
+                                <allotrgmap [trailers]="mappedTrailer" [(item)]="trailerID" [(loc)]="trailerBylocation" [(config)]="mappedOrderConfig"></allotrgmap>
+                        </div>
+                    </div>
+                    <div *ngIf="!omgToggle">
                         <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
                             <thead style="font-size: 12px">
                                 <tr bgcolor="#f7f8fc" class="app-table-tr full">
                                     <ng-container *ngFor="let con of orders.column">
-                                        <th [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+                                        <th *ngIf="selectedOrStatus.value!='PLN'" [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+                                        <th *ngIf="selectedOrStatus.value=='PLN' && con.name=='Order remark'"[ngStyle]="{'width':con.width}" style="text-align:center;">Action</th>
+                                        <th *ngIf="selectedOrStatus.value=='PLN' && con.name!='Order remark'"[ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
                                     </ng-container>
                                 </tr>
                             </thead>
@@ -83,7 +94,8 @@
                                             <span>{{item.orderNumber}}</span>
                                         </td>
                                         <td style="text-align:center;width:10%">
-                                            <span>{{item.movementNumber}}</span>
+                                            <a (click)="showPlannedOrder(item)" *ngIf="item.orderStatus=='PLN'"><span>{{item.movementNumber}}</span></a>
+                                            <span *ngIf="item.orderStatus!='PLN'">{{item.movementNumber}}</span>
                                         </td>
                                         <td style="text-align:center;width:10%">
                                             <span>{{item.orderRefNumber}}</span>
@@ -108,7 +120,8 @@
                                         </td>
 
                                         <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
-                                            <span>{{item.orderRemark.substring(0,25)}}..</span>
+                                            <span *ngIf="selectedOrStatus.value!='PLN'">{{item.orderRemark.substring(0,25)}}..</span>
+                                            <a *ngIf="selectedOrStatus.value=='PLN'" (click)="unplan()">Unplan</a>
                                         </td>
 
                                     </tr>
@@ -295,7 +308,7 @@
                                     [ngClass]="(selectedTrailer.trailerID==item.trailerID)? 'selectedTrailer': (item.trailerID==selectedTruck.trailer)?'attachedTrailer':'' ">
 
                                         <td style="text-align:center;width:16%">
-                                            <span>{{item.trailerID}}-{{item.company}}</span>
+                                            <span>{{item.trailerID}}</span>
                                         </td>
                                         <td style="text-align:center;width:14%">
                                             <span>{{item.trailerName}}</span>
@@ -335,7 +348,7 @@
 
             <div class="col-md-12 page-heading">
                 <div style="padding:10px" class="pull-left"><b>Summary details</b></div>
-                <button class="pull-right toggleBut" type="button" value="encode" (click)="getSubmitConfirm()">Submit</button>
+                <button class="pull-right toggleBut" type="button" value="encode" (click)="toSubmit()">Submit</button>
                 <button style="margin-right:2px" class="pull-right toggleBut" type="button" value="encode" (click)="goToTrailer()">Back</button>
             </div><br />
 
