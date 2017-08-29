@@ -72,11 +72,11 @@ export class AlloTrGmap {
 
     ngOnDestroy() {
         console.log("gmTest componant destroyed");
-        this.config.lat = this.map.getCenter().lat();
-        this.config.lng = this.map.getCenter().lng();
-        this.config.zoom = this.map.getZoom();
+        //this.config.lat = this.map.getCenter().lat();
+        //this.config.lng = this.map.getCenter().lng();
+        //this.config.zoom = this.map.getZoom();
         //console.log(JSON.stringify(this.config));
-        this.emit();
+        //this.emit();
 
     }
     ngOnInit() {
@@ -128,27 +128,35 @@ export class AlloTrGmap {
             this.bindInfoWindow(tr, marker, this.map, this.infowindow, this.createinfoWinContent(tr));
             this.markers.push(marker);
         }
-        var truckLatLng = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
-        var truckMaker = new google.maps.Marker(
-            {
-                position: truckLatLng,
-                map: this.map,
-                //title: tr.trailerID,
-                icon: '../../assets/images/Truck_icon.png'
-            });
-        markerBounds.extend(truckLatLng);
-        //this.markers.push(truckMaker);
+        
+        if (this.config.truckLat) {
+            var truckLatLng = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
+            var trTitle = "Truck: " + this.config.truckLat + " " + this.config.truckLng;
+            var truckMaker = new google.maps.Marker(
+                {
+                    position: truckLatLng,
+                    map: this.map,
+                    title: trTitle,
+                    icon: '../../assets/images/Truck_icon.png'
+                });
+            markerBounds.extend(truckLatLng);
+            //this.markers.push(truckMaker);
+        }
 
-        var orderLatLng = new google.maps.LatLng(this.config.lat, this.config.lng);
-        var orderMaker = new google.maps.Marker(
-            {
-                position: orderLatLng,
-                map: this.map,
-                //title: tr.trailerID,
-                icon: '../../assets/images/order_icon.png'
-            });
-        markerBounds.extend(orderLatLng);
-        //this.markers.push(orderMaker);
+        if (this.config.lat) {
+            var orderLatLng = new google.maps.LatLng(this.config.lat, this.config.lng);
+            var orTitle = "Order: " + this.config.lat + " " + this.config.lng;
+            console.log(orTitle);
+            var orderMaker = new google.maps.Marker(
+                {
+                    position: orderLatLng,
+                    map: this.map,
+                    title: orTitle,
+                    icon: '../../assets/images/order_icon.png'
+                });
+            markerBounds.extend(orderLatLng);
+            //this.markers.push(orderMaker);
+        }
 
         var mcOptions = {
             styles: [{
@@ -263,8 +271,8 @@ export class AlloTrGmap {
             '<div class="row head2" style="font-weight:bold;font-size:13px;color:red">' + tr.trailerName + '</div>' +
             '<div class="row head3" style="font-weight:bold;font-size:12px;color:black">' + tr.trailerType + '</div>' +
             '</div>' +
-            '<div class="row title" style="border-bottom:1px solid silver;height:35px;padding:0px 30px 0px 15px">' +
-            '<span class="vehicle-date" style="font-size:10px;float:left;padding-top:5px"><b>DOT Date:</b><br>' + tr.dotDate + '</span>' +
+            '<div class="row title" style="border-bottom:1px solid silver;height:30px;padding:0px 30px 0px 15px">' +
+            '<span class="vehicle-date" style="font-size:14px;float:left;padding-top:5px"><b>Trailer status: </b></span>' +
             '<span class=" row vehicletype available" style="float:right;font-size:14px;margin-top:4px;font-weight:bold;color:' + color + '">' + tr.trailerStatus + '</span>' +
             '</div>' +
             '<div class="row content" style="padding:3px 30px 0px 15px">' +
