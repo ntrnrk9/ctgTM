@@ -200,6 +200,9 @@ export class AlloTrGmap {
         if(this.config.trailerLat){
             this.directionsDisplay.setMap(this.map);
             this.calcRoute();
+        }else if(this.config.paList){
+            if(this.config.paList.length>0)
+            this.showPlanARoute();
         }
     }
 
@@ -240,6 +243,48 @@ export class AlloTrGmap {
                 var route = response.routes[0];
             }
         });
+    }
+
+    showPlanARoute() {
+
+        let start, end;
+
+        end = new google.maps.LatLng(this.config.lat, this.config.lng);
+        start = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
+        for (var i = 0; i < this.config.paList.length; i++) {
+            var item=this.config.paList[i];
+            var waypts = [];
+            let orderStop = new google.maps.LatLng(item.latitude, item.longitude)
+            waypts.push({
+                location: orderStop,
+                stopover: true
+            });
+            this.planA(start,end,waypts);
+        } 
+
+    }
+
+    planA(start,end,waypts){
+        var directionsDisplay1 = new google.maps.DirectionsRenderer({
+            suppressMarkers: true
+          });
+          directionsDisplay1.setMap(this.map);
+        
+          var request = {
+            origin: start,
+            destination: end,
+            waypoints: waypts,
+            optimizeWaypoints: true,
+            travelMode: google.maps.DirectionsTravelMode.DRIVING
+          };
+        
+          this.directionsService.route(request, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+              directionsDisplay1.setDirections(response);
+              var route = response.routes[0];
+            }
+          });
+
     }
 
 

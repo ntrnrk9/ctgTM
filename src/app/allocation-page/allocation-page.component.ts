@@ -1,9 +1,10 @@
 import { Component,Input,Output, ViewChild, NgZone, ChangeDetectorRef } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { GmapjsComponent } from '../gmapjs/gmapjs.component';
-import { Gmtest } from '../gmtest/gmtest.component';
+import { AlloTrGmap } from '../allotrgmap/allotrgmap.component';
 
 declare var google: any;
 declare var MarkerClusterer: any;
@@ -18,6 +19,7 @@ import * as config from '../configs/configs';
 })
 export class AllocationPageComponent {
     private name = 'AllocationPageComponent';
+    @ViewChild(AlloTrGmap) alloMap: any;
     @Input() config:any;
     page=0;
     data = {
@@ -68,6 +70,8 @@ export class AllocationPageComponent {
     disableLoc = false;
     disableStatus = false;
     ifFirst = true;
+    selectedPlan=true;
+
     oRowCount = 50;
     truRowCount = 50;
     traRowCount = 50;
@@ -184,6 +188,106 @@ export class AllocationPageComponent {
         }
     }
 
+    getPlanA(){
+        this.selectedPlan=false;
+        let lowDist=-1;
+        let bag=[];
+        let top3=0;
+        this.trailerList = this.sortList('routeDist', this.trailerList);
+        for(let i=0;i<this.trailerList.length;i++){
+            var obj=this.trailerList[i];
+            if(lowDist==-1){
+                if (obj['routeDist']) {
+                    lowDist = obj['routeDist'];
+                    bag.push(obj);
+                }
+            }else{
+                if (lowDist == obj['routeDist']) {
+                    bag.push(obj);
+                }else if((lowDist < obj['routeDist'])){
+                    if (top3 < 3) {
+                        lowDist = obj['routeDist'];
+                        top3++;
+                        bag.push(obj);
+                    }
+                }
+            }
+
+        }
+        this.trMapConfig['paList']=bag;
+        //this.trMapConfig['paList']=this.cloneObje(this.temList);
+        //this.mapTrailers=this.cloneObje(this.temList);
+        this.mapTrailers=this.cloneObje(bag);
+        this.alloMap.ngOnInit();
+    }
+    getPlanB() {
+        this.selectedPlan=true;
+        this.trMapConfig['paList']=[];
+        this.mapTrailers=this.cloneObje(this.trailerList);
+
+    }
+
+    temList=[];
+    calcRouteDistance(trLat,trLng,index) {
+        console.log('calling calcRoutDist '+index);
+        let directionsService = new google.maps.DirectionsService();
+        let directionsDisplay = new google.maps.DirectionsRenderer({
+            suppressMarkers: true
+        });
+
+        var waypts = [];
+        let start, end;
+        this.trMapConfig.lat = this.selectedOrder.orderOrginCityLat;
+        this.trMapConfig.lng = this.selectedOrder.orderOrginCityLong;
+        end = new google.maps.LatLng(this.selectedOrder.orderOrginCityLat, this.selectedOrder.orderOrginCityLong);
+        
+        if (this.selectedTruck.number!=-1) {
+            let truckLat = this.selectedTruck.location.position.lat;
+            let truckLng = this.selectedTruck.location.position.lng;
+            start = new google.maps.LatLng(truckLat,truckLng);
+            
+                let orderStop = new google.maps.LatLng(trLat, trLng)
+                waypts.push({
+                    location: orderStop,
+                    stopover: true
+                });
+            
+        } 
+        
+        var request = {
+            origin: start,
+            destination: end,
+            waypoints: waypts,
+            optimizeWaypoints: true,
+            travelMode: google.maps.DirectionsTravelMode.DRIVING,
+        };
+
+        var ctrl = this;
+        var dist=0;
+        directionsService.route(request, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(response);
+                var route = response.routes[0];
+                for(var i=0;i<response.routes[0].legs.length;i++){
+                    var obj=response.routes[0].legs[i];
+                    dist+=obj.distance.value;
+                }
+
+                //ctrl.trailers.groups[i]['routeDist']=dist;
+                var temp=(dist*0.000621371192).toFixed(2);
+                dist=parseFloat(temp);
+                console.log("calc "+index+" succ "+dist+" id:"+ctrl.trailerList[index].trailerID);
+                ctrl.trailerList[index]['routeDist']=dist;
+                ctrl.temList.push(ctrl.trailerList[index]);
+                //return dist;
+            }else{
+                console.log("calc "+index +" failed "+status);
+            }
+        });
+    }
+
+    
+
     showPlannedOrder(item){
         
         this.mappedTrailer=[];
@@ -201,6 +305,10 @@ export class AllocationPageComponent {
     
     closeOrderMap(){
         this.omgToggle=!this.omgToggle;
+    }
+
+    closeTrailerMap(){
+        this.mgToggle=!this.mgToggle;
     }
 
     orderSelected(item: any) {
@@ -289,7 +397,8 @@ export class AllocationPageComponent {
             //this.bylocation = "";
             //this.disableLoc = false;
             //this.disableStatus = false;
-            //this.disableTS = false;
+            //this.disableTS = false
+            this.getPlanB();
         } else {
 
             //this.searchID = "";
@@ -795,10 +904,55 @@ console.log("scrolling");
                 this.trailers.groups=this.sortList('distance',this.trailers.groups);
                 this.mapTrailers=this.cloneObje(this.trailerList);
                 this.trailerDetailsResp = true;
+                this.index=0;
+                this.subscription=this.tryCalDist();
+                
                 
             }, //For Success Response
             (err) => { console.log("trailers error recieved"); this.trailerDetailsResp = true; } //For Error Response
             );
+    }
+index=0;
+subscription;
+    tryCalDist(){
+        this.temList=[];
+        var ctrl=this;
+        var flag=true;
+        var i=0,k=0,l=0;
+        return Observable.interval(3000).subscribe(x => {
+            if (this.index < this.trailerList.length) {
+                var item = this.trailerList[this.index];
+                this.trailerList[this.index]['routeDist'] = 0;
+                ctrl.calcRouteDistance(item['latitude'], item['longitude'], this.index);
+                this.index++;
+            }
+            if (this.index < this.trailerList.length) {
+                item = this.trailerList[this.index];
+                this.trailerList[this.index]['routeDist'] = 0;
+                ctrl.calcRouteDistance(item['latitude'], item['longitude'], this.index);
+                this.index++;
+            }
+            if (this.index < this.trailerList.length) {
+                item = this.trailerList[this.index];
+                this.trailerList[this.index]['routeDist'] = 0;
+                ctrl.calcRouteDistance(item['latitude'], item['longitude'], this.index);
+                this.index++;
+            }
+
+            else {
+                //this.trailerList = this.sortList('routeDist', this.trailerList);
+                this.subscription.unsubscribe();
+            }
+        });
+        
+        // for(let i=0;i<this.trailerList.length;i++){
+        //     var item=this.trailerList[i];
+        //     this.trailerList[i]['routeDist']=0;
+        //     setTimeout(function () {
+        //         ctrl.calcRouteDistance(item['latitude'],item['longitude'],i);
+        //     }, 3000);
+        //     console.log('calling calcRD '+i);
+        // }
     }
 
     getOrderDetails() {

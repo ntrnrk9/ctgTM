@@ -144,7 +144,7 @@
 
             <div class="col-md-12 page-heading">
                 <div style="padding-left: 10px;padding-top: 1px;" class="pull-left"><img style="height: 35px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.orderNumber}} - {{selectedOrder.orderOrginPoint}} - {{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}}</b></div>
-                <button class="pull-right toggleBut"  type="button" value="encode" (click)="goToTrailer()">Next</button>
+                <button class="pull-right toggleBut"  [disabled]="selectedTruck.number==-1" type="button" value="encode" (click)="goToTrailer()">Next</button>
                 <button style="margin-right:2px" class="pull-right toggleBut" type="button" value="encode" (click)="goToOrder()">Back</button>
             </div><br />
 
@@ -289,7 +289,20 @@
                 </div>
                 <div style="padding-top:15px;">
                     <div *ngIf="mgToggle">
-                        <allotrgmap [trailers]="mapTrailers" [(item)]="trailerID" [(loc)]="trailerBylocation" [(config)]="trMapConfig"></allotrgmap>
+                        <div class="page-heading" style="height:32px">
+                            <button [ngClass]="{'selected': !selectedPlan}" type="button" (click)="getPlanA()" class="pull-left toggleBut" style="padding: 6px 15px 6px 15px;">Plan A</button>
+                            <button [ngClass]="{'selected': selectedPlan}" type="button" (click)="getPlanB()" class="pull-left toggleBut" style="padding: 6px 15px 6px 15px;">Plan B</button>
+                            <button type="button" (click)="closeTrailerMap()" class="pull-right toggleBut close" style="padding: 5px 15px 6px 15px;"
+                                data-toggle="tooltip" title="Close">&times;</button>
+                        </div>
+                        <div>
+                            <div *ngIf="!selectedPlan" class="col-md-3">
+                                <ul>
+                                    <li *ngFor="let i=index;let item of trMapConfig.paList">{{item.trailerID}}-{{item.routeDist}}</li>
+                                </ul>
+                            </div>
+                            <div [ngClass]="{'col-md-9': !selectedPlan}" ><allotrgmap [trailers]="mapTrailers" [(item)]="trailerID" [(loc)]="trailerBylocation" [(config)]="trMapConfig"></allotrgmap></div>
+                        </div>
                     </div>
                     <div *ngIf="!mgToggle">
                         <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
@@ -308,7 +321,7 @@
                                     [ngClass]="(selectedTrailer.trailerID==item.trailerID)? 'selectedTrailer': (item.trailerID==selectedTruck.trailer)?'attachedTrailer':'' ">
 
                                         <td style="text-align:center;width:16%">
-                                            <span>{{item.trailerID}}</span>
+                                            <span>{{item.trailerID}}-{{item.routeDist}}</span>
                                         </td>
                                         <td style="text-align:center;width:14%">
                                             <span>{{item.trailerName}}</span>
