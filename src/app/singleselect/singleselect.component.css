@@ -1,0 +1,37 @@
+.ss-button{
+    height: 30px;
+    width: 100%;
+    margin: 0px;
+    border: none;
+    background-color: white;
+}
+
+.ss-select-cont{
+    height: 30px;
+    width: 100%;
+}
+
+.ss-dd {
+    width: auto;
+    border-radius: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    /* padding: 10px 10px 10px 10px; */
+}
+
+.ss-dd-ul {
+    padding: 5px 0px 5px 0px;
+    list-style: none;
+    margin-bottom: 0px;
+    margin: 5px 0px 5px 0px;
+}
+.ss-dd-ul li:hover {
+    background-color: #ededed;
+}
+
+.ss-lbl {
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 18px;
+    margin: 2px; cursor: pointer;
+}

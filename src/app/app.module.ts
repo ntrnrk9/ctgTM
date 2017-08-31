@@ -32,6 +32,7 @@ import { FilterCPipe } from './Filters/filterC.pipe';
 import { FilterArrayPipe } from './Filters/filterArray.pipe';
 import { HistoryPageComponent } from './history-page/history-page.component';
 import { MyDatePickerModule } from 'mydatepicker';
+import { SingleselectComponent } from './singleselect/singleselect.component';
 
 @NgModule({
     imports: [BrowserModule, HttpModule, CommonModule, FormsModule,MyDatePickerModule, NgxPaginationModule,AlertModule.forRoot(),
@@ -45,7 +46,7 @@ import { MyDatePickerModule } from 'mydatepicker';
         AllocationPageComponent, PoolMangPageComponent,
         Pool1MangPageComponent, Footer1Component,
         FilterCPipe, FilterArrayPipe,
-        SearchfilterComponent, GmapjsComponent,Gmaptest,Gmtest, HistoryPageComponent
+        SearchfilterComponent, GmapjsComponent,Gmaptest,Gmtest, HistoryPageComponent, SingleselectComponent
     ],
     //providers:[{ provide: RequestOptions, useClass: HttpInject }],
     bootstrap: [AppComponent]

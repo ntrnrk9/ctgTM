@@ -1,0 +1,11 @@
+<div class="dropdown pull-left ss-select-cont pointer">
+    <button class="ss-button dropdown-toggle"  type="button" data-toggle="dropdown">
+        <span class="pull-left">{{selectedItem[key]}}</span>
+        <span class="caret pull-right" style="margin-top:9px" data-toggle="dropdown" ></span>
+    </button>
+    <div class="dropdown-menu no-padding ss-dd">
+        <ul class="ss-dd-ul">
+            <li *ngFor="let item of items" (click)="selectItem(item)" class="pointer">{{item[key]}}</li>
+        </ul>
+    </div>
+</div>
