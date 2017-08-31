@@ -141,7 +141,10 @@ export class AllocationPageComponent {
     goToTrailer(){
         this.page=2;
         this.mgToggle=false;
-        this.getTrailersDetails();
+        //this.trailers.groups=[];
+        //this.getTrailersDetails(this.selectedOrder.orderOrginCityLat,this.selectedOrder.orderOrginCityLong,50);
+        //this.getTrailersDetails(this.selectedTruck.location.position.lat,this.selectedTruck.location.position.lng,50);
+        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,50);
     }
     
     goToSummary() {
@@ -232,7 +235,7 @@ export class AllocationPageComponent {
             this.selectedTrailer = item;
             this.trMapConfig['trailerLat'] = this.selectedTrailer.latitude;
             this.trMapConfig['trailerLng'] = this.selectedTrailer.longitude;
-            this.mapTrailers=[item];
+            this.mapTrailers=this.cloneObje(this.trailerList);
 
         } else {
             this.selectedTrailer = { trailerID: -1 };
@@ -266,7 +269,9 @@ export class AllocationPageComponent {
         this.trailerID = "";
         this.selectedTrailerType = { lable: "Select a type", value: "" };
         this.selectedTrailer = {trailerID:-1};
-        this.getTrailersDetails();
+        //this.getTrailersDetails(this.selectedOrder.orderOrginCityLat,this.selectedOrder.orderOrginCityLong,50);
+        //this.trailers.groups=[];
+        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,50);
     }
 
 
@@ -274,10 +279,12 @@ export class AllocationPageComponent {
     toggleMG() {
         
         this.mgToggle = !this.mgToggle;
+        this.trMapConfig['selOrder']=this.selectedOrder;
+        this.trMapConfig['selTruck']=this.selectedTruck;
         if (this.selectedTrailer.trailerID != -1) {
             this.trMapConfig['trailerLat'] = this.selectedTrailer.latitude;
             this.trMapConfig['trailerLng'] = this.selectedTrailer.longitude;
-            this.mapTrailers=[this.selectedTrailer];
+            this.mapTrailers=this.cloneObje(this.trailerList);
 
         } else {
             this.trMapConfig['trailerLat'] = undefined;
@@ -776,21 +783,22 @@ console.log("scrolling");
             );
     }
 
-    getTrailersDetails() {
+    getTrailersDetails(lat,lng,dist) {
         this.trailerDetailsResp = false;
-        let lng=this.selectedOrder.orderOrginCityLong;
+        //let lat=this.selectedOrder.orderOrginCityLat;
+        //let lng=this.selectedOrder.orderOrginCityLong;
         if(lng>0){
             lng=0-lng;
         }
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
-        let url = config.baseUrl + "/AllocationService/api/OrderTrailers?latitude="+this.selectedOrder.orderOrginCityLat
-        +"&longitude="+lng+"&distance=150&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer;
+        let url = config.baseUrl + "/AllocationService/api/OrderTrailers?latitude="+lat
+        +"&longitude="+lng+"&distance="+dist+"&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("trailers data recieved");
-                this.trailers.groups=data.dataSet;
-                this.trailerList=data.dataSet;
+                this.trailers.groups=this.trailers.groups.concat(data.dataSet);
+                this.trailerList=this.trailerList.concat(data.dataSet);
                 this.filterTrailerByType();
                 this.trailers.groups=this.sortList('distance',this.trailers.groups);
                 this.mapTrailers=this.cloneObje(this.trailerList);
@@ -800,6 +808,42 @@ console.log("scrolling");
             (err) => { console.log("trailers error recieved"); this.trailerDetailsResp = true; } //For Error Response
             );
     }
+
+    getOrderTruckTrailers(lat1,lat2,lng1,lng2,dist) {
+        this.trailerDetailsResp = false;
+        //let lat=this.selectedOrder.orderOrginCityLat;
+        //let lng=this.selectedOrder.orderOrginCityLong;
+        if(lng1>0){
+            lng1=0-lng1;
+        }
+        if(lng2>0){
+            lng2=0-lng2;
+        }
+        //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
+        
+        let url = config.baseUrl + "/AllocationService/api/OrderTruckTrailers?latitude="+lat1+","+lat2
+        +"&longitude="+lng1+","+lng2+"&distance="+dist+"&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer;
+        this.http.get(url).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("trailers data recieved");
+                if(data.dataSet.length<=1){
+                    this.getOrderTruckTrailers(lat1,lat2,lng1,lng2,dist+50);
+
+                }else{
+                this.trailers.groups=data.dataSet;
+                this.trailerList=data.dataSet;
+                this.filterTrailerByType();
+                this.trailers.groups=this.sortList('distance',this.trailers.groups);
+                this.mapTrailers=this.cloneObje(this.trailerList);
+                this.trailerDetailsResp = true;
+                }
+                
+            }, //For Success Response
+            (err) => { console.log("trailers error recieved"); this.trailerDetailsResp = true; } //For Error Response
+            );
+    }
+
 
     getOrderDetails() {
         this.OrderDetailsResp = false;
