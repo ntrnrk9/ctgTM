@@ -601,12 +601,25 @@ export class AllocationPageComponent {
         let dy = y0 - y1;
 
         let d = Math.sqrt((dx * dx) + (dy * dy));
-        var latLngA = new google.maps.LatLng(gLat1,gLng1);
-        var latLngB = new google.maps.LatLng(gLat2,gLng2);
-        //var dis=google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
-        //return Math.round(dis*0.000621371192)+" -- "+Math.round(d*0.000621371192);
-        //return Math.round(dis*0.000621371192);
-        return Math.round(d*0.000621371192);
+        
+        if(this.isValidLatLng(gLat2,gLng2)){
+            var latLngA = new google.maps.LatLng(gLat1,gLng1);
+            var latLngB = new google.maps.LatLng(gLat2,gLng2);
+            //var dis=google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
+            //return Math.round(dis*0.000621371192)+" -- "+Math.round(d*0.000621371192);
+            //return Math.round(dis*0.000621371192);
+            return Math.round(d*0.000621371192);
+        }else{
+            return -1;
+        }
+        
+    }
+
+    isValidLatLng(lat,lng){
+        if(lat!=0 && lng !=0){
+            return true;
+        }
+        return false;
     }
 
     googleDistCalc(lat,lng){
@@ -764,20 +777,26 @@ console.log("scrolling");
             .subscribe(
             (data) => {
                 console.log("tractors data recieved");
-                this.trucksDetailsResp = true;
+                
                 this.trucks.groups=data.data;
-                this.truckList=data.data;
-                this.trucks.groups=this.sortList('distance',this.trucks.groups);
                 for(var i=0;i<this.trucks.groups.length;i++){
                     let obj=this.trucks.groups[i];
-                    obj['distance']=this.calcTruckDistance(obj['location']['position']['lng'],obj['location']['position']['lat']);
-                    this.trucks.groups[i]=obj;
-                    this.truckList[i]=obj;
+                    var dist=this.calcTruckDistance(obj['location']['position']['lng'],obj['location']['position']['lat']);
+                    if(dist==-1){
+                        this.trucks.groups.splice(i,1);
+                        i--;
+                    }else{
+                        obj['distance']=dist;
+                        this.trucks.groups[i]=obj;
+                        this.truckList[i]=obj;
+                    }
+                    
                 }
+                this.trucks.groups=this.sortList('distance',this.trucks.groups);
+                this.truckList=this.cloneObje(this.trucks.groups);
                 this.filterTrucksByOrder();
                 this.truckList=this.sortList('distance',this.truckList);
-
-
+                this.trucksDetailsResp = true;
             }, //For Success Response
             (err) => { console.log("tractors error recieved"); this.trucksDetailsResp = true; } //For Error Response
             );
@@ -934,6 +953,9 @@ console.log("scrolling");
                 if(data.status==1){
                     //alert("success");
                     $('#successResult').modal('show');
+                    this.resetOrderPage();
+                    this.resetTrailerPage();
+                    this.resetTruckPage();
                     this.goToOrder();
                 }else{
                     //alert("failed");

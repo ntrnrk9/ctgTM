@@ -64,3 +64,12 @@
     background-color: white;
     padding: 0px;
 }
+
+.info{
+    position: absolute;
+    right: 14px;
+    top:110px;
+    border: none;
+    background-color: white;
+    padding: 0px;
+}

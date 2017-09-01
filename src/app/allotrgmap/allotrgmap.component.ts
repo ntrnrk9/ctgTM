@@ -33,6 +33,12 @@ export class AlloTrGmap {
     polyBound: any;
     directionsDisplay;
     directionsService;
+    orinfowindow;
+    truckinfowindow;
+    orderMaker;
+    truckMaker;
+    infoIsOpen=false;
+    
 
 
     markerList: any = {
@@ -160,7 +166,7 @@ export class AlloTrGmap {
         if (this.config.truckLat) {
             var truckLatLng = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
             var trTitle = "Truck: " + this.config.truckLat + " " + this.config.truckLng;
-            var truckMaker = new google.maps.Marker(
+            this.truckMaker = new google.maps.Marker(
                 {
                     position: truckLatLng,
                     map: this.map,
@@ -168,11 +174,11 @@ export class AlloTrGmap {
                     icon: this.markerList.truck
                 });
             this.markerBounds.extend(truckLatLng);
-            var truckinfowindow = new google.maps.InfoWindow({
+            this.truckinfowindow = new google.maps.InfoWindow({
                 content: ""
             });
-            truckinfowindow.setContent(this.truckinfoWinContent(this.config.selTruck));
-            truckinfowindow.open(this.map, truckMaker);
+            this.truckinfowindow.setContent(this.truckinfoWinContent(this.config.selTruck));
+            //truckinfowindow.open(this.map, truckMaker);
             //this.markers.push(truckMaker);
         }
 
@@ -180,7 +186,7 @@ export class AlloTrGmap {
             var orderLatLng = new google.maps.LatLng(this.config.lat, this.config.lng);
             var orTitle = "Order: " + this.config.lat + " " + this.config.lng;
             console.log(orTitle);
-            var orderMaker = new google.maps.Marker(
+            this.orderMaker = new google.maps.Marker(
                 {
                     position: orderLatLng,
                     map: this.map,
@@ -189,11 +195,11 @@ export class AlloTrGmap {
                     //icon: '../../assets/images/Order.png'
                 });
             this.markerBounds.extend(orderLatLng);
-            var orinfowindow = new google.maps.InfoWindow({
+            this.orinfowindow = new google.maps.InfoWindow({
                 content: ""
             });
-            orinfowindow.setContent(this.orcreateinfoWinContent(this.config.selOrder));
-            orinfowindow.open(this.map, orderMaker);
+            this.orinfowindow.setContent(this.orcreateinfoWinContent(this.config.selOrder));
+            //this.orinfowindow.open(this.map, this.orderMaker);
             //this.markers.push(orderMaker);
         }
 
@@ -275,7 +281,7 @@ export class AlloTrGmap {
             if (status == google.maps.DirectionsStatus.OK) {
                 ctrl.directionsDisplay.setDirections(response);
                 var route = response.routes[0];
-
+                ctrl.reset();
             }
         });
     }
@@ -487,7 +493,22 @@ export class AlloTrGmap {
     }
 
     reset() {
-        this.map.fitBounds(this.markerBounds);        
+        var ctrl=this;
+        setTimeout(function () {
+            ctrl.map.fitBounds(ctrl.markerBounds);            
+        }, 700);
+    }
+
+    info(){
+        if (!this.infoIsOpen) {
+            this.orinfowindow.open(this.map, this.orderMaker);
+            this.truckinfowindow.open(this.map, this.truckMaker);
+            this.infoIsOpen = true;
+        } else {
+            this.orinfowindow.close();
+            this.truckinfowindow.close();
+            this.infoIsOpen = false;
+        }
     }
 
 }
