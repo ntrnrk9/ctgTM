@@ -114,7 +114,7 @@ border:1px solid silver;
 
 .adp, .mydp, .mydp, .selbtngroup, .selection {
     height:30px !important;
-    border-radius: none !important;
+    border-radius: 0px !important;
 }
 
 

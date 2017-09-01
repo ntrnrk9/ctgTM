@@ -89,11 +89,11 @@
                     <div class="pull-left" style="margin-left:10px;width:150px"><app-singleselect [items]="modelList" [config]="" [(selectedItem)]="selectedModel" [key]="'lable'"></app-singleselect></div>
                     <div class="pull-left" style="margin-left:10px;width:150px"><app-singleselect [items]="iotStatusList" [config]="" [(selectedItem)]="selectediotStatus" [key]="'lable'"></app-singleselect></div>
                     <span class="pull-left" style="margin-left:15px;padding-top:5px">Last movement date</span>
-                    <div class="pull-left" style="margin-left:10px;width:150px"><my-date-picker name="lastMovDate" [options]="datePickerOptions" [(ngModel)]="lmDate" required></my-date-picker></div>
+                    <div class="pull-left adp" style="margin-left:10px;width:150px"><my-date-picker name="lastMovDate" [options]="datePickerOptions" [(ngModel)]="lmDate" required></my-date-picker></div>
                     <span class="pull-left" style="margin-left:15px;padding-top:5px">Last IOT date</span>
                     <div class="pull-left" style="margin-left:10px;width:150px"><my-date-picker name="lastDotDate" [options]="datePickerOptions" [(ngModel)]="lDotDate" required></my-date-picker></div>
                 </div>
-                    <button *ngIf="!asToggle" style="margin-right: 5px;padding: 11px 13px 9px 13px" class="pull-right resetBut" type="button" value="encode" (click)="toggleAS()" data-toggle="tooltip" title="Remove">
+                    <button *ngIf="!asToggle" style="background:#ededed;padding: 11px 13px 9px 13px" class="pull-right resetBut" type="button" value="encode" (click)="toggleAS()" data-toggle="tooltip" title="Remove">
                         <span style="color:#d2232a"class="glyphicon glyphicon-remove"></span>
                     </button>
 
