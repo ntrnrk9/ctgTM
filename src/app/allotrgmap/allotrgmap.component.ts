@@ -41,7 +41,7 @@ export class AlloTrGmap {
         greenMark: '../../assets/images/markers/trailer-green.png',
         truck:'../../assets/images/Truck.png',
         order:'../../assets/images/Order.png',
-        selectedTr:'../../assets/images/Trailer-sel.png',
+        selectedTr:'../../assets/images/selected-trailer.png',
         linkedTruck:'../../assets/images/Trailer-Link.png',
     };
 
@@ -49,6 +49,8 @@ export class AlloTrGmap {
     selectedMarker={marker:{},item:{}};
     selMarker:any;
     selItem:any;
+    markerBounds;
+    toggleM=false;
     history = {
         column: [{ name: "Date", width: "25%" }, { name: "Order ID", width: "25%" }, { name: "Start City", width: "25%" }, { name: "Destination City", width: "25%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
@@ -100,7 +102,7 @@ export class AlloTrGmap {
 
         this.geocoder = new google.maps.Geocoder();
         this.markers = [];
-        var markerBounds = new google.maps.LatLngBounds();
+        this.markerBounds = new google.maps.LatLngBounds();
         var mapProp = {
             center: new google.maps.LatLng(this.config.lat, this.config.lng),
             zoom: this.config.zoom,
@@ -136,7 +138,7 @@ export class AlloTrGmap {
                         icon: this.markerList.selectedTr
                     });
                 var ob = this.createinfoWinContent(tr);
-                markerBounds.extend(myLatLng);
+                this.markerBounds.extend(myLatLng);
                 this.bindInfoWindow(tr, marker, this.map, this.infowindow, this.createinfoWinContent(tr));
                 //this.markers.push(marker);
             } else {
@@ -149,7 +151,7 @@ export class AlloTrGmap {
                         icon: this.mapIcon(tr)
                     });
                 var ob = this.createinfoWinContent(tr);
-                markerBounds.extend(myLatLng);
+                this.markerBounds.extend(myLatLng);
                 this.bindInfoWindow(tr, marker, this.map, this.infowindow, this.createinfoWinContent(tr));
                 this.markers.push(marker);
             }
@@ -165,7 +167,7 @@ export class AlloTrGmap {
                     title: trTitle,
                     icon: this.markerList.truck
                 });
-            markerBounds.extend(truckLatLng);
+            this.markerBounds.extend(truckLatLng);
             var truckinfowindow = new google.maps.InfoWindow({
                 content: ""
             });
@@ -186,7 +188,7 @@ export class AlloTrGmap {
                     icon: this.markerList.order
                     //icon: '../../assets/images/Order.png'
                 });
-            markerBounds.extend(orderLatLng);
+            this.markerBounds.extend(orderLatLng);
             var orinfowindow = new google.maps.InfoWindow({
                 content: ""
             });
@@ -233,7 +235,7 @@ export class AlloTrGmap {
 
         this.markerCluster = new MarkerClusterer(this.map, this.markers,
             mcOptions);
-        this.map.fitBounds(markerBounds);
+        this.map.fitBounds(this.markerBounds);
         //if(this.config.trailerLat){
             this.directionsDisplay.setMap(this.map);
             this.calcRoute();
@@ -403,7 +405,7 @@ export class AlloTrGmap {
             this.infowindow = infowindow;
         });
         google.maps.event.addListener(marker, 'mouseout', function () {
-            //infowindow.close();
+            infowindow.close();
         });
         google.maps.event.addListener(marker, 'click', function () {
             //this.selectMarker(marker);
@@ -417,73 +419,41 @@ export class AlloTrGmap {
     }
 
     selectMarker(item,marker) {
-        if (item.trailerID==this.selected.trailerID){
+        if(this.selected.trailerID==-1){
+            this.addSelectiom(item,marker);
+        }else if(this.selected.trailerID==item.trailerID){
+            this.removeSelection(item,marker);
             this.selected = { trailerID: -1 };
-            marker.setIcon(this.mapIcon(item));
-            this.markerCluster.addMarker(marker,true);
             this.emit();
-        } else {
-            marker.setIcon(this.markerList.selectedTr);
-            if(this.selMarker){
-                this.selMarker.setIcon(this.mapIcon(this.selItem));
-                this.markerCluster.addMarker(this.selMarker,true);
-            }else{
-                this.selItem=item;
-                this.selMarker=marker;
-            }
-            this.selected = item;
-            this.markerCluster.removeMarker(marker);
-            marker.setMap(this.map);
-            this.config.trailerLat = item.latitude;
-            this.config.trailerLng = item.longitude;
-            this.calcRouteDist();
-            this.emit();
-        }
+        }else{
+            this.removeSelection(this.selected,this.selMarker);
+            this.addSelectiom(item,marker);
+            
+        }   
+    }
+
+    removeSelection(item,marker){
+        marker.setIcon(this.mapIcon(item));
+        this.markerCluster.addMarker(marker,true);
+    }
+
+    addSelectiom(item,marker){
+        this.selMarker = marker;
+        this.selected = item;
+        marker.setIcon(this.markerList.selectedTr);
+        this.markerCluster.removeMarker(marker);
+        marker.setMap(this.map);
+        this.config.trailerLat = item.latitude;
+        this.config.trailerLng = item.longitude;
+        this.calcRouteDist();
+        this.emit();
     }
 
     increment(item) {
         alert(this.map.getZoom());
     }
 
-    geocodeAddress(addr: any) {
-        //this.state = addr;
-        //alert(this.state);
-        var ctrl = this;
-        var geocoder = this.geocoder;
-        var resultsMap = this.map;
-        var address = addr;
-        this.config.polygon = undefined;
-        //var bound: any = this.boundList;
-
-
-        geocoder.geocode({ 'address': address }, function (results: any, status: any) {
-            if (status === 'OK') {
-                var markerBounds = new google.maps.LatLngBounds();
-                resultsMap.setCenter(results[0].geometry.location);
-                markerBounds.extend(results[0].geometry.location);
-                let state = (results[0].address_components[0].long_name);
-                let code = (results[0].address_components[0].short_name);
-                let bounds = (results[0].geometry.bounds);
-                let location = results[0].geometry.location;
-                //bound.push({ state: state, bounds: bounds, code: code, location: location });
-                resultsMap.fitBounds(results[0].geometry.viewport);
-                if (results[0].types[0] == "locality") {
-                    //resultsMap.setZoom(7);
-                } else {
-                    //resultsMap.setZoom(10);
-                }
-                this.map = resultsMap;
-                //ctrl.test(results[0].geometry.bounds);
-            } else {
-                console.log('Geocode was not successful for the following reason: ' + status);
-                //ctrl.action.heading = "Geocode";
-                //ctrl.action.body = 'Please enter a valid location.';
-                //$('#gmResult').modal('show');
-
-            }
-        });
-
-    }
+    
 
     mapCenter(lat: any, lng: any, zoom: any) {
         this.config.lat = lat;
@@ -517,10 +487,7 @@ export class AlloTrGmap {
     }
 
     reset() {
-        this.map.setZoom(4);
-        var myCenter = new google.maps.LatLng(36.090240, -95.712891);
-        this.map.setCenter(myCenter);
-        this.map.setMapTypeId('roadmap');
+        this.map.fitBounds(this.markerBounds);        
     }
 
 }

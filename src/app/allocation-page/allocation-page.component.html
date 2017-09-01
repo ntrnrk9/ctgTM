@@ -144,7 +144,7 @@
 
             <div class="col-md-12 page-heading">
                 <div style="padding-left: 10px;padding-top: 1px;" class="pull-left"><img style="height: 35px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.orderNumber}} - {{selectedOrder.orderOrginPoint}} - {{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}}</b></div>
-                <button class="pull-right toggleBut"  type="button" value="encode" (click)="goToTrailer()">Next</button>
+                <button class="pull-right toggleBut"  [disabled]="selectedTruck.number==-1" type="button" value="encode" (click)="goToTrailer()">Next</button>
                 <button style="margin-right:2px" class="pull-right toggleBut" type="button" value="encode" (click)="goToOrder()">Back</button>
             </div><br />
 
@@ -242,10 +242,10 @@
             <div class="col-md-12 page-heading">
                 
                 
-                <div  style="padding-left: 10px;padding-top: 1px;" class="pull-left">
-                    <img style="height: 35px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.orderNumber}} - {{selectedOrder.orderOrginPoint}} - {{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}} </b>
-                    <span><img style="height: 35px;padding-left:10px" src="../../assets/images/Truck-5.png" *ngIf="selectedTruck.number!=-1"/><b> {{selectedTruck.number}}</b></span>
-                    <span *ngIf="selectedTrailer.trailerID!=-1"><img style="height: 35px;padding-left:10px" src="../../assets/images/Truck-5.png" /><b> {{selectedTrailer.trailerID}} {{ (selectedTrailer.routeDist)?'-'+selectedTrailer.routeDist:''}}</b></span>
+                <div  style="padding-left: 10px;padding-top: 0px;height:100%" class="pull-left">
+                    <img style="height: 35px;padding-right: 5px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.orderNumber}} - {{selectedOrder.orderOrginPoint}} - {{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}} </b>
+                    <span style="padding-left:50px"><img style="height: 39px;padding-right: 10px;" src="../../assets/images/Truck-5.png" *ngIf="selectedTruck.number!=-1"/><b> {{selectedTruck.number}}</b></span>
+                    <span *ngIf="selectedTrailer.trailerID!=-1" style="padding-left:50px"><img style="height: 35px;padding: 4px 10px 0px 0px;" src="../../assets/images/Trailer-icon.png" /><b> {{selectedTrailer.trailerID}} {{ (selectedTrailer.routeDist)?'-'+selectedTrailer.routeDist:''}}</b></span>
                 </div>
                 
                 <button class="pull-right toggleBut" [disabled]="selectedTrailer.trailerID==-1" type="button" value="encode" (click)="goToSummary()">Next</button>

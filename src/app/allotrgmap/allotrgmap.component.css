@@ -55,3 +55,12 @@
 .redAlert{
     box-shadow: 0 0 5px red !important;
 }
+
+.resetMap{
+    position: absolute;
+    right: 14px;
+    top:60px;
+    border: none;
+    background-color: white;
+    padding: 0px;
+}

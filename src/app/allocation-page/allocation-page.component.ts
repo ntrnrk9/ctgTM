@@ -58,7 +58,7 @@ export class AllocationPageComponent {
     trailerTypeList: any = [{ lable: "Select a type", value: "" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" }];
     selectedTrailerType = { lable: "Select a type", value: "" };
 
-    mgToggle = false;
+    mgToggle = true;
     omgToggle = false;
     OrderDetailsResp = false;
     trucksDetailsResp = false;
@@ -140,11 +140,11 @@ export class AllocationPageComponent {
 
     goToTrailer(){
         this.page=2;
-        this.mgToggle=false;
-        //this.trailers.groups=[];
-        //this.getTrailersDetails(this.selectedOrder.orderOrginCityLat,this.selectedOrder.orderOrginCityLong,50);
-        //this.getTrailersDetails(this.selectedTruck.location.position.lat,this.selectedTruck.location.position.lng,50);
+        this.mgToggle=true;
         this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,50);
+        this.trMapConfig['selOrder']=this.selectedOrder;
+        this.trMapConfig['selTruck']=this.selectedTruck;
+        this.mapTrailers=this.cloneObje(this.trailerList);
     }
     
     goToSummary() {
