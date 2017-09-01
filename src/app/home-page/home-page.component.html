@@ -84,14 +84,14 @@
             </div>
             <div *ngIf="!asToggle" style="margin-top: 5px;background-color: #d3d3d3;" class="filter-container" >
                 <div style="padding:5px;float:left">
-                <span (keyup.enter)="searchByID()"><input  class="ctg-textbox pull-left" style="width:120px" type="text" placeholder="Trailer name" [(ngModel)]="searchID"
-                        (ngModelChange)="toggleSearch(1)"  /></span>
+                    <input class="ctg-textbox pull-left" style="width:120px" type="text" placeholder="Trailer make" [(ngModel)]="searchMake"/>
                     <div class="pull-left" style="margin-left:10px;width:150px"><app-singleselect [items]="modelList" [config]="" [(selectedItem)]="selectedModel" [key]="'lable'"></app-singleselect></div>
                     <div class="pull-left" style="margin-left:10px;width:150px"><app-singleselect [items]="iotStatusList" [config]="" [(selectedItem)]="selectediotStatus" [key]="'lable'"></app-singleselect></div>
                     <span class="pull-left" style="margin-left:15px;padding-top:5px">Last movement date</span>
-                    <div class="pull-left adp" style="margin-left:10px;width:150px"><my-date-picker name="lastMovDate" [options]="datePickerOptions" [(ngModel)]="lmDate" required></my-date-picker></div>
+                    <div class="pull-left adp" style="margin-left:10px;width:150px"><my-date-picker name="lastMovDate" [options]="datePickerOptions" [(ngModel)]="lmDate" required [placeholder]="dateFormat"></my-date-picker></div>
                     <span class="pull-left" style="margin-left:15px;padding-top:5px">Last IOT date</span>
-                    <div class="pull-left" style="margin-left:10px;width:150px"><my-date-picker name="lastDotDate" [options]="datePickerOptions" [(ngModel)]="lDotDate" required></my-date-picker></div>
+                    <div class="pull-left" style="margin-left:10px;width:150px"><my-date-picker name="lastDotDate" [options]="datePickerOptions" [(ngModel)]="lDotDate" required [placeholder]="dateFormat"></my-date-picker></div>
+                    <input class="ctg-textbox pull-left" style="width:120px" type="button" value="Search" (click)="selectCmp(selectedCmp)"/>
                 </div>
                     <button *ngIf="!asToggle" style="background:#ededed;padding: 11px 13px 9px 13px" class="pull-right resetBut" type="button" value="encode" (click)="toggleAS()" data-toggle="tooltip" title="Remove">
                         <span style="color:#d2232a"class="glyphicon glyphicon-remove"></span>
@@ -176,6 +176,7 @@
                 </div>
             </div>
             <div style="padding-top:5px">
+                <span>Trailer count={{allTrailers.length}}</span>
                 <img src="../../assets/images/markers/legend.png" class="pull-right" />
             </div>
         </div>

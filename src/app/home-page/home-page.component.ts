@@ -29,6 +29,7 @@ export class HomePageComponent {
     bylocation: String="";
     selectedID: any;
     searchID: String="";
+    searchMake: String="";
     custID:String="";
     trailHistory: any;
     test: Number = 9;
@@ -40,7 +41,7 @@ export class HomePageComponent {
     selectedMiles = { lable: "150 Miles", value: 150 };
     cmpList: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "STAR", value: "STAR" }];
     selectedCmp = { lable: "Covenant", value: "CVEN" };
-    modelList: any = [{ lable: "All model", value: "-1" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" }];
+    modelList: any = [{ lable: "All model", value: "-1" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" },{ lable: "UNK", value: "UNK" }];
     selectedModel = { lable: "All model", value: "-1" };
     iotStatusList: any = [{ lable: "All IOT status", value: "-1" },{ lable: "Inactive", value: "INACTIVE" }, { lable: "Active", value: "ACTIVE" }];
     selectediotStatus = { lable: "All IOT status", value: "-1" };
@@ -61,6 +62,8 @@ export class HomePageComponent {
     mapConfig:any={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap',marker:-1};
     historyConfig:any={showHistory:false,allTraillerSubSet:[],dataSet:[],backupDS:[],backupATS:[]};
     allTrailers_bu=[];
+    
+    dateFormat='mm/dd/yyyy';
     
     private myDatePickerOptions: IMyDpOptions = {
         // other options...
@@ -141,21 +144,7 @@ export class HomePageComponent {
         });
     }
     constructor(private http: Http,private cdr:ChangeDetectorRef ) {
-        let edate = new Date();
-        this.lmDate = {
-            date: {
-              year: edate.getFullYear(),
-              month: edate.getMonth() + 1,
-              day: edate.getDate()
-            }
-          };
-          this.lDotDate = {
-            date: {
-              year: edate.getFullYear(),
-              month: edate.getMonth() + 1,
-              day: edate.getDate()
-            }
-          };  
+        
         this.getStateTrailersStatus();
         //this.getStateTrailersStatus();
         // setTimeout(() => {
@@ -302,6 +291,8 @@ export class HomePageComponent {
             }else{
                 return item;
             }
+        }else{
+            return item;
         }
 
     }
@@ -694,7 +685,10 @@ export class HomePageComponent {
             }
         }
         
-        
+        if(!this.asToggle){
+            this.advanceSearchFilter();
+
+        }
 
     }
 
@@ -763,6 +757,106 @@ export class HomePageComponent {
 
     
 
+    }
+
+    advanceSearchFilter(){
+        var list=this.filterByMake(this.allTrailers);
+        list=this.filterByModel(list);
+        list=this.filterByIOT(list);
+        list=this.filterByLMD(list);
+        list=this.filterByDOT(list);
+        this.allTrailers=this.cloneObj(list);
+    }
+
+    filterByMake(list:any){
+        var bag=[];
+        for(var i=0;i<list.length;i++){
+            var item=list[i];
+            if(this.searchMake==""){
+                bag.push(item);
+            }else
+            if(item.trailerName==this.searchMake){
+                bag.push(item);
+            }
+        }
+        return bag;
+    }
+
+    filterByModel(list:any){
+        var bag=[];
+        for(var i=0;i<list.length;i++){
+            var item=list[i];
+            if(this.selectedModel.value=="-1"){
+                bag.push(item);
+            }else{
+                if(this.selectedModel.value==item.trailerType){
+                    bag.push(item);
+                }
+            }
+            
+        }
+        return bag;
+    }
+
+    filterByIOT(list:any){
+        var bag=[];
+        for(var i=0;i<list.length;i++){
+            var item=list[i];
+            if(this.selectediotStatus.value=="-1"){
+                bag.push(item);
+            }else{
+                if(this.selectediotStatus.value==item.iotInfo){
+                    bag.push(item);
+                }
+            }
+            
+        }
+        return bag;
+    }
+
+    filterByLMD(list: any) {
+        //console.log(JSON.stringify(list));
+        var bag = [];
+        if (this.lmDate) {
+            var lmdDate = this.lmDate.date.month + "/" + this.lmDate.date.day + "/" + this.lmDate.date.year;
+            for (var i = 0; i < list.length; i++) {
+                var item = list[i];
+                var itemLMD = this.formatDateTime(item.lastMovementDate);
+                var ary = itemLMD.split(' ');
+                itemLMD = ary[0];
+                if (lmdDate == itemLMD) {
+                    bag.push(item);
+                }
+            }
+            return bag;
+        } else {
+            return list;
+        }
+    }
+
+    filterByDOT(list: any) {
+        //console.log(JSON.stringify(list));
+        var bag = [];
+        if (this.lDotDate) {
+            var dotDate = this.lDotDate.date.month + "/" + this.lDotDate.date.day + "/" + this.lDotDate.date.year;
+            for (var i = 0; i < list.length; i++) {
+                var item = list[i];
+                var itemDOT = this.formatDateTime(item.dotDate);
+                var ary = itemDOT.split(' ');
+                itemDOT = ary[0];
+                if (!this.lDotDate.date.year) {
+                    bag.push(item);
+                } else {
+                    if (dotDate == itemDOT) {
+                        bag.push(item);
+                    }
+                }
+
+            }
+            return bag;
+        } else {
+            return list;
+        }
     }
 
     allTrailers=[{

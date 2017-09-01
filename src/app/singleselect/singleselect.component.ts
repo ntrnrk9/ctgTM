@@ -18,7 +18,7 @@ export class SingleselectComponent implements OnInit {
 
   selectItem(item: any) {
     console.log("searchFilter: " + JSON.stringify(item[this.key]));
-    this.selectedItem = item[this.key];
+    this.selectedItem = item;
     this.emit();
   }
 
