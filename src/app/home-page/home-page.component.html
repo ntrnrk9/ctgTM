@@ -95,7 +95,7 @@
                     <div class="pull-left adp" style="margin-left:10px;width:150px"><my-date-picker name="lastMovDate" [options]="datePickerOptions" [(ngModel)]="lmDate" required [placeholder]="dateFormat"></my-date-picker></div> -->
                     <!-- <span class="pull-left" style="margin-left:15px;padding-top:5px">Last IOT date</span>
                     <div class="pull-left" style="margin-left:10px;width:150px"><my-date-picker name="lastDotDate" [options]="datePickerOptions" [(ngModel)]="lDotDate" required [placeholder]="dateFormat"></my-date-picker></div> -->
-                    <input class="pm-addBut pull-right" type="button" value="Apply & Search" (click)="selectCmp(selectedCmp)"/>
+                    <input class="pm-addBut pull-right" type="button" value="Search" (click)="selectCmp(selectedCmp)"/>
                 </div>
                     <!-- <button *ngIf="!asToggle" style="background:#ededed;padding: 11px 13px 9px 13px" class="pull-right resetBut" type="button" value="encode" (click)="toggleAS()" data-toggle="tooltip" title="Remove">
                         <span style="color:#d2232a"class="glyphicon glyphicon-remove"></span>
@@ -129,34 +129,31 @@
                             <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
                                 <tr class="full" *ngIf="i<gRowCount">
 
-                                    <td style="text-align:center;width:9%">
+                                    <td style="text-align:center;width:10%">
                                         <span>{{item.trailerID}}</span>
                                     </td>
-                                    <td style="text-align:center;width:9%">
+                                    <td style="text-align:center;width:10%">
                                         <span>{{item.trailerName}}</span>
                                     </td>
-                                    <td style="text-align:center;width:9%">
+                                    <td style="text-align:center;width:10%">
                                         <span>{{item.trailerType}}</span>
                                     </td>
-                                    <td style="text-align:center;width:9%">
+                                    <td style="text-align:center;width:10%">
                                         <span>{{item.location}}</span>
                                     </td>
-                                    <td style="text-align:center;width:9%">
+                                    <td style="text-align:center;width:10%">
                                         <span>{{item.trailerYear}}</span>
                                     </td>
-                                    <td style="text-align:center;width:9%">
+                                    <td style="text-align:center;width:10%">
                                         <span>{{item.distance}}</span>
                                     </td>
-                                    <td style="text-align:center;width:9%">
+                                    <td style="text-align:center;width:10%">
                                         <span>{{item.trailerStatus}}</span>
                                     </td>
-                                    <td style="text-align:center;width:9%">
+                                    <td style="text-align:center;width:10%">
                                         <span>{{formatDateTime(item.dotDate)}}</span>
                                     </td>
-                                    <td style="text-align:center;width:9%">
-                                        <span>{{item.iotInfo}}</span>
-                                    </td>
-                                    <td style="text-align:center;width:9%">
+                                    <td style="text-align:center;width:10%">
                                         <span>{{formatDateTime(item.lastPingDate)}}</span>
                                     </td>
                                     <td style="text-align:center;width:10%">

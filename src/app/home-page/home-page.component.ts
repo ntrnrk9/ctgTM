@@ -42,8 +42,8 @@ export class HomePageComponent {
     selectedMiles = { lable: "150 Miles", value: 150 };
     cmpList: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "STAR", value: "STAR" }];
     selectedCmp = { lable: "Covenant", value: "CVEN" };
-    modelList: any = [{ lable: "All model", value: "-1" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" },{ lable: "UNK", value: "UNK" }];
-    selectedModel = { lable: "All model", value: "-1" };
+    modelList: any = [{ lable: "All types", value: "-1" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" },{ lable: "UNK", value: "UNK" }];
+    selectedModel = { lable: "All types", value: "-1" };
     iotStatusList: any = [{ lable: "All IOT status", value: "-1" },{ lable: "Inactive", value: "INACTIVE" }, { lable: "Active", value: "ACTIVE" }];
     selectediotStatus = { lable: "All IOT status", value: "-1" };
     
@@ -92,8 +92,8 @@ export class HomePageComponent {
     // ];
 
     ob = {
-        column: [{ name: "Trailer ID", width: "9%" }, { name: "Make", width: "9%" }, { name: "Model", width: "9%" }, { name: "Location", width: "9%" },{ name: "Year", width: "8%" },{ name: "Distance in miles", width: "9%" },
-        { name: "Allocation status", width: "9%" }, { name: "Last DOT inspection date", width: "9%" }, { name: "Accessory/IOT information", width: "9%" }, { name: "Last ping date", width: "9%" }, { name: "History", width: "10%" }],
+        column: [{ name: "Trailer ID", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model/Type", width: "10%" }, { name: "Location", width: "10%" },{ name: "Year", width: "10%" },{ name: "Distance in miles", width: "10%" },
+        { name: "Allocation status", width: "10%" }, { name: "Last DOT inspection date", width: "10%" }, { name: "Last ping date", width: "10%" }, { name: "History", width: "10%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
@@ -244,7 +244,7 @@ export class HomePageComponent {
                 combo="latitude="+lat+"&longitude="+lng;
                 ctrl.mapConfig.lat=lat;
                 ctrl.mapConfig.lng=lng;
-                ctrl.mapConfig.zoom=10;
+                //ctrl.mapConfig.zoom=10;
                 ctrl.getTrailerStatusByFilter(combo);
             } else {
                 //alert('Geocode was not successful for the following reason: ' + status);
@@ -285,14 +285,18 @@ export class HomePageComponent {
     }
 
     formatDateTime(item: any) {
-        if (item != "") {
+        if(!item){
+            return item;
+        }
+        else if (item != "") {
             //var str=item.toUpperCase();
             if (item.toUpperCase() != "UNKNOWN") {
                 var ary = item.split(' ');
                 var date = ary[0].split('-');
                 var newD = new Date(date[0], date[1] - 1, date[2]);
+                var tim=ary[1].split('.');
                 //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
-                var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + ary[1];
+                var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + tim[0];
                 return SDate;
             }else{
                 return item;
@@ -314,12 +318,21 @@ export class HomePageComponent {
         } else {
             this.getLatLngByGeoCode();
         }
+
+        if(this.asToggle){
+            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
+            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
+        }        
     }
+
     reset() {
         this.bylocation = "";
         this.searchID = "";
         this.selectedID = "";
         this.custID="";
+        this.searchMake="";
+        this.searchTrYear="";
+        this.selectedModel={lable: "All types", value: "-1" };
         this.mapConfig={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap'};
         this.selectedMiles = { lable: "150 Miles", value: 150 };
         this.selectedCmp = { lable: "Covenant", value: "CVEN" };
@@ -397,6 +410,10 @@ export class HomePageComponent {
         this.selectMiles(this.selectedMiles);
         var obj=this;
         this.cdr.detectChanges();
+        if(this.asToggle){
+            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
+            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
+        }        
         setTimeout(function () {
             obj.trailerStatusResp = true;
             obj.cdr.detectChanges();
@@ -486,11 +503,6 @@ export class HomePageComponent {
                     $('#inValidCustID').modal('show');
                     this.custID="";
                 }
-                if(this.asToggle){
-                    this.allTrailers=this.advanceSearchFilter(this.allTrailers);
-                    this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
-        
-                }
                 //this.historyRecv = true;
             }, //For Success Response
             (err) => {
@@ -506,8 +518,8 @@ export class HomePageComponent {
         this.allTraillerSubSet = [];
         if (this.searchID && this.searchID != "") {
 
-            for (var i = 0; i < this.allTrailers.length; i++) {
-                let item = this.allTrailers[i];
+            for (var i = 0; i < this.allTrailers_bu.length; i++) {
+                let item = this.allTrailers_bu[i];
                 if (item.trailerID == this.searchID) {
                     this.selectedID = item.latitude + "," + item.longitude;
                     this.allTraillerSubSet.push(item);
@@ -536,10 +548,9 @@ export class HomePageComponent {
                 }
             }
             this.allTraillerSubSet = [];
-            for (var i = 0; i < this.allTrailers.length; i++) {
-                let item = this.allTrailers[i];
+            for (var i = 0; i < this.allTrailers_bu.length; i++) {
+                let item = this.allTrailers_bu[i];
                 if (item.trailerID == this.searchID) {
-
                     this.allTraillerSubSet.push(item);
                 }
             }
