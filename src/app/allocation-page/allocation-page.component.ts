@@ -96,7 +96,7 @@ export class AllocationPageComponent {
     };
     
     trailers = {
-        column: [{ name: "Trailer ID", width: "16%" }, { name: "Trailer name", width: "14%" }, { name: "Trailer type", width: "14%" }, { name: "Location", width: "14%" }, { name: "Distance (Approx. radius in miles)", width: "14%" },
+        column: [{ name: "Trailer ID", width: "16%" }, { name: "Make", width: "14%" }, { name: "Model", width: "14%" }, { name: "Location", width: "14%" }, { name: "Distance (Approx. radius in miles)", width: "14%" },
         { name: "Available status", width: "14%" }, { name: "Last trailer ping", width: "14%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };

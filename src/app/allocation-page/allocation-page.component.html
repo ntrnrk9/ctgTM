@@ -245,7 +245,7 @@
                 <div  style="padding-left: 10px;padding-top: 0px;height:100%" class="pull-left">
                     <img style="height: 35px;padding-right: 5px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.orderNumber}} - {{selectedOrder.orderOrginPoint}} - {{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}} </b>
                     <span style="padding-left:50px"><img style="height: 39px;padding-right: 10px;" src="../../assets/images/Truck-5.png" *ngIf="selectedTruck.number!=-1"/><b> {{selectedTruck.number}}</b></span>
-                    <span *ngIf="selectedTrailer.trailerID!=-1" style="padding-left:50px"><img style="height: 35px;padding: 4px 10px 0px 0px;" src="../../assets/images/Trailer-icon.png" /><b> {{selectedTrailer.trailerID}} {{ (selectedTrailer.routeDist)?'-'+selectedTrailer.routeDist:''}}</b></span>
+                    <span *ngIf="selectedTrailer.trailerID!=-1" style="padding-left:50px"><img style="height: 35px;padding: 4px 10px 0px 0px;" src="../../assets/images/Trailer-icon.png" /><b> {{selectedTrailer.trailerID}} {{ (selectedTrailer.routeDistText)?'-'+selectedTrailer.routeDistText:''}}</b></span>
                 </div>
                 
                 <button class="pull-right toggleBut" [disabled]="selectedTrailer.trailerID==-1" type="button" value="encode" (click)="goToSummary()">Next</button>
@@ -369,7 +369,7 @@
                             <span style="font-size: 16px"><b>{{selectedOrder.orderOrginPoint}}</b></span>
                         </div>
                         <div style="padding-top:10px">
-                            <span>Order city</span><br>
+                            <span>Origin city</span><br>
                             <span style="font-size: 16px"><b>{{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}}</b></span>
                         </div>
                         <div style="padding-top:10px">

@@ -316,7 +316,7 @@ export class AlloTrGmap {
                     if (status == google.maps.DirectionsStatus.OK) {
                         //ctrl.directionsDisplay.setDirections(response);
                         var route = response.routes[0];
-                        ctrl.selected['routeDist']=response.routes[0].legs[0].distance.text;
+                        ctrl.selected['routeDistText']=response.routes[0].legs[0].distance.text+" Approx. to reach order origin";
                         ctrl.emit();
                     }
                 });
