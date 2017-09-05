@@ -15,7 +15,7 @@
         <div class="col-md-12 page-body">
             <div class="filter-container" >
                 <div class="pull-left">
-                    <div class="pull-left" style="padding:5px 15px 5px 5px; background-color: #d3d3d3">
+                    <!-- <div class="pull-left" style="padding:5px 15px 5px 5px; background-color: #d3d3d3">
                         <div class="dropdown pull-left pm-select-cont pointer">
                             <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedCmp.lable}}/>
                             <span class="caret" data-toggle="dropdown"></span>
@@ -28,10 +28,10 @@
                                 </ul>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="pull-left" style="padding:5px;">
                         
-                        <span (keyup.enter)="searchByID()"><input  class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Trailer ID" [(ngModel)]="searchID"
+                        <span (keyup.enter)="searchByID()"><input  class="ctg-textbox pull-left" style="width:120px" type="text" placeholder="Trailer ID" [(ngModel)]="searchID"
                     (ngModelChange)="toggleSearch(1)"  /></span>
                         <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
                         <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
@@ -73,29 +73,33 @@
                                 </ul>
                             </div>
                         </div>
-                        <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button>
+                        <!-- <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button> -->
                     </div>
                     
                     <!--<button class="pull-right resetBut" type="button" value="encode" (click)="f.geocodeAddress()"><img src="../../assets/images/markers/refresh.png" /></button>-->
                 </div>
                 <button class="pull-right resetBut" type="button" value="encode" (click)="reset()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
-                <button *ngIf="asToggle" style="margin-right: 5px;padding: 9px 13px" class="pull-right resetBut" type="button" value="encode" (click)="toggleAS()" data-toggle="tooltip" title="Advance search"><span style="color:#d2232a"class="glyphicon glyphicon-plus"></span></button>
+                <!-- <button *ngIf="asToggle" style="margin-right: 5px;padding: 9px 13px" class="pull-right resetBut" type="button" value="encode" (click)="toggleAS()" data-toggle="tooltip" title="Advance search"><span style="color:#d2232a"class="glyphicon glyphicon-plus"></span></button> -->
                 
             </div>
-            <div *ngIf="!asToggle" style="margin-top: 5px;background-color: #d3d3d3;" class="filter-container" >
-                <div style="padding:5px;float:left">
-                    <input class="ctg-textbox pull-left" style="width:120px" type="text" placeholder="Trailer make" [(ngModel)]="searchMake"/>
+            <div *ngIf="asToggle" style="margin-top: 5px;background-color: #d3d3d3;" class="filter-container" >
+                <div style="padding:5px;float:left;width:100%">
+                    <div class="pull-left" style="width:150px"><app-singleselect [items]="cmpList" [config]="" [(selectedItem)]="selectedCmp" [key]="'lable'"></app-singleselect></div>
+                    <input class="ctg-textbox pull-left" style="margin-left:10px; width:120px" type="text" placeholder="Trailer make" [(ngModel)]="searchMake"/>
                     <div class="pull-left" style="margin-left:10px;width:150px"><app-singleselect [items]="modelList" [config]="" [(selectedItem)]="selectedModel" [key]="'lable'"></app-singleselect></div>
-                    <div class="pull-left" style="margin-left:10px;width:150px"><app-singleselect [items]="iotStatusList" [config]="" [(selectedItem)]="selectediotStatus" [key]="'lable'"></app-singleselect></div>
-                    <span class="pull-left" style="margin-left:15px;padding-top:5px">Last movement date</span>
-                    <div class="pull-left adp" style="margin-left:10px;width:150px"><my-date-picker name="lastMovDate" [options]="datePickerOptions" [(ngModel)]="lmDate" required [placeholder]="dateFormat"></my-date-picker></div>
-                    <span class="pull-left" style="margin-left:15px;padding-top:5px">Last IOT date</span>
-                    <div class="pull-left" style="margin-left:10px;width:150px"><my-date-picker name="lastDotDate" [options]="datePickerOptions" [(ngModel)]="lDotDate" required [placeholder]="dateFormat"></my-date-picker></div>
-                    <input class="ctg-textbox pull-left" style="width:120px" type="button" value="Search" (click)="selectCmp(selectedCmp)"/>
+                    <input class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Trailer year" [(ngModel)]="searchTrYear"/>
+                    
+                    
+                    <!-- <div class="pull-left" style="margin-left:10px;width:150px"><app-singleselect [items]="iotStatusList" [config]="" [(selectedItem)]="selectediotStatus" [key]="'lable'"></app-singleselect></div> -->
+                    <!-- <span class="pull-left" style="margin-left:15px;padding-top:5px">Last ping date</span>
+                    <div class="pull-left adp" style="margin-left:10px;width:150px"><my-date-picker name="lastMovDate" [options]="datePickerOptions" [(ngModel)]="lmDate" required [placeholder]="dateFormat"></my-date-picker></div> -->
+                    <!-- <span class="pull-left" style="margin-left:15px;padding-top:5px">Last IOT date</span>
+                    <div class="pull-left" style="margin-left:10px;width:150px"><my-date-picker name="lastDotDate" [options]="datePickerOptions" [(ngModel)]="lDotDate" required [placeholder]="dateFormat"></my-date-picker></div> -->
+                    <input class="pm-addBut pull-right" type="button" value="Apply & Search" (click)="selectCmp(selectedCmp)"/>
                 </div>
-                    <button *ngIf="!asToggle" style="background:#ededed;padding: 11px 13px 9px 13px" class="pull-right resetBut" type="button" value="encode" (click)="toggleAS()" data-toggle="tooltip" title="Remove">
+                    <!-- <button *ngIf="!asToggle" style="background:#ededed;padding: 11px 13px 9px 13px" class="pull-right resetBut" type="button" value="encode" (click)="toggleAS()" data-toggle="tooltip" title="Remove">
                         <span style="color:#d2232a"class="glyphicon glyphicon-remove"></span>
-                    </button>
+                    </button> -->
 
             </div>
             <div style="padding-top:15px;">
@@ -125,32 +129,27 @@
                             <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
                                 <tr class="full" *ngIf="i<gRowCount">
 
-                                    <td style="text-align:center;width:8%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.trailerID}}</span>
                                     </td>
-                                    <td style="text-align:center;width:7%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.trailerName}}</span>
                                     </td>
-                                    <td style="text-align:center;width:7%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.trailerType}}</span>
                                     </td>
                                     <td style="text-align:center;width:9%">
                                         <span>{{item.location}}</span>
                                     </td>
-                                    <td style="text-align:center;width:8%">
+                                    <td style="text-align:center;width:9%">
+                                        <span>{{item.trailerYear}}</span>
+                                    </td>
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.distance}}</span>
                                     </td>
-                                    <td style="text-align:center;width:8%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.trailerStatus}}</span>
                                     </td>
-                                    <td style="text-align:center;width:9%">
-                                        <span>TBC</span>
-                                    </td>
-
-                                    <td style="text-align:center;width:9%">
-                                        <span>TBC</span>
-                                    </td>
-
                                     <td style="text-align:center;width:9%">
                                         <span>{{formatDateTime(item.dotDate)}}</span>
                                     </td>
@@ -158,9 +157,9 @@
                                         <span>{{item.iotInfo}}</span>
                                     </td>
                                     <td style="text-align:center;width:9%">
-                                        <span>{{formatDateTime(item.dotDate)}}</span>
+                                        <span>{{formatDateTime(item.lastPingDate)}}</span>
                                     </td>
-                                    <td style="text-align:center;width:8%">
+                                    <td style="text-align:center;width:10%">
                                          <button class="histBut" (click)="showHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Order history"><img src="../../assets/images/markers/his-order.png" /></button>
                                         <button class="histBut" (click)="showTrHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Trailer history"><img src="../../assets/images/markers/his-truck.png" /></button> 
                                         <!-- <a (click)="showHistory(item)" style="cursor: pointer">History</a> -->
@@ -176,7 +175,7 @@
                 </div>
             </div>
             <div style="padding-top:5px">
-                <span>Trailer count={{allTrailers.length}}</span>
+                <!-- <span>Trailer count={{allTrailers.length}}</span> -->
                 <img src="../../assets/images/markers/legend.png" class="pull-right" />
             </div>
         </div>

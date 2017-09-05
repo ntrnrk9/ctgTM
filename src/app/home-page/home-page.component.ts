@@ -30,6 +30,7 @@ export class HomePageComponent {
     selectedID: any;
     searchID: String="";
     searchMake: String="";
+    searchTrYear:String="";
     custID:String="";
     trailHistory: any;
     test: Number = 9;
@@ -91,8 +92,8 @@ export class HomePageComponent {
     // ];
 
     ob = {
-        column: [{ name: "Trailer ID", width: "8%" }, { name: "Make", width: "7%" }, { name: "Model", width: "7%" }, { name: "Location", width: "9%" },{ name: "Distance in miles", width: "8%" },
-        { name: "Allocation status", width: "8%" }, { name: "Compliance status", width: "9%" }, { name: "Road worthiness status", width: "9%" }, { name: "Last DOT inspection date", width: "9%" }, { name: "Accessory/IOT information", width: "9%" }, { name: "Last movement date", width: "9%" }, { name: "History", width: "8%" }],
+        column: [{ name: "Trailer ID", width: "9%" }, { name: "Make", width: "9%" }, { name: "Model", width: "9%" }, { name: "Location", width: "9%" },{ name: "Year", width: "8%" },{ name: "Distance in miles", width: "9%" },
+        { name: "Allocation status", width: "9%" }, { name: "Last DOT inspection date", width: "9%" }, { name: "Accessory/IOT information", width: "9%" }, { name: "Last ping date", width: "9%" }, { name: "History", width: "10%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
@@ -275,7 +276,7 @@ export class HomePageComponent {
             this.action.body = 'Please enter a location to search.';
             $('#result').modal('show');
         }
-        if(!this.asToggle){
+        if(this.asToggle){
             this.allTrailers=this.advanceSearchFilter(this.allTrailers);
             this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
 
@@ -485,7 +486,7 @@ export class HomePageComponent {
                     $('#inValidCustID').modal('show');
                     this.custID="";
                 }
-                if(!this.asToggle){
+                if(this.asToggle){
                     this.allTrailers=this.advanceSearchFilter(this.allTrailers);
                     this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
         
@@ -551,7 +552,7 @@ export class HomePageComponent {
                 $('#result').modal('show');
             }
         }
-        if(!this.asToggle){
+        if(this.asToggle){
             this.allTrailers=this.advanceSearchFilter(this.allTrailers);
             this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
 
@@ -699,7 +700,7 @@ export class HomePageComponent {
             }
         }
         
-        if(!this.asToggle){
+        if(this.asToggle){
             this.allTrailers=this.advanceSearchFilter(this.allTrailers);
             this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
 
@@ -776,6 +777,7 @@ export class HomePageComponent {
 
     advanceSearchFilter(bag){
         var list=this.filterByMake(bag);
+        list=this.filterByTrYear(list);
         list=this.filterByModel(list);
         list=this.filterByIOT(list);
         list=this.filterByLMD(list);
@@ -785,12 +787,27 @@ export class HomePageComponent {
 
     filterByMake(list:any){
         var bag=[];
+        this.searchMake=this.searchMake.toUpperCase();
         for(var i=0;i<list.length;i++){
             var item=list[i];
             if(this.searchMake==""){
                 bag.push(item);
             }else
             if(item.trailerName==this.searchMake){
+                bag.push(item);
+            }
+        }
+        return bag;
+    }
+    filterByTrYear(list:any){
+        var bag=[];
+        this.searchTrYear=this.searchTrYear.toUpperCase();
+        for(var i=0;i<list.length;i++){
+            var item=list[i];
+            if(this.searchTrYear==""){
+                bag.push(item);
+            }else
+            if(item.trailerYear==this.searchTrYear){
                 bag.push(item);
             }
         }
