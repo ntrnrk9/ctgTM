@@ -258,8 +258,8 @@
             <div class="col-md-12 page-body">
                 <div class="filter-container">
                     <div  class="pull-left">
-                        <div class="pull-left" style="padding:5px 15px 5px 5px;background-color: #d3d3d3">
-                            <div class="dropdown pull-left pm-select-cont">
+                        <!--<div class="pull-left" style="padding:5px 15px 5px 5px;background-color: #d3d3d3">
+                             <div class="dropdown pull-left pm-select-cont">
                                 <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedTrailerType.lable}} />
                                 <span class="caret"></span>
                                 <div class="dropdown-menu no-padding sel-dd">
@@ -270,11 +270,15 @@
                                         </li>
                                     </ul>
                                 </div>
-                            </div>
-                        </div>
+                            </div> 
+                        </div>-->
                         <div class="pull-left" style="padding:5px;">
                             <span (keyup.enter)="searchByTrailerID()"><input  class="ctg-textbox pull-left" type="text" placeholder="Trailer ID" [(ngModel)]="trailerID"
                     (ngModelChange)="trailerToggleSearch(1)"  /></span>
+                    <span style="float: left;margin-left: 10px;padding-top: 5px;"><input type="checkbox"/>
+                        <label >Include UNK type</label>
+                    </span>
+                    
                             <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
 
                             <!-- <input class="ctg-textbox pull-left" type="text" placeholder="By location" (ngModelChange)="trailerToggleSearch(2)" [(ngModel)]="trailerBylocation"
@@ -288,7 +292,10 @@
                 </div>
                 <div style="padding-top:15px;">
                     <div *ngIf="mgToggle">
-                        <allotrgmap [trailers]="mapTrailers"  [(selected)]="selectedTrailer" [(config)]="trMapConfig"></allotrgmap>
+                        <div [ngClass]="{'transparent': !trailerDetailsResp}">
+                            <allotrgmap [trailers]="mapTrailers" [(selected)]="selectedTrailer" [(config)]="trMapConfig"></allotrgmap>
+                        </div>
+                        <div  *ngIf="!trailerDetailsResp" class="loader" ><img src="../../assets/images/loader.gif" /></div>
                     </div>
                     <div *ngIf="!mgToggle">
                         <table class="app-table table-striped table-hover table-bordered1 table table-fixed">

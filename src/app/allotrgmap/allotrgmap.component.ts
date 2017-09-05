@@ -166,12 +166,16 @@ export class AlloTrGmap {
         if (this.config.truckLat) {
             var truckLatLng = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
             var trTitle = "Truck: " + this.config.truckLat + " " + this.config.truckLng;
+            var linked=false;
+            if(this.config.selTruck.trailer!=""){
+                linked=true;
+            }
             this.truckMaker = new google.maps.Marker(
                 {
                     position: truckLatLng,
                     map: this.map,
                     title: trTitle,
-                    icon: this.markerList.truck
+                    icon: linked?this.markerList.linkedTruck:this.markerList.truck
                 });
             this.markerBounds.extend(truckLatLng);
             this.truckinfowindow = new google.maps.InfoWindow({

@@ -90,14 +90,14 @@ export class AllocationPageComponent {
     };
 
     trucks = {
-        column: [{ name: "Truck ID", width: "10%" }, { name: "Company", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model", width: "10%" },
+        column: [{ name: "Truck ID", width: "10%" }, { name: "Company", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model/type", width: "10%" },
         { name: "Year", width: "10%" },{ name: "Type", width: "10%" },{ name: "Trailer", width: "10%" },{ name: "Distance (Approx. radius in miles)", width: "15%" },{ name: "Landmark", width: "15%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
     
     trailers = {
         column: [{ name: "Trailer ID", width: "16%" }, { name: "Make", width: "14%" }, { name: "Model", width: "14%" }, { name: "Location", width: "14%" }, { name: "Distance (Approx. radius in miles)", width: "14%" },
-        { name: "Available status", width: "14%" }, { name: "Last trailer ping", width: "14%" }],
+        { name: "Available status", width: "14%" }, { name: "Last ping date", width: "14%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
@@ -142,6 +142,7 @@ export class AllocationPageComponent {
         this.page=2;
         this.mgToggle=true;
         this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,50);
+        //this.getTrailersDetails(this.selectedTruck.location.position.lat,this.selectedTruck.location.position.lng,50);
         this.trMapConfig['selOrder']=this.selectedOrder;
         this.trMapConfig['selTruck']=this.selectedTruck;
         this.mapTrailers=this.cloneObje(this.trailerList);
@@ -846,7 +847,7 @@ console.log("scrolling");
             .subscribe(
             (data) => {
                 console.log("trailers data recieved");
-                if(data.dataSet.length<=1){
+                if(data.dataSet.length<=1 && dist<=150){
                     this.getOrderTruckTrailers(lat1,lat2,lng1,lng2,dist+50);
 
                 }else{
