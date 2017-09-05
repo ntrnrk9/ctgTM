@@ -275,6 +275,11 @@ export class HomePageComponent {
             this.action.body = 'Please enter a location to search.';
             $('#result').modal('show');
         }
+        if(!this.asToggle){
+            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
+            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
+
+        }
         //f.geocodeAddress(this.bylocation);
     }
 
@@ -480,6 +485,11 @@ export class HomePageComponent {
                     $('#inValidCustID').modal('show');
                     this.custID="";
                 }
+                if(!this.asToggle){
+                    this.allTrailers=this.advanceSearchFilter(this.allTrailers);
+                    this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
+        
+                }
                 //this.historyRecv = true;
             }, //For Success Response
             (err) => {
@@ -541,6 +551,11 @@ export class HomePageComponent {
                 $('#result').modal('show');
             }
         }
+        if(!this.asToggle){
+            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
+            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
+
+        }
     }
 
     //http://61.16.133.244/HomeService/api/TrailerStatus?trailerStatus=Available
@@ -576,7 +591,6 @@ export class HomePageComponent {
             this.mapConfig.marker=-1;
             this.custID=this.custID.toUpperCase();
             this.getTrailerDetailsByCustomerId(this.custID);
-        
             
         
     }
@@ -686,7 +700,8 @@ export class HomePageComponent {
         }
         
         if(!this.asToggle){
-            this.advanceSearchFilter();
+            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
+            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
 
         }
 
@@ -759,13 +774,13 @@ export class HomePageComponent {
 
     }
 
-    advanceSearchFilter(){
-        var list=this.filterByMake(this.allTrailers);
+    advanceSearchFilter(bag){
+        var list=this.filterByMake(bag);
         list=this.filterByModel(list);
         list=this.filterByIOT(list);
         list=this.filterByLMD(list);
         list=this.filterByDOT(list);
-        this.allTrailers=this.cloneObj(list);
+        return list;
     }
 
     filterByMake(list:any){
