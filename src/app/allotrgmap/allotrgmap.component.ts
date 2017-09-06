@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter,ChangeDetectorRef } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 
 declare var google: any;
@@ -47,7 +47,7 @@ export class AlloTrGmap {
         greenMark: '../../assets/images/markers/trailer-green.png',
         truck:'../../assets/images/Truck.png',
         order:'../../assets/images/Order.png',
-        selectedTr:'../../assets/images/selected-trailer.png',
+        selectedTr:'../../assets/images/trailer-selected.png',
         linkedTruck:'../../assets/images/Trailer-Linked.png',
     };
 
@@ -88,7 +88,7 @@ export class AlloTrGmap {
         }
 
     }
-    constructor(private http: Http) { }
+    constructor(private http: Http,private cdr:ChangeDetectorRef) { }
 
     ngOnDestroy() {
         console.log("gmTest componant destroyed");
@@ -143,6 +143,7 @@ export class AlloTrGmap {
                         title: tr.trailerID,
                         icon: this.markerList.selectedTr
                     });
+                this.selMarker=marker;    
                 var ob = this.createinfoWinContent(tr);
                 this.markerBounds.extend(myLatLng);
                 this.bindInfoWindow(tr, marker, this.map, this.infowindow, this.createinfoWinContent(tr));
@@ -321,6 +322,7 @@ export class AlloTrGmap {
                         //ctrl.directionsDisplay.setDirections(response);
                         var route = response.routes[0];
                         ctrl.selected['routeDistText']=response.routes[0].legs[0].distance.text+" Approx. to reach order origin";
+                        ctrl.selected['routeDist']=response.routes[0].legs[0].distance.text+"les";
                         ctrl.emit();
                     }
                 });
@@ -435,6 +437,7 @@ export class AlloTrGmap {
             this.removeSelection(item,marker);
             this.selected = { trailerID: -1 };
             this.emit();
+            this.cdr.detectChanges();
         }else{
             this.removeSelection(this.selected,this.selMarker);
             this.addSelectiom(item,marker);
@@ -498,6 +501,7 @@ export class AlloTrGmap {
 
     reset() {
         var ctrl=this;
+        this.map.fitBounds(this.markerBounds);
     }
 
     info(){

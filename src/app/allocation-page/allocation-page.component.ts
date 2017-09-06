@@ -55,8 +55,8 @@ export class AllocationPageComponent {
     selectedCmp = { lable: "Covenant", value: "CVEN" };
     milesList: any = [{ lable: "Select radius", value: 0 },{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedMiles = { lable: "Select radius", value: 0 };
-    trailerTypeList: any = [{ lable: "Select a type", value: "" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" }];
-    selectedTrailerType = { lable: "Select a type", value: "" };
+    trailerMileList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
+    selectedTrailerMile = { lable: "50 Miles", value: 50 };
 
     mgToggle = true;
     omgToggle = false;
@@ -68,6 +68,10 @@ export class AllocationPageComponent {
     disableLoc = false;
     disableStatus = false;
     ifFirst = true;
+    includeUNK=false;
+    trMapshowLoader=false;
+    poolTrailers=false;
+    
     oRowCount = 50;
     truRowCount = 50;
     traRowCount = 50;
@@ -90,13 +94,13 @@ export class AllocationPageComponent {
     };
 
     trucks = {
-        column: [{ name: "Truck ID", width: "10%" }, { name: "Company", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model/type", width: "10%" },
+        column: [{ name: "Truck ID", width: "10%" }, { name: "Company", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model", width: "10%" },
         { name: "Year", width: "10%" },{ name: "Type", width: "10%" },{ name: "Trailer", width: "10%" },{ name: "Distance (Approx. radius in miles)", width: "15%" },{ name: "Landmark", width: "15%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
     
     trailers = {
-        column: [{ name: "Trailer ID", width: "16%" }, { name: "Make", width: "14%" }, { name: "Model", width: "14%" }, { name: "Location", width: "14%" }, { name: "Distance (Approx. radius in miles)", width: "14%" },
+        column: [{ name: "Trailer ID", width: "16%" }, { name: "Make", width: "14%" }, { name: "Model/type", width: "14%" }, { name: "Location", width: "14%" }, { name: "Distance (Approx. radius in miles)", width: "14%" },
         { name: "Available status", width: "14%" }, { name: "Last ping date", width: "14%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
@@ -122,8 +126,8 @@ export class AllocationPageComponent {
     selectOrStatus(item){
         this.selectedOrStatus = item;
     }
-    selectTrailerType(item){
-        this.selectedTrailerType = item;
+    selectTrailerMile(item){
+        this.selectedTrailerMile = item;
     }
 
 
@@ -141,7 +145,7 @@ export class AllocationPageComponent {
     goToTrailer(){
         this.page=2;
         this.mgToggle=true;
-        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,50);
+        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
         //this.getTrailersDetails(this.selectedTruck.location.position.lat,this.selectedTruck.location.position.lng,50);
         this.trMapConfig['selOrder']=this.selectedOrder;
         this.trMapConfig['selTruck']=this.selectedTruck;
@@ -149,6 +153,7 @@ export class AllocationPageComponent {
     }
     
     goToSummary() {
+        this.cdr.detectChanges();
         this.page = 3;
     }
 
@@ -212,8 +217,12 @@ export class AllocationPageComponent {
             this.selectedOrder = item;
             this.trMapConfig.lat = this.selectedOrder.orderOrginCityLat;
             this.trMapConfig.lng = this.selectedOrder.orderOrginCityLong;
+            this.selectedTruck= {number:-1,type:"",make:"",company:"",model:"",distance:0,location:{landmark:""}};
+            this.selectedTrailer = {trailerID:-1};
         } else {
             this.selectedOrder = { orderNumber: -1 };
+            this.selectedTruck= {number:-1,type:"",make:"",company:"",model:"",distance:0,location:{landmark:""}};
+            this.selectedTrailer = {trailerID:-1};
             this.trMapConfig.lat = undefined;
             this.trMapConfig.lng = undefined;
         }
@@ -222,10 +231,12 @@ export class AllocationPageComponent {
     truckSelected(item: any) {
         if (this.selectedTruck.number != item.number) {
             this.selectedTruck = item;
+            this.selectedTrailer = {trailerID:-1};
             this.trMapConfig['truckLat'] = this.selectedTruck.location.position.lat;
             this.trMapConfig['truckLng'] = this.selectedTruck.location.position.lng;
         } else {
             this.selectedTruck = { number: -1, type: "", make: "", company: "", model: "", distance: 0, location: { landmark: "" } };
+            this.selectedTrailer = {trailerID:-1};
             this.trMapConfig['truckLat'] = undefined;
             this.trMapConfig['truckLng'] = undefined;
         }
@@ -268,11 +279,11 @@ export class AllocationPageComponent {
     resetTrailerPage() {
         this.trailerBylocation = "";
         this.trailerID = "";
-        this.selectedTrailerType = { lable: "Select a type", value: "" };
+        this.selectedTrailerMile = { lable: "50 Miles", value: 50 };
         this.selectedTrailer = {trailerID:-1};
         //this.getTrailersDetails(this.selectedOrder.orderOrginCityLat,this.selectedOrder.orderOrginCityLong,50);
         //this.trailers.groups=[];
-        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,50);
+        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
     }
 
 
@@ -293,6 +304,7 @@ export class AllocationPageComponent {
             this.mapTrailers=this.cloneObje(this.trailerList);
         }
         if (this.mgToggle) {
+            this.trMapshowLoader=false;
             //this.searchID = "";
             //this.bylocation = "";
             //this.disableLoc = false;
@@ -535,41 +547,66 @@ export class AllocationPageComponent {
         this.truckList=this.sortList('distance',this.truckList);
     }
 
-    filterTrailerByType(){
-        if (this.trailerID.length == 0) {
-            this.trailerList = [];
-            for (let i = 0; i < this.trailers.groups.length; i++) {
-                var obj = this.trailers.groups[i];
-                if (this.selectedTrailerType.value == "") {
-                    if (this.selectedOrder.orderCompany == obj['company']) {
-                        this.trailerList.push(obj);
-                    }
+    filterTrailerByMile(){
+        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
+    }
 
-                } else {
-                    if (this.selectedTrailerType.value == obj['trailerType'] && this.selectedOrder.orderCompany == obj['company']) {
-                        this.trailerList.push(obj);
+    filterTrailerByType() {
+        this.trailerList = [];
+        for (let i = 0; i < this.trailers.groups.length; i++) {
+            var obj = this.trailers.groups[i];
+            if (this.includeUNK) {
+                if (this.selectedOrder.orderCompany == obj['company']) {
+                    if (this.trailerID == "") {
+                        if (this.selectedOrder.orderTrailerType == "") {
+                            this.trailerList.push(obj);
+                        } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
+                            if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER" || obj['trailerType'] == "UNK") {
+                                this.trailerList.push(obj);
+                            }
+                        } else if (this.selectedOrder.orderTrailerType == obj['trailerType'] || obj['trailerType'] == "UNK") {
+                            this.trailerList.push(obj);
+                        }
+                    } else if (this.trailerID == obj['trailerID']) {
+                        if (this.selectedOrder.orderTrailerType == "") {
+                            this.trailerList.push(obj);
+                        } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
+                            if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER" || obj['trailerType'] == "UNK") {
+                                this.trailerList.push(obj);
+                            }
+                        } else if (this.selectedOrder.orderTrailerType == obj['trailerType'] || obj['trailerType'] == "UNK") {
+                            this.trailerList.push(obj);
+                        }
+
+                    }
+                }
+            } else {
+                if (this.selectedOrder.orderCompany == obj['company']) {
+                    if (this.trailerID == "") {
+                        if (this.selectedOrder.orderTrailerType == "") {
+                            this.trailerList.push(obj);
+                        } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
+                            if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER") {
+                                this.trailerList.push(obj);
+                            }
+                        } else if (this.selectedOrder.orderTrailerType == obj['trailerType']) {
+                            this.trailerList.push(obj);
+                        }
+                    }else if(this.trailerID == obj['trailerID']){
+                        if (this.selectedOrder.orderTrailerType == "") {
+                            this.trailerList.push(obj);
+                        } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
+                            if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER") {
+                                this.trailerList.push(obj);
+                            }
+                        } else if (this.selectedOrder.orderTrailerType == obj['trailerType']) {
+                            this.trailerList.push(obj);
+                        }
                     }
                 }
             }
-        } else {
-            this.trailerList = [];
-            this.trailerID=this.trailerID.toUpperCase();
-            for (let i = 0; i < this.trailers.groups.length; i++) {
-                var objt = this.trailers.groups[i];
-                if (this.selectedTrailerType.value == "") {
-                    if (this.selectedOrder.orderCompany == obj['company']) {
-                        this.trailerList.push(obj);
-                    }
-
-                } else {
-                    if (this.selectedTrailerType.value == objt['trailerType'] && this.selectedOrder.orderCompany == objt['company'] && this.trailerID == objt['trailerID']) {
-                        this.trailerList.push(objt);
-                    }
-                }
-            }
-            //this.trailerList=this.cloneObje(bag);
         }
-        this.mapTrailers=this.cloneObje(this.trailerList);
+        this.mapTrailers = this.cloneObje(this.trailerList);
     }
 
     
@@ -805,6 +842,7 @@ console.log("scrolling");
 
     getTrailersDetails(lat,lng,dist) {
         this.trailerDetailsResp = false;
+        this.trMapshowLoader=false;
         //let lat=this.selectedOrder.orderOrginCityLat;
         //let lng=this.selectedOrder.orderOrginCityLong;
         if(lng>0){
@@ -825,12 +863,15 @@ console.log("scrolling");
                 this.trailerDetailsResp = true;
                 
             }, //For Success Response
-            (err) => { console.log("trailers error recieved"); this.trailerDetailsResp = true; } //For Error Response
+            (err) => { console.log("trailers error recieved");
+             this.trailerDetailsResp = true;
+             } //For Error Response
             );
     }
 
     getOrderTruckTrailers(lat1,lat2,lng1,lng2,dist) {
         this.trailerDetailsResp = false;
+        this.trMapshowLoader=false;
         //let lat=this.selectedOrder.orderOrginCityLat;
         //let lng=this.selectedOrder.orderOrginCityLong;
         if(lng1>0){
@@ -839,15 +880,22 @@ console.log("scrolling");
         if(lng2>0){
             lng2=0-lng2;
         }
+
+        var toShowPool;
+        if(this.poolTrailers){
+            toShowPool='yes';
+        }else{
+            toShowPool='no';
+        }
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         
         let url = config.baseUrl + "/AllocationService/api/OrderTruckTrailers?latitude="+lat1+","+lat2
-        +"&longitude="+lng1+","+lng2+"&distance="+dist+"&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer;
+        +"&longitude="+lng1+","+lng2+"&distance="+dist+"&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer+'&pooltrailers='+toShowPool;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("trailers data recieved");
-                if(data.dataSet.length<=1 && dist<=150){
+                if(data.dataSet.length<=1 && dist<=100){
                     this.getOrderTruckTrailers(lat1,lat2,lng1,lng2,dist+50);
 
                 }else{
