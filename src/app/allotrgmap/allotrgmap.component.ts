@@ -48,7 +48,7 @@ export class AlloTrGmap {
         truck:'../../assets/images/Truck.png',
         order:'../../assets/images/Order.png',
         selectedTr:'../../assets/images/selected-trailer.png',
-        linkedTruck:'../../assets/images/Trailer-Link.png',
+        linkedTruck:'../../assets/images/Trailer-Linked.png',
     };
 
 
@@ -167,7 +167,7 @@ export class AlloTrGmap {
             var truckLatLng = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
             var trTitle = "Truck: " + this.config.truckLat + " " + this.config.truckLng;
             var linked=false;
-            if(this.config.selTruck.trailer!=""){
+            if(!this.config.selTruck && this.config.selTruck.trailer!=""){
                 linked=true;
             }
             this.truckMaker = new google.maps.Marker(
@@ -285,7 +285,7 @@ export class AlloTrGmap {
             if (status == google.maps.DirectionsStatus.OK) {
                 ctrl.directionsDisplay.setDirections(response);
                 var route = response.routes[0];
-                ctrl.reset();
+                //ctrl.reset();
             }
         });
     }
@@ -498,9 +498,6 @@ export class AlloTrGmap {
 
     reset() {
         var ctrl=this;
-        setTimeout(function () {
-            ctrl.map.fitBounds(ctrl.markerBounds);            
-        }, 700);
     }
 
     info(){
