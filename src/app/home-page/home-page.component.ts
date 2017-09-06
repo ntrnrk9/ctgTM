@@ -1,8 +1,6 @@
 import { Component, ViewChild,NgZone,ChangeDetectorRef   } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { IMyDpOptions, IMyDateModel, IMyInputFieldChanged } from 'mydatepicker';
-
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { GmapjsComponent } from '../gmapjs/gmapjs.component';
 import { Gmtest } from '../gmtest/gmtest.component';
@@ -44,9 +42,6 @@ export class HomePageComponent {
     selectedCmp = { lable: "Covenant", value: "CVEN" };
     modelList: any = [{ lable: "All types", value: "-1" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" },{ lable: "UNK", value: "UNK" }];
     selectedModel = { lable: "All types", value: "-1" };
-    iotStatusList: any = [{ lable: "All IOT status", value: "-1" },{ lable: "Inactive", value: "INACTIVE" }, { lable: "Active", value: "ACTIVE" }];
-    selectediotStatus = { lable: "All IOT status", value: "-1" };
-    
     mgToggleFlag = true;
     trailerStatusResp = false;
     historyRecv = false;
@@ -60,20 +55,9 @@ export class HomePageComponent {
     geocoder = new google.maps.Geocoder();
     zone:NgZone;
     action: any = { heading: "", body: "" };
-    mapConfig:any={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap',marker:-1};
+    mapConfig:any={lat:36.090240,lng:-95.712891,mapType:'roadmap',marker:-1};
     historyConfig:any={showHistory:false,allTraillerSubSet:[],dataSet:[],backupDS:[],backupATS:[]};
     allTrailers_bu=[];
-    
-    dateFormat='mm/dd/yyyy';
-    
-    private myDatePickerOptions: IMyDpOptions = {
-        // other options...
-        dateFormat: 'mm/dd/yyyy',
-        //disableUntil: this.endDate.date,
-    
-    };
-    lDotDate;
-    lmDate;
     //allTrailers: any=[];
     // allTrailers: any = [
     //     { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
@@ -145,7 +129,6 @@ export class HomePageComponent {
         });
     }
     constructor(private http: Http,private cdr:ChangeDetectorRef ) {
-        
         this.getStateTrailersStatus();
         //this.getStateTrailersStatus();
         // setTimeout(() => {
@@ -162,10 +145,6 @@ export class HomePageComponent {
         // setTimeout(function () {
         //     $('#historyModal').modal('show');
         // }, 500);
-    }
-
-    toggleAS(){
-        this.asToggle=!this.asToggle;
     }
 
     toggleMG() {
@@ -242,8 +221,10 @@ export class HomePageComponent {
                 var lat=results[0].geometry.location.lat();
                 var lng=results[0].geometry.location.lng();
                 combo="latitude="+lat+"&longitude="+lng;
-                ctrl.mapConfig.lat=lat;
-                ctrl.mapConfig.lng=lng;
+                if (!this.mgToggleFlag) {
+                    ctrl.mapConfig.lat = lat;
+                    ctrl.mapConfig.lng = lng;
+                }
                 //ctrl.mapConfig.zoom=10;
                 ctrl.getTrailerStatusByFilter(combo);
             } else {
@@ -333,7 +314,7 @@ export class HomePageComponent {
         this.searchMake="";
         this.searchTrYear="";
         this.selectedModel={lable: "All types", value: "-1" };
-        this.mapConfig={lat:36.090240,lng:-95.712891,zoom:4,mapType:'roadmap'};
+        this.mapConfig={lat:36.090240,lng:-95.712891,mapType:'roadmap'};
         this.selectedMiles = { lable: "150 Miles", value: 150 };
         this.selectedCmp = { lable: "Covenant", value: "CVEN" };
         this.selectCmp(this.selectedCmp);
@@ -701,6 +682,7 @@ export class HomePageComponent {
            //this.allTraillerSubSet=this.filterGridByCmp(this.allTrailers);
         }else{
             if(this.bylocation.length>0){
+                this.getvalue();
                 this.selectMiles(this.selectedMiles);
             }else if(this.searchID.length>0){
                 this.searchByID();
@@ -790,9 +772,9 @@ export class HomePageComponent {
         var list=this.filterByMake(bag);
         list=this.filterByTrYear(list);
         list=this.filterByModel(list);
-        list=this.filterByIOT(list);
-        list=this.filterByLMD(list);
-        list=this.filterByDOT(list);
+        //list=this.filterByIOT(list);
+        //list=this.filterByLMD(list);
+        //list=this.filterByDOT(list);
         return list;
     }
 
@@ -839,67 +821,6 @@ export class HomePageComponent {
             
         }
         return bag;
-    }
-
-    filterByIOT(list:any){
-        var bag=[];
-        for(var i=0;i<list.length;i++){
-            var item=list[i];
-            if(this.selectediotStatus.value=="-1"){
-                bag.push(item);
-            }else{
-                if(this.selectediotStatus.value==item.iotInfo){
-                    bag.push(item);
-                }
-            }
-            
-        }
-        return bag;
-    }
-
-    filterByLMD(list: any) {
-        //console.log(JSON.stringify(list));
-        var bag = [];
-        if (this.lmDate) {
-            var lmdDate = this.lmDate.date.month + "/" + this.lmDate.date.day + "/" + this.lmDate.date.year;
-            for (var i = 0; i < list.length; i++) {
-                var item = list[i];
-                var itemLMD = this.formatDateTime(item.lastMovementDate);
-                var ary = itemLMD.split(' ');
-                itemLMD = ary[0];
-                if (lmdDate == itemLMD) {
-                    bag.push(item);
-                }
-            }
-            return bag;
-        } else {
-            return list;
-        }
-    }
-
-    filterByDOT(list: any) {
-        //console.log(JSON.stringify(list));
-        var bag = [];
-        if (this.lDotDate) {
-            var dotDate = this.lDotDate.date.month + "/" + this.lDotDate.date.day + "/" + this.lDotDate.date.year;
-            for (var i = 0; i < list.length; i++) {
-                var item = list[i];
-                var itemDOT = this.formatDateTime(item.dotDate);
-                var ary = itemDOT.split(' ');
-                itemDOT = ary[0];
-                if (!this.lDotDate.date.year) {
-                    bag.push(item);
-                } else {
-                    if (dotDate == itemDOT) {
-                        bag.push(item);
-                    }
-                }
-
-            }
-            return bag;
-        } else {
-            return list;
-        }
     }
 
     allTrailers=[{

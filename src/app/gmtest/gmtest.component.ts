@@ -104,6 +104,9 @@ export class Gmtest {
                 ]
             }
         ];
+        if(!this.config.zoom){
+            this.config['zoom']=4;
+        }
         this.geocoder = new google.maps.Geocoder();
         this.markers = [];
         var mapProp = {
@@ -301,6 +304,11 @@ export class Gmtest {
                     //resultsMap.setZoom(10);
                 }
                 this.map = resultsMap;
+                ctrl.config.lat = this.map.getCenter().lat();
+                ctrl.config.lng = this.map.getCenter().lng();
+                ctrl.config.zoom = this.map.getZoom();
+                //console.log(JSON.stringify(this.config));
+                ctrl.emit();
                 //ctrl.test(results[0].geometry.bounds);
             } else {
                 console.log('Geocode was not successful for the following reason: ' + status);
