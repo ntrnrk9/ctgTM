@@ -71,6 +71,7 @@ export class AllocationPageComponent {
     includeUNK=false;
     trMapshowLoader=false;
     poolTrailers=false;
+    automatedMile=true;
     
     oRowCount = 50;
     truRowCount = 50;
@@ -128,6 +129,7 @@ export class AllocationPageComponent {
         this.selectedOrStatus = item;
     }
     selectTrailerMile(item){
+        this.automatedMile=false;
         this.selectedTrailerMile = item;
     }
 
@@ -146,6 +148,7 @@ export class AllocationPageComponent {
     goToTrailer(){
         this.page=2;
         this.mgToggle=true;
+        this.automatedMile=true;
         this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
         //this.getTrailersDetails(this.selectedTruck.location.position.lat,this.selectedTruck.location.position.lng,50);
         this.trMapConfig['selOrder']=this.selectedOrder;
@@ -902,16 +905,25 @@ console.log("scrolling");
             .subscribe(
             (data) => {
                 console.log("trailers data recieved");
-                if(data.dataSet.length<=1 && dist<=100){
-                    this.getOrderTruckTrailers(lat1,lat2,lng1,lng2,dist+50);
 
-                }else{
-                this.trailers.groups=data.dataSet;
-                this.trailerList=data.dataSet;
-                this.filterTrailerByType();
-                this.trailers.groups=this.sortList('distance',this.trailers.groups);
-                this.mapTrailers=this.cloneObje(this.trailerList);
-                this.trailerDetailsResp = true;
+                if (data.dataSet.length <= 1 && this.automatedMile && dist <= 100) {
+                    this.getOrderTruckTrailers(lat1, lat2, lng1, lng2, dist + 50);
+
+                } else {
+                    if(dist==50){
+                        this.selectedTrailerMile = { lable: "50 Miles", value: 50 };
+                    }else if(dist==100){
+                        this.selectedTrailerMile = { lable: "100 Miles", value: 100 };
+                    }else if(dist==150){
+                        this.selectedTrailerMile = { lable: "150 Miles", value: 150 };
+                    }
+
+                    this.trailers.groups = data.dataSet;
+                    this.trailerList = data.dataSet;
+                    this.filterTrailerByType();
+                    this.trailers.groups = this.sortList('distance', this.trailers.groups);
+                    this.mapTrailers = this.cloneObje(this.trailerList);
+                    this.trailerDetailsResp = true;
                 }
                 
             }, //For Success Response
