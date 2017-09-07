@@ -114,6 +114,7 @@ export class AllocationPageComponent {
     }
 
     ngOnChange(val: number) {
+        console.log("values in allocation changed");
     }
 
     selectCmp(item){
@@ -240,6 +241,12 @@ export class AllocationPageComponent {
             this.trMapConfig['truckLat'] = undefined;
             this.trMapConfig['truckLng'] = undefined;
         }
+    }
+
+    trSelectedFromMap(item){
+        console.log("trailer is selected "+JSON.stringify(item));
+        this.selectedTrailer=item;
+        this.cdr.detectChanges();
     }
 
     trailerSelected(item: any) {

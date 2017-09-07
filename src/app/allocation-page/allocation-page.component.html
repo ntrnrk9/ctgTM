@@ -292,7 +292,7 @@
                 <div style="padding-top:15px;">
                     <div *ngIf="mgToggle">
                         <div *ngIf="trailerDetailsResp" [ngClass]="{'transparent': !trailerDetailsResp}">
-                            <allotrgmap [trailers]="mapTrailers"  [(selected)]="selectedTrailer" [(config)]="trMapConfig"></allotrgmap>
+                            <allotrgmap [trailers]="mapTrailers" (selectedChange)="trSelectedFromMap($event)" [(selected)]="selectedTrailer" [(config)]="trMapConfig"></allotrgmap>
                         </div>
                         <div  *ngIf="!trailerDetailsResp" class="loader" ><img src="../../assets/images/loader.gif" /></div>
                     </div>
@@ -451,7 +451,7 @@
                             <span style="font-size: 16px"><b>{{selectedTrailer.distance}}</b></span>
                         </div>
                         <div style="padding-top:10px">
-                            <span>Last movement date</span><br>
+                            <span>Last ping date</span><br>
                             <span style="font-size: 16px"><b>{{formatDateTime(selectedTrailer.lastMovementDate)}}</b></span>
                         </div>
                     </div>
@@ -465,13 +465,6 @@
                     </div>
                 </div>
                 <div style="padding: 10px 20px;">Truck --> Trailer--> Order origin point: {{selectedTrailer.routeDist}}</div>
-            </div>
-        </div>
-        <div class="row page-container" style="margin:0px">
-            <div class="filter-container">
-                <div style="padding:5px;" class="pull-left">
-                    <span class="pull-left" style="margin-left:15px;padding-top:5px"><b>Title: Approx. Route distance in miles.</b></span>
-                </div>
             </div>
         </div>
     </div>

@@ -167,16 +167,18 @@ export class AlloTrGmap {
         if (this.config.truckLat) {
             var truckLatLng = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
             var trTitle = "Truck: " + this.config.truckLat + " " + this.config.truckLng;
-            var linked=false;
-            if(!this.config.selTruck && this.config.selTruck.trailer!=""){
-                linked=true;
+            var trIcon;
+            if(this.config.selTruck && this.config.selTruck.trailer){
+                trIcon=this.markerList.linkedTruck;
+            }else{
+                trIcon=this.markerList.truck
             }
             this.truckMaker = new google.maps.Marker(
                 {
                     position: truckLatLng,
                     map: this.map,
                     title: trTitle,
-                    icon: linked?this.markerList.linkedTruck:this.markerList.truck
+                    icon: trIcon
                 });
             this.markerBounds.extend(truckLatLng);
             this.truckinfowindow = new google.maps.InfoWindow({
@@ -321,8 +323,15 @@ export class AlloTrGmap {
                     if (status == google.maps.DirectionsStatus.OK) {
                         //ctrl.directionsDisplay.setDirections(response);
                         var route = response.routes[0];
-                        ctrl.selected['routeDistText']=response.routes[0].legs[0].distance.text+" Approx. to reach order origin";
-                        ctrl.selected['routeDist']=response.routes[0].legs[0].distance.text+"les";
+                        var dist=0;
+                        for(let i=0;i<response.routes[0].legs.length;i++){
+                            var leg=response.routes[0].legs[i];
+                            dist+=leg.distance.value;
+
+                        }
+                        dist=Math.round(dist*0.000621371192);
+                        ctrl.selected['routeDistText']=dist+"miles Approx. to reach order origin";
+                        ctrl.selected['routeDist']=dist+" miles";
                         ctrl.emit();
                     }
                 });
@@ -433,15 +442,15 @@ export class AlloTrGmap {
     selectMarker(item,marker) {
         if(this.selected.trailerID==-1){
             this.addSelectiom(item,marker);
+            this.emit();
         }else if(this.selected.trailerID==item.trailerID){
             this.removeSelection(item,marker);
             this.selected = { trailerID: -1 };
             this.emit();
-            this.cdr.detectChanges();
         }else{
             this.removeSelection(this.selected,this.selMarker);
             this.addSelectiom(item,marker);
-            
+            this.emit();
         }   
     }
 
@@ -459,7 +468,6 @@ export class AlloTrGmap {
         this.config.trailerLat = item.latitude;
         this.config.trailerLng = item.longitude;
         this.calcRouteDist();
-        this.emit();
     }
 
     increment(item) {
