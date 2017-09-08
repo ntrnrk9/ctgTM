@@ -1,0 +1,38 @@
+h1 {
+    font-size: 300%;
+    color: #34495e;
+}
+
+.selected {
+    color: white !important;
+    background: #d2232a;
+}
+
+.selected-a{
+    color: white !important;
+    cursor: default;
+}
+.tab-li-last {
+    float: left;
+    padding-left: 10px;
+    padding-right: 10px
+}
+.tab-li {
+    float: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    /* border-right: 2px solid #dedede; */
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 21px;
+}
+
+.tabContainer {
+    padding-top: 10px;
+    padding-bottom:20px;
+}
