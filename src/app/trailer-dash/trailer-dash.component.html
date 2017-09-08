@@ -1,0 +1,24 @@
+<p>
+  trailer-dash works!
+</p>
+<div>
+  <div class="col-md-4" style="height:320px;border:1px solid silver">
+    <div style="height:30px"><input type="button" value="CVEN"/></div>
+    <div style="height:290px">
+      <canvas height="200" baseChart [data]="cvenChartData" [legend]="toShowLegend" [labels]="pieChartLabels" [chartType]="pieChartType" 
+        (chartClick)="chartClicked($event)"></canvas>
+    </div>
+  </div>
+  <div class="col-md-4" style="height:320px;border:1px solid silver">
+    <div style="height:290px;">
+      <canvas height="200" baseChart [data]="srtChartData" [labels]="pieChartLabels" [chartType]="pieChartType" 
+        (chartClick)="chartClicked($event)"></canvas>
+    </div>
+  </div>
+  <div class="col-md-4" style="height:320px;border:1px solid silver">
+    <div style="height:290px;">
+      <canvas height="200" baseChart [data]="starChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
+        (chartClick)="chartClicked($event)"></canvas>
+    </div>
+  </div>
+</div>
