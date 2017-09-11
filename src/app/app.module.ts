@@ -15,7 +15,7 @@ import { AppComponent } from './app.component';
 
 import { HeaderComponent } from './header/header.component';
 import { MainTabsComponent } from './mainTabs/mainTabs.component';
-import { HomePageComponent } from './home-page/home-page.component';
+import { TrackTrailerComponent } from './track-trailer/track-trailer.component';
 import { GmapsComponent } from './gmaps/gmaps.component';
 import { YardMangPageComponent } from './yard-mang-page/yard-mang-page.component';
 import { TableComponent } from './table/table.component';
@@ -46,7 +46,7 @@ import { OrderDashComponent } from './order-dash/order-dash.component';
         })],
     declarations: [AppComponent,
         HeaderComponent, MainTabsComponent,
-        HomePageComponent, GmapsComponent,
+        TrackTrailerComponent, GmapsComponent,
         YardMangPageComponent, TableComponent,
         AllocationPageComponent, PoolMangPageComponent,
         Pool1MangPageComponent, Footer1Component,

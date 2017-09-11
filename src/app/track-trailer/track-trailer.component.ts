@@ -11,16 +11,16 @@ declare var $: any;
 
 import * as config from '../configs/configs';
 @Component({
-    selector: 'home-page',
-    templateUrl: 'home-page.component.html',
-    styleUrls: ['home-page.component.css'],
+    selector: 'track-trailer',
+    templateUrl: 'track-trailer.component.html',
+    styleUrls: ['track-trailer.component.css'],
     moduleId: module.id
 })
-export class HomePageComponent {
+export class TrackTrailerComponent {
     //@ViewChild(GmapjsComponent) gmapJs: any;
     @ViewChild(Gmtest) gmapJs: any;
     //gmapJs: any;
-    private name = 'HomePageComponent';
+    private name = 'TrackTrailerComponent';
     selectedState: any = "alabama";
     selectedTrStatus: any = { status: "Available", value: 2 };
     selectedAvailability: number = -1;
