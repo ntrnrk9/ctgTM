@@ -10,11 +10,14 @@
 <div class="row" style="margin:0px">
   <div class="col-md-4" style="height:330px;">
     <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Trailer Stats</label></div>
-    <div style="height:290px;border:1px solid silver;padding: 10px 5px;">
-      <div *ngIf="trailers.length>0">
-        
+    <div style="height:290px;border:1px solid silver">
+      <div *ngIf="trCountResp">
+        <div class="col-md-6 centered" style="height:145px;border-right:1px solid silver;border-bottom:1px solid silver"><label>Total Trailers: </label>{{totalTrailers}}</div>
+        <div class="col-md-6 centered" style="height:145px;border-bottom:1px solid silver"><label>Empty Trailers: </label>{{emptyTrailers}}</div>
+        <div class="col-md-6 centered" style="height:145px;border-right:1px solid silver"><label>Moving Trailers: </label>{{movingTrailers}}</div>
+        <div class="col-md-6 centered" style="height:145px;"><label>Shed Trailers: </label>{{shedTrailers}}</div>
       </div>
-        <div *ngIf="trailers.length==0" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+        <div *ngIf="!trCountResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
   </div>
   <div class="col-md-4" style="height:330px;">

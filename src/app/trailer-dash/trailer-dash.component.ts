@@ -44,9 +44,15 @@ export class TrailerDashComponent implements OnInit {
 
   public pieChartType: string = 'pie';
   public selectedLable: string = '';
+  totalTrailers=0;
+  emptyTrailers=0;
+  movingTrailers=0;
+  shedTrailers=0;
 
   public toShowLegend = true;
   showGrid = false;
+  trCountResp=false;
+  
   constructor(private http: Http, private cdr: ChangeDetectorRef) {
     this.callFlinAPITrailer();
    }
@@ -248,26 +254,24 @@ export class TrailerDashComponent implements OnInit {
   }
 
   callFlinAPITrailer() {
+    this.trCountResp=false;
 
-    let url = 'https://api.drivenanalyticsolutions.com/ctg/assets/trailers';
+    let url = 'https://ctgtest.com/HomeService/api/TrailerCountSummary';
     this.http.get(url).map(res => res.json())
       .subscribe(
       (data) => {
-        console.log("StatesTrailerCounts data recieved");
-        var emptyNo=0
-
-        for(var i=0;i<data.data.length;i++){
-          var item=data.data[i];
-          if(item.empty){
-            emptyNo++;
-          }
-        }
-        console.log("total "+data.data.length+" empty= "+emptyNo);
-
+        console.log("TrailerCountSummary data recieved");
+        var obj=data.dataSet[0];
+        this.totalTrailers=obj.totalTrailers;
+        this.emptyTrailers=obj.emptyTrailers;
+        this.movingTrailers=obj.movingTrailers;
+        this.shedTrailers=obj.shedTrailers;
+        this.trCountResp=true;
       }, //For Success Response
+      
       (err) => {
-        console.log("StatesTrailerCounts error recieved");
-
+        console.log("TrailerCountSummary error recieved");
+        this.trCountResp=true;
       } //For Error Response
       );
 
