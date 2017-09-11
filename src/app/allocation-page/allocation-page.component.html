@@ -1,10 +1,10 @@
 ﻿<!-- Progress image -->
 
 <div style="text-align: center" [ngSwitch]="page">
-    <img style="height:80px" *ngSwitchCase=0 src="../../assets/images/wizard/order.png" />
-    <img style="height:80px" *ngSwitchCase=1 src="../../assets/images/wizard/truck.png" />
-    <img style="height:80px" *ngSwitchCase=2 src="../../assets/images/wizard/trailer.png" />
-    <img style="height:80px" *ngSwitchCase=3 src="../../assets/images/wizard/summary.png" /><br>
+    <img style="height:80px" *ngSwitchCase=0 src="../../assets/images/progress/order.png" />
+    <img style="height:80px" *ngSwitchCase=1 src="../../assets/images/progress/truck.png" />
+    <img style="height:80px" *ngSwitchCase=2 src="../../assets/images/progress/trailer.png" />
+    <img style="height:80px" *ngSwitchCase=3 src="../../assets/images/progress/summary.png" /><br>
 </div>
 <br>
 <div [ngSwitch]="page">
@@ -70,7 +70,7 @@
                                 <button type="button" (click)="closeOrderMap()" class="pull-right toggleBut close" data-toggle="tooltip" title="Close">&times;</button>
                         </div>
                         <div>
-                                <allotrgmap [trailers]="mappedTrailer" [(item)]="trailerID" [(loc)]="trailerBylocation" [(config)]="mappedOrderConfig"></allotrgmap>
+                                <allotrgmap [trailers]="mappedTrailer" [(config)]="mappedOrderConfig"></allotrgmap>
                         </div>
                     </div>
                     <div *ngIf="!omgToggle">
@@ -144,7 +144,7 @@
 
             <div class="col-md-12 page-heading">
                 <div style="padding-left: 10px;padding-top: 1px;" class="pull-left"><img style="height: 35px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.orderNumber}} - {{selectedOrder.orderOrginPoint}} - {{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}}</b></div>
-                <button class="pull-right toggleBut"  type="button" value="encode" (click)="goToTrailer()">Next</button>
+                <button class="pull-right toggleBut"  [disabled]="selectedTruck.number==-1" type="button" value="encode" (click)="goToTrailer()">Next</button>
                 <button style="margin-right:2px" class="pull-right toggleBut" type="button" value="encode" (click)="goToOrder()">Back</button>
             </div><br />
 
@@ -242,13 +242,12 @@
             <div class="col-md-12 page-heading">
                 
                 
-                <div *ngIf="selectedTruck.number!=-1" style="padding-left: 10px;padding-top: 1px;" class="pull-left">
-                    <img style="height: 35px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.orderNumber}} - {{selectedOrder.orderOrginPoint}} - {{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}} |</b>
-                    <img style="height: 35px;" src="../../assets/images/Truck-5.png" /><b> {{selectedTruck.number}}</b>
+                <div  style="padding-left: 10px;padding-top: 0px;height:100%" class="pull-left">
+                    <img style="height: 35px;padding-right: 5px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.orderNumber}} - {{selectedOrder.orderOrginPoint}} - {{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}} </b>
+                    <span style="padding-left:50px"><img style="height: 39px;padding-right: 10px;" src="../../assets/images/Truck-5.png" *ngIf="selectedTruck.number!=-1"/><b> {{selectedTruck.number}}</b></span>
+                    <span *ngIf="selectedTrailer.trailerID!=-1" style="padding-left:50px"><img style="height: 35px;padding: 4px 10px 0px 0px;" src="../../assets/images/Trailer-icon.png" /><b> {{selectedTrailer.trailerID}}</b> {{ (selectedTrailer.routeDistText)?'- ('+selectedTrailer.routeDistText+')':''}}</span>
                 </div>
-                <div *ngIf="selectedTruck.number==-1" style="padding-left: 10px;padding-top: 1px;" class="pull-left">
-                    <img style="height: 35px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.orderNumber}} - {{selectedOrder.orderOrginPoint}} - {{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}}</b>
-                </div>
+                
                 <button class="pull-right toggleBut" [disabled]="selectedTrailer.trailerID==-1" type="button" value="encode" (click)="goToSummary()">Next</button>
                 <button style="margin-right:2px" class="pull-right toggleBut" type="button" value="encode" (click)="goToTruck()">Back</button>
                 <button style="margin-right:2px" *ngIf="mgToggle" class="pull-right toggleBut" type="button" value="encode" (click)="toggleMG()"><img src="../../assets/images/markers/grid-view.png" /></button>
@@ -260,36 +259,42 @@
                 <div class="filter-container">
                     <div  class="pull-left">
                         <div class="pull-left" style="padding:5px 15px 5px 5px;background-color: #d3d3d3">
-                            <div class="dropdown pull-left pm-select-cont">
-                                <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedTrailerType.lable}} />
+                             <div class="dropdown pull-left pm-select-cont">
+                                <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedTrailerMile.lable}} />
                                 <span class="caret"></span>
                                 <div class="dropdown-menu no-padding sel-dd">
 
                                     <ul class="sel-dd-ul">
-                                        <li *ngFor="let item of trailerTypeList" (click)="selectTrailerType(item);filterTrailerByType()" style="cursor: pointer">
+                                        <li *ngFor="let item of trailerMileList" (click)="selectTrailerMile(item);filterTrailerByMile()" style="cursor: pointer">
                                             {{item.lable}}
                                         </li>
                                     </ul>
                                 </div>
-                            </div>
+                            </div> 
                         </div>
                         <div class="pull-left" style="padding:5px;">
                             <span (keyup.enter)="searchByTrailerID()"><input  class="ctg-textbox pull-left" type="text" placeholder="Trailer ID" [(ngModel)]="trailerID"
-                    (ngModelChange)="trailerToggleSearch(1)"  /></span>
-                            <!--<button class="pull-left" type="button" (click)="searchByID()">search</button>-->
-
-                            <!-- <input class="ctg-textbox pull-left" type="text" placeholder="By location" (ngModelChange)="trailerToggleSearch(2)" [(ngModel)]="trailerBylocation"
-                                style="margin-left:10px;width:230px" value="bylocation" /> -->
-
-
+                                (ngModelChange)="trailerToggleSearch(1)"  /></span>
+                            
                             <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="trailerSearch()">Search</button>
-                        </div>
+                        </div>    
                     </div>
                     <button class="pull-right resetBut" type="button" value="encode" (click)="resetTrailerPage()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
+                    <div class="pull-right" style="margin-right: 25px">
+                        <span style="float: left;margin-left: 10px;padding-top: 5px;"><input type="checkbox" [(ngModel)]="includeUNK" (change)="filterTrailerByType()"/>
+                            <label style="font-weight: normal">Include UNK trailers</label>
+                        </span>
+                        <span style="float: left;margin-left: 10px;padding-top: 5px;"><input type="checkbox" [(ngModel)]="poolTrailers" (change)="filterTrailerByMile()"/>
+                            <label style="font-weight: normal">Include Pool trailers</label>
+                        </span>
+                    </div>
                 </div>
                 <div style="padding-top:15px;">
                     <div *ngIf="mgToggle">
-                        <allotrgmap [trailers]="mapTrailers" [(item)]="trailerID" [(loc)]="trailerBylocation" [(config)]="trMapConfig"></allotrgmap>
+                        <div *ngIf="trailerDetailsResp" [ngClass]="{'transparent': !trailerDetailsResp}">
+                            <allotrgmap [trailers]="mapTrailers" (selectedChange)="trSelectedFromMap($event)" [(selected)]="selectedTrailer" [(config)]="trMapConfig"></allotrgmap>
+                        </div>
+                        <div  *ngIf="!trailerDetailsResp" class="loader" ><img src="../../assets/images/loader.gif" /></div>
                     </div>
                     <div *ngIf="!mgToggle">
                         <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
@@ -370,7 +375,7 @@
                             <span style="font-size: 16px"><b>{{selectedOrder.orderOrginPoint}}</b></span>
                         </div>
                         <div style="padding-top:10px">
-                            <span>Order city</span><br>
+                            <span>Origin city</span><br>
                             <span style="font-size: 16px"><b>{{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}}</b></span>
                         </div>
                         <div style="padding-top:10px">
@@ -430,15 +435,15 @@
                     </div>
                     <div style="padding:20px;">
                         <div>
-                            <span>Trailer type</span><br>
+                            <span>Model/type</span><br>
                             <span style="font-size: 16px"><b>{{selectedTrailer.trailerType}}</b></span>
                         </div>
                         <div style="padding-top:10px">
-                            <span>Trailer name</span><br>
+                            <span>Make</span><br>
                             <span style="font-size: 16px"><b>{{selectedTrailer.trailerName}}</b></span>
                         </div>
                         <div style="padding-top:10px">
-                            <span>location</span><br>
+                            <span>Location</span><br>
                             <span style="font-size: 16px"><b>{{selectedTrailer.location}}</b></span>
                         </div>
                         <div style="padding-top:10px">
@@ -446,11 +451,20 @@
                             <span style="font-size: 16px"><b>{{selectedTrailer.distance}}</b></span>
                         </div>
                         <div style="padding-top:10px">
-                            <span>Last movement date</span><br>
+                            <span>Last ping date</span><br>
                             <span style="font-size: 16px"><b>{{formatDateTime(selectedTrailer.lastMovementDate)}}</b></span>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="col-md-12 page-body">
+                <div class="filter-container">
+                    <div style="padding:5px;" class="pull-left">
+                        <span class="pull-left" style="margin-left:15px;padding-top:5px"><b>Approx. Route distance in miles.</b></span>
+                    </div>
+                </div>
+                <div style="padding: 10px 20px;">Truck --> Trailer--> Order origin point: {{selectedTrailer.routeDist}}</div>
             </div>
         </div>
     </div>

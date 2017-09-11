@@ -55,10 +55,10 @@ export class AllocationPageComponent {
     selectedCmp = { lable: "Covenant", value: "CVEN" };
     milesList: any = [{ lable: "Select radius", value: 0 },{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedMiles = { lable: "Select radius", value: 0 };
-    trailerTypeList: any = [{ lable: "Select a type", value: "" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" }];
-    selectedTrailerType = { lable: "Select a type", value: "" };
+    trailerMileList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
+    selectedTrailerMile = { lable: "50 Miles", value: 50 };
 
-    mgToggle = false;
+    mgToggle = true;
     omgToggle = false;
     OrderDetailsResp = false;
     trucksDetailsResp = false;
@@ -68,6 +68,11 @@ export class AllocationPageComponent {
     disableLoc = false;
     disableStatus = false;
     ifFirst = true;
+    includeUNK=false;
+    trMapshowLoader=false;
+    poolTrailers=false;
+    automatedMile=true;
+    
     oRowCount = 50;
     truRowCount = 50;
     traRowCount = 50;
@@ -96,8 +101,8 @@ export class AllocationPageComponent {
     };
     
     trailers = {
-        column: [{ name: "Trailer ID", width: "16%" }, { name: "Trailer name", width: "14%" }, { name: "Trailer type", width: "14%" }, { name: "Location", width: "14%" }, { name: "Distance (Approx. radius in miles)", width: "14%" },
-        { name: "Available status", width: "14%" }, { name: "Last trailer ping", width: "14%" }],
+        column: [{ name: "Trailer ID", width: "16%" }, { name: "Make", width: "14%" }, { name: "Model/type", width: "14%" }, { name: "Location", width: "14%" }, { name: "Distance (Approx. radius in miles)", width: "14%" },
+        { name: "Available status", width: "14%" }, { name: "Last ping date", width: "14%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
@@ -110,6 +115,7 @@ export class AllocationPageComponent {
     }
 
     ngOnChange(val: number) {
+        console.log("values in allocation changed");
     }
 
     selectCmp(item){
@@ -122,8 +128,9 @@ export class AllocationPageComponent {
     selectOrStatus(item){
         this.selectedOrStatus = item;
     }
-    selectTrailerType(item){
-        this.selectedTrailerType = item;
+    selectTrailerMile(item){
+        this.automatedMile=false;
+        this.selectedTrailerMile = item;
     }
 
 
@@ -140,11 +147,17 @@ export class AllocationPageComponent {
 
     goToTrailer(){
         this.page=2;
-        this.mgToggle=false;
-        this.getTrailersDetails();
+        this.mgToggle=true;
+        this.automatedMile=true;
+        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
+        //this.getTrailersDetails(this.selectedTruck.location.position.lat,this.selectedTruck.location.position.lng,50);
+        this.trMapConfig['selOrder']=this.selectedOrder;
+        this.trMapConfig['selTruck']=this.selectedTruck;
+        this.mapTrailers=this.cloneObje(this.trailerList);
     }
     
     goToSummary() {
+        this.cdr.detectChanges();
         this.page = 3;
     }
 
@@ -208,8 +221,12 @@ export class AllocationPageComponent {
             this.selectedOrder = item;
             this.trMapConfig.lat = this.selectedOrder.orderOrginCityLat;
             this.trMapConfig.lng = this.selectedOrder.orderOrginCityLong;
+            this.selectedTruck= {number:-1,type:"",make:"",company:"",model:"",distance:0,location:{landmark:""}};
+            this.selectedTrailer = {trailerID:-1};
         } else {
             this.selectedOrder = { orderNumber: -1 };
+            this.selectedTruck= {number:-1,type:"",make:"",company:"",model:"",distance:0,location:{landmark:""}};
+            this.selectedTrailer = {trailerID:-1};
             this.trMapConfig.lat = undefined;
             this.trMapConfig.lng = undefined;
         }
@@ -218,13 +235,21 @@ export class AllocationPageComponent {
     truckSelected(item: any) {
         if (this.selectedTruck.number != item.number) {
             this.selectedTruck = item;
+            this.selectedTrailer = {trailerID:-1};
             this.trMapConfig['truckLat'] = this.selectedTruck.location.position.lat;
             this.trMapConfig['truckLng'] = this.selectedTruck.location.position.lng;
         } else {
             this.selectedTruck = { number: -1, type: "", make: "", company: "", model: "", distance: 0, location: { landmark: "" } };
+            this.selectedTrailer = {trailerID:-1};
             this.trMapConfig['truckLat'] = undefined;
             this.trMapConfig['truckLng'] = undefined;
         }
+    }
+
+    trSelectedFromMap(item){
+        console.log("trailer is selected "+JSON.stringify(item));
+        this.selectedTrailer=item;
+        this.cdr.detectChanges();
     }
 
     trailerSelected(item: any) {
@@ -232,7 +257,7 @@ export class AllocationPageComponent {
             this.selectedTrailer = item;
             this.trMapConfig['trailerLat'] = this.selectedTrailer.latitude;
             this.trMapConfig['trailerLng'] = this.selectedTrailer.longitude;
-            this.mapTrailers=[item];
+            this.mapTrailers=this.cloneObje(this.trailerList);
 
         } else {
             this.selectedTrailer = { trailerID: -1 };
@@ -264,9 +289,11 @@ export class AllocationPageComponent {
     resetTrailerPage() {
         this.trailerBylocation = "";
         this.trailerID = "";
-        this.selectedTrailerType = { lable: "Select a type", value: "" };
+        this.selectedTrailerMile = { lable: "50 Miles", value: 50 };
         this.selectedTrailer = {trailerID:-1};
-        this.getTrailersDetails();
+        //this.getTrailersDetails(this.selectedOrder.orderOrginCityLat,this.selectedOrder.orderOrginCityLong,50);
+        //this.trailers.groups=[];
+        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
     }
 
 
@@ -274,10 +301,12 @@ export class AllocationPageComponent {
     toggleMG() {
         
         this.mgToggle = !this.mgToggle;
+        this.trMapConfig['selOrder']=this.selectedOrder;
+        this.trMapConfig['selTruck']=this.selectedTruck;
         if (this.selectedTrailer.trailerID != -1) {
             this.trMapConfig['trailerLat'] = this.selectedTrailer.latitude;
             this.trMapConfig['trailerLng'] = this.selectedTrailer.longitude;
-            this.mapTrailers=[this.selectedTrailer];
+            this.mapTrailers=this.cloneObje(this.trailerList);
 
         } else {
             this.trMapConfig['trailerLat'] = undefined;
@@ -285,6 +314,7 @@ export class AllocationPageComponent {
             this.mapTrailers=this.cloneObje(this.trailerList);
         }
         if (this.mgToggle) {
+            this.trMapshowLoader=false;
             //this.searchID = "";
             //this.bylocation = "";
             //this.disableLoc = false;
@@ -527,41 +557,66 @@ export class AllocationPageComponent {
         this.truckList=this.sortList('distance',this.truckList);
     }
 
-    filterTrailerByType(){
-        if (this.trailerID.length == 0) {
-            this.trailerList = [];
-            for (let i = 0; i < this.trailers.groups.length; i++) {
-                var obj = this.trailers.groups[i];
-                if (this.selectedTrailerType.value == "") {
-                    if (this.selectedOrder.orderCompany == obj['company']) {
-                        this.trailerList.push(obj);
-                    }
+    filterTrailerByMile(){
+        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
+    }
 
-                } else {
-                    if (this.selectedTrailerType.value == obj['trailerType'] && this.selectedOrder.orderCompany == obj['company']) {
-                        this.trailerList.push(obj);
+    filterTrailerByType() {
+        this.trailerList = [];
+        for (let i = 0; i < this.trailers.groups.length; i++) {
+            var obj = this.trailers.groups[i];
+            if (this.includeUNK) {
+                if (this.selectedOrder.orderCompany == obj['company']) {
+                    if (this.trailerID == "") {
+                        if (this.selectedOrder.orderTrailerType == "") {
+                            this.trailerList.push(obj);
+                        } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
+                            if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER" || obj['trailerType'] == "UNK") {
+                                this.trailerList.push(obj);
+                            }
+                        } else if (this.selectedOrder.orderTrailerType == obj['trailerType'] || obj['trailerType'] == "UNK") {
+                            this.trailerList.push(obj);
+                        }
+                    } else if (this.trailerID == obj['trailerID']) {
+                        if (this.selectedOrder.orderTrailerType == "") {
+                            this.trailerList.push(obj);
+                        } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
+                            if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER" || obj['trailerType'] == "UNK") {
+                                this.trailerList.push(obj);
+                            }
+                        } else if (this.selectedOrder.orderTrailerType == obj['trailerType'] || obj['trailerType'] == "UNK") {
+                            this.trailerList.push(obj);
+                        }
+
+                    }
+                }
+            } else {
+                if (this.selectedOrder.orderCompany == obj['company']) {
+                    if (this.trailerID == "") {
+                        if (this.selectedOrder.orderTrailerType == "") {
+                            this.trailerList.push(obj);
+                        } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
+                            if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER") {
+                                this.trailerList.push(obj);
+                            }
+                        } else if (this.selectedOrder.orderTrailerType == obj['trailerType']) {
+                            this.trailerList.push(obj);
+                        }
+                    }else if(this.trailerID == obj['trailerID']){
+                        if (this.selectedOrder.orderTrailerType == "") {
+                            this.trailerList.push(obj);
+                        } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
+                            if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER") {
+                                this.trailerList.push(obj);
+                            }
+                        } else if (this.selectedOrder.orderTrailerType == obj['trailerType']) {
+                            this.trailerList.push(obj);
+                        }
                     }
                 }
             }
-        } else {
-            this.trailerList = [];
-            this.trailerID=this.trailerID.toUpperCase();
-            for (let i = 0; i < this.trailers.groups.length; i++) {
-                var objt = this.trailers.groups[i];
-                if (this.selectedTrailerType.value == "") {
-                    if (this.selectedOrder.orderCompany == obj['company']) {
-                        this.trailerList.push(obj);
-                    }
-
-                } else {
-                    if (this.selectedTrailerType.value == objt['trailerType'] && this.selectedOrder.orderCompany == objt['company'] && this.trailerID == objt['trailerID']) {
-                        this.trailerList.push(objt);
-                    }
-                }
-            }
-            //this.trailerList=this.cloneObje(bag);
         }
-        this.mapTrailers=this.cloneObje(this.trailerList);
+        this.mapTrailers = this.cloneObje(this.trailerList);
     }
 
     
@@ -594,12 +649,25 @@ export class AllocationPageComponent {
         let dy = y0 - y1;
 
         let d = Math.sqrt((dx * dx) + (dy * dy));
-        var latLngA = new google.maps.LatLng(gLat1,gLng1);
-        var latLngB = new google.maps.LatLng(gLat2,gLng2);
-        //var dis=google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
-        //return Math.round(dis*0.000621371192)+" -- "+Math.round(d*0.000621371192);
-        //return Math.round(dis*0.000621371192);
-        return Math.round(d*0.000621371192);
+        
+        if(this.isValidLatLng(gLat2,gLng2)){
+            var latLngA = new google.maps.LatLng(gLat1,gLng1);
+            var latLngB = new google.maps.LatLng(gLat2,gLng2);
+            //var dis=google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB);
+            //return Math.round(dis*0.000621371192)+" -- "+Math.round(d*0.000621371192);
+            //return Math.round(dis*0.000621371192);
+            return Math.round(d*0.000621371192);
+        }else{
+            return -1;
+        }
+        
+    }
+
+    isValidLatLng(lat,lng){
+        if(lat!=0 && lng !=0){
+            return true;
+        }
+        return false;
     }
 
     googleDistCalc(lat,lng){
@@ -757,49 +825,112 @@ console.log("scrolling");
             .subscribe(
             (data) => {
                 console.log("tractors data recieved");
-                this.trucksDetailsResp = true;
+                
                 this.trucks.groups=data.data;
-                this.truckList=data.data;
-                this.trucks.groups=this.sortList('distance',this.trucks.groups);
                 for(var i=0;i<this.trucks.groups.length;i++){
                     let obj=this.trucks.groups[i];
-                    obj['distance']=this.calcTruckDistance(obj['location']['position']['lng'],obj['location']['position']['lat']);
-                    this.trucks.groups[i]=obj;
-                    this.truckList[i]=obj;
+                    var dist=this.calcTruckDistance(obj['location']['position']['lng'],obj['location']['position']['lat']);
+                    if(dist==-1){
+                        this.trucks.groups.splice(i,1);
+                        i--;
+                    }else{
+                        obj['distance']=dist;
+                        this.trucks.groups[i]=obj;
+                        this.truckList[i]=obj;
+                    }
+                    
                 }
+                this.trucks.groups=this.sortList('distance',this.trucks.groups);
+                this.truckList=this.cloneObje(this.trucks.groups);
                 this.filterTrucksByOrder();
                 this.truckList=this.sortList('distance',this.truckList);
-
-
+                this.trucksDetailsResp = true;
             }, //For Success Response
             (err) => { console.log("tractors error recieved"); this.trucksDetailsResp = true; } //For Error Response
             );
     }
 
-    getTrailersDetails() {
+    getTrailersDetails(lat,lng,dist) {
         this.trailerDetailsResp = false;
-        let lng=this.selectedOrder.orderOrginCityLong;
+        this.trMapshowLoader=false;
+        //let lat=this.selectedOrder.orderOrginCityLat;
+        //let lng=this.selectedOrder.orderOrginCityLong;
         if(lng>0){
             lng=0-lng;
         }
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
-        let url = config.baseUrl + "/AllocationService/api/OrderTrailers?latitude="+this.selectedOrder.orderOrginCityLat
-        +"&longitude="+lng+"&distance=150&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer;
+        let url = config.baseUrl + "/AllocationService/api/OrderTrailers?latitude="+lat
+        +"&longitude="+lng+"&distance="+dist+"&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("trailers data recieved");
-                this.trailers.groups=data.dataSet;
-                this.trailerList=data.dataSet;
+                this.trailers.groups=this.trailers.groups.concat(data.dataSet);
+                this.trailerList=this.trailerList.concat(data.dataSet);
                 this.filterTrailerByType();
                 this.trailers.groups=this.sortList('distance',this.trailers.groups);
                 this.mapTrailers=this.cloneObje(this.trailerList);
                 this.trailerDetailsResp = true;
                 
             }, //For Success Response
+            (err) => { console.log("trailers error recieved");
+             this.trailerDetailsResp = true;
+             } //For Error Response
+            );
+    }
+
+    getOrderTruckTrailers(lat1,lat2,lng1,lng2,dist) {
+        this.trailerDetailsResp = false;
+        this.trMapshowLoader=false;
+        //let lat=this.selectedOrder.orderOrginCityLat;
+        //let lng=this.selectedOrder.orderOrginCityLong;
+        if(lng1>0){
+            lng1=0-lng1;
+        }
+        if(lng2>0){
+            lng2=0-lng2;
+        }
+
+        var toShowPool;
+        if(this.poolTrailers){
+            toShowPool='yes';
+        }else{
+            toShowPool='no';
+        }
+        //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
+        
+        let url = config.baseUrl + "/AllocationService/api/OrderTruckTrailers?latitude="+lat1+","+lat2
+        +"&longitude="+lng1+","+lng2+"&distance="+dist+"&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer+'&pooltrailers='+toShowPool;
+        this.http.get(url).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("trailers data recieved");
+
+                if (data.dataSet.length <= 1 && this.automatedMile && dist <= 100) {
+                    this.getOrderTruckTrailers(lat1, lat2, lng1, lng2, dist + 50);
+
+                } else {
+                    if(dist==50){
+                        this.selectedTrailerMile = { lable: "50 Miles", value: 50 };
+                    }else if(dist==100){
+                        this.selectedTrailerMile = { lable: "100 Miles", value: 100 };
+                    }else if(dist==150){
+                        this.selectedTrailerMile = { lable: "150 Miles", value: 150 };
+                    }
+
+                    this.trailers.groups = data.dataSet;
+                    this.trailerList = data.dataSet;
+                    this.filterTrailerByType();
+                    this.trailers.groups = this.sortList('distance', this.trailers.groups);
+                    this.mapTrailers = this.cloneObje(this.trailerList);
+                    this.trailerDetailsResp = true;
+                }
+                
+            }, //For Success Response
             (err) => { console.log("trailers error recieved"); this.trailerDetailsResp = true; } //For Error Response
             );
     }
+
 
     getOrderDetails() {
         this.OrderDetailsResp = false;
@@ -890,6 +1021,9 @@ console.log("scrolling");
                 if(data.status==1){
                     //alert("success");
                     $('#successResult').modal('show');
+                    this.resetOrderPage();
+                    this.resetTrailerPage();
+                    this.resetTruckPage();
                     this.goToOrder();
                 }else{
                     //alert("failed");

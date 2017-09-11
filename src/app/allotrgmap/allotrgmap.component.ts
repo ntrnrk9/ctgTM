@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter,ChangeDetectorRef } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 
 declare var google: any;
@@ -15,14 +15,17 @@ import * as config from '../configs/configs';
 })
 export class AlloTrGmap {
     private search = '';
-    @Input() item: any;
-    @Input() loc: any;
+    
+    @Input() selected: any;
     @Input() config: any;
     @Input() trailers: any = [];
 
     @Output() configChange = new EventEmitter<any>();
+    @Output() selectedChange = new EventEmitter<any>();
+    
     geocoder: any;
     markers: any;
+    markerCluster:any;
     map: any;
     infowindow: any;
     index: any = -1;
@@ -30,14 +33,30 @@ export class AlloTrGmap {
     polyBound: any;
     directionsDisplay;
     directionsService;
+    orinfowindow;
+    truckinfowindow;
+    orderMaker;
+    truckMaker;
+    infoIsOpen=false;
+    
 
 
     markerList: any = {
         yellowMark: '../../assets/images/markers/trailer-yellow.png',
         redMark: '../../assets/images/markers/trailer-red.png',
         greenMark: '../../assets/images/markers/trailer-green.png',
+        truck:'../../assets/images/Truck.png',
+        order:'../../assets/images/Order.png',
+        selectedTr:'../../assets/images/trailer-selected.png',
+        linkedTruck:'../../assets/images/Trailer-Linked.png',
     };
-    selectedMarker: any = { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" };
+
+
+    selectedMarker={marker:{},item:{}};
+    selMarker:any;
+    selItem:any;
+    markerBounds;
+    toggleM=false;
     history = {
         column: [{ name: "Date", width: "25%" }, { name: "Order ID", width: "25%" }, { name: "Start City", width: "25%" }, { name: "Destination City", width: "25%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
@@ -57,6 +76,7 @@ export class AlloTrGmap {
 
     emit() {
         this.configChange.emit(this.config);
+        this.selectedChange.emit(this.selected);
         console.log(this.config);
     }
 
@@ -68,7 +88,7 @@ export class AlloTrGmap {
         }
 
     }
-    constructor(private http: Http) { }
+    constructor(private http: Http,private cdr:ChangeDetectorRef) { }
 
     ngOnDestroy() {
         console.log("gmTest componant destroyed");
@@ -88,7 +108,7 @@ export class AlloTrGmap {
 
         this.geocoder = new google.maps.Geocoder();
         this.markers = [];
-        var markerBounds = new google.maps.LatLngBounds();
+        this.markerBounds = new google.maps.LatLngBounds();
         var mapProp = {
             center: new google.maps.LatLng(this.config.lat, this.config.lng),
             zoom: this.config.zoom,
@@ -113,33 +133,59 @@ export class AlloTrGmap {
         for (var i = 0; i < this.trailers.length; i++) {
             var tr = this.trailers[i];
             var myLatLng = new google.maps.LatLng(tr.latitude, tr.longitude);
-            if (tr.trailerID == this.config.marker) {
+            var marker;
+            if (tr.trailerID == this.selected.trailerID) {
                 this.index = i;
+                marker = new google.maps.Marker(
+                    {
+                        position: myLatLng,
+                        map: this.map,
+                        title: tr.trailerID,
+                        icon: this.markerList.selectedTr
+                    });
+                this.selMarker=marker;    
+                var ob = this.createinfoWinContent(tr);
+                this.markerBounds.extend(myLatLng);
+                this.bindInfoWindow(tr, marker, this.map, this.infowindow, this.createinfoWinContent(tr));
+                //this.markers.push(marker);
+            } else {
+
+                marker = new google.maps.Marker(
+                    {
+                        position: myLatLng,
+                        //map: this.map,
+                        title: tr.trailerID,
+                        icon: this.mapIcon(tr)
+                    });
+                var ob = this.createinfoWinContent(tr);
+                this.markerBounds.extend(myLatLng);
+                this.bindInfoWindow(tr, marker, this.map, this.infowindow, this.createinfoWinContent(tr));
+                this.markers.push(marker);
             }
-            var marker = new google.maps.Marker(
-                {
-                    position: myLatLng,
-                    //map: this.map,
-                    title: tr.trailerID,
-                    icon: this.mapIcon(tr)
-                });
-            var ob = this.createinfoWinContent(tr);
-            markerBounds.extend(myLatLng);
-            this.bindInfoWindow(tr, marker, this.map, this.infowindow, this.createinfoWinContent(tr));
-            this.markers.push(marker);
         }
         
         if (this.config.truckLat) {
             var truckLatLng = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
             var trTitle = "Truck: " + this.config.truckLat + " " + this.config.truckLng;
-            var truckMaker = new google.maps.Marker(
+            var trIcon;
+            if(this.config.selTruck && this.config.selTruck.trailer){
+                trIcon=this.markerList.linkedTruck;
+            }else{
+                trIcon=this.markerList.truck
+            }
+            this.truckMaker = new google.maps.Marker(
                 {
                     position: truckLatLng,
                     map: this.map,
                     title: trTitle,
-                    icon: '../../assets/images/Truck_icon.png'
+                    icon: trIcon
                 });
-            markerBounds.extend(truckLatLng);
+            this.markerBounds.extend(truckLatLng);
+            this.truckinfowindow = new google.maps.InfoWindow({
+                content: ""
+            });
+            this.truckinfowindow.setContent(this.truckinfoWinContent(this.config.selTruck));
+            //truckinfowindow.open(this.map, truckMaker);
             //this.markers.push(truckMaker);
         }
 
@@ -147,14 +193,20 @@ export class AlloTrGmap {
             var orderLatLng = new google.maps.LatLng(this.config.lat, this.config.lng);
             var orTitle = "Order: " + this.config.lat + " " + this.config.lng;
             console.log(orTitle);
-            var orderMaker = new google.maps.Marker(
+            this.orderMaker = new google.maps.Marker(
                 {
                     position: orderLatLng,
                     map: this.map,
                     title: orTitle,
-                    icon: '../../assets/images/order_icon.png'
+                    icon: this.markerList.order
+                    //icon: '../../assets/images/Order.png'
                 });
-            markerBounds.extend(orderLatLng);
+            this.markerBounds.extend(orderLatLng);
+            this.orinfowindow = new google.maps.InfoWindow({
+                content: ""
+            });
+            this.orinfowindow.setContent(this.orcreateinfoWinContent(this.config.selOrder));
+            //this.orinfowindow.open(this.map, this.orderMaker);
             //this.markers.push(orderMaker);
         }
 
@@ -194,13 +246,13 @@ export class AlloTrGmap {
         }
         var obj = this;
 
-        var markerCluster = new MarkerClusterer(this.map, this.markers,
+        this.markerCluster = new MarkerClusterer(this.map, this.markers,
             mcOptions);
-        this.map.fitBounds(markerBounds);
-        if(this.config.trailerLat){
+        this.map.fitBounds(this.markerBounds);
+        //if(this.config.trailerLat){
             this.directionsDisplay.setMap(this.map);
             this.calcRoute();
-        }
+        //}
     }
 
     calcRoute() {
@@ -209,25 +261,23 @@ export class AlloTrGmap {
         let start,end;
 
         end = new google.maps.LatLng(this.config.lat, this.config.lng);
-        if (this.config.truckLat) {
-            start = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
-            if (this.config.trailerLat) {
-                let orderStop = new google.maps.LatLng(this.config.trailerLat, this.config.trailerLng)
-                waypts.push({
-                    location: orderStop,
-                    stopover: true
-                });
-            }
-        } else {
-            start = new google.maps.LatLng(this.config.trailerLat, this.config.trailerLng);
+        start = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
+        
+            
+        if (this.config.trailerLat) {
+            let orderStop = new google.maps.LatLng(this.config.trailerLat, this.config.trailerLng)
+            waypts.push({
+                location: orderStop,
+                stopover: true
+            });
         }
-
+        
         let transitOptions;
         transitOptions={modes:[google.maps.TransitMode.BUS]}
         var request = {
             origin: start,
             destination: end,
-            waypoints: waypts,
+            //waypoints: waypts,
             optimizeWaypoints: true,
             travelMode: google.maps.DirectionsTravelMode.DRIVING,
             //transitOptions:transitOptions
@@ -238,13 +288,58 @@ export class AlloTrGmap {
             if (status == google.maps.DirectionsStatus.OK) {
                 ctrl.directionsDisplay.setDirections(response);
                 var route = response.routes[0];
+                //ctrl.reset();
             }
         });
     }
 
+    calcRouteDist() {
+                var waypts = [];
+                let start,end;
+        
+                end = new google.maps.LatLng(this.config.lat, this.config.lng);
+                start = new google.maps.LatLng(this.config.truckLat, this.config.truckLng);
+                
+                    
+                if (this.config.trailerLat) {
+                    let orderStop = new google.maps.LatLng(this.config.trailerLat, this.config.trailerLng)
+                    waypts.push({
+                        location: orderStop,
+                        stopover: true
+                    });
+                }
+                
+                var request = {
+                    origin: start,
+                    destination: end,
+                    waypoints: waypts,
+                    optimizeWaypoints: true,
+                    travelMode: google.maps.DirectionsTravelMode.DRIVING,
+                    //transitOptions:transitOptions
+                };
+        
+                var ctrl=this;
+                this.directionsService.route(request, function (response, status) {
+                    if (status == google.maps.DirectionsStatus.OK) {
+                        //ctrl.directionsDisplay.setDirections(response);
+                        var route = response.routes[0];
+                        var dist=0;
+                        for(let i=0;i<response.routes[0].legs.length;i++){
+                            var leg=response.routes[0].legs[i];
+                            dist+=leg.distance.value;
+
+                        }
+                        dist=Math.round(dist*0.000621371192);
+                        ctrl.selected['routeDistText']=dist+"miles Approx. to reach order origin";
+                        ctrl.selected['routeDist']=dist+" miles";
+                        ctrl.emit();
+                    }
+                });
+            }
 
 
 
+    
     restrictZoom() {
         var obj = this;
         google.maps.event.addListener(this.map, 'zoom_changed', function () {
@@ -265,24 +360,63 @@ export class AlloTrGmap {
             color = "#15c922";
             status = "CONFIRMED"
         }
-        var content = '<div class="infowindow" style="width:200px;padding:0px;height:170px;overflow:hidden;">' +
-            '<div class="row header" style="border-bottom: 2px solid gray;padding:0px 0px 0px 30px">' +
-            '<div class="row head1" style="font-weight:bold;font-size:14px;color:black">Trailer #: ' + tr.trailerID + ' (' + tr.company + ')</div>' +
-            '<div class="row head2" style="font-weight:bold;font-size:13px;color:red">' + tr.trailerName + '</div>' +
-            '<div class="row head3" style="font-weight:bold;font-size:12px;color:black">' + tr.trailerType + '</div>' +
-            '</div>' +
-            '<div class="row title" style="border-bottom:1px solid silver;height:30px;padding:0px 30px 0px 15px">' +
-            '<span class="vehicle-date" style="font-size:14px;float:left;padding-top:5px"><b>Trailer status: </b></span>' +
-            '<span class=" row vehicletype available" style="float:right;font-size:14px;margin-top:4px;font-weight:bold;color:' + color + '">' + tr.trailerStatus + '</span>' +
+        var content = '<div class="infowindow" style="width:200px;padding:0px;height:73px;overflow:hidden;">' +
+            '<div class="row header" style="border-bottom: 1px solid gray;padding:0px 0px 2px 30px">' +
+            '<div class="row head1" style="font-size:14px;color:black">Trailer #: <b>' + tr.trailerID + ' (' + tr.company + ')</b></div>' +
+            '<div class="row head2" style="font-size:13px;color:red">Name: <b>' + tr.trailerName + '</b></div>' 
+            
+             +'<div class="row head3" style="font-weight:bold;font-size:12px;padding-right:33px;color:black">'
+             + '<span>'+tr.trailerType +'</span>'
+             +'<span style="float:right;font-weight:bold;color:' + color + '">' + tr.trailerStatus + '</span>' 
+             + '</div>' +
             '</div>' +
             '<div class="row content" style="padding:3px 30px 0px 15px">' +
-            '<span><b>Location</b></span><br>' + tr.location +
-            '<br><br><span><b>lat: </b>' + tr.latitude + '<b></span><br><span>lng: </b>' + tr.longitude + '</span>' +
+            '<span>' + tr.latitude + ', ' + tr.longitude + '</span>' +
             '</div>' +
 
             '</div>';
         return content;
     }
+
+    orcreateinfoWinContent(tr: any) {
+        var content = '<div class="infowindow" style="width:200px;padding:0px;height:73px;overflow:hidden;">' +
+            '<div class="row header" style="border-bottom: 1px solid gray;padding:0px 0px 2px 30px">' +
+            '<div class="row head1" style="font-size:14px;color:black">Order #: <b>' + tr.orderNumber + '</b></div>' +
+            '<div class="row head2" style="font-size:13px;color:red">Movement no.: <b>' + tr.movementNumber + '</b></div>' 
+            
+             +'<div class="row head3" style="font-weight:bold;font-size:12px;padding-right:33px;color:black">'
+             +'<span></span>'
+             +'<span></span>' 
+             +'</div>'+
+            '</div>' +
+            '<div class="row content" style="padding:3px 30px 0px 15px">' +
+            '<span><b>Origin: </b>'+tr.orderOrginCity+', '+tr.orderOrginState+'<br></span>'+
+            '<span><b>Destination: </b>' + tr.orderDestCity+', '+tr.orderDestState + '</span>' +
+            '</div>' +
+
+            '</div>';
+        return content;
+    }
+
+    truckinfoWinContent(tr: any) {
+        var content = '<div class="infowindow" style="width:200px;padding:0px;height:73px;overflow:hidden;">' +
+            '<div class="row header" style="border-bottom: 1px solid gray;padding:0px 0px 2px 30px">' +
+            '<div class="row head1" style="font-weight:bold;font-size:14px;color:black">Truck #: ' + tr.number + ' (' + tr.company + ')</div>' +
+            '<div class="row head2" style="font-weight:bold;font-size:13px;color:red">Company: ' + tr.make + '</div>' 
+            
+             +'<div class="row head3" style="font-weight:bold;font-size:12px;padding-right:33px;color:black">'
+             + '<span>'+tr.model+'</span>'
+             +'<span style="float:right;font-weight:bold;color:red">' + tr.type+' - '+tr.year+ '</span>' 
+             + '</div>' +
+            '</div>' +
+            '<div class="row content" style="padding:3px 30px 0px 15px">' +
+            '<span>Trailer attached: ' + tr.trailer + '</span>' +
+            '</div>' +
+
+            '</div>';
+        return content;
+    }
+
 
     bindInfoWindow(item, marker, map, infowindow, html) {
         var ob = this;
@@ -292,71 +426,55 @@ export class AlloTrGmap {
             this.infowindow = infowindow;
         });
         google.maps.event.addListener(marker, 'mouseout', function () {
-            //infowindow.close();
+            infowindow.close();
         });
         google.maps.event.addListener(marker, 'click', function () {
             //this.selectMarker(marker);
 
-            ob.selectMarker(item);
+            ob.selectMarker(item,marker);
             //console.log(ob.selectedMarker);
             //$('#historyModal').modal('show');
             //this.map.setZoom(10);
-            this.map.setCenter(marker.getPosition());
+            //this.map.setCenter(marker.getPosition());
         });
     }
 
-    selectMarker(item) {
-
-        this.selectedMarker = item;
-        this.getTrailerHistory();
-        $('#gmHistoryModal').modal('show');
-
-        //this.selectedMarkerChange.emit(this.selectedMarker);
-
-        //this.increment(item);
+    selectMarker(item,marker) {
+        if(this.selected.trailerID==-1){
+            this.addSelectiom(item,marker);
+            this.emit();
+        }else if(this.selected.trailerID==item.trailerID){
+            this.removeSelection(item,marker);
+            this.selected = { trailerID: -1 };
+            this.emit();
+        }else{
+            this.removeSelection(this.selected,this.selMarker);
+            this.addSelectiom(item,marker);
+            this.emit();
+        }   
     }
+
+    removeSelection(item,marker){
+        marker.setIcon(this.mapIcon(item));
+        this.markerCluster.addMarker(marker,true);
+    }
+
+    addSelectiom(item,marker){
+        this.selMarker = marker;
+        this.selected = item;
+        marker.setIcon(this.markerList.selectedTr);
+        this.markerCluster.removeMarker(marker);
+        marker.setMap(this.map);
+        this.config.trailerLat = item.latitude;
+        this.config.trailerLng = item.longitude;
+        this.calcRouteDist();
+    }
+
     increment(item) {
         alert(this.map.getZoom());
     }
-    geocodeAddress(addr: any) {
-        //this.state = addr;
-        //alert(this.state);
-        var ctrl = this;
-        var geocoder = this.geocoder;
-        var resultsMap = this.map;
-        var address = addr;
-        this.config.polygon = undefined;
-        //var bound: any = this.boundList;
 
-
-        geocoder.geocode({ 'address': address }, function (results: any, status: any) {
-            if (status === 'OK') {
-                var markerBounds = new google.maps.LatLngBounds();
-                resultsMap.setCenter(results[0].geometry.location);
-                markerBounds.extend(results[0].geometry.location);
-                let state = (results[0].address_components[0].long_name);
-                let code = (results[0].address_components[0].short_name);
-                let bounds = (results[0].geometry.bounds);
-                let location = results[0].geometry.location;
-                //bound.push({ state: state, bounds: bounds, code: code, location: location });
-                resultsMap.fitBounds(results[0].geometry.viewport);
-                if (results[0].types[0] == "locality") {
-                    //resultsMap.setZoom(7);
-                } else {
-                    //resultsMap.setZoom(10);
-                }
-                this.map = resultsMap;
-                //ctrl.test(results[0].geometry.bounds);
-            } else {
-                console.log('Geocode was not successful for the following reason: ' + status);
-                //ctrl.action.heading = "Geocode";
-                //ctrl.action.body = 'Please enter a valid location.';
-                //$('#gmResult').modal('show');
-
-            }
-        });
-
-    }
+    
 
     mapCenter(lat: any, lng: any, zoom: any) {
         this.config.lat = lat;
@@ -364,6 +482,7 @@ export class AlloTrGmap {
         this.config.zoom = zoom;
         this.emit();
     }
+    
     call(item: any) {
         item = item.toUpperCase();
         for (var i = 0; i < this.trailers.length; i++) {
@@ -376,7 +495,7 @@ export class AlloTrGmap {
                 this.map.setMapTypeId('satellite');
                 var obTemp = this;
                 this.index = i;
-                this.config.marker = i;
+                this.selected.trailerID = i;
                 //this.markers[this.index].setAnimation(google.maps.Animation.BOUNCE);
                 console.log(this.markers[this.index]);
                 break;
@@ -389,126 +508,21 @@ export class AlloTrGmap {
     }
 
     reset() {
-        this.map.setZoom(4);
-        var myCenter = new google.maps.LatLng(36.090240, -95.712891);
-        this.map.setCenter(myCenter);
-        this.map.setMapTypeId('roadmap');
+        var ctrl=this;
+        this.map.fitBounds(this.markerBounds);
     }
 
-    getTrailerHistory() {
-        this.historyRecv = false;
-        let url = config.baseUrl + "/HomeService/api/TrailerHistory?trailerID=" + this.selectedMarker.trailerID;
-        this.http.get(url).map(res => res.json())
-            .subscribe(
-            (data) => {
-                console.log("StatesTrailerCounts data recieved");
-                this.history.groups = data;
-                this.historyRecv = true;
-            }, //For Success Response
-            (err) => {
-                console.log("StatesTrailerCounts error recieved");
-                this.historyRecv = true;
-            } //For Error Response
-            );
-    }
-
-    drawGeoFence() {
-        // Define the LatLng coordinates for the polygon's path.
-        var triangleCoords = [
-            { lat: 25.774, lng: -80.190 },
-            { lat: 18.466, lng: -66.118 },
-            { lat: 32.321, lng: -64.757 },
-            { lat: 25.774, lng: -80.190 }
-        ];
-
-        var poly = [{ lat: -87.3363893237851, lng: 37.9295343693131 },
-        { lat: -87.336357727646828, lng: 37.929602093994617 },
-        { lat: -87.336400642991066, lng: 37.929534398019314 },
-        { lat: -87.3363893237851, lng: 37.9295343693131 }];
-
-
-        // Construct the polygon.
-        var bermudaTriangle = new google.maps.Polygon({
-            //paths: triangleCoords,
-            paths: poly,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35
-        });
-        bermudaTriangle.setMap(this.map);
-        this.map.setCenter(poly[0].lat, poly[0].lng);
-        this.map.setZoom(19);
-
-
-    }
-
-
-
-    drawPoly(multipolygonWKT: any, lat: any, lng: any) {
-        var polylines = [];
-        var toReturn = [];
-        //var multipolygonWKT="POLYGON ((-106.29151225090025 31.719999517096294, -106.28837943077087 31.719944759613266, -106.28841161727905 31.721541839581246, -106.29127621650696 31.721468830811506, -106.29151225090025 31.719999517096294))";
-        this.polyBound = new google.maps.LatLngBounds();
-
-
-        var formattedValues = multipolygonWKT.replace("POLYGON", "");
-        console.log(formattedValues);
-        formattedValues = formattedValues.replace("))", "");
-        console.log(formattedValues);
-        formattedValues = formattedValues.replace("((", "");
-        console.log(formattedValues);
-
-
-        var linesCoords = formattedValues.split("),(");
-        console.log(linesCoords);
-
-
-
-        for (var i = 0; i < linesCoords.length; i++) {
-            polylines[i] = [];
-            var singleLine = linesCoords[i].split(",");
-            console.log(singleLine);
-
-            for (var j = 0; j < singleLine.length; j++) {
-                var strCoordinates = singleLine[j].trim();
-                var coordinates = strCoordinates.split(" ");
-                console.log(coordinates);
-                var latlng = new google.maps.LatLng(parseFloat(coordinates[1]), parseFloat(coordinates[0]));
-                console.log("{lat:" + parseFloat(coordinates[1]) + ",lng:" + parseFloat(coordinates[0]) + "}");
-                this.polyBound.extend(latlng);
-                polylines[i].push(latlng);
-
-            }
+    info(){
+        if (!this.infoIsOpen) {
+            this.orinfowindow.open(this.map, this.orderMaker);
+            this.truckinfowindow.open(this.map, this.truckMaker);
+            this.infoIsOpen = true;
+        } else {
+            this.orinfowindow.close();
+            this.truckinfowindow.close();
+            this.infoIsOpen = false;
         }
-
-        //by now you should have the polylines array filled with arrays that hold the coordinates of the polylines of the multipolyline
-        //lets loop thru this array
-
-        for (var k = 0; k < polylines.length; k++) {
-            var line = polylines[k];
-            if (k > -1) {
-
-                var poly = new google.maps.Polygon({
-                    paths: line,
-                    strokeColor: 'red',
-                    strokeOpacity: 1,
-                    strokeWeight: 2,
-                    zIndex: 1
-                });
-                poly.setMap(this.map);
-                this.config.polygon = multipolygonWKT;
-            }
-        }
-
-        this.emit();
-        var latlng = new google.maps.LatLng(lat, lng);
-        this.map.setCenter(latlng);
-        this.map.setZoom(15);
-        return toReturn;
     }
-
 
 }
 
