@@ -25,7 +25,7 @@ import { Footer1Component } from './footer1/footer1.component';
 import { SearchfilterComponent } from './searchfilter/searchfilter.component';
 import { GmapjsComponent } from './gmapjs/gmapjs.component';
 //import { HttpInject } from './injectables/httpInject';
-import { Gmaptest } from './gmaptest/gmaptest.component';
+import { AlloTrGmap } from './allotrgmap/allotrgmap.component';
 import { Gmtest } from './gmtest/gmtest.component';
 
 import { FilterCPipe } from './Filters/filterC.pipe';
@@ -46,7 +46,7 @@ import { SingleselectComponent } from './singleselect/singleselect.component';
         AllocationPageComponent, PoolMangPageComponent,
         Pool1MangPageComponent, Footer1Component,
         FilterCPipe, FilterArrayPipe,
-        SearchfilterComponent, GmapjsComponent,Gmaptest,Gmtest, HistoryPageComponent, SingleselectComponent
+        SearchfilterComponent, GmapjsComponent,AlloTrGmap,Gmtest, HistoryPageComponent, SingleselectComponent
     ],
     //providers:[{ provide: RequestOptions, useClass: HttpInject }],
     bootstrap: [AppComponent]
