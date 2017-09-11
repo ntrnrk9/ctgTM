@@ -1,24 +1,103 @@
 <p>
   trailer-dash works!
 </p>
-<div>
-  <div class="col-md-4" style="height:320px;border:1px solid silver">
-    <div style="height:30px"><input type="button" value="CVEN"/></div>
-    <div style="height:290px">
-      <canvas height="200" baseChart [data]="cvenChartData" [legend]="toShowLegend" [labels]="pieChartLabels" [chartType]="pieChartType" 
-        (chartClick)="chartClicked($event)"></canvas>
+<div class="row" style="margin:0px">
+<div style="width:150px;border: 1px solid silver;height: 32px;">
+  <app-singleselect [items]="cmpList" [config]="" (selectedItemChange)="cmpSelected($event)" [(selectedItem)]="selectedCmp" [key]="'lable'"></app-singleselect>
+</div>
+</div>
+<br>
+<div class="row" style="margin:0px">
+  <div class="col-md-4" style="height:330px;">
+    <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Trailer Stats</label></div>
+    <div style="height:290px;border:1px solid silver;padding: 10px 5px;">
+      <div *ngIf="trailers.length>0">
+        
+      </div>
+        <div *ngIf="trailers.length==0" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
   </div>
-  <div class="col-md-4" style="height:320px;border:1px solid silver">
-    <div style="height:290px;">
-      <canvas height="200" baseChart [data]="srtChartData" [labels]="pieChartLabels" [chartType]="pieChartType" 
-        (chartClick)="chartClicked($event)"></canvas>
+  <div class="col-md-4" style="height:330px;">
+    <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Status</label></div>
+    <div style="height:290px;border:1px solid silver;padding: 10px 5px;">
+      <div *ngIf="trailers.length>0">
+        <canvas height="200" baseChart [options]="chartOptions" [data]="statusChartData" [labels]="pieChartLabels" [chartType]="pieChartType" (chartClick)="chartClicked($event,1)"></canvas>
+      </div>
+      <div *ngIf="trailers.length==0" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
   </div>
-  <div class="col-md-4" style="height:320px;border:1px solid silver">
-    <div style="height:290px;">
-      <canvas height="200" baseChart [data]="starChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
-        (chartClick)="chartClicked($event)"></canvas>
+  <div class="col-md-4" style="height:330px;">
+      <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Trailer Type</label></div>
+      <div style="height:290px;border:1px solid silver;padding: 10px 5px;">
+      <div *ngIf="trailers.length>0">
+        <canvas height="200" baseChart [options]="chartOptions" [data]="typeChartData" [labels]="typeChartLabels" [chartType]="pieChartType"
+        (chartClick)="chartClicked($event,2)"></canvas>
+      </div>
+      <div *ngIf="trailers.length==0" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
+  </div>
+</div>
+<br><br>
+<label *ngIf="showGrid">Covanent {{selectedLable}} trailers</label>
+<div style="padding-top:15px;" *ngIf="showGrid">
+  <div>
+    <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
+      <thead style="font-size: 12px">
+        <tr bgcolor="#f7f8fc" class="app-table-tr full">
+          <ng-container *ngFor="let con of ob.column">
+            <th [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody id="tgBody" *ngIf="allTrailler.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;"
+        (scroll)="tableScrolled(this)">
+        <ng-container *ngFor="let i=index;let item of allTrailler">
+          <tr class="full" *ngIf="i<gRowCount">
+
+            <td style="text-align:center;width:8%">
+              <span>{{item.trailerID}}</span>
+            </td>
+            <td style="text-align:center;width:7%">
+              <span>{{item.trailerName}}</span>
+            </td>
+            <td style="text-align:center;width:7%">
+              <span>{{item.trailerType}}</span>
+            </td>
+            <td style="text-align:center;width:9%">
+              <span>{{item.location}}</span>
+            </td>
+            <td style="text-align:center;width:8%">
+              <span>{{item.distance}}</span>
+            </td>
+            <td style="text-align:center;width:8%">
+              <span>{{item.trailerStatus}}</span>
+            </td>
+            <td style="text-align:center;width:9%">
+              <span>TBC</span>
+            </td>
+
+            <td style="text-align:center;width:9%">
+              <span>TBC</span>
+            </td>
+
+            <td style="text-align:center;width:9%">
+              <span>TBC</span>
+            </td>
+            <td style="text-align:center;width:9%">
+              <span>{{item.iotInfo}}</span>
+            </td>
+            <td style="text-align:center;width:9%">
+              <span>{{formatDateTime(item.dotDate)}}</span>
+            </td>
+            <td style="text-align:center;width:8%">
+                <span>{{item.company}}</span>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="allTrailler.length==0 ">No data found</div>
+    <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTrailler.length}} record(s) found</div>-->
+    <div style="padding-top: 10px;">{{allTrailler.length}} record(s) found</div>
   </div>
 </div>

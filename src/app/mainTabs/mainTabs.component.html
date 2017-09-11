@@ -7,7 +7,7 @@
             <li class="tab-li" [ngClass]="{'selected': toShowTab==4}" (click)="toShowTab=4">
                 <h4><a [ngClass]="{'selected-a': toShowTab==4}" href="#" >Pool Management</a></h4>
             </li>
-            <li class="tab-li" [ngClass]="{'selected': toShowTab==2}">
+            <li class="tab-li" [ngClass]="{'selected': toShowTab==2}" (click)="toShowTab=2">
                 <h4><a [ngClass]="{'selected-a': toShowTab==2}" href="#" style="cursor: default">Allocation</a></h4>
             </li>
             <li class="tab-li-last" [ngClass]="{'selected': toShowTab==3}">
@@ -19,7 +19,8 @@
     
     <div class="container">
         <div [ngSwitch]="toShowTab">
-            <home-page *ngSwitchCase=1></home-page>
+            <!-- <home-page *ngSwitchCase=1></home-page> -->
+            <app-home-main *ngSwitchCase=1></app-home-main>
             <allocation-page *ngSwitchCase=2></allocation-page>
             <yard-mang-page *ngSwitchCase=3></yard-mang-page>
             <pool1-mang-page *ngSwitchCase=4></pool1-mang-page>

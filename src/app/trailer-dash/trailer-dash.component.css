@@ -1,0 +1,64 @@
+.kpi-head {
+    background-color: #22466f;
+    padding: 5px;
+    height: 40px;
+}
+
+.kpi-title{
+    color: white;
+    padding-left: 5px;
+    padding-top: 5px;
+}
+
+.app-table {
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+.app-table thead tr {
+    background-color: #22466f;
+    color: #fff;
+}
+
+.app-table-tr {
+    padding: 15px 0px 15px 0px;
+}
+
+.app-table tr {
+    padding: 0px;
+}
+
+.table-fixed thead {
+    width: 100%;
+}
+
+.table-fixed tbody {
+    max-height: 500px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
+    display: inline-block;
+}
+
+.table-fixed tbody td, .table-fixed thead > tr> th {
+    float: left;
+    border-bottom-width: 0;
+}
+
+.table-fixed tbody {
+    border: 1px solid silver;
+    border-top: none;
+}
+
+.full {
+    width: 100%
+}
+
+.histLoader {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

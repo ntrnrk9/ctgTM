@@ -8,6 +8,7 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { AgmCoreModule } from '@agm/core';
 import { AlertModule } from 'ngx-bootstrap';
 import { NgxPaginationModule, PaginatePipe, PaginationService } from 'ngx-pagination';
+import { ChartsModule } from 'ng2-charts';
 
 import { AppComponent } from './app.component';
 
@@ -32,9 +33,14 @@ import { FilterCPipe } from './Filters/filterC.pipe';
 import { FilterArrayPipe } from './Filters/filterArray.pipe';
 import { HistoryPageComponent } from './history-page/history-page.component';
 import { MyDatePickerModule } from 'mydatepicker';
+import { SingleselectComponent } from './singleselect/singleselect.component';
+import { HomeMainComponent } from './home-main/home-main.component';
+import { TrailerDashComponent } from './trailer-dash/trailer-dash.component';
+import { OrderDashComponent } from './order-dash/order-dash.component';
 
 @NgModule({
-    imports: [BrowserModule, HttpModule, CommonModule, FormsModule,MyDatePickerModule, NgxPaginationModule,AlertModule.forRoot(),
+    imports: [BrowserModule, HttpModule, CommonModule, FormsModule,MyDatePickerModule, NgxPaginationModule,ChartsModule,
+        AlertModule.forRoot(),
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyAafsMtGWbhgmfXU1TV-K-VUh8y1d8jZjI'
         })],
@@ -45,7 +51,9 @@ import { MyDatePickerModule } from 'mydatepicker';
         AllocationPageComponent, PoolMangPageComponent,
         Pool1MangPageComponent, Footer1Component,
         FilterCPipe, FilterArrayPipe,
-        SearchfilterComponent, GmapjsComponent,Gmaptest,Gmtest, HistoryPageComponent
+        SearchfilterComponent, GmapjsComponent,Gmtest, HistoryPageComponent,SingleselectComponent
+        , HomeMainComponent, TrailerDashComponent, 
+        OrderDashComponent
     ],
     //providers:[{ provide: RequestOptions, useClass: HttpInject }],
     bootstrap: [AppComponent]
