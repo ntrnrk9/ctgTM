@@ -37,7 +37,7 @@ export class OrderDashComponent implements OnInit {
     {
       data: [65, 59, 80, 90], label: 'Series A',
       backgroundColor: [
-        'red','blue','green','yellow'
+        '#22466f','#22466f','#22466f','#22466f'
       ]
     }
 

@@ -22,6 +22,19 @@ export class TrailerDashComponent implements OnInit {
   public starChartData: number[] = [300, 500, 100, 200];
   public statusChartData: number[] = [300, 500, 100, 200];
   public typeChartData: number[] = [300, 500, 100, 200];
+  public colors = [{
+    backgroundColor: ['#00a0dc',
+      '#8d6cab',
+      '#dd5143',
+      '#e68523',
+      '#00aeb3',
+      '#86888a',
+      '#dc4b89',
+      '#edb220',
+      '#7cb82f',
+      ]
+  }];
+  
 
   chartOptions={legend:{position:'right'}};
   
@@ -42,7 +55,7 @@ export class TrailerDashComponent implements OnInit {
   };
 
 
-  public pieChartType: string = 'pie';
+  public pieChartType: string = 'doughnut';
   public selectedLable: string = '';
   totalTrailers=0;
   emptyTrailers=0;
@@ -69,6 +82,7 @@ export class TrailerDashComponent implements OnInit {
     var starChartData = [0, 0, 0, 0];
     let map = new Map();
     let trTypeMap=new Map();
+    this.typeChartLabels=[];
     for (var i = 0; i < this.trailers.length; i++) {
 
       var item = this.trailers[i];
@@ -231,6 +245,7 @@ export class TrailerDashComponent implements OnInit {
     bag.forEach(obj => {
       this.typeChartData.push(obj.length);
     });
+    
     this.typeFilteredTrailers=bag;
   }
 
