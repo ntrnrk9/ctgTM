@@ -360,7 +360,9 @@ export class AlloTrGmap {
             color = "#15c922";
             status = "CONFIRMED"
         }
-        var content = '<div class="infowindow" style="width:200px;padding:0px;height:73px;overflow:hidden;">' +
+        var isEmpty=(tr.isEmpty==1)? "Yes":"No";
+        var custID=(tr.customerId)? '<span>Pool: ' + tr.customerId +'</span><br>' :"";
+        var content = '<div class="infowindow" style="width:200px;padding:0px;height:105px;overflow:hidden;">' +
             '<div class="row header" style="border-bottom: 1px solid gray;padding:0px 0px 2px 30px">' +
             '<div class="row head1" style="font-size:14px;color:black">Trailer #: <b>' + tr.trailerID + ' (' + tr.company + ')</b></div>' +
             '<div class="row head2" style="font-size:13px;color:red">Name: <b>' + tr.trailerName + '</b></div>' 
@@ -371,6 +373,8 @@ export class AlloTrGmap {
              + '</div>' +
             '</div>' +
             '<div class="row content" style="padding:3px 30px 0px 15px">' +
+             custID  +
+            '<span>is Empty: ' + isEmpty + '</span><br>' +
             '<span>' + tr.latitude + ', ' + tr.longitude + '</span>' +
             '</div>' +
 
@@ -426,7 +430,7 @@ export class AlloTrGmap {
             this.infowindow = infowindow;
         });
         google.maps.event.addListener(marker, 'mouseout', function () {
-            infowindow.close();
+            //infowindow.close();
         });
         google.maps.event.addListener(marker, 'click', function () {
             //this.selectMarker(marker);
