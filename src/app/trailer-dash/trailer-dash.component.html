@@ -11,7 +11,7 @@
     <div class="small-box b1">
       <div class="inner">
         <h3>{{totalTrailers}}</h3>
-        <p>Total trailers</p>
+        <p>Total</p>
       </div>
       <div class="icon">
         <img width="100" src="../../assets/images/dash/trailer-1.png" />
@@ -24,7 +24,7 @@
     <div class="small-box b2">
       <div class="inner">
         <h3>{{emptyTrailers}}</h3>
-        <p>Empty Trailers</p>
+        <p>Empty</p>
       </div>
       <div class="icon">
           <img width="100" src="../../assets/images/dash/empty-2.png" />
@@ -37,7 +37,7 @@
     <div class="small-box b3">
       <div class="inner">
         <h3>{{movingTrailers}}</h3>
-        <p>Moving Trailers</p>
+        <p>Moving</p>
       </div>
       <div class="icon">
           <img width="100" src="../../assets/images/dash/moving-3.png" />
@@ -50,7 +50,7 @@
     <div class="small-box b4">
       <div class="inner">
         <h3>{{shedTrailers}}</h3>
-        <p>Shed Trailers</p>
+        <p>In-Shed</p>
       </div>
       <div class="icon">
           <img width="100" src="../../assets/images/dash/shed-4.png" />
@@ -76,21 +76,23 @@
         <div *ngIf="!trCountResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
   </div> -->
-  <div class="col-md-6" style="height:330px;">
-    <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Status</label></div>
-    <div style="height:290px;border:1px solid silver;padding: 10px 5px;">
+  <div class="col-md-6" style="height:380px;">
+    <!-- <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Status</label></div> -->
+    <div style="height:380px;border:1px solid silver;">
       <div *ngIf="trailers.length>0">
-        <canvas height="130" baseChart [options]="chartOptions" [colors]="colors" [data]="statusChartData" [labels]="pieChartLabels" [chartType]="pieChartType" (chartClick)="chartClicked($event,1)"></canvas>
+        <!-- <canvas height="130" baseChart [options]="chartOptions" [colors]="colors" [data]="statusChartData" [labels]="pieChartLabels" [chartType]="pieChartType" (chartClick)="chartClicked($event,1)"></canvas> -->
+        <nvd3 [options]="trStatusChartoptions" [data]="trStatusChartdata"></nvd3>
       </div>
       <div *ngIf="trailers.length==0" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
   </div>
-  <div class="col-md-6" style="height:330px;">
-      <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Trailer Type</label></div>
-      <div style="height:290px;border:1px solid silver;padding: 10px 5px;">
+  <div class="col-md-6" style="height:380px;">
+      <!-- <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Trailer Type</label></div> -->
+      <div style="height:380px;border:1px solid silver;">
       <div *ngIf="trailers.length>0">
-        <canvas height="130" baseChart [options]="chartOptions" [colors]="colors" [data]="typeChartData" [labels]="typeChartLabels" [chartType]="pieChartType"
-        (chartClick)="chartClicked($event,2)"></canvas>
+        <!-- <canvas height="130" baseChart [options]="chartOptions" [colors]="colors" [data]="typeChartData" [labels]="typeChartLabels" [chartType]="pieChartType"
+        (chartClick)="chartClicked($event,2)"></canvas> -->
+        <nvd3 [options]="trTypeChartoptions" [data]="trTypeChartData"></nvd3>
       </div>
       <div *ngIf="trailers.length==0" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
@@ -113,42 +115,31 @@
         <ng-container *ngFor="let i=index;let item of allTrailler">
           <tr class="full" *ngIf="i<gRowCount">
 
-            <td style="text-align:center;width:8%">
+            <td style="text-align:center;width:12.5%">
               <span>{{item.trailerID}}</span>
             </td>
-            <td style="text-align:center;width:7%">
+            <td style="text-align:center;width:12.5%">
               <span>{{item.trailerName}}</span>
             </td>
-            <td style="text-align:center;width:7%">
+            <td style="text-align:center;width:12.5%">
               <span>{{item.trailerType}}</span>
             </td>
-            <td style="text-align:center;width:9%">
+            <td style="text-align:center;width:12.5%">
               <span>{{item.location}}</span>
             </td>
-            <td style="text-align:center;width:8%">
-              <span>{{item.distance}}</span>
-            </td>
-            <td style="text-align:center;width:8%">
+            
+            <td style="text-align:center;width:12.5%">
               <span>{{item.trailerStatus}}</span>
             </td>
-            <td style="text-align:center;width:9%">
-              <span>TBC</span>
-            </td>
 
-            <td style="text-align:center;width:9%">
-              <span>TBC</span>
+            <td style="text-align:center;width:12.5%">
+                <span>{{formatDateTime(item.dotDate)}}</span>
             </td>
-
-            <td style="text-align:center;width:9%">
-              <span>TBC</span>
+            
+            <td style="text-align:center;width:12.5%">
+              <span>{{formatDateTime(item.lastPingDate)}}</span>
             </td>
-            <td style="text-align:center;width:9%">
-              <span>{{item.iotInfo}}</span>
-            </td>
-            <td style="text-align:center;width:9%">
-              <span>{{formatDateTime(item.dotDate)}}</span>
-            </td>
-            <td style="text-align:center;width:8%">
+            <td style="text-align:center;width:12.5%">
                 <span>{{item.company}}</span>
             </td>
           </tr>

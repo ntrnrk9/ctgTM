@@ -1,12 +1,16 @@
-import { Component, OnInit, Input,ViewChild, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input,ViewChild, NgZone, ChangeDetectorRef,ViewEncapsulation } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 
+
+declare let d3: any;
+
 @Component({
   selector: 'app-trailer-dash',
   templateUrl: './trailer-dash.component.html',
-  styleUrls: ['./trailer-dash.component.css']
+  styleUrls: ['./trailer-dash.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class TrailerDashComponent implements OnInit {
@@ -49,8 +53,8 @@ export class TrailerDashComponent implements OnInit {
   typeFilteredTrailers=[];
   allTrailler = [];
   ob = {
-    column: [{ name: "Trailer ID", width: "8%" }, { name: "Trailer name", width: "7%" }, { name: "Trailer type", width: "7%" }, { name: "Location", width: "9%" }, { name: "Distance in miles", width: "8%" },
-    { name: "Allocation status", width: "8%" }, { name: "Compliance status", width: "9%" }, { name: "Road worthiness status", width: "9%" }, { name: "Last DOT inspection date", width: "9%" }, { name: "Accessory/IOT information", width: "9%" }, { name: "Last movement date", width: "9%" }, { name: "Company", width: "8%" }],
+    column: [{ name: "Trailer ID", width: "12.5%" }, { name: "Trailer name", width: "12.5%" }, { name: "Trailer type", width: "12.5%" }, { name: "Location", width: "12.5%" },
+    { name: "Allocation status", width: "12.5%" },{ name: "Last DOT inspection date", width: "12.5%" }, { name: "Last ping date", width: "12.5%" }, { name: "Company", width: "12.5%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
 
@@ -65,6 +69,115 @@ export class TrailerDashComponent implements OnInit {
   public toShowLegend = true;
   showGrid = false;
   trCountResp=false;
+
+  trStatusChartoptions = {
+    chart: {
+      type: 'pieChart',
+      height: 350,
+      donut: true,
+      labelType: 'value',
+      growOnHover: true,
+      labelsOutside: false,
+      donutLabelsOutside:false,
+      legendPosition: 'bottom',
+      x: function (d) { return d.key; },
+      y: function (d) { return d.y; },
+      showLabels: true,
+      duration: 500,
+      tooltip: {
+        enabled: false
+      },
+      legend: {
+        align: false,
+        padding:50,
+        margin: {
+          top: 5,
+          right: 30,
+          bottom: 0,
+          left: 0
+        }
+      },
+      dispatch: {
+        tooltipShow: function (e) { console.log('tooltipShow') },
+        tooltipHide: function (e) { console.log('tooltipHide') },
+      },
+      pie: {
+        margin: {
+          top: -20,
+          right: 50,
+          bottom: 10,
+          left: 0
+        },
+        dispatch: {
+          elementClick: function (e) {
+            console.log('click ' + JSON.stringify(e));
+            
+          },
+        }
+      },
+    },
+    title: {   
+      enable: true,
+      text: 'Status',
+      className: 'h4'
+      }
+  };
+
+  trTypeChartoptions = {
+    chart: {
+      type: 'pieChart',
+      height: 350,
+      donut: true,
+      labelType: 'value',
+      growOnHover: true,
+      labelsOutside: false,
+      donutLabelsOutside:false,
+      legendPosition: 'bottom',
+      x: function (d) { return d.key; },
+      y: function (d) { return d.y; },
+      showLabels: true,
+      duration: 500,
+      tooltip: {
+        enabled: false
+      },
+      legend: {
+        align: false,
+        padding:50,
+        margin: {
+          top: 5,
+          right: 60,
+          bottom: 0,
+          left: 0
+        }
+      },
+      dispatch: {
+        tooltipShow: function (e) { console.log('tooltipShow') },
+        tooltipHide: function (e) { console.log('tooltipHide') },
+      },
+      pie: {
+        margin: {
+          top: -20,
+          right: 50,
+          bottom: 10,
+          left: 0
+        },
+        dispatch: {
+          elementClick: function (e) {
+            console.log('click ' + JSON.stringify(e));
+            
+          },
+        }
+      },
+    },
+    title: {   
+      enable: true,
+      text: 'Type',
+      className: 'h4'
+      }
+  };
+  trStatusChartdata = [];
+  trTypeChartData=[];
+
   
   constructor(private http: Http, private cdr: ChangeDetectorRef) {
     this.callFlinAPITrailer();
@@ -76,6 +189,17 @@ export class TrailerDashComponent implements OnInit {
   }
 
   ngOnInit() {
+    var ctrl=this;
+    this.trStatusChartoptions.chart.pie.dispatch.elementClick=function(e){
+      console.log('click-init ' + JSON.stringify(e));
+      ctrl.nvd3chartClicked(e,1);
+    };
+
+    this.trTypeChartoptions.chart.pie.dispatch.elementClick=function(e){
+      console.log('click-init ' + JSON.stringify(e));
+      ctrl.nvd3chartClicked(e,2);
+    };
+
     var pln = 0, avl = 0, inact = 0, oth = 0;
     var cvenChartData = [0, 0, 0, 0];
     var srtChartData = [0, 0, 0, 0];
@@ -192,7 +316,9 @@ export class TrailerDashComponent implements OnInit {
   }
 
 
-
+public testFunction(val:any){
+console.log('val', val);
+}
   // events
   public chartClicked(e: any, type): void {
     console.log(e);
@@ -224,27 +350,62 @@ export class TrailerDashComponent implements OnInit {
     console.log(e);
   }
 
+  public nvd3chartClicked(e: any, type): void {
+    //console.log(e);
+    //console.log(e.active[0]._index);
+    this.showGrid = true;
+    if (type == 1) {
+      this.selectedLable = e.data.key;
+      this.allTrailler = e.data.list;
+    } else if (type == 2) {
+      //var ind=e.dataactive[0]._index;
+      this.selectedLable = e.data.key;
+      this.allTrailler = e.data.list;
+    }
+
+  }
+
   cmpSelected(item) {
+    this.showGrid = false;
     this.selectedCmp = item;
     var bag = [];
+    var list:any;
     if (this.selectedCmp.value == "CVEN") {
       this.statusChartData = this.cloneObj(this.cvenChartData);
+      list=this.cvenList;
       bag = this.segrigateTrailerByType(this.cvenTrailers, 'CVEN');
 
 
     } else if (this.selectedCmp.value == "SRT") {
       this.statusChartData = this.cloneObj(this.srtChartData);
+      list=this.srtList;
       bag = this.segrigateTrailerByType(this.srtTrailers, 'SRT');
 
     } else if (this.selectedCmp.value == "STAR") {
       this.statusChartData = this.cloneObj(this.starChartData);
+      list=this.starList;
       bag = this.segrigateTrailerByType(this.starTrailers, 'STAR');
 
     }
+    this.trStatusChartdata=[];
+    for(var i=0;i<this.statusChartData.length;i++){
+      var obj={key:"",y:0,list:[]};
+      obj.key=this.pieChartLabels[i];
+      obj.y=this.statusChartData[i];
+      obj.list=list[obj.key.toLowerCase()];
+      this.trStatusChartdata.push(obj);
+    }
+
+    console.log(this.trStatusChartdata);
+
     this.typeChartData = [];
+    this.trTypeChartData = [];
     bag.forEach(obj => {
       this.typeChartData.push(obj.length);
+      var item={key:obj.label,y:obj.length,list:obj.list};
+      this.trTypeChartData.push(item);
     });
+    //console.log(this.trTypeChartData);
     
     this.typeFilteredTrailers=bag;
   }
@@ -253,7 +414,7 @@ export class TrailerDashComponent implements OnInit {
   segrigateTrailerByType(list, cmp) {
     let bag=[];
     this.typeChartLabels.forEach(obj => {
-      var item={ length: 0, list: [] };
+      var item={ length: 0, list: [], label:obj };
       bag.push(item);
     });
     

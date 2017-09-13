@@ -168,3 +168,11 @@
     line-height: 27px;
     font-size: 35px;
 }
+
+.nv-label text {
+    fill: white !important;
+}
+
+svg text {
+    fill: Black !important;
+}
