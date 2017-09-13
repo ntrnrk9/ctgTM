@@ -570,21 +570,21 @@ export class AllocationPageComponent {
                 if (this.selectedOrder.orderCompany == obj['company']) {
                     if (this.trailerID == "") {
                         if (this.selectedOrder.orderTrailerType == "") {
-                            if(this.includeMT && obj['isEmpty']==1){
+                            if(this.includeMT){
                                 this.trailerList.push(obj);
                             }else if(!this.includeMT && obj['isEmpty']!=1){
                                 this.trailerList.push(obj);
                             }
                         } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
                             if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER" || obj['trailerType'] == "UNK") {
-                                if(this.includeMT && obj['isEmpty']==1){
+                                if(this.includeMT){
                                     this.trailerList.push(obj);
                                 }else if(!this.includeMT && obj['isEmpty']!=1){
                                     this.trailerList.push(obj);
                                 }
                             }
                         } else if (this.selectedOrder.orderTrailerType == obj['trailerType'] || obj['trailerType'] == "UNK") {
-                            if(this.includeMT && obj['isEmpty']==1){
+                            if(this.includeMT){
                                 this.trailerList.push(obj);
                             }else if(!this.includeMT && obj['isEmpty']!=1){
                                 this.trailerList.push(obj);
@@ -592,21 +592,21 @@ export class AllocationPageComponent {
                         }
                     } else if (this.trailerID == obj['trailerID']) {
                         if (this.selectedOrder.orderTrailerType == "") {
-                            if(this.includeMT && obj['isEmpty']==1){
+                            if(this.includeMT){
                                 this.trailerList.push(obj);
                             }else if(!this.includeMT && obj['isEmpty']!=1){
                                 this.trailerList.push(obj);
                             }
                         } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
                             if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER" || obj['trailerType'] == "UNK") {
-                                if(this.includeMT && obj['isEmpty']==1){
+                                if(this.includeMT){
                                     this.trailerList.push(obj);
                                 }else if(!this.includeMT && obj['isEmpty']!=1){
                                     this.trailerList.push(obj);
                                 }
                             }
                         } else if (this.selectedOrder.orderTrailerType == obj['trailerType'] || obj['trailerType'] == "UNK") {
-                            if(this.includeMT && obj['isEmpty']==1){
+                            if(this.includeMT){
                                 this.trailerList.push(obj);
                             }else if(!this.includeMT && obj['isEmpty']!=1){
                                 this.trailerList.push(obj);
@@ -619,21 +619,21 @@ export class AllocationPageComponent {
                 if (this.selectedOrder.orderCompany == obj['company']) {
                     if (this.trailerID == "") {
                         if (this.selectedOrder.orderTrailerType == "") {
-                            if(this.includeMT && obj['isEmpty']==1){
+                            if(this.includeMT){
                                 this.trailerList.push(obj);
                             }else if(!this.includeMT && obj['isEmpty']!=1){
                                 this.trailerList.push(obj);
                             }
                         } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
                             if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER") {
-                                if(this.includeMT && obj['isEmpty']==1){
+                                if(this.includeMT){
                                     this.trailerList.push(obj);
                                 }else if(!this.includeMT && obj['isEmpty']!=1){
                                     this.trailerList.push(obj);
                                 }
                             }
                         } else if (this.selectedOrder.orderTrailerType == obj['trailerType']) {
-                            if(this.includeMT && obj['isEmpty']==1){
+                            if(this.includeMT){
                                 this.trailerList.push(obj);
                             }else if(!this.includeMT && obj['isEmpty']!=1){
                                 this.trailerList.push(obj);
@@ -641,21 +641,21 @@ export class AllocationPageComponent {
                         }
                     }else if(this.trailerID == obj['trailerID']){
                         if (this.selectedOrder.orderTrailerType == "") {
-                            if(this.includeMT && obj['isEmpty']==1){
+                            if(this.includeMT){
                                 this.trailerList.push(obj);
                             }else if(!this.includeMT && obj['isEmpty']!=1){
                                 this.trailerList.push(obj);
                             }
                         } else if (this.selectedOrder.orderTrailerType == "REEDRY") {
                             if (obj['trailerType'] == "DRY" || obj['trailerType'] == "REEFER") {
-                                if(this.includeMT && obj['isEmpty']==1){
+                                if(this.includeMT){
                                     this.trailerList.push(obj);
                                 }else if(!this.includeMT && obj['isEmpty']!=1){
                                     this.trailerList.push(obj);
                                 }
                             }
                         } else if (this.selectedOrder.orderTrailerType == obj['trailerType']) {
-                            if(this.includeMT && obj['isEmpty']==1){
+                            if(this.includeMT){
                                 this.trailerList.push(obj);
                             }else if(!this.includeMT && obj['isEmpty']!=1){
                                 this.trailerList.push(obj);
@@ -960,8 +960,7 @@ console.log("scrolling");
         }
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         
-        let url = config.baseUrl + "/AllocationService/api/OrderTruckTrailers?latitude="+lat1+","+lat2
-        +"&longitude="+lng1+","+lng2+"&distance="+dist+"&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer+'&pooltrailers='+toShowPool;
+        let url = config.baseUrl + "/AllocationService/api/OrderTruckTrailers?&companyID="+this.selectedOrder.orderOrginPoint+"&distance="+dist+"&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer+'&pooltrailers='+toShowPool;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -1065,13 +1064,16 @@ console.log("scrolling");
             "orderName": this.selectedOrder.orderName, 
             "orderOriginCity": this.selectedOrder.orderOrginCity, 
             "orderDestinationCity": this.selectedOrder.orderDestCity,
-            
+            "orderStartDate":this.selectedOrder.orderStartDate,
+            "orderCompletionDate":this.selectedOrder.orderCompleteDate,
+            "orderRefNum":this.selectedOrder.orderRefNumber,
+            "orderOriginPoint":this.selectedOrder.orderOrginCity+","+this.selectedOrder.orderOrginState,
+            "orderBillTo":this.selectedOrder.orderBillTo,
             "truckID": this.selectedTruck.number, 
             "truckCompany": this.selectedOrder.orderCompany, 
             "trailerID": this.selectedTrailer.trailerID,
             "trailerType": this.selectedTrailer.trailerType, 
             "trailerName": this.selectedTrailer.trailerName,
-            
         };
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         let url = config.baseUrl + "/AllocationService/api/InsertOrderAllocation";
