@@ -9,6 +9,7 @@ import { AgmCoreModule } from '@agm/core';
 import { AlertModule } from 'ngx-bootstrap';
 import { NgxPaginationModule, PaginatePipe, PaginationService } from 'ngx-pagination';
 import { ChartsModule } from 'ng2-charts';
+import { NvD3Module } from 'ng2-nvd3';
 
 import { AppComponent } from './app.component';
 
@@ -38,8 +39,11 @@ import { HomeMainComponent } from './home-main/home-main.component';
 import { TrailerDashComponent } from './trailer-dash/trailer-dash.component';
 import { OrderDashComponent } from './order-dash/order-dash.component';
 
+import 'd3';
+import 'nvd3';
+
 @NgModule({
-    imports: [BrowserModule, HttpModule, CommonModule, FormsModule,MyDatePickerModule, NgxPaginationModule,ChartsModule,
+    imports: [BrowserModule, HttpModule, CommonModule, FormsModule,MyDatePickerModule, NgxPaginationModule,ChartsModule,NvD3Module,
         AlertModule.forRoot(),
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyAafsMtGWbhgmfXU1TV-K-VUh8y1d8jZjI'
