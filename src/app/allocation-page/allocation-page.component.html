@@ -316,7 +316,7 @@
                                     [ngClass]="(selectedTrailer.trailerID==item.trailerID)? 'selectedTrailer': (item.trailerID==selectedTruck.trailer)?'attachedTrailer':'' ">
 
                                         <td style="text-align:center;width:16%">
-                                            <span>{{item.trailerID}}</span>
+                                            <span>{{item.trailerID}}-{{item.isEmpty}}-{{item.customerId}}</span>
                                         </td>
                                         <td style="text-align:center;width:14%">
                                             <span>{{item.trailerName}}</span>

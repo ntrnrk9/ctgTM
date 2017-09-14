@@ -361,7 +361,7 @@ export class AlloTrGmap {
             status = "CONFIRMED"
         }
         var isEmpty=(tr.isEmpty==1)? "Yes":"No";
-        var custID=(tr.customerId)? '<span>Pool: ' + tr.customerId +'</span><br>' :"";
+        var custID=(tr.customerId)? '<span>Pool: ' + tr.customerId +' | Variance: '+tr.poolVariance+'</span><br>' :"";
         var content = '<div class="infowindow" style="width:200px;padding:0px;height:105px;overflow:hidden;">' +
             '<div class="row header" style="border-bottom: 1px solid gray;padding:0px 0px 2px 30px">' +
             '<div class="row head1" style="font-size:14px;color:black">Trailer #: <b>' + tr.trailerID + ' (' + tr.company + ')</b></div>' +
