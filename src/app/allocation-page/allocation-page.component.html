@@ -281,11 +281,14 @@
                     </div>
                     <button class="pull-right resetBut" type="button" value="encode" (click)="resetTrailerPage()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
                     <div class="pull-right" style="margin-right: 25px">
+                        <span style="float: left;margin-left: 10px;padding-top: 5px;"><input type="checkbox" [(ngModel)]="includeMT" (change)="filterTrailerByType()"/>
+                            <label style="font-weight: normal">Include MT</label>
+                        </span>
                         <span style="float: left;margin-left: 10px;padding-top: 5px;"><input type="checkbox" [(ngModel)]="includeUNK" (change)="filterTrailerByType()"/>
-                            <label style="font-weight: normal">Include UNK trailers</label>
+                            <label style="font-weight: normal">Include UNK</label>
                         </span>
                         <span style="float: left;margin-left: 10px;padding-top: 5px;"><input type="checkbox" [(ngModel)]="poolTrailers" (change)="filterTrailerByMile()"/>
-                            <label style="font-weight: normal">Include Pool trailers</label>
+                            <label style="font-weight: normal">Only pool</label>
                         </span>
                     </div>
                 </div>
@@ -313,7 +316,7 @@
                                     [ngClass]="(selectedTrailer.trailerID==item.trailerID)? 'selectedTrailer': (item.trailerID==selectedTruck.trailer)?'attachedTrailer':'' ">
 
                                         <td style="text-align:center;width:16%">
-                                            <span>{{item.trailerID}}</span>
+                                            <span>{{item.trailerID}}-{{item.isEmpty}}-{{item.customerId}}</span>
                                         </td>
                                         <td style="text-align:center;width:14%">
                                             <span>{{item.trailerName}}</span>
