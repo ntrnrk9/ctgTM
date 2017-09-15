@@ -666,18 +666,24 @@ console.log('val', val);
   }
 
   formatDateTime(item: any) {
-    if (item != "") {
+    if (!item) {
+      return item;
+    }
+    else if (item != "") {
       //var str=item.toUpperCase();
       if (item.toUpperCase() != "UNKNOWN") {
         var ary = item.split(' ');
         var date = ary[0].split('-');
         var newD = new Date(date[0], date[1] - 1, date[2]);
+        var tim = ary[1].split('.');
         //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
-        var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + ary[1];
+        var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + tim[0];
         return SDate;
       } else {
         return item;
       }
+    } else {
+      return item;
     }
   }
 
