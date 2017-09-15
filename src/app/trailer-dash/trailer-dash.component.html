@@ -1,20 +1,15 @@
 
-<div class="row" style="margin:20px 0px 0px 0px">
-<div style="width:180px;border: 1px solid #d3d3d3;height: 32px;" class="pull-left">
-  <app-singleselect [items]="cmpList" [config]="" (selectedItemChange)="cmpSelected($event)" [(selectedItem)]="selectedCmp" [key]="'lable'"></app-singleselect>
-</div>
-</div>
-<br>
-<div class="row" >
+<div class="row" style="margin-top:20px">
   <div class="col-lg-3 col-xs-6 " >
     <!-- small box -->
     <div class="small-box b1">
       <div class="inner">
-        <h3>{{totalTrailers}}</h3>
-        <p>Total</p>
+        <h3 *ngIf="trailers.length>0">{{segData.cven.list.length+segData.srt.list.length+segData.star.list.length}}</h3>
+        <h3 *ngIf="trailers.length==0">...</h3>
+        <p>Grand Total</p>
       </div>
       <div class="icon">
-        <img width="100" src="../../assets/images/dash/trailer-1.png" />
+        <img width="100" src="../../assets/images/dash/GrandTotal.png" />
       </div>
       
     </div>
@@ -23,11 +18,12 @@
     <!-- small box -->
     <div class="small-box b2">
       <div class="inner">
-        <h3>{{emptyTrailers}}</h3>
-        <p>Empty</p>
+        <h3 *ngIf="trailers.length>0">{{segData.cven.list.length}}</h3>
+        <h3 *ngIf="trailers.length==0">...</h3>
+        <p>Covenant</p>
       </div>
       <div class="icon">
-          <img width="100" src="../../assets/images/dash/empty-2.png" />
+          <img width="100" src="../../assets/images/dash/CVEN.png" />
       </div>
       
     </div>
@@ -36,11 +32,12 @@
     <!-- small box -->
     <div class="small-box b3">
       <div class="inner">
-        <h3>{{movingTrailers}}</h3>
-        <p>Moving</p>
+        <h3 *ngIf="trailers.length>0">{{segData.srt.list.length}}</h3>
+        <h3 *ngIf="trailers.length==0">...</h3>
+        <p>SRT</p>
       </div>
       <div class="icon">
-          <img width="100" src="../../assets/images/dash/moving-3.png" />
+          <img width="100" src="../../assets/images/dash/SRT.png" />
       </div>
       
     </div>
@@ -49,20 +46,30 @@
     <!-- small box -->
     <div class="small-box b4">
       <div class="inner">
-        <h3>{{shedTrailers}}</h3>
-        <p>Inshed</p>
+        <h3 *ngIf="trailers.length>0">{{segData.star.list.length}}</h3>
+        <h3 *ngIf="trailers.length==0">...</h3>
+        <p>STAR</p>
       </div>
       <div class="icon">
-          <img width="100" src="../../assets/images/dash/shed-4.png" />
+          <img width="100" src="../../assets/images/dash/STAR.png" />
       </div>
       
     </div>
   </div><!-- ./col -->
 </div>
 
+<div class="row" style="margin:20px 0px 0px 0px">
+    <div style="width:180px;border: 1px solid #d3d3d3;height: 32px;" class="pull-left">
+      <app-singleselect [items]="cmpList" [config]="cmpSelectConfig" (selectedItemChange)="cmpSelected($event);filterByCmpnState()" [(selectedItem)]="selectedCmp"
+        [key]="'lable'"></app-singleselect>
+    </div>
+    <div style="width:180px;border: 1px solid #d3d3d3;height: 32px;margin-left:10px" class="pull-left">
+        <app-singleselect [items]="allStates" [config]="stateSelectConfig" (selectedItemChange)="stateSelected($event);filterByCmpnState()" [(selectedItem)]="selectedState"
+          [key]="'stateDesc'"></app-singleselect>
+      </div>
+  </div>
+  <br>
 
-
-<br>
 <div class="row" >
   <!-- <div class="col-md-4" style="height:330px;">
     <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Trailer Stats</label></div>
@@ -81,7 +88,26 @@
     <div style="height:380px;border:1px solid silver;">
       <div *ngIf="trailers.length>0">
         <!-- <canvas height="130" baseChart [options]="chartOptions" [colors]="colors" [data]="statusChartData" [labels]="pieChartLabels" [chartType]="pieChartType" (chartClick)="chartClicked($event,1)"></canvas> -->
-        <nvd3 [options]="trStatusChartoptions" [data]="trStatusChartdata"></nvd3>
+        <div class="col-md-8">
+          <div style="text-align: left;padding-top: 10px;">
+            <label style="font-size: 25px;font-weight: normal;">By status</label>
+          </div>
+          <div style="margin-top:-35px ">
+            <nvd3 [options]="trStatusChartoptions" [data]="trStatusChartdata"></nvd3>
+          </div>
+        </div>
+        <div class="col-md-4" style="padding-top:0px;">
+          <table class="table table-striped">
+            <tr *ngFor="let i=index;let item of trStatusChartdata" style="padding-bottom: 20px" (click)="getGridData(item)">
+              <td><span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span></td>
+              <td><span class="pull-left">{{item.key}}</span><br><span style="font-size:25px">{{item.y}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="lBox pull-left" style="background: white"></span></td>
+                <td><span class="pull-left">Total</span><br><span style="font-size:25px">{{lotSize}}</span></td>
+            </tr>
+          </table>
+        </div>
       </div>
       <div *ngIf="trailers.length==0" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
@@ -92,7 +118,26 @@
       <div *ngIf="trailers.length>0">
         <!-- <canvas height="130" baseChart [options]="chartOptions" [colors]="colors" [data]="typeChartData" [labels]="typeChartLabels" [chartType]="pieChartType"
         (chartClick)="chartClicked($event,2)"></canvas> -->
-        <nvd3 [options]="trTypeChartoptions" [data]="trTypeChartData"></nvd3>
+        <div class="col-md-8">
+          <div style="text-align: left;padding-top: 10px;">
+            <label style="font-size: 25px;font-weight: normal;">By type</label>
+          </div>
+          <div style="margin-top:-35px ">
+            <nvd3 [options]="trTypeChartoptions" [data]="trTypeChartData"></nvd3>
+          </div>
+        </div>
+        <div class="col-md-4" style="padding-top:0px;">
+          <table class="table table-striped">
+            <tr *ngFor="let i=index;let item of trTypeChartData" style="padding-bottom: 20px">
+              <td><span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span></td>
+              <td><span class="pull-left">{{item.key}}</span><br><span style="font-size:25px">{{item.y}}</span></td>
+            </tr>
+            <tr>
+              <td><span class="lBox pull-left" style="background: white"></span></td>
+              <td><span class="pull-left">Total</span><br><span style="font-size:25px">{{lotSize}}</span></td>
+            </tr>
+          </table>
+        </div>
       </div>
       <div *ngIf="trailers.length==0" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
@@ -125,6 +170,9 @@
               <span>{{item.trailerType}}</span>
             </td>
             <td style="text-align:center;width:12.5%">
+                <span>{{item.trailerYear}}</span>
+            </td>
+            <td style="text-align:center;width:12.5%">
               <span>{{item.location}}</span>
             </td>
             
@@ -139,9 +187,7 @@
             <td style="text-align:center;width:12.5%">
               <span>{{formatDateTime(item.lastPingDate)}}</span>
             </td>
-            <td style="text-align:center;width:12.5%">
-                <span>{{item.company}}</span>
-            </td>
+            
           </tr>
         </ng-container>
       </tbody>

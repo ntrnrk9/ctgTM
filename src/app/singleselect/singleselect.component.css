@@ -35,3 +35,15 @@
     line-height: 18px;
     margin: 2px; cursor: pointer;
 }
+
+.ssf-dd-ul {
+    padding: 5px 0px 5px 0px;
+    list-style: none;
+    margin-bottom: 0px;
+    height: 129px;
+    overflow-y: scroll;
+    margin: 5px 0px 5px 0px;
+}
+.ssf-dd-ul li:hover {
+    background-color: #ededed;
+}
