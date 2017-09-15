@@ -42,6 +42,12 @@ export class TrackTrailerComponent {
     selectedCmp = { lable: "Covenant", value: "CVEN" };
     modelList: any = [{ lable: "All types", value: "-1" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" },{ lable: "UNK", value: "UNK" }];
     selectedModel = { lable: "All types", value: "-1" };
+    cmpSelectConfig={
+        filter:true
+    };
+    modeSelectConfig={
+        filter:true
+    }
     mgToggleFlag = true;
     trailerStatusResp = false;
     historyRecv = false;

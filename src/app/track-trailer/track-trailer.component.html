@@ -84,9 +84,9 @@
             </div>
             <div *ngIf="asToggle" style="margin-top: 5px;background-color: #d3d3d3;" class="filter-container" >
                 <div style="padding:5px;float:left;width:100%">
-                    <div class="pull-left" style="width:150px"><app-singleselect [items]="cmpList" [config]="" [(selectedItem)]="selectedCmp" [key]="'lable'"></app-singleselect></div>
+                    <div class="pull-left" style="width:150px"><app-singleselect [items]="cmpList" [config]="cmpSelectConfig" [(selectedItem)]="selectedCmp" [key]="'lable'"></app-singleselect></div>
                     <input class="ctg-textbox pull-left" style="margin-left:10px; width:120px" type="text" placeholder="Trailer make" [(ngModel)]="searchMake"/>
-                    <div class="pull-left" style="margin-left:10px;width:150px"><app-singleselect [items]="modelList" [config]="" [(selectedItem)]="selectedModel" [key]="'lable'"></app-singleselect></div>
+                    <div class="pull-left" style="margin-left:10px;width:150px"><app-singleselect [items]="modelList" [config]="modeSelectConfig" [(selectedItem)]="selectedModel" [key]="'lable'"></app-singleselect></div>
                     <input class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Trailer year" [(ngModel)]="searchTrYear"/>
                     
                     

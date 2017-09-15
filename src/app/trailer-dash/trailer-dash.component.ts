@@ -78,7 +78,7 @@ export class TrailerDashComponent implements OnInit {
   typeFilteredTrailers=[];
   allTrailler = [];
   ob = {
-    column: [{ name: "Trailer ID", width: "12.5%" }, { name: "Make", width: "12.5%" }, { name: "Model/Type", width: "12.5%" },{ name: "Company", width: "12.5%" },{ name: "Location", width: "12.5%" },
+    column: [{ name: "Trailer ID", width: "12.5%" }, { name: "Make", width: "12.5%" }, { name: "Model/Type", width: "12.5%" },{ name: "Year", width: "12.5%" },{ name: "Location", width: "12.5%" },
     { name: "Allocation status", width: "12.5%" },{ name: "Last DOT inspection date", width: "12.5%" }, { name: "Last ping date", width: "12.5%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
@@ -404,6 +404,8 @@ export class TrailerDashComponent implements OnInit {
   }
 
   filterByCmpnState(){
+    this.showGrid=false;
+    this.gRowCount=50;
     var lot=this.filterByCmp();
     var lotSize=0;
 
@@ -441,7 +443,7 @@ export class TrailerDashComponent implements OnInit {
       this.trStatusChartdata.push(item1);
       
       bag=this.filterByState(lot.byStatus.OTH);
-      item1={key:'Inactive',y:bag.length,list:bag};
+      item1={key:'Others',y:bag.length,list:bag};
       lotSize+=bag.length;
       this.trStatusChartdata.push(item1);
       
@@ -478,6 +480,7 @@ console.log('val', val);
     console.log(e);
     console.log(e.active[0]._index);
     this.showGrid = true;
+    this.gRowCount=50;
     if (type == 1) {
       if (e.active[0]._index == 0) {
         this.selectedLable = this.pieChartLabels[0];
@@ -508,6 +511,7 @@ console.log('val', val);
     //console.log(e);
     //console.log(e.active[0]._index);
     this.showGrid = true;
+    this.gRowCount=50;
     if (type == 1) {
       this.selectedLable = e.data.key;
       this.allTrailler = e.data.list;
@@ -524,6 +528,7 @@ console.log('val', val);
 
   cmpSelected(item) {
     this.showGrid = false;
+    this.gRowCount=50;
     this.selectedCmp = item;
     
     // var bag = [];
@@ -665,7 +670,7 @@ console.log('val', val);
     }
   }
 
-  formatDateTime(item: any) {
+  formatDateTime(item: any,dt) {
     if (!item) {
       return item;
     }
@@ -677,7 +682,11 @@ console.log('val', val);
         var newD = new Date(date[0], date[1] - 1, date[2]);
         var tim = ary[1].split('.');
         //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
-        var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + tim[0];
+        if (dt == 1) {
+          var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + tim[0];
+        } else {
+          var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear();
+        }
         return SDate;
       } else {
         return item;
@@ -688,7 +697,10 @@ console.log('val', val);
   }
 
   getGridData(item){
+    this.gRowCount=50;
+    this.selectedLable = item.key;
     this.allTrailler = item.list;
+    this.showGrid = true;
   }
 
   public isInactive(item) {

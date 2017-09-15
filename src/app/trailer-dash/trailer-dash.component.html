@@ -98,7 +98,7 @@
         </div>
         <div class="col-md-4" style="padding-top:0px;">
           <table class="table table-striped">
-            <tr *ngFor="let i=index;let item of trStatusChartdata" style="padding-bottom: 20px" (click)="getGridData(item)">
+            <tr *ngFor="let i=index;let item of trStatusChartdata" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item)">
               <td><span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span></td>
               <td><span class="pull-left">{{item.key}}</span><br><span style="font-size:25px">{{item.y}}</span></td>
             </tr>
@@ -128,7 +128,7 @@
         </div>
         <div class="col-md-4" style="padding-top:0px;">
           <table class="table table-striped">
-            <tr *ngFor="let i=index;let item of trTypeChartData" style="padding-bottom: 20px">
+            <tr *ngFor="let i=index;let item of trTypeChartData" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item)">
               <td><span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span></td>
               <td><span class="pull-left">{{item.key}}</span><br><span style="font-size:25px">{{item.y}}</span></td>
             </tr>
@@ -144,7 +144,7 @@
   </div>
 </div>
 <br><br>
-<label *ngIf="showGrid">{{selectedCmp.lable}} {{selectedLable}} Trailers</label>
+<label *ngIf="showGrid">{{selectedLable}} Trailers - {{selectedCmp.lable}}</label>
 <div style="padding-top:15px;" *ngIf="showGrid">
   <div>
     <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
@@ -181,11 +181,11 @@
             </td>
 
             <td style="text-align:center;width:12.5%">
-                <span>{{formatDateTime(item.dotDate)}}</span>
+                <span>{{formatDateTime(item.dotDate,0)}}</span>
             </td>
             
             <td style="text-align:center;width:12.5%">
-              <span>{{formatDateTime(item.lastPingDate)}}</span>
+              <span>{{formatDateTime(item.lastPingDate,1)}}</span>
             </td>
             
           </tr>
