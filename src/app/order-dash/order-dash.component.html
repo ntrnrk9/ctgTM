@@ -1,0 +1,19 @@
+<p>
+  order-dash works!
+</p>
+
+
+<div style="text-align: center">
+  <div style="height:300px;width:500px;">
+    <canvas baseChart
+          width="4" height="1"
+          [datasets]="barChartData"
+          [labels]="barChartLabels"
+          [options]="barChartOptions"
+          [legend]="barChartLegend"
+          [colors]="colorsOPs"
+          [chartType]="barChartType"
+          (chartHover)="chartHovered($event)"
+          (chartClick)="chartClicked($event)"></canvas>
+  </div>
+</div>

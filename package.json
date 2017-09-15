@@ -31,6 +31,8 @@
     "core-js": "^2.4.1",
     "jquery": "^3.2.1",
     "mydatepicker": "^2.0.27",
+    "ng2-charts": "^1.6.0",
+    "ng2-nvd3": "^2.0.0",
     "ngx-bootstrap": "^1.7.1",
     "ngx-pagination": "^3.0.1",
     "rxjs": "5.0.1",

@@ -22,12 +22,12 @@ var HomePageComponent = (function () {
 }());
 HomePageComponent = __decorate([
     core_1.Component({
-        selector: 'home-page',
-        templateUrl: 'home-page.component.html',
-        styleUrls: ['home-page.component.css'],
+        selector: 'track-trailer',
+        templateUrl: 'track-trailer.component.html',
+        styleUrls: ['track-trailer.component.css'],
         moduleId: module.id
     })
-], HomePageComponent);
-exports.HomePageComponent = HomePageComponent;
+], TrackTrailerComponent);
+exports.TrackTrailerComponent = TrackTrailerComponent;
 // This code copy to app.module.ts
-//# sourceMappingURL=home-page.component.js.map
+//# sourceMappingURL=track-trailer.component.js.map

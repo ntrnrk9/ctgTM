@@ -8,13 +8,15 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { AgmCoreModule } from '@agm/core';
 import { AlertModule } from 'ngx-bootstrap';
 import { NgxPaginationModule, PaginatePipe, PaginationService } from 'ngx-pagination';
+import { ChartsModule } from 'ng2-charts';
+import { NvD3Module } from 'ng2-nvd3';
 
 import { AppComponent } from './app.component';
 
 
 import { HeaderComponent } from './header/header.component';
 import { MainTabsComponent } from './mainTabs/mainTabs.component';
-import { HomePageComponent } from './home-page/home-page.component';
+import { TrackTrailerComponent } from './track-trailer/track-trailer.component';
 import { GmapsComponent } from './gmaps/gmaps.component';
 import { YardMangPageComponent } from './yard-mang-page/yard-mang-page.component';
 import { TableComponent } from './table/table.component';
@@ -33,20 +35,29 @@ import { FilterArrayPipe } from './Filters/filterArray.pipe';
 import { HistoryPageComponent } from './history-page/history-page.component';
 import { MyDatePickerModule } from 'mydatepicker';
 import { SingleselectComponent } from './singleselect/singleselect.component';
+import { HomeMainComponent } from './home-main/home-main.component';
+import { TrailerDashComponent } from './trailer-dash/trailer-dash.component';
+import { OrderDashComponent } from './order-dash/order-dash.component';
+
+import 'd3';
+import 'nvd3';
 
 @NgModule({
-    imports: [BrowserModule, HttpModule, CommonModule, FormsModule,MyDatePickerModule, NgxPaginationModule,AlertModule.forRoot(),
+    imports: [BrowserModule, HttpModule, CommonModule, FormsModule,MyDatePickerModule, NgxPaginationModule,ChartsModule,NvD3Module,
+        AlertModule.forRoot(),
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyAafsMtGWbhgmfXU1TV-K-VUh8y1d8jZjI'
         })],
     declarations: [AppComponent,
         HeaderComponent, MainTabsComponent,
-        HomePageComponent, GmapsComponent,
+        TrackTrailerComponent, GmapsComponent,
         YardMangPageComponent, TableComponent,
         AllocationPageComponent, PoolMangPageComponent,
         Pool1MangPageComponent, Footer1Component,
         FilterCPipe, FilterArrayPipe,
         SearchfilterComponent, GmapjsComponent,AlloTrGmap,Gmtest, HistoryPageComponent, SingleselectComponent
+        , HomeMainComponent, TrailerDashComponent, 
+        OrderDashComponent
     ],
     //providers:[{ provide: RequestOptions, useClass: HttpInject }],
     bootstrap: [AppComponent]
