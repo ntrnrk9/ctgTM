@@ -365,7 +365,7 @@ export class AlloTrGmap {
         var content = '<div class="infowindow" style="width:200px;padding:0px;height:105px;overflow:hidden;">' +
             '<div class="row header" style="border-bottom: 1px solid gray;padding:0px 0px 2px 30px">' +
             '<div class="row head1" style="font-size:14px;color:black">Trailer #: <b>' + tr.trailerID + ' (' + tr.company + ')</b></div>' +
-            '<div class="row head2" style="font-size:13px;color:red">Name: <b>' + tr.trailerName + '</b></div>' 
+            '<div class="row head2" style="font-size:13px;color:red"><b>' + tr.trailerName + '</b></div>' 
             
              +'<div class="row head3" style="font-weight:bold;font-size:12px;padding-right:33px;color:black">'
              + '<span>'+tr.trailerType +'</span>'

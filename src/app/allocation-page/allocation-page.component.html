@@ -22,7 +22,7 @@
                 <div class="filter-container">
                     <div class="pull-left">
                         <div class="pull-left" style="padding:5px 15px 5px 5px;background-color: #d3d3d3">
-                            <div class="dropdown pull-left pm-select-cont">
+                            <!-- <div class="dropdown pull-left pm-select-cont">
                                 <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedOrStatus.lable}} />
                                 <span class="caret"></span>
                                 <div class="dropdown-menu no-padding sel-dd">
@@ -32,8 +32,8 @@
                                         </li>
                                     </ul>
                                 </div>
-                            </div>
-                            <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
+                            </div> -->
+                            <div class="dropdown pull-left pm-select-cont" style="margin-left:0px;">
                                 <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedCmp.lable}} />
                                 <span class="caret"></span>
                                 <div class="dropdown-menu no-padding sel-dd">
@@ -288,7 +288,7 @@
                             <label style="font-weight: normal">Include UNK</label>
                         </span>
                         <span style="float: left;margin-left: 10px;padding-top: 5px;"><input type="checkbox" [(ngModel)]="poolTrailers" (change)="filterTrailerByMile()"/>
-                            <label style="font-weight: normal">Only pool</label>
+                            <label style="font-weight: normal">Pool trailers only</label>
                         </span>
                     </div>
                 </div>
@@ -316,7 +316,7 @@
                                     [ngClass]="(selectedTrailer.trailerID==item.trailerID)? 'selectedTrailer': (item.trailerID==selectedTruck.trailer)?'attachedTrailer':'' ">
 
                                         <td style="text-align:center;width:16%">
-                                            <span>{{item.trailerID}}-{{item.isEmpty}}-{{item.customerId}}</span>
+                                            <span>{{item.trailerID}}</span>
                                         </td>
                                         <td style="text-align:center;width:14%">
                                             <span>{{item.trailerName}}</span>
@@ -355,7 +355,7 @@
         <div class="row page-container" style="margin:0px">
 
             <div class="col-md-12 page-heading">
-                <div style="padding:10px" class="pull-left"><b>Summary details</b></div>
+                <div style="padding:10px" class="pull-left"><b>Allocation Summary</b></div>
                 <button class="pull-right toggleBut" type="button" value="encode" (click)="toSubmit()">Submit</button>
                 <button style="margin-right:2px" class="pull-right toggleBut" type="button" value="encode" (click)="goToTrailer()">Back</button>
             </div><br />
@@ -500,7 +500,7 @@
                     <h4 class="modal-title">Allocation Status</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Order allocated successfully!</p>
+                    <p>Trailer allocated successfully!</p>
                 </div>
                 <div class="modal-footer page-footer">
                     <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
