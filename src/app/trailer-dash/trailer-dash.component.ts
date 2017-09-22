@@ -78,8 +78,8 @@ export class TrailerDashComponent implements OnInit {
   typeFilteredTrailers=[];
   allTrailler = [];
   ob = {
-    column: [{ name: "Trailer ID", width: "12.5%" }, { name: "Make", width: "12.5%" }, { name: "Model/Type", width: "12.5%" },{ name: "Year", width: "12.5%" },{ name: "Location", width: "12.5%" },
-    { name: "Allocation status", width: "12.5%" },{ name: "Last DOT inspection date", width: "12.5%" }, { name: "Last ping date", width: "12.5%" }],
+    column: [{ name: "Trailer ID", width: "12%",key:'trailerID' }, { name: "Make", width: "12%",key:'trailerName' }, { name: "Model/Type", width: "12%",key:'trailerType' },{ name: "Year", width: "12%",key:'trailerYear' },{ name: "Location", width: "12%",key:'location' },
+    { name: "Allocation status", width: "12%",key:'trailerStatus' },{ name: "Last DOT inspection date", width: "16%",key:'dotDate' }, { name: "Last ping date", width: "12%",key:'lastPingDate' }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
 
@@ -218,6 +218,7 @@ export class TrailerDashComponent implements OnInit {
   }
 
   ngOnInit() {
+    
     var ctrl=this;
     this.trStatusChartoptions.chart.pie.dispatch.elementClick=function(e){
       //console.log('click-init ' + JSON.stringify(e));
@@ -242,115 +243,83 @@ export class TrailerDashComponent implements OnInit {
     let map = new Map();
     let trTypeMap=new Map();
     this.typeChartLabels=[];
-    // for (var i = 0; i < this.trailers.length; i++) {
-
-    //   var item = this.trailers[i];
-    //   if (!map.has(item.trailerStatus)) {
-    //     map.set(item.trailerStatus, true);
-    //   }
-    //   if (!trTypeMap.has(item.trailerType)) {
-    //     trTypeMap.set(item.trailerType, true);
-    //     this.typeChartLabels.push(item.trailerType);
-    //   }
-
-    //   if (item.company == 'CVEN') {
-    //     this.cvenTrailers.push(item);
-    //     if (item.trailerStatus == 'PLN') {
-    //       if (this.isInactive(item.lastPingDate)) {
-    //         cvenChartData[2]++;
-    //         this.cvenList.inactive.push(item);
-    //       } else {
-    //         cvenChartData[0]++;
-    //         this.cvenList.planned.push(item);
-    //       }
-    //     } else if (item.trailerStatus == 'AVL') {
-    //       if (this.isInactive(item.lastPingDate)) {
-    //         cvenChartData[2]++;
-    //         this.cvenList.inactive.push(item);
-    //       } else {
-    //         cvenChartData[1]++;
-    //         this.cvenList.available.push(item);
-    //       }
-    //     } else {
-    //       if (this.isInactive(item.lastPingDate)) {
-    //         cvenChartData[2]++;
-    //         this.cvenList.inactive.push(item);
-    //       } else {
-    //         cvenChartData[3]++;
-    //         this.cvenList.others.push(item);
-    //       }
-    //     }
-
-    //   } else if (item.company == "SRT") {
-    //     this.srtTrailers.push(item);
-    //     if (item.trailerStatus == 'PLN') {
-    //       if (this.isInactive(item.lastPingDate)) {
-    //         srtChartData[2]++;
-    //         this.srtList.inactive.push(item);
-    //       } else {
-    //         srtChartData[0]++;
-    //         this.srtList.planned.push(item);
-    //       }
-    //     } else if (item.trailerStatus == 'AVL') {
-    //       if (this.isInactive(item.lastPingDate)) {
-    //         srtChartData[2]++;
-    //         this.srtList.inactive.push(item);
-    //       } else {
-    //         srtChartData[1]++;
-    //         this.srtList.available.push(item);
-    //       }
-    //     } else {
-    //       if (this.isInactive(item.lastPingDate)) {
-    //         srtChartData[2]++;
-    //         this.srtList.inactive.push(item);
-    //       } else {
-    //         srtChartData[3]++;
-    //         this.srtList.others.push(item);
-    //       }
-    //     }
-
-    //   } else if (item.company == "STAR") {
-    //     this.starTrailers.push(item);
-    //     if (item.trailerStatus == 'PLN') {
-    //       if (this.isInactive(item.lastPingDate)) {
-    //         starChartData[2]++;
-    //         this.starList.inactive.push(item);
-    //       } else {
-    //         starChartData[0]++;
-    //         this.starList.planned.push(item);
-    //       }
-    //     } else if (item.trailerStatus == 'AVL') {
-    //       if (this.isInactive(item.lastPingDate)) {
-    //         starChartData[2]++;
-    //         this.starList.inactive.push(item);
-    //       } else {
-    //         starChartData[1]++;
-    //         this.starList.available.push(item);
-    //       }
-    //     } else {
-    //       if (this.isInactive(item.lastPingDate)) {
-    //         starChartData[2]++;
-    //         this.starList.inactive.push(item);
-    //       } else {
-    //         starChartData[3]++;
-    //         this.starList.others.push(item);
-    //       }
-    //     }
-
-    //   }
-    // }
-    //var bag = [pln, avl, 1000, oth];
-    //this.pieChartData[0]=pln;
-    //this.pieChartData[1]=avl;
-    //this.cvenChartData = cvenChartData;
-    //this.srtChartData = srtChartData;
-    //this.starChartData = starChartData;
-    //console.log(map);
-    //console.log(trTypeMap);
-    //this.cmpSelected(this.selectedCmp);
+    
     this.prepSegData();
     this.filterByCmpnState();
   }
+
+  sortTrailers(list, key, asc) {
+    var bag;
+    if (key == "dotDate") {
+      bag = this.sortTrailersByTime(list, key, asc);
+    } else if (key == "lastPingDate") {
+      bag = this.sortTrailersByTime(list, key, asc);
+    } else {
+      bag = list.sort((item1, item2) => {
+        if (asc == 0) {
+          if (item1[key] > item2[key]) {
+            return 1;
+          } else if (item1[key] < item2[key]) {
+            return -1;
+          } else {
+            return 0;
+          }
+        } else {
+          if (item1[key] < item2[key]) {
+            return 1;
+          } else if (item1[key] > item2[key]) {
+            return -1;
+          } else {
+            return 0;
+          }
+        }
+      });
+    }
+    return bag;
+  }
+
+  sortTrailersByTime(list,key,asc) {
+    var bag = list.sort((item1, item2) => {
+      if(item1[key]==null ||item1[key]==""){
+        return 1;
+      }
+      if(item2[key]==null ||item2[key]==""){
+        return -1;
+      }
+      var ary1 = item1[key].split(' ');
+      var date1 = ary1[0].split('-');
+      var item1D = new Date(date1[0], date1[1] - 1, date1[2]);
+      var tim1 = ary1[1].split('.');
+      var time1 = tim1[0].split(':');
+      item1D.setHours(time1[0], time1[1], time1[2]);
+
+      var ary2 = item2[key].split(' ');
+      var date2 = ary2[0].split('-');
+      var item2D = new Date(date2[0], date2[1] - 1, date2[2]);
+      var tim2 = ary2[1].split('.');
+      var time2 = tim2[0].split(':');
+      item2D.setHours(time2[0], time2[1], time2[2]);
+      if(asc==0){
+      if (item1D > item2D) {
+        return 1;
+      } else if (item1D < item2D) {
+        return -1;
+      } else {
+        return 0;
+      }
+    }else{
+      if (item1D < item2D) {
+        return 1;
+      } else if (item1D > item2D) {
+        return -1;
+      } else {
+        return 0;
+      }
+    }
+    });
+    return bag;
+  }
+  
 
   prepSegData(){
     let map = new Map();
@@ -514,14 +483,14 @@ console.log('val', val);
     this.gRowCount=50;
     if (type == 1) {
       this.selectedLable = e.data.key;
-      this.allTrailler = e.data.list;
+      this.allTrailler = this.sortTrailersByTime(e.data.list,'lastPingDate',0);
     } else if (type == 2) {
       //var ind=e.dataactive[0]._index;
       this.selectedLable = e.data.key;
-      this.allTrailler = e.data.list;
+      this.allTrailler = this.sortTrailersByTime(e.data.list,'lastPingDate',0);
     }
-
   }
+
   stateSelected(item){
     this.selectedState=item;
   }
@@ -530,70 +499,6 @@ console.log('val', val);
     this.showGrid = false;
     this.gRowCount=50;
     this.selectedCmp = item;
-    
-    // var bag = [];
-    // var list:any;
-    // if (this.selectedCmp.value == "CVEN") {
-    //   this.statusChartData = this.cloneObj(this.cvenChartData);
-    //   list=this.cvenList;
-    //   bag = this.segrigateTrailerByType(this.cvenTrailers, 'CVEN');
-    //   this.totalTrailers=this.cvenTrailers.length;
-
-
-    // } else if (this.selectedCmp.value == "SRT") {
-    //   this.statusChartData = this.cloneObj(this.srtChartData);
-    //   list=this.srtList;
-    //   bag = this.segrigateTrailerByType(this.srtTrailers, 'SRT');
-    //   this.totalTrailers=this.srtTrailers.length;
-
-    // } else if (this.selectedCmp.value == "STAR") {
-    //   this.statusChartData = this.cloneObj(this.starChartData);
-    //   list=this.starList;
-    //   bag = this.segrigateTrailerByType(this.starTrailers, 'STAR');
-    //   this.totalTrailers=this.starTrailers.length;
-
-    // }
-    
-    // this.trStatusChartdata=[];
-    // if (this.selectedState.country != "") {
-    //   for (var i = 0; i < this.statusChartData.length; i++) {
-    //     var obj = { key: "", y: 0, list: [], percent: 0 };
-    //     obj.key = this.pieChartLabels[i];
-    //     obj.list = list[obj.key.toLowerCase()];
-    //     var bag=[];
-    //     for(var j=0;j<obj.list.length;j++){
-    //       var ite=obj.list[j];
-    //       if(ite.state==this.selectedState.stateCode){
-    //         bag.push(ite);
-    //       }
-    //     }
-    //     obj.list=bag;
-    //     this.trStatusChartdata.push(obj);
-    //   }
-    // } else {
-    //   for (var i = 0; i < this.statusChartData.length; i++) {
-    //     var obj = { key: "", y: 0, list: [], percent: 0 };
-    //     obj.key = this.pieChartLabels[i];
-    //     obj.y = this.statusChartData[i];
-    //     obj.list = list[obj.key.toLowerCase()];
-    //     obj.percent = obj.percent;
-    //     this.trStatusChartdata.push(obj);
-    //   }
-    // }
-
-    // console.log(this.trStatusChartdata);
-    // //this.saveToFile(this.trStatusChartdata);
-
-    // this.typeChartData = [];
-    // this.trTypeChartData = [];
-    // bag.forEach(obj => {
-    //   this.typeChartData.push(obj.length);
-    //   var item={key:obj.label,y:obj.length,list:obj.list,percent:obj.percent};
-    //   this.trTypeChartData.push(item);
-    // });
-    // //console.log(this.trTypeChartData);
-    
-    //this.typeFilteredTrailers=bag;
   }
 
   
@@ -680,7 +585,11 @@ console.log('val', val);
         var ary = item.split(' ');
         var date = ary[0].split('-');
         var newD = new Date(date[0], date[1] - 1, date[2]);
+        
         var tim = ary[1].split('.');
+        var time=tim[0].split(':');
+
+        newD.setHours(time[0],time[1],time[2]);
         //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
         if (dt == 1) {
           var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + tim[0];

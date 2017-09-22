@@ -183,3 +183,9 @@ svg text {
     margin-top:5px;
     margin-right:15px;
 }
+
+.caret-reversed {
+    -ms-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+}

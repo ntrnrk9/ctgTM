@@ -151,7 +151,11 @@
       <thead style="font-size: 12px">
         <tr bgcolor="#f7f8fc" class="app-table-tr full">
           <ng-container *ngFor="let con of ob.column">
-            <th [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+            <th [ngStyle]="{'width':con.width}" style="text-align:center;">
+              <span>{{con.name}}</span>
+              <span  class="caret pointer" (click)="sortTrailers(allTrailler,con.key,1)"></span>
+              <span  class="caret caret-reversed pointer" (click)="sortTrailers(allTrailler,con.key,0)"></span>
+            </th>
           </ng-container>
         </tr>
       </thead>
@@ -160,31 +164,31 @@
         <ng-container *ngFor="let i=index;let item of allTrailler">
           <tr class="full" *ngIf="i<gRowCount">
 
-            <td style="text-align:center;width:12.5%">
+            <td style="text-align:center;width:12%">
               <span>{{item.trailerID}}</span>
             </td>
-            <td style="text-align:center;width:12.5%">
+            <td style="text-align:center;width:12%">
               <span>{{item.trailerName}}</span>
             </td>
-            <td style="text-align:center;width:12.5%">
+            <td style="text-align:center;width:12%">
               <span>{{item.trailerType}}</span>
             </td>
-            <td style="text-align:center;width:12.5%">
+            <td style="text-align:center;width:12%">
                 <span>{{item.trailerYear}}</span>
             </td>
-            <td style="text-align:center;width:12.5%">
+            <td style="text-align:center;width:12%">
               <span>{{item.location}}</span>
             </td>
             
-            <td style="text-align:center;width:12.5%">
+            <td style="text-align:center;width:12%">
               <span>{{item.trailerStatus}}</span>
             </td>
 
-            <td style="text-align:center;width:12.5%">
+            <td style="text-align:center;width:16%">
                 <span>{{formatDateTime(item.dotDate,0)}}</span>
             </td>
             
-            <td style="text-align:center;width:12.5%">
+            <td style="text-align:center;width:12%">
               <span>{{formatDateTime(item.lastPingDate,1)}}</span>
             </td>
             
