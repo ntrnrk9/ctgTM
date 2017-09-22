@@ -1492,8 +1492,10 @@ export class Pool1MangPageComponent {
         $('#deleteConfirmCP').modal('show');
         if(choice=="planner"){
             this.action.heading = "Delete Planner";
+            this.plannerCrud=item;
         }else if(choice=="csr"){
             this.action.heading = "Delete CSR";
+            this.csrCrud=item;
         }
         this.action.body = "Are you sure you want to delete this "+choice+"?";
         
