@@ -19,13 +19,13 @@ export class TrailerDashComponent implements OnInit {
 
   gRowCount = 50;
 
-  public pieChartLabels: string[] = ['Planned', 'Available', 'Inactive', 'Others'];
+  public pieChartLabels: string[] = ['Planned', 'Available', 'Inactive', 'Pool','Others'];
   public typeChartLabels: string[] = [];
 
   segData = {
-    cven: { list: [], byStatus: { INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
-    srt: { list: [], byStatus: { INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
-    star: { list: [], byStatus: { INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
+    cven: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
+    srt: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
+    star: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
   };
 
 
@@ -202,9 +202,9 @@ export class TrailerDashComponent implements OnInit {
 
     var ctrl = this;
     this.segData = {
-      cven: { list: [], byStatus: { INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
-      srt: { list: [], byStatus: { INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
-      star: { list: [], byStatus: { INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
+      cven: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
+      srt: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
+      star: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
     };
 
     this.trStatusChartoptions.chart.pie.dispatch.elementClick = function (e) {
@@ -340,7 +340,9 @@ export class TrailerDashComponent implements OnInit {
   }
 
   checkStatusOfTrailer(item) {
-    if (this.isInactive(item.lastPingDate)) {
+    if (item.isPool==1) {
+      return 'POOL';
+    }else if (this.isInactive(item.lastPingDate)) {
       return 'INACT';
     } else if (item.trailerStatus == 'AVL') {
       return item.trailerStatus;
@@ -359,9 +361,12 @@ export class TrailerDashComponent implements OnInit {
 
     this.trStatusChartdata = [];
     if (this.selectedState.country == "") {
+      
       var item = { key: 'Planned', y: lot.byStatus.PLN.length, list: lot.byStatus.PLN };
       this.trStatusChartdata.push(item);
       var item = { key: 'Available', y: lot.byStatus.AVL.length, list: lot.byStatus.AVL };
+      this.trStatusChartdata.push(item);
+      var item = { key: 'Pool', y: lot.byStatus.POOL.length, list: lot.byStatus.POOL };
       this.trStatusChartdata.push(item);
       var item = { key: 'Inactive', y: lot.byStatus.INACT.length, list: lot.byStatus.INACT };
       this.trStatusChartdata.push(item);
@@ -382,6 +387,11 @@ export class TrailerDashComponent implements OnInit {
 
       bag = this.filterByState(lot.byStatus.AVL);
       item1 = { key: 'Available', y: bag.length, list: bag };
+      lotSize += bag.length;
+      this.trStatusChartdata.push(item1);
+
+      bag = this.filterByState(lot.byStatus.POOL);
+      item1 = { key: 'Pool', y: bag.length, list: bag };
       lotSize += bag.length;
       this.trStatusChartdata.push(item1);
 

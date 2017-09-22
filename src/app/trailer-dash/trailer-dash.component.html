@@ -100,11 +100,11 @@
           <table class="table table-striped">
             <tr *ngFor="let i=index;let item of trStatusChartdata" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item)">
               <td><span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span></td>
-              <td><span class="pull-left">{{item.key}}</span><br><span style="font-size:25px">{{item.y}}</span></td>
+              <td><span class="pull-left">{{item.key}}</span><br><span style="font-size:19px">{{item.y}}</span></td>
             </tr>
             <tr>
                 <td><span class="lBox pull-left" style="background: white"></span></td>
-                <td><span class="pull-left">Total</span><br><span style="font-size:25px">{{lotSize}}</span></td>
+                <td><span class="pull-left">Total</span><br><span style="font-size:19px">{{lotSize}}</span></td>
             </tr>
           </table>
         </div>
@@ -130,11 +130,11 @@
           <table class="table table-striped">
             <tr *ngFor="let i=index;let item of trTypeChartData" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item)">
               <td><span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span></td>
-              <td><span class="pull-left">{{item.key}}</span><br><span style="font-size:25px">{{item.y}}</span></td>
+              <td><span class="pull-left">{{item.key}}</span><br><span style="font-size:19px">{{item.y}}</span></td>
             </tr>
             <tr>
               <td><span class="lBox pull-left" style="background: white"></span></td>
-              <td><span class="pull-left">Total</span><br><span style="font-size:25px">{{lotSize}}</span></td>
+              <td><span class="pull-left">Total</span><br><span style="font-size:19px">{{lotSize}}</span></td>
             </tr>
           </table>
         </div>
