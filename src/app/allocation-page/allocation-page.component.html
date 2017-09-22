@@ -14,7 +14,7 @@
 
             <div class="col-md-12 page-heading">
                 <div style="padding-left: 10px;padding-top: 1px;" class="pull-left"><img style="height: 35px;" src="../../assets/images/Order-1.png" /></div>
-                <button class="pull-right toggleBut" [disabled]="selectedOrder.orderNumber==-1" type="button" value="encode" (click)="goToTruck()">Next</button>
+                <button class="pull-right toggleBut" [disabled]="selectedOrder.number==-1" type="button" value="encode" (click)="goToTruck()">Next</button>
             </div><br />
 
 
@@ -87,43 +87,39 @@
                             <tbody id="tgBody" *ngIf="OrderDetailsResp && orderList.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;"
                                 (scroll)="orderTableScrolled(this)">
                                 <ng-container *ngFor="let i=index;let item of orderList">
-                                    <tr class="full" *ngIf="i<oRowCount" (click)="orderSelected(item)" [ngClass]="{'selected': selectedOrder.orderNumber==item.orderNumber}">
+                                    <tr class="full" *ngIf="i<oRowCount" (click)="orderSelected(item)" [ngClass]="{'selected': selectedOrder.number==item.number}">
 
-                                        <td style="text-align:center;width:10%">
+                                        <td style="text-align:center;width:11%">
                                             <!-- <span>{{item.orderNumber}}-{{item.orderCompany}}-{{item.orderStatus}}</span> -->
-                                            <span>{{item.orderNumber}}</span>
+                                            <span>{{item.number}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
-                                            <a (click)="showPlannedOrder(item)" *ngIf="item.orderStatus=='PLN'"><span>{{item.movementNumber}}</span></a>
-                                            <span *ngIf="item.orderStatus!='PLN'">{{item.movementNumber}}</span>
+                                        <td style="text-align:center;width:11%">
+                                            <a (click)="showPlannedOrder(item)" *ngIf="item.orderStatus=='PLN'"><span>{{item.move}}</span></a>
+                                            <span *ngIf="item.orderStatus!='PLN'">{{item.move}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.orderRefNumber}}</span>
+                                        
+                                        <td style="text-align:center;width:11%">
+                                            <span>{{item.bill_to}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.orderBillTo}}</span>
+                                        <td style="text-align:center;width:11%">
+                                            <span>{{item.origin}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.orderOrginCity}},{{item.orderOrginState}}</span>
+                                        <td style="text-align:center;width:11%">
+                                            <span>{{item.destination}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.orderDestCity}},{{item.orderDestState}}</span>
+                                        <td style="text-align:center;width:11%">
+                                            <span>{{item.shipper}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{item.orderOrginPoint}}</span>
+                                        <td style="text-align:center;width:11%">
+                                            <span>{{formatDateTime(item.departure)}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{formatDateTime(item.orderStartDate)}}</span>
+                                        <td style="text-align:center;width:11%">
+                                            <span>{{formatDateTime(item.arrival)}}</span>
                                         </td>
-                                        <td style="text-align:center;width:10%">
-                                            <span>{{formatDateTime(item.orderCompleteDate)}}</span>
-                                        </td>
-
-                                        <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
-                                            <span *ngIf="selectedOrStatus.value!='PLN'">{{item.orderRemark.substring(0,25)}}..</span>
+                                        <td style="text-align:center;width:12%" data-toggle="tooltip" title={{item.orderRemark}}>
+                                            <span *ngIf="selectedOrStatus.value!='PLN'">..</span>
                                             <a *ngIf="selectedOrStatus.value=='PLN'" (click)="unplan()">Unplan</a>
                                         </td>
-
                                     </tr>
                                 </ng-container>
                             </tbody>
@@ -143,7 +139,7 @@
         <div class="row page-container" style="margin:0px">
 
             <div class="col-md-12 page-heading">
-                <div style="padding-left: 10px;padding-top: 1px;" class="pull-left"><img style="height: 35px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.orderNumber}} - {{selectedOrder.orderOrginPoint}} - {{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}}</b></div>
+                <div style="padding-left: 10px;padding-top: 1px;" class="pull-left"><img style="height: 35px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.number}} - {{selectedOrder.shipper}} - {{selectedOrder.origin}} - Legs: {{selectedOrder.legs}}</b></div>
                 <button class="pull-right toggleBut"  [disabled]="selectedTruck.number==-1" type="button" value="encode" (click)="goToTrailer()">Next</button>
                 <button style="margin-right:2px" class="pull-right toggleBut" type="button" value="encode" (click)="goToOrder()">Back</button>
             </div><br />
@@ -243,7 +239,7 @@
                 
                 
                 <div  style="padding-left: 10px;padding-top: 0px;height:100%" class="pull-left">
-                    <img style="height: 35px;padding-right: 5px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.orderNumber}} - {{selectedOrder.orderOrginPoint}} - {{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}} </b>
+                    <img style="height: 35px;padding-right: 5px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.number}} - {{selectedOrder.shipper}} - {{selectedOrder.origin}} - Legs: {{selectedOrder.legs}} </b>
                     <span style="padding-left:50px"><img style="height: 39px;padding-right: 10px;" src="../../assets/images/Truck-5.png" *ngIf="selectedTruck.number!=-1"/><b> {{selectedTruck.number}}</b></span>
                     <span *ngIf="selectedTrailer.trailerID!=-1" style="padding-left:50px"><img style="height: 35px;padding: 4px 10px 0px 0px;" src="../../assets/images/Trailer-icon.png" /><b> {{selectedTrailer.trailerID}}</b> {{ (selectedTrailer.routeDistText)?'- ('+selectedTrailer.routeDistText+')':''}}</span>
                 </div>
@@ -334,7 +330,7 @@
                                             <span>{{item.trailerStatus}}</span>
                                         </td>
                                         <td style="text-align:center;width:14%">
-                                            <span>{{formatDateTime(item.lastMovementDate)}}</span>
+                                            <span>{{formatTrDateTime(item.lastMovementDate)}}</span>
                                         </td>
                                     </tr>
                                 </ng-container>
@@ -365,33 +361,37 @@
                 <div class="col-md-4" style="border-right: 1px solid #ededed;">
                     <div class="filter-container">
                         <div style="padding:5px;" class="pull-left">
-                            <span class="pull-left" style="margin-left:15px;padding-top:5px">Order ID / Movement no. : <b>{{selectedOrder.orderNumber}} / {{selectedOrder.movementNumber}}</b></span>
+                            <span class="pull-left" style="margin-left:15px;padding-top:5px">Order ID / Movement no. : <b>{{selectedOrder.number}} / {{selectedOrder.move}}</b></span>
                         </div>
                     </div>
                     <div style="padding:20px;">
                         <div>
-                            <span>Bill to name</span><br>
-                            <span style="font-size: 16px"><b>{{selectedOrder.orderBillTo}}</b></span>
+                            <span>Bill to party</span><br>
+                            <span style="font-size: 16px"><b>{{selectedOrder.bill_to}}</b></span>
                         </div>
                         <div style="padding-top:10px">
                             <span>TMW</span><br>
-                            <span style="font-size: 16px"><b>{{selectedOrder.orderOrginPoint}}</b></span>
+                            <span style="font-size: 16px"><b>{{selectedOrder.shipper}}</b></span>
                         </div>
                         <div style="padding-top:10px">
                             <span>Origin city</span><br>
-                            <span style="font-size: 16px"><b>{{selectedOrder.orderOrginCity}},{{selectedOrder.orderOrginState}}</b></span>
+                            <span style="font-size: 16px"><b>{{selectedOrder.origin}}</b></span>
                         </div>
                         <div style="padding-top:10px">
                             <span>Destination city</span><br>
-                            <span style="font-size: 16px"><b>{{selectedOrder.orderDestCity}},{{selectedOrder.orderDestState}}</b></span>
+                            <span style="font-size: 16px"><b>{{selectedOrder.destination}}</b></span>
                         </div>
                         <div style="padding-top:10px">
                             <span>Order start date</span><br>
-                            <span style="font-size: 16px"><b>{{formatDateTime(selectedOrder.orderStartDate)}}</b></span>
+                            <span style="font-size: 16px"><b>{{selectedOrder.departure}}</b></span>
                         </div>
                         <div style="padding-top:10px">
                             <span>Order end date</span><br>
-                            <span style="font-size: 16px"><b>{{formatDateTime(selectedOrder.orderCompleteDate)}}</b></span>
+                            <span style="font-size: 16px"><b>{{selectedOrder.arrival}}</b></span>
+                        </div>
+                        <div style="padding-top:10px">
+                            <span>Legs</span><br>
+                            <span style="font-size: 16px"><b>{{selectedOrder.legsC}}</b></span>
                         </div>
 
                     </div>
@@ -455,7 +455,7 @@
                         </div>
                         <div style="padding-top:10px">
                             <span>Last ping date</span><br>
-                            <span style="font-size: 16px"><b>{{formatDateTime(selectedTrailer.lastMovementDate)}}</b></span>
+                            <span style="font-size: 16px"><b>{{formatTrDateTime(selectedTrailer.lastMovementDate)}}</b></span>
                         </div>
                     </div>
                 </div>
@@ -510,19 +510,53 @@
     </div>
     <!-- submit conformation div -->
     <div class="modal fade" id="failedResult" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header page-heading" style="padding:5px 15px 5px 15px">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Allocation Status</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>Error in allocating order</p>
-                    </div>
-                    <div class="modal-footer page-footer">
-                        <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
-                    </div>
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header page-heading" style="padding:5px 15px 5px 15px">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Allocation Status</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Error in allocating order</p>
+                </div>
+                <div class="modal-footer page-footer">
+                    <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="modal fade" id="unExpecError" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header page-heading" style="padding:5px">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Allocation</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Unexpected Error occured. Please contact system administrator.</p>
+                </div>
+                <div class="modal-footer page-footer">
+                    <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="yardunExpecError" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header page-heading" style="padding:5px">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Allocation</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Unexpected Error occured. Please contact system administrator. 
+                    <a href="#Bar" data-toggle="collapse">Details</a></p>
+                    <div id="Bar" class="collapse">Unable to find order/yard location</div>
+                </div>
+                <div class="modal-footer page-footer">
+                    <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
