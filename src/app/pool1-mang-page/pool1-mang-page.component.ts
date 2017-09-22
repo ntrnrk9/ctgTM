@@ -80,11 +80,11 @@ export class Pool1MangPageComponent {
     allPlanners = JSON.parse(JSON.stringify(this.allPlanners1));
 
     csrTable = {
-        column: [{ name: "Sr. no.", width: "25%" },{ name: "CSR code", width: "25%" }, { name: "CSR name", width: "25%" },{ name: "Action", width: "25%" }],
+        column: [{ name: "CSR code", width: "33%" }, { name: "CSR name", width: "33%" },{ name: "Action", width: "34%" }],
         groups: []
     };
     plannerTable = {
-        column: [{ name: "Sr. no.", width: "25%" },{ name: "Planner code", width: "25%" }, { name: "Planner name", width: "25%" },{ name: "Action", width: "25%" }],
+        column: [{ name: "Planner code", width: "33%" }, { name: "Planner name", width: "33%" },{ name: "Action", width: "34%" }],
         groups: []
     };
 
@@ -1172,6 +1172,22 @@ export class Pool1MangPageComponent {
     }
 
     updatePlanner() {
+        var orPlanner=this.allPlanners1[this.plannerEditIndex].planner.toUpperCase();
+        var orPlannerCode=this.allPlanners1[this.plannerEditIndex].plannerCode.toUpperCase();
+        
+        var newPlanner=this.plannerCrud.planner.toUpperCase();
+        var newPlannerCode=this.plannerCrud.plannerCode.toUpperCase();
+        
+        this.plannerCrud.planner=this.plannerCrud.planner.toUpperCase();
+        this.plannerCrud.plannerCode=this.plannerCrud.plannerCode.toUpperCase();
+        // if(orPlanner==newPlanner && orPlannerCode==newPlannerCode){
+        //     console.log("no edit made");
+        //     $('#editPlannerModal').modal('hide');
+        //     this.action.heading = "Update planner";
+        //     this.action.body = "Planner updated successfully!";
+        //     $('#result').modal('show');
+            
+        // }else
         if (this.validatePlanner()) {
 
             let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
@@ -1187,6 +1203,11 @@ export class Pool1MangPageComponent {
                     if (resp.status == 1) {
                         this.action.heading = "Update Planner";
                         this.action.body = "Planner Updated successfully!";
+                        $('#result').modal('show');
+                        this.getAllPlanner();
+                    }else if (resp.status == 2) {
+                        this.action.heading = "Update Planner";
+                        this.action.body = "No change to update.!";
                         $('#result').modal('show');
                         this.getAllPlanner();
                     }
@@ -1213,7 +1234,7 @@ export class Pool1MangPageComponent {
         var isnameValid=false,isCodeValid=false;
         var isnamelenthy=false,isCodelenthy=false;
         var codeValidator=/^[a-zA-Z0-9]+$/;
-        var nameValidatoe=/^[a-zA-Z\s]+$/;
+        var nameValidatoe=/^[a-zA-Z\s\-']+$/;
         isnameValid=nameValidatoe.test(this.csrCrud.csr);
         isCodeValid=codeValidator.test(this.csrCrud.csrCode);
         isnamelenthy=(this.csrCrud.csr.length>70)?false:true;
@@ -1230,7 +1251,7 @@ export class Pool1MangPageComponent {
         var isnameValid=false,isCodeValid=false;
         var isnamelenthy=false,isCodelenthy=false;
         var codeValidator=/^[a-zA-Z0-9]+$/;
-        var nameValidatoe=/^[a-zA-Z\s]+$/;
+        var nameValidatoe=/^[a-zA-Z\s\-']+$/;
         isnameValid=nameValidatoe.test(this.plannerCrud.planner);
         isCodeValid=codeValidator.test(this.plannerCrud.plannerCode);
         
@@ -1291,11 +1312,18 @@ export class Pool1MangPageComponent {
         
         var newCSR=this.csrCrud.csr.toUpperCase();
         var newCSRCode=this.csrCrud.csrCode.toUpperCase();
+
+        this.csrCrud.csr=this.csrCrud.csr.toUpperCase();
+        this.csrCrud.csrCode=this.csrCrud.csrCode.toUpperCase();
         
-        if(orCSR==newCSR && orCSRCode==newCSRCode){
-            console.log("no edit made");
+        // if(orCSR==newCSR && orCSRCode==newCSRCode){
+        //     console.log("no edit made");
+        //     $('#editCSRModal').modal('hide');
+        //     this.action.heading = "Update CSR";
+        //     this.action.body = "CSR updated successfully!";
+        //     $('#result').modal('show');
             
-        }else
+        // }else
         if (this.validateCSR()) {
             
             let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
@@ -1313,6 +1341,11 @@ export class Pool1MangPageComponent {
                     if (resp.status == 1) {
                         this.action.heading = "Update CSR";
                         this.action.body = "CSR updated successfully!";
+                        $('#result').modal('show');
+                        this.getAllCsr();
+                    }else if (resp.status == 2) {
+                        this.action.heading = "Update CSR";
+                        this.action.body = "No change to update.!";
                         $('#result').modal('show');
                         this.getAllCsr();
                     }
@@ -1493,7 +1526,7 @@ export class Pool1MangPageComponent {
         if(choice=="planner"){
             this.action.heading = "Delete Planner";
             this.plannerCrud=item;
-        }else if(choice=="csr"){
+        }else if(choice=="CSR"){
             this.action.heading = "Delete CSR";
             this.csrCrud=item;
         }

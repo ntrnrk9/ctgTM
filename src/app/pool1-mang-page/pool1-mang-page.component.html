@@ -162,7 +162,7 @@
                     <button *ngIf="!showManageBox" type="button" style="background:white;color:black;" class="pm-addBut pull-left"><h5 style="margin:0px;font-weight:bold">Pool List</h5></button>
                     
                     <button *ngIf="!showManageBox" style="margin-left:10px" type="button" class="pm-addBut pull-right" data-toggle="modal" data-target="#addModal" (click)="toAdd()">Add <span class="pull-right glyphicon glyphicon-plus pm-add-plus"></span></button>
-                    <button *ngIf="!showManageBox" type="button" class="pm-addBut pull-right" (click)="managecsrPlanner()">Manage </button>
+                    <button *ngIf="!showManageBox" type="button" class="pm-addBut pull-right" (click)="managecsrPlanner()">Manage user </button>
                     <!-- <button *ngIf="showManageBox" type="button" class="pm-addBut pull-right" (click)="backToPool()">Back to pool </button> -->
                 </div>
 
@@ -187,21 +187,19 @@
                                 </ng-container>
                             </tr>
                         </thead>
-                        <tbody *ngIf="allCsrResp && data.length!=0" style="font-size: 12px">
+                        <tbody *ngIf="allCsrResp && allCsr.length!=0" style="font-size: 12px">
                             <ng-container *ngFor="let i=index;let item of allCsr">
                                 <tr class="full">
-                                    <td style="text-align:center;width:25%">
-                                        <span>{{i+1}}</span>
-                                    </td>
-                                    <td style="text-align:center;width:25%">
+                                    
+                                    <td style="text-align:center;width:33%">
                                         <span>{{item.csrCode}}</span>
                                     </td>
-                                    <td style="text-align:center;width:25%">
+                                    <td style="text-align:center;width:33%">
                                         <span>{{item.csr}}</span>
                                     </td>
-                                    <td style="text-align:center;width:25%">
+                                    <td style="text-align:center;width:34%">
                                         <button type="button" class="action" (click)="toEditCSR(item,i)"><img width="20px" src="../../assets/images/markers/edit.png" data-toggle="tooltip" title="Edit"/></button>
-                                        <button class="action" (click)="getConfirmationToDeleteCP(item,'csr')"><img width="20px" src="../../assets/images/markers/delete.png" data-toggle="tooltip" title="Delete"/></button>
+                                        <button class="action" (click)="getConfirmationToDeleteCP(item,'CSR')"><img width="20px" src="../../assets/images/markers/delete.png" data-toggle="tooltip" title="Delete"/></button>
                                         <!-- <button class="action"><img width="20px" src="../../assets/images/markers/reposition.png" data-toggle="tooltip" title="Reposition"/></button> -->
                                     </td>
                                 </tr>
@@ -230,19 +228,17 @@
                                     </ng-container>
                                 </tr>
                             </thead>
-                            <tbody *ngIf="allPlannersResp && data.length!=0" style="font-size: 12px">
+                            <tbody *ngIf="allPlannersResp && allPlanners1.length!=0" style="font-size: 12px">
                                 <ng-container *ngFor="let i=index;let item of allPlanners1">
                                     <tr class="full">
-                                        <td style="text-align:center;width:25%">
-                                            <span>{{i+1}}</span>
-                                        </td>
-                                        <td style="text-align:center;width:25%">
+                                        
+                                        <td style="text-align:center;width:33%">
                                             <span>{{item.plannerCode}}</span>
                                         </td>
-                                        <td style="text-align:center;width:25%">
+                                        <td style="text-align:center;width:33%">
                                             <span>{{item.planner}}</span>
                                         </td>
-                                        <td style="text-align:center;width:25%">
+                                        <td style="text-align:center;width:34%">
                                             <button type="button" class="action" (click)="toEditPlanner(item,i)"><img width="20px" src="../../assets/images/markers/edit.png" data-toggle="tooltip" title="Edit"/></button>
                                             <button class="action" (click)="getConfirmationToDeleteCP(item,'planner')"><img width="20px" src="../../assets/images/markers/delete.png" data-toggle="tooltip" title="Delete"/></button>
                                         </td>
@@ -618,11 +614,11 @@
                             <div class="modal-div">
                                 <div class="row pu-row">
                                     <div class="col-md-6 orPad">
-                                        <label>CSR Code</label><br />
+                                        <label>CSR Code<span class="first"> *</span></label><br />
                                         <input type="text" [(ngModel)]="csrCrud.csrCode" value="{{csrCrud.csrCode}}" [ngClass]="{'redAlert':!isValidFields.isValidCSRCode }" placeholder="Max 20 char"/>
                                     </div>
                                     <div class="col-md-6 olPad">
-                                        <label>CSR Name</label><br />
+                                        <label>CSR Name<span class="first"> *</span></label><br />
                                         <input type="text" [(ngModel)]="csrCrud.csr" value="{{csrCrud.csr}}" [ngClass]="{'redAlert':!isValidFields.isValidCSRName}" placeholder="Max 70 char"/>
                                     </div>
                                     <!-- <span class="note">Note: Maximum 70 charecters</span> -->
@@ -650,11 +646,11 @@
                             <div class="modal-div">
                                 <div class="row pu-row">
                                     <div class="col-md-6 orPad">
-                                        <label>Planner Code</label><br />
+                                        <label>Planner Code<span class="first"> *</span></label><br />
                                         <input type="text" [(ngModel)]="plannerCrud.plannerCode" value="{{plannerCrud.plannerCode}}" [ngClass]="{'redAlert':!isValidFields.isValidPlannerCode }" placeholder="Max 20 char"/>
                                     </div>
                                     <div class="col-md-6 olPad">
-                                        <label>Planner Name</label><br />
+                                        <label>Planner Name<span class="first"> *</span></label><br />
                                         <input type="text" [(ngModel)]="plannerCrud.planner" value="{{plannerCrud.planner}}" [ngClass]="{'redAlert':!isValidFields.isValidPlannerName }"  placeholder="Max 70 char"/>
                                     </div>
                                     <!-- <span class="note">Note: Maximum 70 charecters</span> -->
