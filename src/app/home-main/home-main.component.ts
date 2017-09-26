@@ -11,7 +11,7 @@ import * as config from '../configs/configs';
   styleUrls: ['./home-main.component.css']
 })
 export class HomeMainComponent implements OnInit {
-  toShowTab = 1;
+  toShowTab = 2;
   allTrailers = [];
 
   trailerStatusResp = false;

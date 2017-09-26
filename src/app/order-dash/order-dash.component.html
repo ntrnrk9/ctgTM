@@ -1,10 +1,5 @@
-<p>
-  order-dash works!
-</p>
-
-
 <div style="text-align: center">
-  <div style="height:300px;width:500px;">
+  <!-- <div style="height:300px;width:500px;">
     <canvas baseChart
           width="4" height="1"
           [datasets]="barChartData"
@@ -15,5 +10,75 @@
           [chartType]="barChartType"
           (chartHover)="chartHovered($event)"
           (chartClick)="chartClicked($event)"></canvas>
+  </div> -->
+  <div class="row">
+    <div class="col-md-6">
+      <div>
+        <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3>
+      </div>
+      <div *ngIf="!OrderTrailerTrackResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+    </div>
+    <div class="col-md-6">
+      <div *ngIf="FutureAVLOrdersResp">
+        <nvd3 [options]="futAvlOptions" [data]="futAvlData"></nvd3>
+      </div>
+      <div *ngIf="!FutureAVLOrdersResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+    </div>
+  </div>
+
+  <div>
+    <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
+      <thead style="font-size: 12px">
+        <tr bgcolor="#f7f8fc" class="app-table-tr full">
+          <ng-container *ngFor="let con of orders.column">
+            <th [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody id="tgBody" *ngIf="allTrailler.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
+        <ng-container *ngFor="let i=index;let item of allTrailler">
+          <tr class="full" *ngIf="i<gRowCount">
+
+              <td style="text-align:center;width:10%">
+                  <!-- <span>{{item.orderNumber}}-{{item.orderCompany}}-{{item.orderStatus}}</span> -->
+                  <span>{{item.orderNumber}}</span>
+              </td>
+              <td style="text-align:center;width:10%">
+                  <a (click)="showPlannedOrder(item)" *ngIf="item.orderStatus=='PLN'"><span>{{item.movementNumber}}</span></a>
+                  <span *ngIf="item.orderStatus!='PLN'">{{item.movementNumber}}</span>
+              </td>
+              <td style="text-align:center;width:10%">
+                  <span>{{item.orderRefNumber}}</span>
+              </td>
+              <td style="text-align:center;width:10%">
+                  <span>{{item.orderBillTo}}</span>
+              </td>
+              <td style="text-align:center;width:10%">
+                  <span>{{item.orderOrginCity}},{{item.orderOrginState}}</span>
+              </td>
+              <td style="text-align:center;width:10%">
+                  <span>{{item.orderDestCity}},{{item.orderDestState}}</span>
+              </td>
+              <td style="text-align:center;width:10%">
+                  <span>{{item.orderOrginPoint}}</span>
+              </td>
+              <td style="text-align:center;width:10%">
+                  <span>{{item.orderStartDate}}</span>
+              </td>
+              <td style="text-align:center;width:10%">
+                  <span>{{item.orderCompleteDate}}</span>
+              </td>
+
+              <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
+                  <span>{{item.orderRemark}}</span>
+              </td>
+
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="allTrailler.length==0 ">No data found</div>
+    <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTrailler.length}} record(s) found</div>-->
+    <div style="padding-top: 10px;">{{allTrailler.length}} record(s) found</div>
   </div>
 </div>
