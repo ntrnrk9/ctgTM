@@ -13,10 +13,10 @@
   </div> -->
   <div class="row">
     <div class="col-md-6">
-      <div>
+      <div *ngIf="OrderStatsResp">
         <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3>
       </div>
-      <div *ngIf="!OrderTrailerTrackResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+      <div *ngIf="!OrderStatsResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
     <div class="col-md-6">
       <div *ngIf="FutureAVLOrdersResp">

@@ -45,7 +45,7 @@ export class OrderDashComponent implements OnInit {
     '#7cb82f',
   ];
 
-  OrderTrailerTrackResp = false;
+  OrderStatsResp=false;
   FutureAVLOrdersResp=false;
 
   public barChartLabels: string[] = ['Moving as planned', 'Not started', 'Not as per plan', 'Not as per plan'];
@@ -183,7 +183,7 @@ export class OrderDashComponent implements OnInit {
 
   getOrderStats() {
     let url = config.baseUrl + "/HomeService/api/OrderTrailerTrack";
-
+    this.OrderStatsResp=false;
     this.http.get(url).map(res => res.json())
       .subscribe(
       (data) => {
@@ -194,30 +194,30 @@ export class OrderDashComponent implements OnInit {
           values: [
             {
               "label": "Moving as planned",
-              "value": 29.0,
+              "value": 0,
               "list": []
             },
             {
               "label": "Not started",
-              "value": 90.0,
+              "value": 0,
               "list": []
             },
             {
               "label": "Not as per plan and started",
-              "value": 32.0,
+              "value": 0,
               "list": []
             },
             {
               "label": "Not as per plan and not started",
-              "value": 196.0,
+              "value": 0,
               "list": []
             }
           ]
         }
         data.dataSet.forEach(element => {
           if (element.isMovingAsPlanned == 1) {
-            bag.values[4].value++;
-            bag.values[4].list.push(element);
+            bag.values[3].value++;
+            bag.values[3].list.push(element);
           } else if (element.isMovingAsPlanned == 2) {
             bag.values[1].value++;
             bag.values[1].list.push(element);
@@ -230,12 +230,14 @@ export class OrderDashComponent implements OnInit {
 
           } else { }
         });
-        this.readyDdata();
+        this.plnVsActdata=[];
+        this.plnVsActdata.push(bag); 
+        this.OrderStatsResp=true;
 
       }, //For Success Response
       (err) => {
         console.log("StatesTrailerCounts error recieved");
-
+        this.OrderStatsResp=true;
       } //For Error Response
       );
   }
