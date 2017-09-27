@@ -1211,7 +1211,7 @@ export class AllocationPageComponent {
 
         let options = new RequestOptions({ headers: headers });
         //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
-        let url = config.ctgApiUrl + "/assets/order/" + this.selectedOrder.number + "/legs1";
+        let url = config.ctgApiUrl + "/assets/order/" + this.selectedOrder.number + "/legs";
         this.http.get(url, {
             headers: headers
         }).map(res => res.json())

@@ -71,7 +71,7 @@
     <app-singleselect [items]="cmpList" [config]="cmpSelectConfig" (selectedItemChange)="cmpSelected($event);filterByCmpnState(1)"
       [(selectedItem)]="selectedCmp" [key]="'lable'"></app-singleselect>
   </div>
-  <div style="width:180px;border: 1px solid #d3d3d3;height: 32px;margin-left:10px" class="pull-left">
+  <div *ngIf="toShowStateFilter" style="width:180px;border: 1px solid #d3d3d3;height: 32px;margin-left:10px" class="pull-left">
     <app-singleselect [items]="allStates" [config]="stateSelectConfig" (selectedItemChange)="stateSelected($event);filterByCmpnState(2)"
       [(selectedItem)]="selectedState" [key]="'stateDesc'"></app-singleselect>
   </div>

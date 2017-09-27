@@ -95,6 +95,7 @@ export class TrailerDashComponent implements OnInit {
   public toShowLegend = true;
   showGrid = false;
   trCountResp = false;
+  toShowStateFilter=true;
 
   trStatusChartoptions = {
     chart: {
@@ -225,6 +226,17 @@ export class TrailerDashComponent implements OnInit {
       srt: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
       star: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
     };
+    this.segByCountryData = {
+      usa: { list: [],cven:[],srt:[],star:[]},
+      mexico: { list: [],cven:[],srt:[],star:[]},
+      canada: { list: [],cven:[],srt:[],star:[]}
+    };
+    this.byCmpTotal={
+      gTot:0,
+      cven:0,
+      srt:0,
+      star:0
+    };
 
     this.trStatusChartoptions.chart.pie.dispatch.elementClick = function (e) {
       //console.log('click-init ' + JSON.stringify(e));
@@ -346,13 +358,13 @@ export class TrailerDashComponent implements OnInit {
         this.segData.star.byStatus[key].push(item);
       }
 
-      if (item.country == 'USA') {
+      if (item.country.toUpperCase() == 'USA') {
         this.segByCountryData.usa.list.push(item);
         this.segByCountryData.usa[item.company.toLowerCase()].push(item);
-      } else if (item.country == 'MEXICO') {
+      } else if (item.country.toUpperCase() == 'MEXICO') {
         this.segByCountryData.mexico.list.push(item);
         this.segByCountryData.mexico[item.company.toLowerCase()].push(item);
-      } else if (item.country == 'CANADA') {
+      } else if (item.country.toUpperCase() == 'CANADA') {
         this.segByCountryData.canada.list.push(item);
         this.segByCountryData.canada[item.company.toLowerCase()].push(item);
       }
@@ -494,7 +506,7 @@ export class TrailerDashComponent implements OnInit {
   filterByCountry(list) {
     var bag = [];
     list.forEach(element => {
-      if (this.selectedCountry.value == element.country) {
+      if (this.selectedCountry.value.toLowerCase() == element.country.toLowerCase()) {
         bag.push(element);
       }
     });
@@ -543,6 +555,11 @@ export class TrailerDashComponent implements OnInit {
     this.showGrid = false;
     this.gRowCount = 50;
     this.selectedCountry = item;
+    if(item.value=="USA"){
+      this.toShowStateFilter=true;
+    }else{
+      this.toShowStateFilter=false;
+    }
   }
 
 
