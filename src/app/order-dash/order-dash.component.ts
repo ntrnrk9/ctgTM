@@ -24,6 +24,10 @@ export class OrderDashComponent implements OnInit {
       //console.log('click-init ' + JSON.stringify(e));
       ctrl.futAvlOrderchartClicked(e);
     };
+    this.plnVsActoptions.chart.discretebar.dispatch.elementClick=function(e){
+      //console.log('click-init ' + JSON.stringify(e));
+      ctrl.plnVsActchartClicked(e);
+    };
   }
 
   public barChartOptions: any = {
@@ -47,6 +51,8 @@ export class OrderDashComponent implements OnInit {
 
   OrderStatsResp=false;
   FutureAVLOrdersResp=false;
+  toShowPlnVsActTable=false;
+  toShowFutAvlTable=false;
 
   public barChartLabels: string[] = ['Moving as planned', 'Not started', 'Not as per plan', 'Not as per plan'];
   public barChartType: string = 'bar';
@@ -61,10 +67,16 @@ export class OrderDashComponent implements OnInit {
   };
 
   orders = {
-    column: [{ name: "Order ID", width: "10%" },{ name: "Movement no.", width: "10%" }, { name: "Ref. no.", width: "10%" },{ name: "Bill to name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Order origin point", width: "10%" },
-    { name: "Order start date", width: "10%" }, { name: "Order end date", width: "10%" }, { name: "Order remark", width: "10%" } ],
+    column: [{ name: "Order ID", width: "10%" }, { name: "Movement no.", width: "10%" }, { name: "Ref. no.", width: "10%" }, { name: "Bill to name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Order origin point", width: "10%" },
+    { name: "Order start date", width: "10%" }, { name: "Order end date", width: "10%" }, { name: "Order remark", width: "10%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
-};
+  };
+
+  plnVsActGrid = {
+    column: [{ name: "Order ID", width: "10%" }, { name: "Movement no.", width: "10%" }, { name: "Ref. no.", width: "10%" }, { name: "Bill to name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Order origin point", width: "10%" },
+    { name: "Order start date", width: "10%" }, { name: "Order end date", width: "10%" }, { name: "Order remark", width: "10%" }],
+    groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
+  };
 
   colorsOPs = ['red'];
   dataSet = [];
@@ -72,6 +84,13 @@ export class OrderDashComponent implements OnInit {
 
   futAvlOrderchartClicked(e){
     this.allTrailler=e.data.list;
+    this.toShowPlnVsActTable=false;
+    this.toShowFutAvlTable=true;
+  }
+  plnVsActchartClicked(e){
+    this.allTrailler=e.data.list;
+    this.toShowFutAvlTable=false;
+    this.toShowPlnVsActTable=true;
   }
 
   public barChartData: any[] = [
@@ -84,29 +103,7 @@ export class OrderDashComponent implements OnInit {
 
   ];
 
-  plnVsActdata = [
-    {
-      key: "Planned Vs Actual",
-      values: [
-        {
-          "label": "Moving as planned",
-          "value": 29.0
-        },
-        {
-          "label": "Not started",
-          "value": 90.0
-        },
-        {
-          "label": "Not as per plan",
-          "value": 32.0
-        },
-        {
-          "label": "Not as per planA",
-          "value": 196.0
-        }
-      ]
-    }
-  ];
+  plnVsActdata = [];
 
   plnVsActoptions = {
     chart: {
@@ -131,6 +128,14 @@ export class OrderDashComponent implements OnInit {
       yAxis: {
         axisLabel: 'Y Axis',
         axisLabelDistance: -10
+      },
+      discretebar:{
+        dispatch: {
+          elementClick: function (e) {
+            console.log('click ' + JSON.stringify(e));
+            
+          },
+        }
       }
     }
   };
