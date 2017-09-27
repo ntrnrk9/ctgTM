@@ -7,6 +7,10 @@
     <img style="height:80px" *ngSwitchCase=3 src="../../assets/images/progress/summary.png" /><br>
 </div>
 <br>
+
+
+<allotrgmap [trailers]="pingList" (selectedChange)="trSelectedFromMap($event)" [(selected)]="selectedTrailer" [(config)]="trMapConfig"></allotrgmap>
+
 <div [ngSwitch]="page">
     <!-- Order selection div -->
     <div *ngSwitchCase=0>
@@ -526,14 +530,18 @@
         </div>
     </div>
     <div class="modal fade" id="unExpecError" role="dialog">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header page-heading" style="padding:5px">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Allocation</h4>
+                    <h4 class="modal-title">{{action.heading}}</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Unexpected Error occured. Please contact system administrator.</p>
+                    <p>{{action.body}}
+                    <a href="#details" data-toggle="collapse">Details</a></p>
+                    <div id="details" class="collapse">
+                       <p [innerHTML]="action.details" style="word-wrap: break-word"></p>
+                    </div>
                 </div>
                 <div class="modal-footer page-footer">
                     <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>

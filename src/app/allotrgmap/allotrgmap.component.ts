@@ -205,7 +205,7 @@ export class AlloTrGmap {
             this.orinfowindow = new google.maps.InfoWindow({
                 content: ""
             });
-            this.orinfowindow.setContent(this.orcreateinfoWinContent(this.config.selOrder));
+            //this.orinfowindow.setContent(this.orcreateinfoWinContent(this.config.selOrder));
             //this.orinfowindow.open(this.map, this.orderMaker);
             //this.markers.push(orderMaker);
         }

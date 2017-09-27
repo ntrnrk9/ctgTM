@@ -57,6 +57,9 @@ export class AllocationPageComponent {
     selectedMiles = { lable: "Select radius", value: 0 };
     trailerMileList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedTrailerMile = { lable: "50 Miles", value: 50 };
+    action: any = { heading: "", body: "",details: ""};
+    pingList=[];
+    trResp=false;
 
     mgToggle = true;
     omgToggle = false;
@@ -82,7 +85,6 @@ export class AllocationPageComponent {
     traRowCount = 50;
     geocoder = new google.maps.Geocoder();
     zone: NgZone;
-    action: any = { heading: "", body: "" };
     mapConfig: any = { lat: 36.090240, lng: -95.712891, zoom: 4, mapType: 'roadmap', marker: -1 };
     historyConfig: any = { showHistory: false, allTraillerSubSet: [], dataSet: [], backupDS: [], backupATS: [] };
     
@@ -117,6 +119,7 @@ export class AllocationPageComponent {
     constructor(private http: Http, private cdr: ChangeDetectorRef) {
         //this.getOrderDetails();
         this.getOrderDetailsByFn();
+        this.gettrailers();
     }
 
     ngOnChange(val: number) {
@@ -1147,7 +1150,50 @@ export class AllocationPageComponent {
             }, //For Success Response
             (err) => {
                 console.log("OrderDetailsByFn error recieved");
-                this.OrderDetailsResp = false;
+                this.OrderDetailsResp = true;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='orders service failed<br>'+url+'<br>Status: '+err.status;
+                $('#unExpecError').modal('show');
+            } //For Error Response
+            );
+    }
+
+    gettrailers() {
+        this.trResp = false;
+        var creds = "username=" + config.username + "&password=" + config.password;
+
+        let authToken = "Basic";
+        let headers = new Headers({ 'Accept': 'application/json' });
+        headers.append('Authorization', 'Basic ' +
+            btoa(config.username + ':' + config.password));
+
+
+        let options = new RequestOptions({ headers: headers });
+        let url = config.ctgApiUrl + "/assets/trailers";
+        this.http.get(url, {
+            headers: headers
+        }).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("tr data recieved");
+                var bag=[];
+                data.data.forEach(element => {
+                    var item={latitude:0,longitude:0,trailerID:0};
+                    item.latitude=element.location.position.lat;
+                    item.longitude=element.location.position.lng;
+                    item.trailerID=element.number;
+                    bag.push(item);
+                });
+                this.pingList=bag;
+
+            }, //For Success Response
+            (err) => {
+                console.log("OrderDetailsByFn error recieved");
+                this.OrderDetailsResp = true;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='orders service failed<br>'+url+'<br>Status: '+err.status;
                 $('#unExpecError').modal('show');
             } //For Error Response
             );
@@ -1165,7 +1211,7 @@ export class AllocationPageComponent {
 
         let options = new RequestOptions({ headers: headers });
         //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
-        let url = config.ctgApiUrl + "/assets/order/" + this.selectedOrder.number + "/legs";
+        let url = config.ctgApiUrl + "/assets/order/" + this.selectedOrder.number + "/legs1";
         this.http.get(url, {
             headers: headers
         }).map(res => res.json())
@@ -1180,6 +1226,9 @@ export class AllocationPageComponent {
             (err) => {
                 console.log("OrderLegsOfOrder error recieved");
                 this.OrderLegsResp = false;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='Legs service failed<br>'+url+'<br>Status: '+err.status;
                 $('#unExpecError').modal('show');
             } //For Error Response
             );
