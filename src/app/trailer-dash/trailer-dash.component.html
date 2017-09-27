@@ -1,88 +1,96 @@
-
 <div class="row" style="margin-top:20px">
-  <div class="col-lg-3 col-xs-6 " >
+  <div class="col-lg-3 col-xs-6 ">
     <!-- small box -->
     <div class="small-box b1">
       <div class="inner">
-        <h3 *ngIf="trailers.length>0">{{segData.cven.list.length+segData.srt.list.length+segData.star.list.length}}</h3>
+        <h3 *ngIf="trailers.length>0">{{this.byCmpTotal.gTot}}</h3>
         <h3 *ngIf="trailers.length==0">...</h3>
         <p>Grand Total</p>
       </div>
       <div class="icon">
         <img width="100" src="../../assets/images/dash/GrandTotal.png" />
       </div>
-      
+
     </div>
-  </div><!-- ./col -->
-  <div class="col-lg-3 col-xs-6 " >
+  </div>
+  <!-- ./col -->
+  <div class="col-lg-3 col-xs-6 ">
     <!-- small box -->
     <div class="small-box b2">
       <div class="inner">
-        <h3 *ngIf="trailers.length>0">{{segData.cven.list.length}}</h3>
+        <h3 *ngIf="trailers.length>0">{{this.byCmpTotal.cven}}</h3>
         <h3 *ngIf="trailers.length==0">...</h3>
         <p>Covenant</p>
       </div>
       <div class="icon">
-          <img width="100" src="../../assets/images/dash/CVEN.png" />
+        <img width="100" src="../../assets/images/dash/CVEN.png" />
       </div>
-      
+
     </div>
-  </div><!-- ./col -->
-  <div class="col-lg-3 col-xs-6 " >
+  </div>
+  <!-- ./col -->
+  <div class="col-lg-3 col-xs-6 ">
     <!-- small box -->
     <div class="small-box b3">
       <div class="inner">
-        <h3 *ngIf="trailers.length>0">{{segData.srt.list.length}}</h3>
+        <h3 *ngIf="trailers.length>0">{{this.byCmpTotal.srt}}</h3>
         <h3 *ngIf="trailers.length==0">...</h3>
         <p>SRT</p>
       </div>
       <div class="icon">
-          <img width="100" src="../../assets/images/dash/SRT.png" />
+        <img width="100" src="../../assets/images/dash/SRT.png" />
       </div>
-      
+
     </div>
-  </div><!-- ./col -->
-  <div class="col-lg-3 col-xs-6 " >
+  </div>
+  <!-- ./col -->
+  <div class="col-lg-3 col-xs-6 ">
     <!-- small box -->
     <div class="small-box b4">
       <div class="inner">
-        <h3 *ngIf="trailers.length>0">{{segData.star.list.length}}</h3>
+        <h3 *ngIf="trailers.length>0">{{this.byCmpTotal.star}}</h3>
         <h3 *ngIf="trailers.length==0">...</h3>
         <p>STAR</p>
       </div>
       <div class="icon">
-          <img width="100" src="../../assets/images/dash/STAR.png" />
+        <img width="100" src="../../assets/images/dash/STAR.png" />
       </div>
-      
+
     </div>
-  </div><!-- ./col -->
+  </div>
+  <!-- ./col -->
 </div>
 
 <div class="row" style="margin:20px 0px 0px 0px">
-    <div style="width:180px;border: 1px solid #d3d3d3;height: 32px;" class="pull-left">
-      <app-singleselect [items]="cmpList" [config]="cmpSelectConfig" (selectedItemChange)="cmpSelected($event);filterByCmpnState()" [(selectedItem)]="selectedCmp"
-        [key]="'lable'"></app-singleselect>
-    </div>
-    <div style="width:180px;border: 1px solid #d3d3d3;height: 32px;margin-left:10px" class="pull-left">
-        <app-singleselect [items]="allStates" [config]="stateSelectConfig" (selectedItemChange)="stateSelected($event);filterByCmpnState()" [(selectedItem)]="selectedState"
-          [key]="'stateDesc'"></app-singleselect>
-      </div>
-  </div>
-  <br>
 
-<div class="row" >
+  <div style="width:180px;border: 1px solid #d3d3d3;height: 32px;" class="pull-left">
+    <app-singleselect [items]="countryList" [config]="countrySelectConfig" (selectedItemChange)="countrySelected($event);filterByCmpnState(0)"
+      [(selectedItem)]="selectedCountry" [key]="'lable'"></app-singleselect>
+  </div>
+  <div style="width:180px;border: 1px solid #d3d3d3;height: 32px;margin-left:10px" class="pull-left">
+    <app-singleselect [items]="cmpList" [config]="cmpSelectConfig" (selectedItemChange)="cmpSelected($event);filterByCmpnState(1)"
+      [(selectedItem)]="selectedCmp" [key]="'lable'"></app-singleselect>
+  </div>
+  <div style="width:180px;border: 1px solid #d3d3d3;height: 32px;margin-left:10px" class="pull-left">
+    <app-singleselect [items]="allStates" [config]="stateSelectConfig" (selectedItemChange)="stateSelected($event);filterByCmpnState(2)"
+      [(selectedItem)]="selectedState" [key]="'stateDesc'"></app-singleselect>
+  </div>
+</div>
+<br>
+
+<div class="row">
   <!-- <div class="col-md-4" style="height:330px;">
-    <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Trailer Stats</label></div>
-    <div style="height:290px;border:1px solid silver">
-      <div *ngIf="trCountResp">
-        <div class="col-md-6 centered box1" style=""><div style="font-size: 30px">{{totalTrailers}}</div><br><div>Total Trailers: </div></div>
-        <div class="col-md-6 centered box2" style=""><label>Empty Trailers: </label>{{emptyTrailers}}</div>
-        <div class="col-md-6 centered box3" style=""><label>Moving Trailers: </label>{{movingTrailers}}</div>
-        <div class="col-md-6 centered box4" style=""><label>Shed Trailers: </label>{{shedTrailers}}</div>
+      <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Trailer Stats</label></div>
+      <div style="height:290px;border:1px solid silver">
+        <div *ngIf="trCountResp">
+          <div class="col-md-6 centered box1" style=""><div style="font-size: 30px">{{totalTrailers}}</div><br><div>Total Trailers: </div></div>
+          <div class="col-md-6 centered box2" style=""><label>Empty Trailers: </label>{{emptyTrailers}}</div>
+          <div class="col-md-6 centered box3" style=""><label>Moving Trailers: </label>{{movingTrailers}}</div>
+          <div class="col-md-6 centered box4" style=""><label>Shed Trailers: </label>{{shedTrailers}}</div>
+        </div>
+          <div *ngIf="!trCountResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
       </div>
-        <div *ngIf="!trCountResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
-    </div>
-  </div> -->
+    </div> -->
   <div class="col-md-6" style="height:380px;">
     <!-- <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Status</label></div> -->
     <div style="height:380px;border:1px solid silver;">
@@ -103,8 +111,8 @@
               <td><span class="pull-left">{{item.key}}</span><br><span style="font-size:19px">{{item.y}}</span></td>
             </tr>
             <tr>
-                <td><span class="lBox pull-left" style="background: white"></span></td>
-                <td><span class="pull-left">Total</span><br><span style="font-size:19px">{{lotSize}}</span></td>
+              <td><span class="lBox pull-left" style="background: white"></span></td>
+              <td><span class="pull-left">Total</span><br><span style="font-size:19px">{{lotSize}}</span></td>
             </tr>
           </table>
         </div>
@@ -113,11 +121,11 @@
     </div>
   </div>
   <div class="col-md-6" style="height:380px;">
-      <!-- <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Trailer Type</label></div> -->
-      <div style="height:380px;border:1px solid silver;">
+    <!-- <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Trailer Type</label></div> -->
+    <div style="height:380px;border:1px solid silver;">
       <div *ngIf="trailers.length>0">
         <!-- <canvas height="130" baseChart [options]="chartOptions" [colors]="colors" [data]="typeChartData" [labels]="typeChartLabels" [chartType]="pieChartType"
-        (chartClick)="chartClicked($event,2)"></canvas> -->
+          (chartClick)="chartClicked($event,2)"></canvas> -->
         <div class="col-md-8">
           <div style="text-align: left;padding-top: 10px;">
             <label style="font-size: 25px;font-weight: normal;">By type</label>
@@ -153,14 +161,13 @@
           <ng-container *ngFor="let con of ob.column">
             <th [ngStyle]="{'width':con.width}" style="text-align:center;">
               <span>{{con.name}}</span>
-              <span  class="caret pointer" (click)="sortTrailers(allTrailler,con.key,1)"></span>
-              <span  class="caret caret-reversed pointer" (click)="sortTrailers(allTrailler,con.key,0)"></span>
+              <span class="caret pointer" (click)="sortTrailers(allTrailler,con.key,1)"></span>
+              <span class="caret caret-reversed pointer" (click)="sortTrailers(allTrailler,con.key,0)"></span>
             </th>
           </ng-container>
         </tr>
       </thead>
-      <tbody id="tgBody" *ngIf="allTrailler.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;"
-        (scroll)="tableScrolled(this)">
+      <tbody id="tgBody" *ngIf="allTrailler.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
         <ng-container *ngFor="let i=index;let item of allTrailler">
           <tr class="full" *ngIf="i<gRowCount">
 
@@ -174,24 +181,24 @@
               <span>{{item.trailerType}}</span>
             </td>
             <td style="text-align:center;width:12%">
-                <span>{{item.trailerYear}}</span>
+              <span>{{item.trailerYear}}</span>
             </td>
             <td style="text-align:center;width:12%">
               <span>{{item.location}}</span>
             </td>
-            
+
             <td style="text-align:center;width:12%">
               <span>{{item.trailerStatus}}</span>
             </td>
 
             <td style="text-align:center;width:16%">
-                <span>{{formatDateTime(item.dotDate,0)}}</span>
+              <span>{{formatDateTime(item.dotDate,0)}}</span>
             </td>
-            
+
             <td style="text-align:center;width:12%">
               <span>{{formatDateTime(item.lastPingDate,1)}}</span>
             </td>
-            
+
           </tr>
         </ng-container>
       </tbody>

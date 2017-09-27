@@ -97,7 +97,7 @@ export class TrackTrailerComponent {
 
         var input = document.getElementById('ctgGeoCode');
         var autoCompOptions = {
-            componentRestrictions: { country: 'us' }
+            componentRestrictions: { country: ['us','mx','ca'] }
         };
         var autocomplete = new google.maps.places.Autocomplete(input, autoCompOptions);
         var obj=this;

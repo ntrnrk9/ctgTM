@@ -28,12 +28,28 @@ export class TrailerDashComponent implements OnInit {
     star: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
   };
 
+  segByCountryData = {
+    usa: { list: [],cven:[],srt:[],star:[]},
+    mexico: { list: [],cven:[],srt:[],star:[]},
+    canada: { list: [],cven:[],srt:[],star:[]}
+  };
+
+  byCmpTotal={
+    gTot:0,
+    cven:0,
+    srt:0,
+    star:0
+  };
+
 
   allStates = [];
   stateSelectConfig = {
     filter: true
   }
   cmpSelectConfig = {
+    filter: false
+  }
+  countrySelectConfig = {
     filter: false
   }
 
@@ -55,6 +71,9 @@ export class TrailerDashComponent implements OnInit {
 
   cmpList: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "STAR", value: "STAR" }];
   selectedCmp = { lable: "Covenant", value: "CVEN" };
+
+  countryList: any = [{ lable: "USA", value: "USA" }, { lable: "Mexico", value: "MEXICO" }, { lable: "Canada", value: "CANADA" }];
+  selectedCountry = { lable: "USA", value: "USA" };
   
   
   allTrailler = [];
@@ -224,7 +243,7 @@ export class TrailerDashComponent implements OnInit {
     }
 
     this.prepSegData();
-    this.filterByCmpnState();
+    this.filterByCmpnState(0);
   }
 
   sortTrailers(list, key, asc) {
@@ -326,6 +345,17 @@ export class TrailerDashComponent implements OnInit {
         var key = this.checkStatusOfTrailer(item);
         this.segData.star.byStatus[key].push(item);
       }
+
+      if (item.country == 'USA') {
+        this.segByCountryData.usa.list.push(item);
+        this.segByCountryData.usa[item.company.toLowerCase()].push(item);
+      } else if (item.country == 'MEXICO') {
+        this.segByCountryData.mexico.list.push(item);
+        this.segByCountryData.mexico[item.company.toLowerCase()].push(item);
+      } else if (item.country == 'CANADA') {
+        this.segByCountryData.canada.list.push(item);
+        this.segByCountryData.canada[item.company.toLowerCase()].push(item);
+      }
     }
 
     this.segData.cven.byType = this.segrigateTrailerByType(this.segData.cven.list, 'CVEN');
@@ -353,24 +383,36 @@ export class TrailerDashComponent implements OnInit {
     }
   }
 
-  filterByCmpnState() {
+  filterByCmpnState(choice) {
     this.showGrid = false;
     this.gRowCount = 50;
-    var lot = this.filterByCmp();
+    var lot = this.cloneObj(this.filterByCmp());
+    lot=this.filterByCmpnCountry(lot);
     var lotSize = 0;
-
+    if(choice==0){
+      this.byCmpTotal.gTot=this.segByCountryData[this.selectedCountry.value.toLowerCase()].list.length;
+      this.byCmpTotal.cven=this.segByCountryData[this.selectedCountry.value.toLowerCase()].cven.length;
+      this.byCmpTotal.srt=this.segByCountryData[this.selectedCountry.value.toLowerCase()].srt.length;
+      this.byCmpTotal.star=this.segByCountryData[this.selectedCountry.value.toLowerCase()].star.length;
+    }
+      
     this.trStatusChartdata = [];
     if (this.selectedState.country == "") {
       
       var item = { key: 'Planned', y: lot.byStatus.PLN.length, list: lot.byStatus.PLN };
+      lotSize += lot.byStatus.PLN.length
       this.trStatusChartdata.push(item);
       var item = { key: 'Available', y: lot.byStatus.AVL.length, list: lot.byStatus.AVL };
+      lotSize += lot.byStatus.AVL.length
       this.trStatusChartdata.push(item);
       var item = { key: 'Pool', y: lot.byStatus.POOL.length, list: lot.byStatus.POOL };
+      lotSize += lot.byStatus.POOL.length
       this.trStatusChartdata.push(item);
       var item = { key: 'Inactive', y: lot.byStatus.INACT.length, list: lot.byStatus.INACT };
+      lotSize += lot.byStatus.INACT.length
       this.trStatusChartdata.push(item);
       var item = { key: 'Others', y: lot.byStatus.OTH.length, list: lot.byStatus.OTH };
+      lotSize += lot.byStatus.OTH.length
       this.trStatusChartdata.push(item);
 
       this.trTypeChartData = [];
@@ -378,7 +420,7 @@ export class TrailerDashComponent implements OnInit {
         var item = { key: element.label, y: element.length, list: element.list };
         this.trTypeChartData.push(item);
       });
-      this.lotSize = lot.list.length;
+      this.lotSize = lotSize;
     } else if (this.selectedState.country != "") {
       var bag = this.filterByState(lot.byStatus.PLN);
       var item1 = { key: 'Planned', y: bag.length, list: bag };
@@ -415,6 +457,26 @@ export class TrailerDashComponent implements OnInit {
     }
   }
 
+  filterByCmpnCountry(lot) {
+    this.showGrid = false;
+    this.gRowCount = 50;
+    var lotSize = 0;
+
+    lot.byStatus.PLN = this.filterByCountry(lot.byStatus.PLN);
+    lot.byStatus.AVL = this.filterByCountry(lot.byStatus.AVL);
+    lot.byStatus.POOL = this.filterByCountry(lot.byStatus.POOL);
+    lot.byStatus.INACT = this.filterByCountry(lot.byStatus.INACT);
+    lot.byStatus.OTH = this.filterByCountry(lot.byStatus.OTH);
+
+    this.trTypeChartData = [];
+    lot.byType.forEach(element => {
+      element.list = this.filterByCountry(element.list);
+      element.length=element.list.length;
+    });
+    this.lotSize = lotSize;
+    return lot;
+  }
+
   filterByCmp() {
     return this.segData[this.selectedCmp.value.toLowerCase()];
   }
@@ -423,6 +485,16 @@ export class TrailerDashComponent implements OnInit {
     var bag = [];
     list.forEach(element => {
       if (this.selectedState.stateCode == element.state) {
+        bag.push(element);
+      }
+    });
+    return bag;
+  }
+
+  filterByCountry(list) {
+    var bag = [];
+    list.forEach(element => {
+      if (this.selectedCountry.value == element.country) {
         bag.push(element);
       }
     });
@@ -456,6 +528,8 @@ export class TrailerDashComponent implements OnInit {
   }
 
   stateSelected(item) {
+    this.showGrid = false;
+    this.gRowCount = 50;
     this.selectedState = item;
   }
 
@@ -463,6 +537,12 @@ export class TrailerDashComponent implements OnInit {
     this.showGrid = false;
     this.gRowCount = 50;
     this.selectedCmp = item;
+  }
+
+  countrySelected(item) {
+    this.showGrid = false;
+    this.gRowCount = 50;
+    this.selectedCountry = item;
   }
 
 
