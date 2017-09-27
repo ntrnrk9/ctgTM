@@ -43,3 +43,16 @@
 .full {
     width: 100%
 }
+
+.histLoader {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.histBut {
+    border: none;
+    background: transparent;
+    color: #d2232a;
+}

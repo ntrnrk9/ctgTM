@@ -73,8 +73,8 @@ export class OrderDashComponent implements OnInit {
   };
 
   plnVsActGrid = {
-    column: [{ name: "Order ID", width: "10%" }, { name: "Movement no.", width: "10%" }, { name: "Ref. no.", width: "10%" }, { name: "Bill to name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Order origin point", width: "10%" },
-    { name: "Order start date", width: "10%" }, { name: "Order end date", width: "10%" }, { name: "Order remark", width: "10%" }],
+    column: [{ name: "Order ID", width: "10%" }, { name: "Movement no.", width: "10%" }, { name: "Order start date.", width: "10%" }, { name: "Order end date", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Order origin point", width: "10%" },
+    { name: "Planned trailer", width: "10%" }, { name: "Trailer in TMW", width: "10%" }, { name: "Sync. with TMW", width: "10%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
 
@@ -83,11 +83,13 @@ export class OrderDashComponent implements OnInit {
   pack = [];
 
   futAvlOrderchartClicked(e){
+    this.gRowCount=50;
     this.allTrailler=e.data.list;
     this.toShowPlnVsActTable=false;
     this.toShowFutAvlTable=true;
   }
   plnVsActchartClicked(e){
+    this.gRowCount=50;
     this.allTrailler=e.data.list;
     this.toShowFutAvlTable=false;
     this.toShowPlnVsActTable=true;
@@ -119,7 +121,7 @@ export class OrderDashComponent implements OnInit {
       y: function (d) { return d.value + (1e-10); },
       showValues: true,
       valueFormat: function (d) {
-        return d3.format(',.4f')(d);
+        return d3.format(',.0f')(d);
       },
       duration: 500,
       xAxis: {
@@ -156,7 +158,7 @@ export class OrderDashComponent implements OnInit {
       y: function (d) { return d.value + (1e-10); },
       showValues: true,
       valueFormat: function (d) {
-        return d3.format(',.4f')(d);
+        return d3.format(',.0f')(d);
       },
       duration: 500,
       xAxis: {
