@@ -326,3 +326,10 @@ border:1px solid silver;
     border: none;
     background-color: #d3d3d3;
 }
+
+.note{
+    margin: 0px;
+    font-size: 10px;
+    font-style: italic;
+    color: gray;
+}

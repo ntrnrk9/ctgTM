@@ -31,6 +31,7 @@ export class Pool1MangPageComponent {
     selectedPlanner: any = "Select a planner";
     toAddBrand: String = "";
     allCsr: any;
+    allCsrResp=false;
     asc = true;
     ttAsc=true;
     fieldvalidation = false;
@@ -57,6 +58,8 @@ export class Pool1MangPageComponent {
     data: any[] = [];
     result: any[] = [];
     pageNum: Number = 1;
+    csrEditIndex=-1;
+    plannerEditIndex=-1;
 
     countryList: any = [];
     cityList: any = [];
@@ -65,17 +68,30 @@ export class Pool1MangPageComponent {
     allStates1: any = [];
     allCC1: any = [];
     allPlanners1: any = [];
+    allPlannersResp=false;
     allPools: any = [];
     allCCForAdd: any = [];
+    plannerCrud={plannerId: -1, planner: "", plannerCode: ""};
+    csrCrud={csrId: -1, csrCode: "", csr: ""};
 
     allCC = JSON.parse(JSON.stringify(this.allCC1));
     allStates = JSON.parse(JSON.stringify(this.allStates1));
     allCities = JSON.parse(JSON.stringify(this.allCities1));
     allPlanners = JSON.parse(JSON.stringify(this.allPlanners1));
 
+    csrTable = {
+        column: [{ name: "CSR code", width: "33%" }, { name: "CSR name", width: "33%" },{ name: "Action", width: "34%" }],
+        groups: []
+    };
+    plannerTable = {
+        column: [{ name: "Planner code", width: "33%" }, { name: "Planner name", width: "33%" },{ name: "Action", width: "34%" }],
+        groups: []
+    };
+
     stateCheckAll: any = false;
     cityCheckAll: any = false;
     ccCheckAll: any = false;
+    showManageBox=false;
     poolToEdit: any = {
         state: "",
         city: "",
@@ -115,6 +131,13 @@ export class Pool1MangPageComponent {
     choosenCity: any = [];
     choosenCC: any = [];
     choosenPlanner: any = [];
+
+    managecsrPlanner() {
+        this.showManageBox = true;
+    }
+    backToPool(){
+        this.showManageBox = false;
+    }
 
     private sort(prop) {
         this.asc = !this.asc;
@@ -666,26 +689,28 @@ export class Pool1MangPageComponent {
 
     private getAllCsr() {
         //alert("hi");
+        this.allCsrResp=false;
         let headers = new Headers({ 'Content-Type': 'text/plain' });
         let options = new RequestOptions({ headers: headers });
         let obj = { 'csr': 0, 'csrCode': 0 };
         let url = config.baseUrl+"/CommonService/api/Csr?csr=0&csrCode=0";
         this.http.get(url).map(res => res.json())
             .subscribe(
-            (data) => { console.log("getAllCsr data recieved"); this.allCsr = data; }, //For Success Response
-            (err) => { console.log("getAllCsr error recieved"); } //For Error Response
+            (data) => { console.log("getAllCsr data recieved"); this.allCsr = data;this.allCsrResp=true; }, //For Success Response
+            (err) => { console.log("getAllCsr error recieved"); this.allCsrResp=true;} //For Error Response
             );
     }
 
     private getAllPlanner() {
         //alert("hi");
+        this.allPlannersResp=false;
         let url = config.baseUrl+"/CommonService/api/Planner?planner=0&plannerCode=0";
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
-                console.log("getAllPlanner data recieved"); this.allPlanners1 = data; this.allPlanners = JSON.parse(JSON.stringify(this.allPlanners1));
+                console.log("getAllPlanner data recieved"); this.allPlannersResp=true;this.allPlanners1 = data; this.allPlanners = JSON.parse(JSON.stringify(this.allPlanners1));
             }, //For Success Response
-            (err) => { console.log("getAllPlanner error recieved"); } //For Error Response
+            (err) => { console.log("getAllPlanner error recieved");this.allPlannersResp=true; } //For Error Response
             );
         this.insertSelected(this.allPlanners);
         this.insertSelected(this.allPlanners1);
@@ -767,6 +792,26 @@ export class Pool1MangPageComponent {
         this.getAllPlanner();
         this.getAllPool();
         this.getAllCompanyForAddPool();
+    }
+
+    private toEditPlanner(item,index){
+        this.isValidFields['isValidPlannerCode']=true;
+        this.isValidFields['isValidPlannerName']=true;
+        this.plannerCrud.planner=item.planner;
+        this.plannerCrud.plannerCode=item.plannerCode;
+        this.plannerCrud.plannerId=item.plannerId;
+        this.plannerEditIndex=index;
+        $('#editPlannerModal').modal('show');
+    }
+
+    private toEditCSR(item,index){
+        this.isValidFields['isValidCSRCode']=true;
+        this.isValidFields['isValidCSRName']=true;
+        this.csrCrud.csr=item.csr;
+        this.csrCrud.csrCode=item.csrCode;
+        this.csrCrud.csrId=item.csrId;
+        this.csrEditIndex=index;
+        $('#editCSRModal').modal('show');
     }
 
     private toEdit(index: any) {
@@ -1080,8 +1125,343 @@ export class Pool1MangPageComponent {
 
     }
 
+    private cancelAddCsr(){
+        this.csrCrud={csrId: -1, csrCode: "", csr: ""};
+    }
+
+    private cancelAddPlanner(){
+        this.plannerCrud={plannerId: -1, planner: "", plannerCode: ""};
+    }
+
+    addPlanner() {
+        if (this.validatePlanner()) {
+            let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
+            let options = new RequestOptions({ headers: headers });
+            this.plannerCrud.planner=this.plannerCrud.planner.toUpperCase();
+            this.plannerCrud.plannerCode=this.plannerCrud.plannerCode.toUpperCase();
+
+            let url = config.baseUrl + "/PoolMGMTService/api/InsertPlanner";
+            let object = this;
+            this.http.post(url, this.plannerCrud, options).map(res => res.json())
+                .subscribe(
+                (resp) => {
+                    console.log("insert Planner success recieved" + JSON.stringify(resp));
+                    if (resp.status == 1) {
+                        this.action.heading = "Add Planner";
+                        this.action.body = "Planner added successfully!";
+                        $('#result').modal('show');
+                        this.getAllPlanner();
+                    }
+                    else {
+                        console.log("insert Planner error recieved");
+                        this.action.heading = "Add Planner";
+                        this.action.body = "Error in adding Planner.";
+                        $('#result').modal('show');
+                    }
+                }, //For Success Response
+                (err) => {
+                    console.log("insert Planner error recieved");
+                    this.action.heading = "Add Planner";
+                    this.action.body = "Error in adding Planner.";
+                    $('#result').modal('show');
+                } //For Error Response
+                );
+
+            $('#addPlannerModal').modal('hide');
+        }
+    }
+
+    updatePlanner() {
+        var orPlanner=this.allPlanners1[this.plannerEditIndex].planner.toUpperCase();
+        var orPlannerCode=this.allPlanners1[this.plannerEditIndex].plannerCode.toUpperCase();
+        
+        var newPlanner=this.plannerCrud.planner.toUpperCase();
+        var newPlannerCode=this.plannerCrud.plannerCode.toUpperCase();
+        
+        this.plannerCrud.planner=this.plannerCrud.planner.toUpperCase();
+        this.plannerCrud.plannerCode=this.plannerCrud.plannerCode.toUpperCase();
+        // if(orPlanner==newPlanner && orPlannerCode==newPlannerCode){
+        //     console.log("no edit made");
+        //     $('#editPlannerModal').modal('hide');
+        //     this.action.heading = "Update planner";
+        //     this.action.body = "Planner updated successfully!";
+        //     $('#result').modal('show');
+            
+        // }else
+        if (this.validatePlanner()) {
+
+            let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
+            let options = new RequestOptions({ headers: headers });
+
+
+            let url = config.baseUrl + "/PoolMGMTService/api/UpdatePlanner";
+            let object = this;
+            this.http.post(url, this.plannerCrud, options).map(res => res.json())
+                .subscribe(
+                (resp) => {
+                    console.log("update planner success recieved" + JSON.stringify(resp));
+                    if (resp.status == 1) {
+                        this.action.heading = "Update Planner";
+                        this.action.body = "Planner Updated successfully!";
+                        $('#result').modal('show');
+                        this.getAllPlanner();
+                    }else if (resp.status == 2) {
+                        this.action.heading = "Update Planner";
+                        this.action.body = "No change to update.!";
+                        $('#result').modal('show');
+                        this.getAllPlanner();
+                    }
+                    else {
+                        console.log("update Planner error recieved");
+                        this.action.heading = "Update Planner";
+                        this.action.body = "Error in updating Planner.";
+                        $('#result').modal('show');
+                    }
+                }, //For Success Response
+                (err) => {
+                    console.log("update Planner error recieved");
+                    this.action.heading = "Update Planner";
+                    this.action.body = "Error in updating Planner.";
+                    $('#result').modal('show');
+                } //For Error Response
+                );
+
+            $('#editPlannerModal').modal('hide');
+        }
+    }
+
+    validateCSR(){
+        var isnameValid=false,isCodeValid=false;
+        var isnamelenthy=false,isCodelenthy=false;
+        var codeValidator=/^[a-zA-Z0-9]+$/;
+        var nameValidatoe=/^[a-zA-Z\s\-']+$/;
+        isnameValid=nameValidatoe.test(this.csrCrud.csr);
+        isCodeValid=codeValidator.test(this.csrCrud.csrCode);
+        isnamelenthy=(this.csrCrud.csr.length>70)?false:true;
+        isCodelenthy=(this.csrCrud.csrCode.length>20)?false:true;
+        this.isValidFields['isValidCSRCode']=(isCodeValid && isCodelenthy)?true:false;
+        this.isValidFields['isValidCSRName']=(isnameValid && isnamelenthy)?true:false;
+        if(this.isValidFields['isValidCSRCode'] && this.isValidFields['isValidCSRName']){
+            return true;
+        }
+        return false;
+    }
+
+    validatePlanner(){
+        var isnameValid=false,isCodeValid=false;
+        var isnamelenthy=false,isCodelenthy=false;
+        var codeValidator=/^[a-zA-Z0-9]+$/;
+        var nameValidatoe=/^[a-zA-Z\s\-']+$/;
+        isnameValid=nameValidatoe.test(this.plannerCrud.planner);
+        isCodeValid=codeValidator.test(this.plannerCrud.plannerCode);
+        
+        isnamelenthy=(this.plannerCrud.planner.length>70)?false:true;
+        isCodelenthy=(this.plannerCrud.plannerCode.length>20)?false:true;
+        this.isValidFields['isValidPlannerCode']=(isCodeValid && isCodelenthy)?true:false;
+        this.isValidFields['isValidPlannerName']=(isnameValid && isnamelenthy)?true:false;
+        if(this.isValidFields['isValidPlannerCode'] && this.isValidFields['isValidPlannerName']){
+            return true;
+        }
+        return false;
+    }
+
+    addCsr() {
+        if (this.validateCSR()) {
+
+            let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
+            let options = new RequestOptions({ headers: headers });
+            this.csrCrud.csr=this.csrCrud.csr.toUpperCase();
+            this.csrCrud.csrCode=this.csrCrud.csrCode.toUpperCase();
+
+            let url = config.baseUrl + "/PoolMGMTService/api/InsertCSR";
+            let object = this;
+            this.http.post(url, this.csrCrud, options).map(res => res.json())
+                .subscribe(
+                (resp) => {
+                    console.log("insert CSR success recieved" + JSON.stringify(resp));
+                    if (resp.status == 1) {
+                        this.action.heading = "Add CSR";
+                        this.action.body = "CSR added successfully!";
+                        $('#result').modal('show');
+                        this.getAllCsr();
+                    }
+                    else {
+                        console.log("insert CSR error recieved");
+                        this.action.heading = "Add CSR";
+                        this.action.body = "Error in adding CSR.";
+                        $('#result').modal('show');
+                    }
+                }, //For Success Response
+                (err) => {
+                    console.log("insert CSR error recieved");
+                    this.action.heading = "Add CSR";
+                    this.action.body = "Error in adding CSR.";
+                    $('#result').modal('show');
+                } //For Error Response
+                );
+
+            $('#addCSRModal').modal('hide');
+        }
+
+    }
+
+    updateCsr() {
+
+        var orCSR=this.allCsr[this.csrEditIndex].csr;
+        var orCSRCode=this.allCsr[this.csrEditIndex].csrCode;
+        
+        var newCSR=this.csrCrud.csr.toUpperCase();
+        var newCSRCode=this.csrCrud.csrCode.toUpperCase();
+
+        this.csrCrud.csr=this.csrCrud.csr.toUpperCase();
+        this.csrCrud.csrCode=this.csrCrud.csrCode.toUpperCase();
+        
+        // if(orCSR==newCSR && orCSRCode==newCSRCode){
+        //     console.log("no edit made");
+        //     $('#editCSRModal').modal('hide');
+        //     this.action.heading = "Update CSR";
+        //     this.action.body = "CSR updated successfully!";
+        //     $('#result').modal('show');
+            
+        // }else
+        if (this.validateCSR()) {
+            
+            let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
+            let options = new RequestOptions({ headers: headers });
+            var data = {
+                csrCode: this.csrCrud.csrCode, csr: this.csrCrud.csr
+            }
+
+            let url = config.baseUrl + "/PoolMGMTService/api/UpdateCSR";
+            let object = this;
+            this.http.post(url, this.csrCrud, options).map(res => res.json())
+                .subscribe(
+                (resp) => {
+                    console.log("update csr success recieved" + JSON.stringify(resp));
+                    if (resp.status == 1) {
+                        this.action.heading = "Update CSR";
+                        this.action.body = "CSR updated successfully!";
+                        $('#result').modal('show');
+                        this.getAllCsr();
+                    }else if (resp.status == 2) {
+                        this.action.heading = "Update CSR";
+                        this.action.body = "No change to update.!";
+                        $('#result').modal('show');
+                        this.getAllCsr();
+                    }
+                    else {
+                        console.log("update csr error recieved");
+                        this.action.heading = "Update Pool";
+                        this.action.body = "Error in updating CSR.";
+                        $('#result').modal('show');
+                    }
+                }, //For Success Response
+                (err) => {
+                    console.log("insertPool error recieved");
+                    this.action.heading = "Add Pool";
+                    this.action.body = "Error in adding pool.";
+                    $('#result').modal('show');
+                } //For Error Response
+                );
+
+            $('#editCSRModal').modal('hide');
+        }
+    }
+
+    deleteCSR() {
+        let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
+        let options = new RequestOptions({ headers: headers });
+
+        //let url = "http://61.16.133.244/PoolMGMTService/api/DeletePool?pid="+item.pID+"&poolid="+item.poolID+"&cmpid="+item.cmpID;
+        let url = config.baseUrl+"/PoolMGMTService/api/DeleteCSR";
+        this.http.post(url, this.csrCrud, options).map(res => res.json())
+            .subscribe(
+            (resp) => {
+
+                if (resp.status == 1) {
+                    console.log("deletePool success recieved");
+                    this.action.heading = "Delete CSR";
+                    this.action.body = "CSR deleted successfully!";
+                    $('#result').modal('show');
+                    this.getAllCsr();
+                }
+                else {
+                    console.log("delete CSR error recieved");
+                    this.action.heading = "Delete CSR";
+                    this.action.body = "Error in deleting CSR.";
+                    $('#result').modal('show');
+                }
+
+            }, //For Success Response
+            (err) => {
+                console.log("delete CSR error recieved");
+                this.action.heading = "Delete CSR";
+                this.action.body = "Error in deleting CSR.";
+                $('#result').modal('show');
+            } //For Error Response
+            );
+    }
+
+    deletePlanner() {
+        let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
+        let options = new RequestOptions({ headers: headers });
+
+        //let url = "http://61.16.133.244/PoolMGMTService/api/DeletePool?pid="+item.pID+"&poolid="+item.poolID+"&cmpid="+item.cmpID;
+        let url = config.baseUrl+"/PoolMGMTService/api/DeletePlanner";
+        this.http.post(url, this.plannerCrud, options).map(res => res.json())
+            .subscribe(
+            (resp) => {
+
+                if (resp.status == 1) {
+                    console.log("delete Planner success recieved");
+                    this.action.heading = "Delete planner";
+                    this.action.body = "Planner deleted successfully!";
+                    $('#result').modal('show');
+                    this.getAllPlanner();
+                }
+                else {
+                    console.log("delete Planner error recieved");
+                    this.action.heading = "Delete planner";
+                    this.action.body = "Error in deleting planner.";
+                    $('#result').modal('show');
+                }
+
+            }, //For Success Response
+            (err) => {
+                console.log("delete Planner error recieved");
+                this.action.heading = "Delete planner";
+                this.action.body = "Error in deleting planner.";
+                $('#result').modal('show');
+            } //For Error Response
+            );
+    }
+
+    toDeleteCP(choice){
+        if(choice=="Delete CSR"){
+            console.log("delete csr");
+            this.deleteCSR();
+        }else if(choice=="Delete Planner"){
+            console.log("delete planner");
+            this.deletePlanner();
+        }
+    }
+
     private toAdd() {
         this.cancelAdd();
+    }
+
+    private toAddCSR() {
+        this.isValidFields['isValidCSRCode']=true;
+        this.isValidFields['isValidCSRName']=true;
+        this.csrCrud={csrId: -1, csrCode: "", csr: ""};
+
+    }
+
+    private toAddPlanner() {
+        this.isValidFields['isValidPlannerCode']=true;
+        this.isValidFields['isValidPlannerName']=true;
+        this.plannerCrud={plannerId: -1, planner: "", plannerCode: ""};
+        
     }
 
     private validateFileds() {
@@ -1139,6 +1519,19 @@ export class Pool1MangPageComponent {
     getConfirmationToDelete(item: any) {
         $('#deleteConfirm').modal('show');
         this.poolToDel = item;
+    }
+
+    getConfirmationToDeleteCP(item: any,choice) {
+        $('#deleteConfirmCP').modal('show');
+        if(choice=="planner"){
+            this.action.heading = "Delete Planner";
+            this.plannerCrud=item;
+        }else if(choice=="CSR"){
+            this.action.heading = "Delete CSR";
+            this.csrCrud=item;
+        }
+        this.action.body = "Are you sure you want to delete this "+choice+"?";
+        
     }
 
     toDelete() {

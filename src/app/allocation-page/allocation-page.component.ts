@@ -25,11 +25,11 @@ export class AllocationPageComponent {
             ["Available", "2343443", "05-20-2017 08:30", "Chattanooga ", "Walmart", "Atlanta,GA", "Buford,GA", "SOLO", "2342345", "SID", "all set",],
             ["Available", "2343444", "05-20-2017 09:30", "West depot", "Fedex", "Ontario OH", "Bufford,GA", "SOLO", "2342345", "SID", "all set",],
             ["Available", "2343445", "05-20-2017 10:30", "CTG ", "VH Transport", "Bentonville,AR", "Bufford,GA", "SOLO", "2342345", "SID", "all set",]],
-        column: ["Status", "Order#", "Order date", "Origin name", "Bill to name", "Origin city", "Destination city", "Service", "Ref#", "Ref type", "Order remark", "Action"]
+        column: ["Status", "Order#", "Order date", "Origin name", "Bill to party", "Origin city", "Destination city", "Service", "Ref#", "Ref type", "Order remark", "Action"]
     };
 
 
-    selectedOrder: any = {orderNumber:-1};
+    selectedOrder: any = {number:-1};
     selectedTruck: any = {number:-1,type:"",make:"",company:"",model:"",distance:0,location:{landmark:""}};
     selectedTrailer: any = {trailerID:-1};
     selectedTrStatus: any = { status: "Available", value: 2 };
@@ -57,12 +57,18 @@ export class AllocationPageComponent {
     selectedMiles = { lable: "Select radius", value: 0 };
     trailerMileList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedTrailerMile = { lable: "50 Miles", value: 50 };
+    action: any = { heading: "", body: "",details: ""};
+    pingList=[];
+    trResp=false;
 
     mgToggle = true;
     omgToggle = false;
     OrderDetailsResp = false;
     trucksDetailsResp = false;
     trailerDetailsResp=false;
+    OrderLegsResp=false;
+    yardDetailsResp=false;
+    OrderTrailerTypeResp=false;
     historyRecv = false;
     disableTS = false;
     disableLoc = false;
@@ -79,7 +85,6 @@ export class AllocationPageComponent {
     traRowCount = 50;
     geocoder = new google.maps.Geocoder();
     zone: NgZone;
-    action: any = { heading: "", body: "" };
     mapConfig: any = { lat: 36.090240, lng: -95.712891, zoom: 4, mapType: 'roadmap', marker: -1 };
     historyConfig: any = { showHistory: false, allTraillerSubSet: [], dataSet: [], backupDS: [], backupATS: [] };
     
@@ -90,8 +95,8 @@ export class AllocationPageComponent {
     mappedTrailer:any=[];
 
     orders = {
-        column: [{ name: "Order ID", width: "10%" },{ name: "Movement no.", width: "10%" }, { name: "Ref. no.", width: "10%" },{ name: "Bill to name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Order origin point", width: "10%" },
-        { name: "Order start date", width: "10%" }, { name: "Order end date", width: "10%" }, { name: "Order remark", width: "10%" } ],
+        column: [{ name: "Order ID", width: "11%" },{ name: "Movement no.", width: "11%" },{ name: "Bill to party", width: "11%" }, { name: "Origin city", width: "11%" }, { name: "Destination city", width: "11%" }, { name: "Order origin point", width: "11%" },
+        { name: "Order start date", width: "11%" }, { name: "Order end date", width: "11%" }, { name: "Order remark", width: "12%" } ],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
@@ -112,7 +117,9 @@ export class AllocationPageComponent {
     }
 
     constructor(private http: Http, private cdr: ChangeDetectorRef) {
-        this.getOrderDetails();
+        //this.getOrderDetails();
+        this.getOrderDetailsByFn();
+        this.gettrailers();
     }
 
     ngOnChange(val: number) {
@@ -137,13 +144,17 @@ export class AllocationPageComponent {
 
     goToTruck(){
         this.page=1;
+        this.getOrderTrailerType();
+        this.getYardDetailes();
+        this.getLegsOfOrder();
         this.getTractorsDetails();
         
     }
 
     goToOrder(){
         this.page=0;
-        this.getOrderDetails();
+        //this.getOrderDetails();
+        this.getOrderDetailsByFn();
     }
 
     goToTrailer(){
@@ -208,7 +219,7 @@ export class AllocationPageComponent {
             this.mappedOrderConfig.lng=0-this.mappedOrderConfig.lng;
         }
 
-        this.getPlannedOrderDetails(item.orderNumber);
+        this.getPlannedOrderDetails(item.number);
 
         
     }
@@ -218,14 +229,14 @@ export class AllocationPageComponent {
     }
 
     orderSelected(item: any) {
-        if (this.selectedOrder.orderNumber != item.orderNumber) {
+        if (this.selectedOrder.number != item.number) {
             this.selectedOrder = item;
             this.trMapConfig.lat = this.selectedOrder.orderOrginCityLat;
             this.trMapConfig.lng = this.selectedOrder.orderOrginCityLong;
             this.selectedTruck= {number:-1,type:"",make:"",company:"",model:"",distance:0,location:{landmark:""}};
             this.selectedTrailer = {trailerID:-1};
         } else {
-            this.selectedOrder = { orderNumber: -1 };
+            this.selectedOrder = { number: -1 };
             this.selectedTruck= {number:-1,type:"",make:"",company:"",model:"",distance:0,location:{landmark:""}};
             this.selectedTrailer = {trailerID:-1};
             this.trMapConfig.lat = undefined;
@@ -258,16 +269,62 @@ export class AllocationPageComponent {
             this.selectedTrailer = item;
             this.trMapConfig['trailerLat'] = this.selectedTrailer.latitude;
             this.trMapConfig['trailerLng'] = this.selectedTrailer.longitude;
+            this.calcTotRouteDistance();
             this.mapTrailers=this.cloneObje(this.trailerList);
 
         } else {
             this.selectedTrailer = { trailerID: -1 };
             this.trMapConfig['trailerLat'] = undefined;
             this.trMapConfig['trailerLng'] = undefined;
+            this.selectedTrailer['routeDistText'] = "";
+            this.selectedTrailer['routeDist'] = "";
             this.mapTrailers=this.cloneObje(this.trailerList);
 
         }
 
+    }
+
+    calcTotRouteDistance() {
+        var waypts = [];
+        let start, end;
+        let directionsService = new google.maps.DirectionsService();
+        let directionsDisplay = new google.maps.DirectionsRenderer({
+            suppressMarkers: true
+        });
+        end = new google.maps.LatLng(this.selectedOrder.orderOrginCityLat, this.selectedOrder.orderOrginCityLong);
+        start = new google.maps.LatLng(this.selectedTruck.location.position.lat,this.selectedTruck.location.position.lng);
+
+        if (this.selectedTrailer.latitude) {
+            let orderStop = new google.maps.LatLng(this.selectedTrailer.latitude,this.selectedTrailer.longitude)
+            waypts.push({
+                location: orderStop,
+                stopover: true
+            });
+        }
+
+        var request = {
+            origin: start,
+            destination: end,
+            waypoints: waypts,
+            optimizeWaypoints: true,
+            travelMode: google.maps.DirectionsTravelMode.DRIVING,
+        };
+
+        var ctrl = this;
+        directionsService.route(request, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                var route = response.routes[0];
+                var dist = 0;
+                for (let i = 0; i < response.routes[0].legs.length; i++) {
+                    var leg = response.routes[0].legs[i];
+                    dist += leg.distance.value;
+
+                }
+                dist = Math.round(dist * 0.000621371192);
+                ctrl.selectedTrailer['routeDistText'] = dist + "miles Approx. to reach order origin";
+                ctrl.selectedTrailer['routeDist'] = dist + " miles";
+            }
+        });
     }
 
     resetOrderPage() {
@@ -275,8 +332,9 @@ export class AllocationPageComponent {
         this.omID = "";
         this.selectedCmp = { lable: "Covenant", value: "CVEN" };
         this.selectedOrStatus = { lable: "Available", value: "AVL" };
-        this.selectedOrder= {orderNumber:-1};
-        this.getOrderDetails();
+        this.selectedOrder= {number:-1};
+        //this.getOrderDetails();
+        this.getOrderDetailsByFn();
     }
 
     resetTruckPage() {
@@ -362,13 +420,13 @@ export class AllocationPageComponent {
     formatDateTime(item: any) {
         if (item != "") {
             if (item != "UNKNOWN") {
-                var ary = item.split(' ');
+                var ary = item.split('T');
                 var date = ary[0].split('-');
-                var time = ary[1].split(':');
-                var secs = time[2].split('.');
+                //var time = ary[1].split(':');
+                //var secs = time[2].split('.');
                 var newD = new Date(date[0], date[1] - 1, date[2]);
                 //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
-                var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + time[0] + ":" + time[1] + ":" + secs[0];
+                var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + ary[1];
                 return SDate;
             } else {
                 return item;
@@ -377,19 +435,25 @@ export class AllocationPageComponent {
 
     }
 
-    search() {
-        if (this.bylocation.length > 0) {
-            this.getvalue();
-        } else if (this.searchID.length > 0) {
-            //this.searchByID();
-        } else {
-            if (this.disableStatus) {
-                this.action.heading = "Trailer search";
-                this.action.body = 'Enter a valid input.';
-                $('#result').modal('show');
+    formatTrDateTime(item: any) {
+        if (item != "") {
+            if (item != "UNKNOWN") {
+                var ary = item.split(' ');
+                var date = ary[0].split('-');
+                var tim = ary[1].split('.');
+                var time=tim[0].split(':');
+                var newD = new Date(date[0], date[1] - 1, date[2]);
+                //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
+                var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + tim[0];
+                return SDate;
+            } else {
+                return item;
             }
         }
+
     }
+
+    
 
     searchByomID() {
         this.orderList = [];
@@ -397,11 +461,11 @@ export class AllocationPageComponent {
         for (let i = 0; i < this.orders.groups.length; i++) {
             var obj = this.orders.groups[i];
             if (this.omID == "") {
-                if (this.selectedCmp.value == obj['orderCompany'] && this.selectedOrStatus.value == obj['orderStatus']) {
+                if (this.selectedCmp.value == obj['company'] && this.selectedOrStatus.value == obj['status']) {
                     this.orderList.push(obj);
                 }
-            } else if (this.omID == obj['orderNumber'] || this.omID == obj['movementNumber']) {
-                if (this.selectedCmp.value == obj['orderCompany'] && this.selectedOrStatus.value == obj['orderStatus']) {
+            } else if (this.omID == obj['number'] || this.omID == obj['move']) {
+                if (this.selectedCmp.value == obj['company'] && this.selectedOrStatus.value == obj['status']) {
                     this.orderList.push(obj);
                 }
             }
@@ -415,11 +479,11 @@ export class AllocationPageComponent {
         for (let i = 0; i < this.trucks.groups.length; i++) {
             var obj = this.trucks.groups[i];
             if (this.truckID == "") {
-                if (this.selectedOrder.orderCompany == obj['company'] && obj['status'] == "AVL") {
+                if (this.selectedOrder.company == obj['company'] && obj['status'] == "AVL") {
                     this.truckList.push(obj);
                 }
 
-            } else if (this.truckID == obj['number'] && this.selectedOrder.orderCompany == obj['company'] && obj['status'] == "AVL") {
+            } else if (this.truckID == obj['number'] && this.selectedOrder.company == obj['company'] && obj['status'] == "AVL") {
                 this.truckList.push(obj);
             }
         }
@@ -446,9 +510,9 @@ export class AllocationPageComponent {
         this.orderList = [];
         for (let i = 0; i < this.orders.groups.length; i++) {
             var obj = this.orders.groups[i];
-             var conCity=obj['orderOrginCity'].toLowerCase().includes(this.orderBylocation.toLowerCase())
+             var conCity=obj['origin'].toLowerCase().includes(this.orderBylocation.toLowerCase())
             if (conCity) {
-                if (this.selectedCmp.value == obj['orderCompany'] && this.selectedOrStatus.value == obj['orderStatus']) {
+                if (this.selectedCmp.value == obj['company'] && this.selectedOrStatus.value == obj['status']) {
                     this.orderList.push(obj);
                 }
             }
@@ -466,7 +530,7 @@ export class AllocationPageComponent {
             this.orderList = [];
             for (let i = 0; i < this.orders.groups.length; i++) {
                 var obj = this.orders.groups[i];
-                if (this.selectedCmp.value == obj['orderCompany']) {
+                if (this.selectedCmp.value == obj['company']) {
                     this.orderList.push(obj);
                 }
             }
@@ -474,7 +538,7 @@ export class AllocationPageComponent {
             var bag = [];
             for (let i = 0; i < this.orderList.length; i++) {
                 var objt = this.orderList[i];
-                if (this.selectedCmp.value == objt['orderCompany']) {
+                if (this.selectedCmp.value == objt['company']) {
                     bag.push(objt);
                 }
             }
@@ -487,7 +551,7 @@ export class AllocationPageComponent {
             this.orderList = [];
             for (let i = 0; i < this.orders.groups.length; i++) {
                 var obj = this.orders.groups[i];
-                if (this.selectedCmp.value == obj['orderCompany']) {
+                if (this.selectedCmp.value == obj['company']) {
                     this.orderList.push(obj);
                 }
             }
@@ -495,7 +559,7 @@ export class AllocationPageComponent {
             var bag = [];
             for (let i = 0; i < this.orderList.length; i++) {
                 var objt = this.orderList[i];
-                if (this.selectedCmp.value == objt['orderCompany']) {
+                if (this.selectedCmp.value == objt['company']) {
                     bag.push(objt);
                 }
             }
@@ -508,7 +572,7 @@ export class AllocationPageComponent {
             this.orderList = [];
             for (let i = 0; i < this.orders.groups.length; i++) {
                 var obj = this.orders.groups[i];
-                if (this.selectedCmp.value == obj['orderCompany'] && this.selectedOrStatus.value == obj['orderStatus']) {
+                if (this.selectedCmp.value == obj['company'] && this.selectedOrStatus.value == obj['status']) {
                     this.orderList.push(obj);
                 }
             }
@@ -521,7 +585,7 @@ export class AllocationPageComponent {
             //var bag = [];
             // for (let i = 0; i < this.orderList.length; i++) {
             //     var objt = this.orderList[i];
-            //     if (this.selectedCmp.value == objt['orderCompany'] && this.selectedOrStatus.value == objt['orderStatus']) {
+            //     if (this.selectedCmp.value == objt['company'] && this.selectedOrStatus.value == objt['orderStatus']) {
             //         bag.push(objt);
             //     }
             // }
@@ -534,7 +598,7 @@ export class AllocationPageComponent {
         this.truckList = [];
         for (let i = 0; i < this.trucks.groups.length; i++) {
             var obj = this.trucks.groups[i];
-            if (this.selectedOrder.orderCompany == obj['company'] && obj['status'] == "AVL") {
+            if (this.selectedOrder.company == obj['company'] && obj['status'] == "AVL") {
                 this.truckList.push(obj);
             }
         }
@@ -546,11 +610,11 @@ export class AllocationPageComponent {
         for (let i = 0; i < this.trucks.groups.length; i++) {
             var obj = this.trucks.groups[i];
             if (this.selectedMiles.value == 0) {
-                if (this.selectedOrder.orderCompany == obj['company'] && obj['status'] == "AVL") {
+                if (this.selectedOrder.company == obj['company'] && obj['status'] == "AVL") {
                     this.truckList.push(obj);
                 }
             } else {
-                if (this.selectedOrder.orderCompany == obj['company'] && obj['status'] == "AVL" && obj['distance'] <= this.selectedMiles.value) {
+                if (this.selectedOrder.company == obj['company'] && obj['status'] == "AVL" && obj['distance'] <= this.selectedMiles.value) {
                     this.truckList.push(obj);
                 }
             }
@@ -559,6 +623,7 @@ export class AllocationPageComponent {
     }
 
     filterTrailerByMile(){
+        this.selectedTrailer = {trailerID:-1};
         this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
     }
 
@@ -567,7 +632,7 @@ export class AllocationPageComponent {
         for (let i = 0; i < this.trailers.groups.length; i++) {
             var obj = this.trailers.groups[i];
             if (this.includeUNK) {
-                if (this.selectedOrder.orderCompany == obj['company']) {
+                if (this.selectedOrder.company == obj['company']) {
                     if (this.trailerID == "") {
                         if (this.selectedOrder.orderTrailerType == "") {
                             if(this.includeMT){
@@ -616,7 +681,7 @@ export class AllocationPageComponent {
                     }
                 }
             } else {
-                if (this.selectedOrder.orderCompany == obj['company']) {
+                if (this.selectedOrder.company == obj['company']) {
                     if (this.trailerID == "") {
                         if (this.selectedOrder.orderTrailerType == "") {
                             if(this.includeMT){
@@ -737,66 +802,29 @@ export class AllocationPageComponent {
 
 
 
-    getLatLngByGeoCode() {
-        var input = $('#ctgGeoCode').val();
-        console.log(input);
-        this.bylocation = input;
+    getLatLngByGeoCode(place) {    
+        console.log(place);
         var ctrl = this;
         var geocoder = this.geocoder;
         var combo = "";
-        var address = this.bylocation;
-
-        this.geocoder.geocode({ 'address': address }, function (results: any, status: any) {
+        this.geocoder.geocode({ 'address': place }, function (results: any, status: any) {
             if (status === 'OK') {
+                
                 var lat = results[0].geometry.location.lat();
                 var lng = results[0].geometry.location.lng();
-                combo = "latitude=" + lat + "&longitude=" + lng;
-                ctrl.mapConfig.lat = lat;
-                ctrl.mapConfig.lng = lng;
-                ctrl.mapConfig.zoom = 10;
-
+                ctrl.selectedOrder.orderOrginCityLat = lat;
+                ctrl.selectedOrder.orderOrginCityLong = lng;
+                ctrl.trMapConfig.lat = lat;
+                ctrl.trMapConfig.lng = lng;
             } else {
                 //alert('Geocode was not successful for the following reason: ' + status);
-                $('#inValidRes').modal('show');
+                $('#yardunExpecError').modal('show');
                 console.log("getLatLngByGeoCode:no location to search");
             }
         });
 
     }
 
-
-
-    getvalue() {
-        var input = $('#ctgGeoCode').val();
-        console.log(input);
-        this.bylocation = input;
-        if (this.bylocation != "") {
-            if (this.mgToggle) {
-
-                this.getLatLngByGeoCode();
-            } else {
-                this.getLatLngByGeoCode();
-            }
-        } else {
-            //alert("Enter a location to search");
-            this.action.heading = "Geocode";
-            this.action.body = 'Please enter a location to search.';
-            $('#result').modal('show');
-        }
-        //f.geocodeAddress(this.bylocation);
-    }
-
-    setByLocation() {
-        var input = $('#ctgGeoCode').val();
-        console.log(input);
-        this.bylocation = input;
-        if (this.mgToggle) {
-
-            this.getLatLngByGeoCode();
-        } else {
-            this.getLatLngByGeoCode();
-        }
-    }
     reset() {
         this.bylocation = "";
         this.searchID = "";
@@ -804,7 +832,8 @@ export class AllocationPageComponent {
         this.mapConfig = { lat: 36.090240, lng: -95.712891, zoom: 4, mapType: 'roadmap' };
         this.selectedCmp = { lable: "SVN", value: "SVN" };
 
-        this.getOrderDetails();
+        //this.getOrderDetails();
+        this.getOrderDetailsByFn();
         if (this.mgToggle) {
 
             this.disableLoc = false;
@@ -829,8 +858,8 @@ export class AllocationPageComponent {
         }
     }
 
-    trucktableScrolled(this:any){
-console.log("scrolling");
+    trucktableScrolled(this: any) {
+        console.log("scrolling");
         var raw = document.getElementById('tgBody');
         if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
 
@@ -841,8 +870,8 @@ console.log("scrolling");
         }
     }
     
-    trailertableScrolled(this:any){
-console.log("scrolling");
+    trailertableScrolled(this: any) {
+        console.log("scrolling");
         var raw = document.getElementById('tgBody');
         if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
 
@@ -853,7 +882,7 @@ console.log("scrolling");
         }
     }
 
-    sortList(prop,list) {
+    sortList(prop, list) {
         var sortedlist = list.sort((a: any, b: any) => {
             if (a[prop] < b[prop]) {
                 return -1;
@@ -867,47 +896,122 @@ console.log("scrolling");
         return sortedlist;
     }
 
+    filterInvalidData(list, key) {
+        var bag = [];
+        list.forEach(element => {
+            var item = element[key];
+            if (item != "") {
+                if (item != "UNKNOWN") {
+                    var ary = item.split('T');
+                    var date = ary[0].split('-');
+                    var time = ary[1].split(':');
+                    if (time[1] == '01' || time[1] == '1') {
+
+                    } else {
+                        bag.push(element);
+                    }
+                } else {
+                    bag.push(element);
+                }
+            } else {
+                bag.push(element);
+            }
+        });
+        return bag;
+    }
+
+    filterAvlOrders(list){
+        var bag=[];
+        var notbag=[];
+        list.forEach(element => {
+            if(element.trailer==null && element.status=="AVL"){
+                bag.push(element);
+            }else{
+                notbag.push(element);
+            }
+            
+        });
+        console.log(notbag);
+        console.log("not bag count "+notbag.length);
+        return bag;
+
+    }
+
+    sortListByTime(list, key) {
+        var bag = list.sort((item1, item2) => {
+            var ary1 = item1[key].split('T');
+            var date1 = ary1[0].split('-');
+            var item1D = new Date(date1[0], date1[1] - 1, date1[2]);
+            var tim1 = ary1[1].split('.');
+            var time1 = tim1[0].split(':');
+            item1D.setHours(time1[0], time1[1], time1[2]);
+
+            var ary2 = item2[key].split('T');
+            var date2 = ary2[0].split('-');
+            var item2D = new Date(date2[0], date2[1] - 1, date2[2]);
+            var tim2 = ary2[1].split('.');
+            var time2 = tim2[0].split(':');
+            item2D.setHours(time2[0], time2[1], time2[2]);
+
+            if (item1D > item2D) {
+                return 1;
+            } else if (item1D < item2D) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+        return bag;
+    }
+
     getTractorsDetails() {
         this.trucksDetailsResp = false;
         var creds = "username=" + config.username + "&password=" + config.password;
-        
+
         let authToken = "Basic";
         let headers = new Headers({ 'Accept': 'application/json' });
         headers.append('Authorization', 'Basic ' +
-        btoa(config.username+':'+config.password)); 
-        
-        
+            btoa(config.username + ':' + config.password));
+
+
         let options = new RequestOptions({ headers: headers });
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         let url = config.ctgApiUrl + "/assets/tractors";
-        this.http.get(url,{
+        this.http.get(url, {
             headers: headers
-          }).map(res => res.json())
+        }).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("tractors data recieved");
-                
-                this.trucks.groups=data.data;
-                for(var i=0;i<this.trucks.groups.length;i++){
-                    let obj=this.trucks.groups[i];
-                    var dist=this.calcTruckDistance(obj['location']['position']['lng'],obj['location']['position']['lat']);
-                    if(dist==-1){
-                        this.trucks.groups.splice(i,1);
+
+                this.trucks.groups = data.data;
+                for (var i = 0; i < this.trucks.groups.length; i++) {
+                    let obj = this.trucks.groups[i];
+                    var dist = this.calcTruckDistance(obj['location']['position']['lng'], obj['location']['position']['lat']);
+                    if (dist == -1) {
+                        this.trucks.groups.splice(i, 1);
                         i--;
-                    }else{
-                        obj['distance']=dist;
-                        this.trucks.groups[i]=obj;
-                        this.truckList[i]=obj;
+                    } else {
+                        obj['distance'] = dist;
+                        this.trucks.groups[i] = obj;
+                        this.truckList[i] = obj;
                     }
-                    
+
                 }
-                this.trucks.groups=this.sortList('distance',this.trucks.groups);
-                this.truckList=this.cloneObje(this.trucks.groups);
+                this.trucks.groups = this.sortList('distance', this.trucks.groups);
+                this.truckList = this.cloneObje(this.trucks.groups);
                 this.filterTrucksByOrder();
-                this.truckList=this.sortList('distance',this.truckList);
+                this.truckList = this.sortList('distance', this.truckList);
                 this.trucksDetailsResp = true;
             }, //For Success Response
-            (err) => { console.log("tractors error recieved"); this.trucksDetailsResp = true; } //For Error Response
+            (err) => {
+                console.log("tractors error recieved");
+                this.trucksDetailsResp = true;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='tractors service failed<br>'+url+'<br>Status: '+err.status;
+                $('#unExpecError').modal('show');
+            } //For Error Response
             );
     }
 
@@ -921,7 +1025,7 @@ console.log("scrolling");
         }
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         let url = config.baseUrl + "/AllocationService/api/OrderTrailers?latitude="+lat
-        +"&longitude="+lng+"&distance="+dist+"&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer;
+        +"&longitude="+lng+"&distance="+dist+"&company="+this.selectedOrder.company+"&trailerId="+this.selectedTruck.trailer;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -936,6 +1040,10 @@ console.log("scrolling");
             }, //For Success Response
             (err) => { console.log("trailers error recieved");
              this.trailerDetailsResp = true;
+             this.action.heading="Allocation";
+             this.action.body="Unexpected Error occured. Please contact system administrator.";
+             this.action.details='OrderTrailers service failed<br>'+url+'<br>Status: '+err.status;
+             $('#unExpecError').modal('show');
              } //For Error Response
             );
     }
@@ -960,7 +1068,7 @@ console.log("scrolling");
         }
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         
-        let url = config.baseUrl + "/AllocationService/api/OrderTruckTrailers?&companyID="+this.selectedOrder.orderOrginPoint+"&distance="+dist+"&company="+this.selectedOrder.orderCompany+"&trailerId="+this.selectedTruck.trailer+'&pooltrailers='+toShowPool;
+        let url = config.baseUrl + "/AllocationService/api/OrderTruckTrailers?latitude="+lat2+"&longitude="+lng2+"&distance="+dist+"&company="+this.selectedOrder.company+"&trailerId="+this.selectedTruck.trailer+'&pooltrailers='+toShowPool;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -987,7 +1095,14 @@ console.log("scrolling");
                 }
                 
             }, //For Success Response
-            (err) => { console.log("trailers error recieved"); this.trailerDetailsResp = true; } //For Error Response
+            (err) => {
+                console.log("trailers error recieved");
+                this.trailerDetailsResp = true;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='OrderTruckTrailers service failed<br>'+url+'<br>Status: '+err.status;
+                $('#unExpecError').modal('show');
+             } //For Error Response
             );
     }
 
@@ -1000,51 +1115,238 @@ console.log("scrolling");
             .subscribe(
             (data) => {
                 console.log("OrderDetails data recieved");
-                this.orders.groups=data.dataSet;
-                this.orderList=data.dataSet;
+                this.orders.groups = data.dataSet;
+                this.orderList = data.dataSet;
                 this.orderMasterAndFilter();
                 this.OrderDetailsResp = true;
 
 
             }, //For Success Response
-            (err) => { console.log("OrderDetails error recieved"); this.OrderDetailsResp = true; } //For Error Response
+            (err) => {
+                console.log("OrderDetails error recieved");
+                this.OrderDetailsResp = true;
+                $('#unExpecError').modal('show');
+            } //For Error Response
             );
     }
+
+    getOrderDetailsByFn() {
+        this.OrderDetailsResp = false;
+        var creds = "username=" + config.username + "&password=" + config.password;
+
+        let authToken = "Basic";
+        let headers = new Headers({ 'Accept': 'application/json' });
+        headers.append('Authorization', 'Basic ' +
+            btoa(config.username + ':' + config.password));
+
+
+        let options = new RequestOptions({ headers: headers });
+        let url = config.ctgApiUrl + "/assets/orders/AVL";
+        this.http.get(url, {
+            headers: headers
+        }).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("OrderDetailsByFn data recieved");
+                var bag=this.filterInvalidData(data.data,'departure');
+                bag=this.filterAvlOrders(bag);
+                bag=this.sortListByTime(bag,'departure');
+                this.orders.groups = bag;
+                this.orderList = bag;
+                this.orderMasterAndFilter();
+                this.OrderDetailsResp = true;
+
+            }, //For Success Response
+            (err) => {
+                console.log("OrderDetailsByFn error recieved");
+                this.OrderDetailsResp = true;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='orders service failed<br>'+url+'<br>Status: '+err.status;
+                $('#unExpecError').modal('show');
+            } //For Error Response
+            );
+    }
+
+    gettrailers() {
+        this.trResp = false;
+        var creds = "username=" + config.username + "&password=" + config.password;
+
+        let authToken = "Basic";
+        let headers = new Headers({ 'Accept': 'application/json' });
+        headers.append('Authorization', 'Basic ' +
+            btoa(config.username + ':' + config.password));
+
+
+        let options = new RequestOptions({ headers: headers });
+        let url = config.ctgApiUrl + "/assets/trailers";
+        this.http.get(url, {
+            headers: headers
+        }).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("tr data recieved");
+                var bag=[];
+                data.data.forEach(element => {
+                    var item={latitude:0,longitude:0,trailerID:0};
+                    item.latitude=element.location.position.lat;
+                    item.longitude=element.location.position.lng;
+                    item.trailerID=element.number;
+                    bag.push(item);
+                });
+                this.pingList=bag;
+
+            }, //For Success Response
+            (err) => {
+                console.log("OrderDetailsByFn error recieved");
+                this.OrderDetailsResp = true;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='orders service failed<br>'+url+'<br>Status: '+err.status;
+                $('#unExpecError').modal('show');
+            } //For Error Response
+            );
+    }
+
+    getLegsOfOrder() {
+        this.OrderLegsResp = false;
+        var creds = "username=" + config.username + "&password=" + config.password;
+
+        let authToken = "Basic";
+        let headers = new Headers({ 'Accept': 'application/json' });
+        headers.append('Authorization', 'Basic ' +
+            btoa(config.username + ':' + config.password));
+
+
+        let options = new RequestOptions({ headers: headers });
+        //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
+        let url = config.ctgApiUrl + "/assets/order/" + this.selectedOrder.number + "/legs";
+        this.http.get(url, {
+            headers: headers
+        }).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("OrderLegsOfOrder data recieved");
+                this.selectedOrder['legs'] = data;
+                this.selectedOrder['legsC'] = data.join();
+                this.OrderLegsResp = true;
+
+            }, //For Success Response
+            (err) => {
+                console.log("OrderLegsOfOrder error recieved");
+                this.OrderLegsResp = false;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='Legs service failed<br>'+url+'<br>Status: '+err.status;
+                $('#unExpecError').modal('show');
+            } //For Error Response
+            );
+    }
+//////
+    getOrderTrailerType() {
+        this.OrderTrailerTypeResp = false;
+        //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
+        let url = config.baseUrl + "/AllocationService/api/OrderTrailerType?orderNumber=" + this.selectedOrder.number;
+        this.http.get(url).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("OrderTrailerType data recieved");
+                if(data.dataSet.length>0){
+                this.selectedOrder['orderTrailerType']=data.dataSet[0].ordersTrailerType;
+                }else{
+                    this.selectedOrder['orderTrailerType']="";
+                    console.log("No specific trailerType for order found");
+                }
+            }, //For Success Response
+            (err) => {
+                console.log("OrderTrailerType error recieved");
+                this.OrderTrailerTypeResp = false;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='OrderTrailerType service failed<br>'+url+'<br>Status: '+err.status;
+                $('#unExpecError').modal('show');
+            } //For Error Response
+            );
+    }
+
+    getYardDetailes() {
+        this.yardDetailsResp = false;
+        var creds = "username=" + config.username + "&password=" + config.password;
+
+        let authToken = "Basic";
+        let headers = new Headers({ 'Accept': 'application/json' });
+        headers.append('Authorization', 'Basic ' +
+            btoa(config.username + ':' + config.password));
+
+
+        let options = new RequestOptions({ headers: headers });
+        //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
+        let url = config.ctgApiUrl + "/assets/yard/" + this.selectedOrder.shipper;
+        this.http.get(url, {
+            headers: headers
+        }).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("yardDetails data recieved");
+                this.selectedOrder.orderOrginCityLat = data.location.position.lat;
+                this.selectedOrder.orderOrginCityLong = data.location.position.lng;
+                this.trMapConfig.lat = this.selectedOrder.orderOrginCityLat;
+                this.trMapConfig.lng = this.selectedOrder.orderOrginCityLong;
+                this.yardDetailsResp = true;
+
+            }, //For Success Response
+            (err) => {
+                console.log("yardDetails error recieved");
+                this.yardDetailsResp = false;
+                this.getLatLngByGeoCode(this.selectedOrder.origin);
+                
+            } //For Error Response
+            );
+    }
+
+    
 
     getPlannedOrderDetails(item) {
         this.OrderDetailsResp = false;
         //let url="https://ctgtest.com/AllocationService/api/PlannedOrderDetail?orderID=2896133";
-        let url = config.baseUrl + "/AllocationService/api/PlannedOrderDetail?orderID="+item;
+        let url = config.baseUrl + "/AllocationService/api/PlannedOrderDetail?orderID=" + item;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("PlannedOrderDetails data recieved");
                 //this.orders.groups=data.dataSet;
-                if(data.dataSet.length>0){
-                this.mappedOrderConfig['truckLat'] = data.dataSet[0].tractorLat;
-                this.mappedOrderConfig['truckLng'] = data.dataSet[0].tractorLong;
-        
-                this.mappedOrderConfig['trailerLat'] = data.dataSet[0].trailerLat;
-                this.mappedOrderConfig['trailerLng'] = data.dataSet[0].trailerLong;
+                if (data.dataSet.length > 0) {
+                    this.mappedOrderConfig['truckLat'] = data.dataSet[0].tractorLat;
+                    this.mappedOrderConfig['truckLng'] = data.dataSet[0].tractorLong;
 
-                if(this.mappedOrderConfig.truckLng>0){
-                    this.mappedOrderConfig.truckLng=0-this.mappedOrderConfig.truckLng;
-                }
+                    this.mappedOrderConfig['trailerLat'] = data.dataSet[0].trailerLat;
+                    this.mappedOrderConfig['trailerLng'] = data.dataSet[0].trailerLong;
 
-                if(this.mappedOrderConfig.trailerLng>0){
-                    this.mappedOrderConfig.trailerLng=0-this.mappedOrderConfig.trailerLng;
-                }
-        
-                this.omgToggle=!this.omgToggle;
-                this.OrderDetailsResp = true;
-                }else{
+                    if (this.mappedOrderConfig.truckLng > 0) {
+                        this.mappedOrderConfig.truckLng = 0 - this.mappedOrderConfig.truckLng;
+                    }
+
+                    if (this.mappedOrderConfig.trailerLng > 0) {
+                        this.mappedOrderConfig.trailerLng = 0 - this.mappedOrderConfig.trailerLng;
+                    }
+
+                    this.omgToggle = !this.omgToggle;
+                    this.OrderDetailsResp = true;
+                } else {
                     this.OrderDetailsResp = true;
                     alert("no maping found");
                 }
 
 
             }, //For Success Response
-            (err) => { console.log("PlannedOrderDetails error recieved"); this.OrderDetailsResp = true; } //For Error Response
+            (err) => {
+                console.log("PlannedOrderDetails error recieved");
+                this.OrderDetailsResp = true;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='PlannedOrderDetails service failed<br>'+url+'<br>Status: '+err.status;
+                $('#unExpecError').modal('show');
+            } //For Error Response
             );
     }
 
@@ -1053,68 +1355,51 @@ console.log("scrolling");
         this.OrderDetailsResp = false;
         let headers = new Headers({ 'Content-Type': 'application/json;', 'Accept': 'application/json' });
         let options = new RequestOptions({ headers: headers });
-        let bo={
+        let bo = {
             order: this.selectedOrder,
-            truck:this.selectedTruck,
-            trailer:this.selectedTrailer
+            truck: this.selectedTruck,
+            trailer: this.selectedTrailer
         }
         let body = {
-            "orderID": this.selectedOrder.orderNumber,
-            "movementNumber":this.selectedOrder.movementNumber,
-            "orderName": this.selectedOrder.orderName, 
-            "orderOriginCity": this.selectedOrder.orderOrginCity, 
-            "orderDestinationCity": this.selectedOrder.orderDestCity,
-            "orderStartDate":this.selectedOrder.orderStartDate,
-            "orderCompletionDate":this.selectedOrder.orderCompleteDate,
-            "orderRefNum":this.selectedOrder.orderRefNumber,
-            "orderOriginPoint":this.selectedOrder.orderOrginCity+","+this.selectedOrder.orderOrginState,
-            "orderBillTo":this.selectedOrder.orderBillTo,
-            "truckID": this.selectedTruck.number, 
-            "truckCompany": this.selectedOrder.orderCompany, 
+            "orderID": this.selectedOrder.number,
+            "OrderLegs": this.selectedOrder.legsC,
+            "movementNumber": this.selectedOrder.move,
+            "orderOriginCityState": this.selectedOrder.origin,
+            "orderDestinationCityState": this.selectedOrder.destination,
+            "orderStartDate": this.selectedOrder.departure,
+            "orderCompletionDate": this.selectedOrder.arrival,
+            "orderShipper": this.selectedOrder.shipper,
+            "orderBillTo": this.selectedOrder.bill_to,
+            "truckID": this.selectedTruck.number,
+            "truckCompany": this.selectedOrder.company,
             "trailerID": this.selectedTrailer.trailerID,
-            "trailerType": this.selectedTrailer.trailerType, 
+            "trailerType": this.selectedTrailer.trailerType,
             "trailerName": this.selectedTrailer.trailerName,
         };
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         let url = config.baseUrl + "/AllocationService/api/InsertOrderAllocation";
-        this.http.post(url,body,options).map(res => res.json())
+        this.http.post(url, body, options).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("OrderDetails data recieved");
-                if(data.status==1){
+                if (data.status == 1) {
                     //alert("success");
                     $('#successResult').modal('show');
                     this.resetOrderPage();
                     this.resetTrailerPage();
                     this.resetTruckPage();
                     this.goToOrder();
-                }else{
+                } else {
                     //alert("failed");
                     $('#failedResult').modal('show');
                 }
             }, //For Success Response
-            (err) => { console.log("OrderDetails error recieved"); this.OrderDetailsResp = true;$('#failedResult').modal('show'); } //For Error Response
+            (err) => {
+                console.log("OrderDetails error recieved");
+                this.OrderDetailsResp = true;
+                $('#failedResult').modal('show');
+            } //For Error Response
             );
     }
-
-    itemObj={
-        "orderNumber": "1889405",
-        "orderOrginCity": "West Chester",
-        "orderOrginState": "PA",
-        "orderOrginCityLat": 39.96,
-        "orderOrginCityLong": 75.6,
-        "orderOrginPoint": "ADUWES02",
-        "orderDestCity": "West Chester",
-        "orderDestState": "PA",
-        "orderDestPoint": "ADUWES02",
-        "orderStartDate": "2049-12-31 23:59:00.000",
-        "orderCompleteDate": "2050-01-07 10:59:00.000",
-        "orderCompany": "CVEN",
-        "orderStatus": "AVL",
-        "orderBillTo": "A DUIE PYLE INC-DEDICATED",
-        "orderRefNumber": "",
-        "orderRemark": "",
-        "movementNumber": "2231740"
-        };
 
 }

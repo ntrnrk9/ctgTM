@@ -230,7 +230,7 @@ export class Gmtest {
             '<div class="row head3" style="font-weight:bold;font-size:12px;color:black">' + tr.trailerType + '</div>' +
             '</div>' +
             '<div class="row title" style="border-bottom:1px solid silver;height:35px;padding:0px 30px 0px 15px">' +
-            '<span class="vehicle-date" style="font-size:10px;float:left;padding-top:5px"><b>DOT Date:</b><br>' + tr.dotDate + '</span>' +
+            '<span class="vehicle-date" style="font-size:10px;float:left;padding-top:5px"><b>DOT Date:</b><br>' + this.formatDateTime(tr.dotDate,0) + '</span>' +
             '<span class=" row vehicletype available" style="float:right;font-size:14px;margin-top:4px;font-weight:bold;color:' + color + '">' + status + '</span>' +
             '</div>' +
             '<div class="row content" style="padding:3px 30px 0px 15px">' +
@@ -407,7 +407,33 @@ export class Gmtest {
 
     }
 
-    
+    formatDateTime(item: any,choice) {
+        if(!item){
+            return item;
+        }
+        else if (item != "") {
+            //var str=item.toUpperCase();
+            if (item.toUpperCase() != "UNKNOWN") {
+                var ary = item.split(' ');
+                var date = ary[0].split('-');
+                var newD = new Date(date[0], date[1] - 1, date[2]);
+                var tim=ary[1].split('.');
+                //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
+                if (choice == 0) {
+                    var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear();
+                }
+                else if (choice == 1) {
+                    var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + tim[0];
+                }
+                return SDate;
+            }else{
+                return item;
+            }
+        }else{
+            return item;
+        }
+
+    }
 
     drawPoly(multipolygonWKT:any,lat:any,lng:any) {
         var polylines = [];

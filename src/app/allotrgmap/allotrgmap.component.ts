@@ -361,8 +361,20 @@ export class AlloTrGmap {
             status = "CONFIRMED"
         }
         var isEmpty=(tr.isEmpty==1)? "Yes":"No";
-        var custID=(tr.customerId)? '<span>Pool: ' + tr.customerId +' | Variance: '+tr.poolVariance+'</span><br>' :"";
-        var content = '<div class="infowindow" style="width:200px;padding:0px;height:105px;overflow:hidden;">' +
+        var custID="";
+        if(tr.isPool==1){
+            if(tr.poolVariance>0){
+                custID='<span><b>' + tr.customerId +' | +'+tr.poolVariance+'</b></span><br>';
+            }else if(tr.poolVariance<0){
+                custID='<span><b>' + tr.customerId +' | </b></span><span style="color:#fb3447"><b>'+tr.poolVariance+'</b></span><br>';
+            }else{
+                custID='<span><b>' + tr.customerId +' | '+tr.poolVariance+'</b></span><br>';
+            }
+        }else{
+            custID='<span><b>' + tr.customerId +'</b></span><br>';
+        }
+
+        var content = '<div class="infowindow" style="width:200px;padding:0px;height:120px;overflow:hidden;">' +
             '<div class="row header" style="border-bottom: 1px solid gray;padding:0px 0px 2px 30px">' +
             '<div class="row head1" style="font-size:14px;color:black">Trailer #: <b>' + tr.trailerID + ' (' + tr.company + ')</b></div>' +
             '<div class="row head2" style="font-size:13px;color:red"><b>' + tr.trailerName + '</b></div>' 
@@ -375,7 +387,8 @@ export class AlloTrGmap {
             '<div class="row content" style="padding:3px 30px 0px 15px">' +
              custID  +
             '<span>is Empty: ' + isEmpty + '</span><br>' +
-            '<span>' + tr.latitude + ', ' + tr.longitude + '</span>' +
+            '<span>' + tr.latitude + ', ' + tr.longitude + '</span><br>' +
+            '<span>' + tr.location + '</span><br>' +
             '</div>' +
 
             '</div>';
@@ -385,8 +398,8 @@ export class AlloTrGmap {
     orcreateinfoWinContent(tr: any) {
         var content = '<div class="infowindow" style="width:200px;padding:0px;height:73px;overflow:hidden;">' +
             '<div class="row header" style="border-bottom: 1px solid gray;padding:0px 0px 2px 30px">' +
-            '<div class="row head1" style="font-size:14px;color:black">Order #: <b>' + tr.orderNumber + '</b></div>' +
-            '<div class="row head2" style="font-size:13px;color:red">Movement no.: <b>' + tr.movementNumber + '</b></div>' 
+            '<div class="row head1" style="font-size:14px;color:black">Order #: <b>' + tr.number + '</b></div>' +
+            '<div class="row head2" style="font-size:13px;color:red">Movement no.: <b>' + tr.move + '</b></div>' 
             
              +'<div class="row head3" style="font-weight:bold;font-size:12px;padding-right:33px;color:black">'
              +'<span></span>'
@@ -394,8 +407,8 @@ export class AlloTrGmap {
              +'</div>'+
             '</div>' +
             '<div class="row content" style="padding:3px 30px 0px 15px">' +
-            '<span><b>Origin: </b>'+tr.orderOrginCity+', '+tr.orderOrginState+'<br></span>'+
-            '<span><b>Destination: </b>' + tr.orderDestCity+', '+tr.orderDestState + '</span>' +
+            '<span><b>Origin: </b>'+tr.origin+'<br></span>'+
+            '<span><b>Destination: </b>' + tr.destination+ '</span>' +
             '</div>' +
 
             '</div>';
@@ -405,8 +418,8 @@ export class AlloTrGmap {
     truckinfoWinContent(tr: any) {
         var content = '<div class="infowindow" style="width:200px;padding:0px;height:73px;overflow:hidden;">' +
             '<div class="row header" style="border-bottom: 1px solid gray;padding:0px 0px 2px 30px">' +
-            '<div class="row head1" style="font-weight:bold;font-size:14px;color:black">Truck #: ' + tr.number + ' (' + tr.company + ')</div>' +
-            '<div class="row head2" style="font-weight:bold;font-size:13px;color:red">Company: ' + tr.make + '</div>' 
+            '<div class="row head1" style="font-size:14px;color:black">Truck #: <b>' + tr.number + ' (' + tr.company + ')</b></div>' +
+            '<div class="row head2" style="font-weight:bold;font-size:13px;color:red">' + tr.make + '</div>' 
             
              +'<div class="row head3" style="font-weight:bold;font-size:12px;padding-right:33px;color:black">'
              + '<span>'+tr.model+'</span>'
