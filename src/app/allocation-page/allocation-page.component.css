@@ -193,3 +193,8 @@ opacity: 0 !important;
 .sel-dd-ul li:hover {
     background-color: #ededed;
 }
+
+.adp{
+    width:150px !important;
+    margin-left: 10px; 
+}

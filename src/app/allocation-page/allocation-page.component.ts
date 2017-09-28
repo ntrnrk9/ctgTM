@@ -976,7 +976,8 @@ export class AllocationPageComponent {
 
         let options = new RequestOptions({ headers: headers });
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
-        let url = config.ctgApiUrl + "/assets/tractors";
+        let url="https://api.drivenanalyticsolutions.com/ctg/assets/tractors";
+        //let url = config.ctgApiUrl + "/assets/tractors";
         this.http.get(url, {
             headers: headers
         }).map(res => res.json())
@@ -1351,6 +1352,52 @@ export class AllocationPageComponent {
     }
 
     toSubmit() {
+        this.allocateInTMW();
+    }
+
+    allocateInTMW(){    
+        
+        var creds = "username=" + config.username + "&password=" + config.password;
+
+        let authToken = "Basic";
+        let headers = new Headers({ 'Accept': 'application/json' });
+        headers.append('Authorization', 'Basic ' +
+            btoa(config.username + ':' + config.password));
+
+        //let options = new RequestOptions({ headers: headers });
+        let options={
+            headers: headers
+        };
+        let postBody = {
+            "order": this.selectedOrder.number,
+            "trailer": this.selectedTrailer.trailerID,
+            "legs": this.selectedOrder.legs
+        };
+        //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
+        let url = config.ctgApiUrl + "/assets/order/assign_trailer";
+        
+        
+        this.http.post(url,postBody,options ).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("allocateInTMW data recieved");
+                if(data.trailer==this.selectedTrailer.trailerID){
+                    console.log("TMS Trailers matches with TMW Trailer");
+                    this.allocateInTMS();
+                }else{
+                    console.log("TMS Trailers do not match with TMW Trailer");
+                    this.allocateInTMS();
+                }
+                //this.allocateInTMS();
+            }, //For Success Response
+            (err) => {
+                console.log("allocateInTMW error recieved");
+                this.allocateInTMS();
+            } //For Error Response
+            );
+    }
+
+    allocateInTMS() {
         console.log("submit allocation");
         this.OrderDetailsResp = false;
         let headers = new Headers({ 'Content-Type': 'application/json;', 'Accept': 'application/json' });
