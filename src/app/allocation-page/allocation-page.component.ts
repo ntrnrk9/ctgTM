@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { GmapjsComponent } from '../gmapjs/gmapjs.component';
 import { Gmtest } from '../gmtest/gmtest.component';
+import { IMyDpOptions, IMyDateModel, IMyInputFieldChanged } from 'mydatepicker';
 
 declare var google: any;
 declare var MarkerClusterer: any;
@@ -112,12 +113,41 @@ export class AllocationPageComponent {
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
+    endDate = { date: { year: 2018, month: 10, day: 9 } };
+    fromDate: any = { date: { year: 20018, month: 10, day: 9 } };
+    private myDatePickerOptions: IMyDpOptions = {
+        // other options...
+        dateFormat: 'mm/dd/yyyy',
+        //disableUntil: this.endDate.date,
+    
+      };
+
     ngOnInit() {
         this.page=this.config.page;
     }
 
     constructor(private http: Http, private cdr: ChangeDetectorRef) {
         //this.getOrderDetails();
+        let edate = new Date();
+        this.endDate = {
+          date: {
+            year: edate.getFullYear(),
+            month: edate.getMonth() + 1,
+            day: edate.getDate()
+          }
+        };
+
+        let fdate = new Date();
+        fdate.setDate(fdate.getDate() - 30);
+        this.fromDate = {
+          date: {
+            year: fdate.getFullYear(),
+            month: fdate.getMonth() + 1,
+            day: fdate.getDate()
+          }
+        };
+
+        
         this.getOrderDetailsByFn();
         this.gettrailers();
     }
