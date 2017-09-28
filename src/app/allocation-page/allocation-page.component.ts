@@ -1007,6 +1007,9 @@ export class AllocationPageComponent {
             (err) => {
                 console.log("tractors error recieved");
                 this.trucksDetailsResp = true;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='tractors service failed<br>'+url+'<br>Status: '+err.status;
                 $('#unExpecError').modal('show');
             } //For Error Response
             );
@@ -1037,6 +1040,9 @@ export class AllocationPageComponent {
             }, //For Success Response
             (err) => { console.log("trailers error recieved");
              this.trailerDetailsResp = true;
+             this.action.heading="Allocation";
+             this.action.body="Unexpected Error occured. Please contact system administrator.";
+             this.action.details='OrderTrailers service failed<br>'+url+'<br>Status: '+err.status;
              $('#unExpecError').modal('show');
              } //For Error Response
             );
@@ -1062,7 +1068,7 @@ export class AllocationPageComponent {
         }
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         
-        let url = config.baseUrl + "/AllocationService/api/OrderTruckTrailers?companyID="+this.selectedOrder.shipper+"&originCityState="+this.selectedOrder.origin+"&distance="+dist+"&company="+this.selectedOrder.company+"&trailerId="+this.selectedTruck.trailer+'&pooltrailers='+toShowPool;
+        let url = config.baseUrl + "/AllocationService/api/OrderTruckTrailers?latitude="+lat2+"&longitude="+lng2+"&distance="+dist+"&company="+this.selectedOrder.company+"&trailerId="+this.selectedTruck.trailer+'&pooltrailers='+toShowPool;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -1092,6 +1098,9 @@ export class AllocationPageComponent {
             (err) => {
                 console.log("trailers error recieved");
                 this.trailerDetailsResp = true;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='OrderTruckTrailers service failed<br>'+url+'<br>Status: '+err.status;
                 $('#unExpecError').modal('show');
              } //For Error Response
             );
@@ -1245,12 +1254,16 @@ export class AllocationPageComponent {
                 if(data.dataSet.length>0){
                 this.selectedOrder['orderTrailerType']=data.dataSet[0].ordersTrailerType;
                 }else{
+                    this.selectedOrder['orderTrailerType']="";
                     console.log("No specific trailerType for order found");
                 }
             }, //For Success Response
             (err) => {
                 console.log("OrderTrailerType error recieved");
                 this.OrderTrailerTypeResp = false;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='OrderTrailerType service failed<br>'+url+'<br>Status: '+err.status;
                 $('#unExpecError').modal('show');
             } //For Error Response
             );
@@ -1329,6 +1342,9 @@ export class AllocationPageComponent {
             (err) => {
                 console.log("PlannedOrderDetails error recieved");
                 this.OrderDetailsResp = true;
+                this.action.heading="Allocation";
+                this.action.body="Unexpected Error occured. Please contact system administrator.";
+                this.action.details='PlannedOrderDetails service failed<br>'+url+'<br>Status: '+err.status;
                 $('#unExpecError').modal('show');
             } //For Error Response
             );
