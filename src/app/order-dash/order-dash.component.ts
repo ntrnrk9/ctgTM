@@ -53,6 +53,7 @@ export class OrderDashComponent implements OnInit {
   FutureAVLOrdersResp=false;
   toShowPlnVsActTable=false;
   toShowFutAvlTable=false;
+  toShowPlnVsActNAPTable=false;
 
   public barChartLabels: string[] = ['Moving as planned', 'Not started', 'Not as per plan', 'Not as per plan'];
   public barChartType: string = 'bar';
@@ -61,8 +62,8 @@ export class OrderDashComponent implements OnInit {
   futAvlOrder=[];
   allTrailler = [];
   ob = {
-    column: [{ name: "Trailer ID", width: "12.5%" }, { name: "Make", width: "12.5%" }, { name: "Model/Type", width: "12.5%" }, { name: "Year", width: "12.5%" }, { name: "Location", width: "12.5%" },
-    { name: "Allocation status", width: "12.5%" }, { name: "Last DOT inspection date", width: "12.5%" }, { name: "Last ping date", width: "12.5%" }],
+    column: [{ name: "Order ID", width: "11%" }, { name: "Movement no.", width: "11%" }, { name: "Order start date.", width: "11%" }, { name: "Order end date", width: "11%" }, { name: "Origin city", width: "11%" }, { name: "Destination city", width: "11%" }, { name: "Order origin point", width: "11%" },
+    { name: "Planned trailer", width: "11%" }, { name: "Trailer in TMW", width: "12%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
 
@@ -91,8 +92,15 @@ export class OrderDashComponent implements OnInit {
   plnVsActchartClicked(e){
     this.gRowCount=50;
     this.allTrailler=e.data.list;
-    this.toShowFutAvlTable=false;
-    this.toShowPlnVsActTable=true;
+    if(e.data.label=="Not as per plan"){
+      this.toShowFutAvlTable=false;
+      this.toShowPlnVsActTable=false;
+      this.toShowPlnVsActNAPTable=true;
+    } else {
+      this.toShowFutAvlTable = false;
+      this.toShowPlnVsActTable = true;
+      this.toShowPlnVsActNAPTable=false;
+    }
   }
 
   public barChartData: any[] = [
@@ -210,21 +218,17 @@ export class OrderDashComponent implements OnInit {
               "list": []
             },
             {
-              "label": "Not as per plan and started",
-              "value": 0,
-              "list": []
-            },
-            {
-              "label": "Not as per plan and not started",
+              "label": "Not as per plan",
               "value": 0,
               "list": []
             }
+            
           ]
         }
         data.dataSet.forEach(element => {
           if (element.isMovingAsPlanned == 1) {
-            bag.values[3].value++;
-            bag.values[3].list.push(element);
+            bag.values[2].value++;
+            bag.values[2].list.push(element);
           } else if (element.isMovingAsPlanned == 2) {
             bag.values[1].value++;
             bag.values[1].list.push(element);
@@ -238,7 +242,9 @@ export class OrderDashComponent implements OnInit {
           } else { }
         });
         this.plnVsActdata=[];
-        this.plnVsActdata.push(bag); 
+        if (data.dataSet.length > 0) {
+          this.plnVsActdata.push(bag);
+        }
         this.OrderStatsResp=true;
 
       }, //For Success Response
