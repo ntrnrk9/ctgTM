@@ -198,3 +198,9 @@ opacity: 0 !important;
     width:150px !important;
     margin-left: 10px; 
 }
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

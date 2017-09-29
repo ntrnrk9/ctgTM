@@ -80,6 +80,7 @@ export class AllocationPageComponent {
     trMapshowLoader=false;
     poolTrailers=false;
     automatedMile=true;
+    alloInProg=false;
     
     oRowCount = 50;
     truRowCount = 50;
@@ -115,6 +116,8 @@ export class AllocationPageComponent {
 
     endDate = { date: { year: 2018, month: 10, day: 9 } };
     fromDate: any = { date: { year: 20018, month: 10, day: 9 } };
+    endDateBU = { date: { year: 2018, month: 10, day: 9 } };
+    fromDateBU: any = { date: { year: 20018, month: 10, day: 9 } };
     private myDatePickerOptions: IMyDpOptions = {
         // other options...
         dateFormat: 'mm/dd/yyyy',
@@ -129,6 +132,7 @@ export class AllocationPageComponent {
     constructor(private http: Http, private cdr: ChangeDetectorRef) {
         //this.getOrderDetails();
         let edate = new Date();
+        edate.setDate(edate.getDate() + 7 );
         this.endDate = {
           date: {
             year: edate.getFullYear(),
@@ -138,7 +142,7 @@ export class AllocationPageComponent {
         };
 
         let fdate = new Date();
-        fdate.setDate(fdate.getDate() - 30);
+        fdate.setDate(fdate.getDate() - 3);
         this.fromDate = {
           date: {
             year: fdate.getFullYear(),
@@ -174,6 +178,7 @@ export class AllocationPageComponent {
 
     goToTruck(){
         this.page=1;
+        this.truckID="";
         this.getOrderTrailerType();
         this.getYardDetailes();
         this.getLegsOfOrder();
@@ -191,6 +196,12 @@ export class AllocationPageComponent {
         this.page=2;
         this.mgToggle=true;
         this.automatedMile=true;
+        this.selectedTrailerMile = { lable: "50 Miles", value: 50 };
+        this.poolTrailers=false;
+        this.includeMT=true;
+        this.includeUNK=true;
+        this.trailerID="";
+        this.selectedTrailer = {trailerID:-1};
         this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
         //this.getTrailersDetails(this.selectedTruck.location.position.lat,this.selectedTruck.location.position.lng,50);
         this.trMapConfig['selOrder']=this.selectedOrder;
@@ -208,7 +219,36 @@ export class AllocationPageComponent {
 
     }
 
+    isOrderDateFilterChanged(){
+        var fromChanged=true;
+        if(
+            (this.fromDate.date.year==this.fromDateBU.date.year) &&
+            (this.fromDate.date.month==this.fromDateBU.date.month) &&
+            (this.fromDate.date.day==this.fromDateBU.date.day)
+        ){
+            fromChanged=false;
+        }
+
+        var endChanged=true;
+        if(
+            (this.endDate.date.year==this.endDateBU.date.year) &&
+            (this.endDate.date.month==this.endDateBU.date.month) &&
+            (this.endDate.date.day==this.endDateBU.date.day)
+        ){
+            endChanged=false;
+        }
+
+        if(fromChanged || endChanged){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     orderSearch() {
+        if(this.isOrderDateFilterChanged()){
+            this.getOrderDetailsByFn();
+        }
         if (this.omID.length > 0) {
             this.searchByomID();
         } else if (this.orderBylocation.length > 0) {
@@ -380,6 +420,9 @@ export class AllocationPageComponent {
         this.trailerID = "";
         this.selectedTrailerMile = { lable: "50 Miles", value: 50 };
         this.selectedTrailer = {trailerID:-1};
+        this.poolTrailers=false;
+        this.includeMT=true;
+        this.includeUNK=true;
         //this.getTrailersDetails(this.selectedOrder.orderOrginCityLat,this.selectedOrder.orderOrginCityLong,50);
         //this.trailers.groups=[];
         this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
@@ -1103,11 +1146,28 @@ export class AllocationPageComponent {
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
+                var limit=0;
+                if((this.selectedTruck.trailer=="" || this.selectedTruck.trailer==undefined)){
+                    console.log("No pool trailers found for the chosen fitlers");
+                    limit=0;
+                }else if((this.selectedTruck.trailer!="" && this.selectedTruck.trailer )){
+                    console.log("No pool trailers found for the chosen fitlers");
+                    limit=1;
+                }
                 console.log("trailers data recieved");
-
-                if (data.dataSet.length <= 1 && this.automatedMile && dist <= 100) {
+                if(!this.automatedMile && data.dataSet.length <= limit){
+                    $('#cResult').modal('show');
+                    this.automatedMile=false;
+                    this.trailers.groups = data.dataSet;
+                    this.trailerList = data.dataSet;
+                    this.filterTrailerByType();
+                    this.trailers.groups = this.sortList('distance', this.trailers.groups);
+                    this.mapTrailers = this.cloneObje(this.trailerList);
+                    this.trailerDetailsResp = true;
+                }else
+                if (data.dataSet.length <= limit && this.automatedMile && dist <= 100) {
                     this.getOrderTruckTrailers(lat1, lat2, lng1, lng2, dist + 50);
-
+                    
                 } else {
                     if(dist==50){
                         this.selectedTrailerMile = { lable: "50 Miles", value: 50 };
@@ -1116,7 +1176,7 @@ export class AllocationPageComponent {
                     }else if(dist==150){
                         this.selectedTrailerMile = { lable: "150 Miles", value: 150 };
                     }
-
+                    this.automatedMile=false;
                     this.trailers.groups = data.dataSet;
                     this.trailerList = data.dataSet;
                     this.filterTrailerByType();
@@ -1162,7 +1222,13 @@ export class AllocationPageComponent {
     }
 
     getOrderDetailsByFn() {
+        
         this.OrderDetailsResp = false;
+        //2017-09-26T10:00:00&end=2017-09-29T10:00:00
+        let fDate=this.fromDate.date.year+"-"+this.fromDate.date.month+"-"+this.fromDate.date.day+"T00:00:00";
+        let eDate=this.endDate.date.year+"-"+this.endDate.date.month+"-"+this.endDate.date.day+"T00:00:00";
+        this.fromDateBU=this.cloneObje(this.fromDate);
+        this.endDateBU=this.cloneObje(this.endDate);
         var creds = "username=" + config.username + "&password=" + config.password;
 
         let authToken = "Basic";
@@ -1172,12 +1238,14 @@ export class AllocationPageComponent {
 
 
         let options = new RequestOptions({ headers: headers });
-        let url = config.ctgApiUrl + "/assets/orders/AVL";
+        //let url = config.ctgApiUrl + "/assets/orders/AVL";
+        let url = config.ctgApiUrl + "/assets/orders/avl?start="+fDate+"&end="+eDate;
         this.http.get(url, {
             headers: headers
         }).map(res => res.json())
             .subscribe(
             (data) => {
+                
                 console.log("OrderDetailsByFn data recieved");
                 var bag=this.filterInvalidData(data.data,'departure');
                 bag=this.filterAvlOrders(bag);
@@ -1383,6 +1451,8 @@ export class AllocationPageComponent {
 
     toSubmit() {
         this.allocateInTMW();
+        this.alloInProg=true;
+        //$('#waiting').modal('show');
     }
 
     allocateInTMW(){    
@@ -1458,6 +1528,8 @@ export class AllocationPageComponent {
         this.http.post(url, body, options).map(res => res.json())
             .subscribe(
             (data) => {
+                this.alloInProg=false;
+                //$('#waiting').modal('hide');
                 console.log("OrderDetails data recieved");
                 if (data.status == 1) {
                     //alert("success");
@@ -1472,6 +1544,8 @@ export class AllocationPageComponent {
                 }
             }, //For Success Response
             (err) => {
+                this.alloInProg=false;
+                //$('#waiting').modal('hide');
                 console.log("OrderDetails error recieved");
                 this.OrderDetailsResp = true;
                 $('#failedResult').modal('show');

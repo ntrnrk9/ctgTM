@@ -17,7 +17,9 @@
         <div class="row page-container" style="margin:0px">
 
             <div class="col-md-12 page-heading">
-                <div style="padding-left: 10px;padding-top: 1px;" class="pull-left"><img style="height: 35px;" src="../../assets/images/Order-1.png" /></div>
+                <div style="padding-left: 10px;padding-top: 1px;" class="pull-left">
+                    <img style="height: 35px;" src="../../assets/images/Order-1.png" /><b *ngIf="selectedOrder.number!=-1"> {{selectedOrder.number}} - {{selectedOrder.shipper}} - {{selectedOrder.origin}} - Legs: {{selectedOrder.legs}}</b>
+                </div>
                 <button class="pull-right toggleBut" [disabled]="selectedOrder.number==-1" type="button" value="encode" (click)="goToTruck()">Next</button>
             </div><br />
 
@@ -49,6 +51,14 @@
                                     </ul>
                                 </div>
                             </div>
+                            <span class="pull-left" style="margin-left:15px;padding-top:5px">Order range</span>
+                             <div class="pull-left adp">
+                                 <my-date-picker name="fromDate" [options]="myDatePickerOptions" [(ngModel)]="fromDate" required></my-date-picker>
+                             </div>
+                             <span class="pull-left" style="margin-left:10px;padding-top:5px"> - </span>
+                             <div  class="pull-left adp">
+                                 <my-date-picker name="endDate" [options]="myDatePickerOptions" [(ngModel)]="endDate" required></my-date-picker>
+                             </div>
                         </div>
                         <div class="pull-left" style="padding:5px;">
                             <span (keyup.enter)="searchByomID()">
@@ -62,15 +72,9 @@
                             </span>
 
 
+                             
+                             
                              <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="orderSearch()">Search</button> 
-                             <span class="pull-left" style="margin-left:15px;padding-top:5px">From</span>
-                             <div class="pull-left adp">
-                                 <my-date-picker name="fromDate" [options]="myDatePickerOptions" [(ngModel)]="fromDate" required></my-date-picker>
-                             </div>
-                             <span class="pull-left" style="margin-left:15px;padding-top:5px"> To </span>
-                             <div  class="pull-left adp">
-                                 <my-date-picker name="endDate" [options]="myDatePickerOptions" [(ngModel)]="endDate" required></my-date-picker>
-                             </div>
                         </div>
                     </div>
                     <button class="pull-right resetBut" type="button" value="encode" (click)="resetOrderPage()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
@@ -151,7 +155,10 @@
         <div class="row page-container" style="margin:0px">
 
             <div class="col-md-12 page-heading">
-                <div style="padding-left: 10px;padding-top: 1px;" class="pull-left"><img style="height: 35px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.number}} - {{selectedOrder.shipper}} - {{selectedOrder.origin}} - Legs: {{selectedOrder.legs}}</b></div>
+                <div style="padding-left: 10px;padding-top: 1px;" class="pull-left">
+                    <img style="height: 35px;" src="../../assets/images/Order-1.png" /><b> {{selectedOrder.number}} - {{selectedOrder.shipper}} - {{selectedOrder.origin}} - Legs: {{selectedOrder.legs}}</b>
+                    <span style="padding-left:50px" *ngIf="selectedTruck.number!=-1"><img style="height: 39px;padding-right: 10px;" src="../../assets/images/Truck-5.png"/><b> {{selectedTruck.number}}</b></span>
+                </div>
                 <button class="pull-right toggleBut"  [disabled]="selectedTruck.number==-1" type="button" value="encode" (click)="goToTrailer()">Next</button>
                 <button style="margin-right:2px" class="pull-right toggleBut" type="button" value="encode" (click)="goToOrder()">Back</button>
             </div><br />
@@ -367,119 +374,122 @@
                 <button class="pull-right toggleBut" type="button" value="encode" (click)="toSubmit()">Submit</button>
                 <button style="margin-right:2px" class="pull-right toggleBut" type="button" value="encode" (click)="goToTrailer()">Back</button>
             </div><br />
-
-
-            <div class="col-md-12 page-body">
-                <div class="col-md-4" style="border-right: 1px solid #ededed;">
-                    <div class="filter-container">
-                        <div style="padding:5px;" class="pull-left">
-                            <span class="pull-left" style="margin-left:15px;padding-top:5px">Order ID / Movement no. : <b>{{selectedOrder.number}} / {{selectedOrder.move}}</b></span>
-                        </div>
-                    </div>
-                    <div style="padding:20px;">
-                        <div>
-                            <span>Bill to party</span><br>
-                            <span style="font-size: 16px"><b>{{selectedOrder.bill_to}}</b></span>
-                        </div>
-                        <div style="padding-top:10px">
-                            <span>TMW</span><br>
-                            <span style="font-size: 16px"><b>{{selectedOrder.shipper}}</b></span>
-                        </div>
-                        <div style="padding-top:10px">
-                            <span>Origin city</span><br>
-                            <span style="font-size: 16px"><b>{{selectedOrder.origin}}</b></span>
-                        </div>
-                        <div style="padding-top:10px">
-                            <span>Destination city</span><br>
-                            <span style="font-size: 16px"><b>{{selectedOrder.destination}}</b></span>
-                        </div>
-                        <div style="padding-top:10px">
-                            <span>Order start date</span><br>
-                            <span style="font-size: 16px"><b>{{selectedOrder.departure}}</b></span>
-                        </div>
-                        <div style="padding-top:10px">
-                            <span>Order end date</span><br>
-                            <span style="font-size: 16px"><b>{{selectedOrder.arrival}}</b></span>
-                        </div>
-                        <div style="padding-top:10px">
-                            <span>Legs</span><br>
-                            <span style="font-size: 16px"><b>{{selectedOrder.legsC}}</b></span>
-                        </div>
-
-                    </div>
-
-                </div>
-                <div class="col-md-4" style="border-right: 1px solid #ededed;">
-                    <div class="filter-container">
-                        <div style="padding:5px;" class="pull-left">
-                            <span class="pull-left" style="margin-left:15px;padding-top:5px">Truck ID : <b>{{selectedTruck.number}}</b></span>
-                        </div>
-                    </div>
-                    <div style="padding:20px;">
-                        <div style="height:42px">
-                            <span>Company</span><br>
-                            <span style="font-size: 16px"><b>{{selectedTruck.company}}</b></span>
-                        </div>
-                        <div style="padding-top:10px;height:52px">
-                            <span>Make</span><br>
-                            <span style="font-size: 16px"><b>{{selectedTruck.make}}</b></span>
-                        </div>
-                        <div style="padding-top:10px;height:52px">
-                            <span>Model</span><br>
-                            <span style="font-size: 16px"><b>{{selectedTruck.model}}</b></span>
-                        </div>
-                        <div style="padding-top:10px;height:52px">
-                            <span>Type</span><br>
-                            <span style="font-size: 16px"><b>{{selectedTruck.type}}</b></span>
-                        </div>
-                        <div style="padding-top:10px;height:52px">
-                            <span>Distance (Approx. radius in miles)</span><br>
-                            <span style="font-size: 16px"><b>{{selectedTruck.distance}}</b></span>
-                        </div>
-                        <div style="padding-top:10px;height:52px">
-                            <span>Landmark</span><br>
-                            <span style="font-size: 16px"><b>{{selectedTruck.location.landmark}}</b></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="filter-container">
-                        <div style="padding:5px;" class="pull-left">
-                            <span class="pull-left" style="margin-left:15px;padding-top:5px">Trailer ID : <b>{{selectedTrailer.trailerID}}</b></span>
-                        </div>
-                    </div>
-                    <div style="padding:20px;">
-                        <div>
-                            <span>Model/type</span><br>
-                            <span style="font-size: 16px"><b>{{selectedTrailer.trailerType}}</b></span>
-                        </div>
-                        <div style="padding-top:10px">
-                            <span>Make</span><br>
-                            <span style="font-size: 16px"><b>{{selectedTrailer.trailerName}}</b></span>
-                        </div>
-                        <div style="padding-top:10px">
-                            <span>Location</span><br>
-                            <span style="font-size: 16px"><b>{{selectedTrailer.location}}</b></span>
-                        </div>
-                        <div style="padding-top:10px">
-                            <span>Distance (Approx. radius in miles)</span><br>
-                            <span style="font-size: 16px"><b>{{selectedTrailer.distance}}</b></span>
-                        </div>
-                        <div style="padding-top:10px">
-                            <span>Last ping date</span><br>
-                            <span style="font-size: 16px"><b>{{formatTrDateTime(selectedTrailer.lastMovementDate)}}</b></span>
-                        </div>
-                    </div>
-                </div>
+            <div  *ngIf="alloInProg" style="height:400px">
+                <div   class="loader centered" ><img src="../../assets/images/loader.gif" /></div>
             </div>
+            <div *ngIf="!alloInProg">
+                <div class="col-md-12 page-body">
+                    <div class="col-md-4" style="border-right: 1px solid #ededed;">
+                        <div class="filter-container">
+                            <div style="padding:5px;" class="pull-left">
+                                <span class="pull-left" style="margin-left:15px;padding-top:5px">Order ID / Movement no. : <b>{{selectedOrder.number}} / {{selectedOrder.move}}</b></span>
+                            </div>
+                        </div>
+                        <div style="padding:20px;">
+                            <div>
+                                <span>Bill to party</span><br>
+                                <span style="font-size: 16px"><b>{{selectedOrder.bill_to}}</b></span>
+                            </div>
+                            <div style="padding-top:10px">
+                                <span>TMW</span><br>
+                                <span style="font-size: 16px"><b>{{selectedOrder.shipper}}</b></span>
+                            </div>
+                            <div style="padding-top:10px">
+                                <span>Origin city</span><br>
+                                <span style="font-size: 16px"><b>{{selectedOrder.origin}}</b></span>
+                            </div>
+                            <div style="padding-top:10px">
+                                <span>Destination city</span><br>
+                                <span style="font-size: 16px"><b>{{selectedOrder.destination}}</b></span>
+                            </div>
+                            <div style="padding-top:10px">
+                                <span>Order start date</span><br>
+                                <span style="font-size: 16px"><b>{{selectedOrder.departure}}</b></span>
+                            </div>
+                            <div style="padding-top:10px">
+                                <span>Order end date</span><br>
+                                <span style="font-size: 16px"><b>{{selectedOrder.arrival}}</b></span>
+                            </div>
+                            <div style="padding-top:10px">
+                                <span>Legs</span><br>
+                                <span style="font-size: 16px"><b>{{selectedOrder.legsC}}</b></span>
+                            </div>
 
-            <div class="col-md-12 page-body">
-                <div class="filter-container">
-                    <div style="padding:5px;" class="pull-left">
-                        <span class="pull-left" style="margin-left:15px;padding-top:5px"><b>Approx. Route distance in miles.</b></span>
+                        </div>
+
+                    </div>
+                    <div class="col-md-4" style="border-right: 1px solid #ededed;">
+                        <div class="filter-container">
+                            <div style="padding:5px;" class="pull-left">
+                                <span class="pull-left" style="margin-left:15px;padding-top:5px">Truck ID : <b>{{selectedTruck.number}}</b></span>
+                            </div>
+                        </div>
+                        <div style="padding:20px;">
+                            <div style="height:42px">
+                                <span>Company</span><br>
+                                <span style="font-size: 16px"><b>{{selectedTruck.company}}</b></span>
+                            </div>
+                            <div style="padding-top:10px;height:52px">
+                                <span>Make</span><br>
+                                <span style="font-size: 16px"><b>{{selectedTruck.make}}</b></span>
+                            </div>
+                            <div style="padding-top:10px;height:52px">
+                                <span>Model</span><br>
+                                <span style="font-size: 16px"><b>{{selectedTruck.model}}</b></span>
+                            </div>
+                            <div style="padding-top:10px;height:52px">
+                                <span>Type</span><br>
+                                <span style="font-size: 16px"><b>{{selectedTruck.type}}</b></span>
+                            </div>
+                            <div style="padding-top:10px;height:52px">
+                                <span>Distance (Approx. radius in miles)</span><br>
+                                <span style="font-size: 16px"><b>{{selectedTruck.distance}}</b></span>
+                            </div>
+                            <div style="padding-top:10px;height:52px">
+                                <span>Landmark</span><br>
+                                <span style="font-size: 16px"><b>{{selectedTruck.location.landmark}}</b></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="filter-container">
+                            <div style="padding:5px;" class="pull-left">
+                                <span class="pull-left" style="margin-left:15px;padding-top:5px">Trailer ID : <b>{{selectedTrailer.trailerID}}</b></span>
+                            </div>
+                        </div>
+                        <div style="padding:20px;">
+                            <div>
+                                <span>Model/type</span><br>
+                                <span style="font-size: 16px"><b>{{selectedTrailer.trailerType}}</b></span>
+                            </div>
+                            <div style="padding-top:10px">
+                                <span>Make</span><br>
+                                <span style="font-size: 16px"><b>{{selectedTrailer.trailerName}}</b></span>
+                            </div>
+                            <div style="padding-top:10px">
+                                <span>Location</span><br>
+                                <span style="font-size: 16px"><b>{{selectedTrailer.location}}</b></span>
+                            </div>
+                            <div style="padding-top:10px">
+                                <span>Distance (Approx. radius in miles)</span><br>
+                                <span style="font-size: 16px"><b>{{selectedTrailer.distance}}</b></span>
+                            </div>
+                            <div style="padding-top:10px">
+                                <span>Last ping date</span><br>
+                                <span style="font-size: 16px"><b>{{formatTrDateTime(selectedTrailer.lastMovementDate)}}</b></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div style="padding: 10px 20px;">Truck --> Trailer--> Order origin point: {{selectedTrailer.routeDist}}</div>
+
+                <div class="col-md-12 page-body">
+                    <div class="filter-container">
+                        <div style="padding:5px;" class="pull-left">
+                            <span class="pull-left" style="margin-left:15px;padding-top:5px"><b>Approx. Route distance in miles.</b></span>
+                        </div>
+                    </div>
+                    <div style="padding: 10px 20px;">Truck --> Trailer--> Order origin point: {{selectedTrailer.routeDist}}</div>
+                </div>
             </div>
         </div>
     </div>
@@ -575,4 +585,35 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="cResult" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header page-heading" style="padding:5px 15px 5px 15px">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Trailer search</h4>
+                </div>
+                <div class="modal-body">
+                    <p>No trailers found for the chosen filters!</p>
+                </div>
+                <div class="modal-footer page-footer">
+                    <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="waiting" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header page-heading" style="padding:5px 15px 5px 15px">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Allocating trailer</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+                    </div>
+                    <div class="modal-footer page-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
 </div>
