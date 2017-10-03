@@ -131,6 +131,16 @@ export class AllocationPageComponent {
 
     constructor(private http: Http, private cdr: ChangeDetectorRef) {
         //this.getOrderDetails();
+        this.initDateFilter();
+        this.getOrderDetailsByFn();
+        this.gettrailers();
+    }
+
+    ngOnChange(val: number) {
+        console.log("values in allocation changed");
+    }
+
+    initDateFilter(){
         let edate = new Date();
         edate.setDate(edate.getDate() + 7 );
         this.endDate = {
@@ -150,14 +160,6 @@ export class AllocationPageComponent {
             day: fdate.getDate()
           }
         };
-
-        
-        this.getOrderDetailsByFn();
-        this.gettrailers();
-    }
-
-    ngOnChange(val: number) {
-        console.log("values in allocation changed");
     }
 
     selectCmp(item){
@@ -404,6 +406,7 @@ export class AllocationPageComponent {
         this.selectedOrStatus = { lable: "Available", value: "AVL" };
         this.selectedOrder= {number:-1};
         //this.getOrderDetails();
+        this.initDateFilter();
         this.getOrderDetailsByFn();
     }
 
@@ -1226,7 +1229,7 @@ export class AllocationPageComponent {
         this.OrderDetailsResp = false;
         //2017-09-26T10:00:00&end=2017-09-29T10:00:00
         let fDate=this.fromDate.date.year+"-"+this.fromDate.date.month+"-"+this.fromDate.date.day+"T00:00:00";
-        let eDate=this.endDate.date.year+"-"+this.endDate.date.month+"-"+this.endDate.date.day+"T00:00:00";
+        let eDate=this.endDate.date.year+"-"+this.endDate.date.month+"-"+this.endDate.date.day+"T23:59:59";
         this.fromDateBU=this.cloneObje(this.fromDate);
         this.endDateBU=this.cloneObje(this.endDate);
         var creds = "username=" + config.username + "&password=" + config.password;
@@ -1341,7 +1344,7 @@ export class AllocationPageComponent {
             } //For Error Response
             );
     }
-//////
+
     getOrderTrailerType() {
         this.OrderTrailerTypeResp = false;
         //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
@@ -1532,11 +1535,35 @@ export class AllocationPageComponent {
                 //$('#waiting').modal('hide');
                 console.log("OrderDetails data recieved");
                 if (data.status == 1) {
-                    //alert("success");
+                    
                     $('#successResult').modal('show');
-                    this.resetOrderPage();
-                    this.resetTrailerPage();
-                    this.resetTruckPage();
+                    
+                    //reset order page
+                    this.orderBylocation = "";
+                    this.omID = "";
+                    this.selectedCmp = { lable: "Covenant", value: "CVEN" };
+                    this.selectedOrStatus = { lable: "Available", value: "AVL" };
+                    this.selectedOrder= {number:-1};
+                    this.initDateFilter();
+                    
+                    //reset truck page
+                    this.truckBylocation = "";
+                    this.truckID = "";
+                    this.selectedMiles = { lable: "Select radius", value: 0 };
+                    this.selectedTruck = {number:-1};
+                    
+                    //reset trialer page
+                    this.trailerBylocation = "";
+                    this.trailerID = "";
+                    this.selectedTrailerMile = { lable: "50 Miles", value: 50 };
+                    this.selectedTrailer = {trailerID:-1};
+                    this.poolTrailers=false;
+                    this.includeMT=true;
+                    this.includeUNK=true;
+                    
+                    // this.resetTruckPage();
+                    // this.resetOrderPage();
+                    // this.resetTrailerPage();
                     this.goToOrder();
                 } else {
                     //alert("failed");
