@@ -1,12 +1,41 @@
-﻿.app-table {
-    width: 100%;
+﻿h1 {
+    font-size: 300%;
+    color: #34495e;
 }
 
-.app-table-tr {
-    padding: 15px;
+.selected {
+    color: white !important;
+    background: #d2232a;
+    cursor: default !important;
 }
 
-.app-table tr {
-    height: 45px;
-    padding: 10px;
+.selected-a{
+    color: white !important;
+    cursor: default !important;
+}
+.tab-li-last {
+    float: left;
+    padding-left: 10px;
+    padding-right: 10px
+}
+.tab-li {
+    float: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    /* border-right: 2px solid #dedede; */
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 21px;
+    cursor: pointer;
+}
+
+.tabContainer {
+    padding-top: 10px;
+    padding-bottom:20px;
 }

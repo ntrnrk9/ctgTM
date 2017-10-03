@@ -41,6 +41,8 @@ import { OrderDashComponent } from './order-dash/order-dash.component';
 
 import 'd3';
 import 'nvd3';
+import { YardDashComponent } from './yard-dash/yard-dash.component';
+import { YardCheckComponent } from './yard-check/yard-check.component';
 
 @NgModule({
     imports: [BrowserModule, HttpModule, CommonModule, FormsModule,MyDatePickerModule, NgxPaginationModule,ChartsModule,NvD3Module,
@@ -57,7 +59,7 @@ import 'nvd3';
         FilterCPipe, FilterArrayPipe,
         SearchfilterComponent, GmapjsComponent,AlloTrGmap,Gmtest, HistoryPageComponent, SingleselectComponent
         , HomeMainComponent, TrailerDashComponent, 
-        OrderDashComponent
+        OrderDashComponent, YardDashComponent, YardCheckComponent
     ],
     //providers:[{ provide: RequestOptions, useClass: HttpInject }],
     bootstrap: [AppComponent]

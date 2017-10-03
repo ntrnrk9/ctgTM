@@ -1,35 +1,20 @@
-﻿<div class="page-container">
-    <div class="row">
-        <div class="col-md-12">
-            <div style="background: #d1deef;padding:15px;">
-                <input class="ctg-textbox" placeholder="Trailer ID" style="padding:0px;" />
-                <input class="ctg-textbox" placeholder="Choose state" style="margin-left:10px;padding:0px" />
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div style="background: white;">
-                <h5 style="padding:15px;margin:0px">Yard Management</h5>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <table class="app-table">
-                <thead>
-                    <tr bgcolor="#b3d4f" class="app-table-tr">
-                        <th style="text-align:center" *ngFor="let con of config.column">{{con}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let row of config.rows">
-                        <td style="text-align:center" *ngFor="let val of row">
-                            <span>{{val}}</span>
-                        </td>
-                        <td style="text-align:center">
-                            <button>Play</button>
-                            <button>Upload</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+﻿<div class="row page-container" style="margin:0px;background-color: #fafafa">
+
+    <div class="row" style="background-color: #d3d3d3;margin: 0px;">
+        <ul style="list-style:none;float:left;padding-left:0px;margin-bottom:0px">
+            <li class="tab-li" [ngClass]="{'selected': toShowTab==1}" (click)="toShowTab=1">
+                <h4><a [ngClass]="{'selected-a': toShowTab==1}" href="#">Yard Dashboard</a></h4>
+            </li>
+            <li class="tab-li" [ngClass]="{'selected': toShowTab==2}" (click)="toShowTab=2">
+                <h4><a [ngClass]="{'selected-a': toShowTab==2}" href="#">Manage yard checks</a></h4>
+            </li>
+        </ul>
+    </div>
+
+    <!-- <button (click)="getStateTrailersStatus()">refresh</button> -->
+    <div [ngSwitch]="toShowTab" style="margin-top:10px">
+        <app-yard-dash *ngSwitchCase=1 ></app-yard-dash>
+        <app-yard-check *ngSwitchCase=2 ></app-yard-check>
+        
     </div>
 </div>

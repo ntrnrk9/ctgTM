@@ -1,0 +1,174 @@
+h1 {
+    font-size: 300%;
+    color: #34495e;
+}
+
+.page-container {
+    /* box-shadow: 1px 2px 5px grey; */
+    /*border: 1px solid silver;*/
+}
+
+.page-body {
+    padding: 0px 20px 20px 20px;
+    margin-top: 10px;
+}
+
+.pm-select-cont {
+    background-color: white;
+    padding-right: 4px;
+}
+
+.mulSel-dd {
+    width: 198px;
+    border-radius: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding: 10px 10px 10px 10px;
+}
+
+.sel-dd {
+    width: auto;
+    border-radius: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding: 0px 10px 0px 10px;
+}
+
+.mulSel-dd-ul {
+    padding: 5px 0px 5px 0px;
+    list-style: none;
+    margin-bottom: 0px;
+    height: 129px;
+    overflow-y: scroll;
+    margin: 5px 0px 5px 0px;
+}
+
+.sel-dd-ul {
+    padding: 5px 0px 5px 0px;
+    list-style: none;
+    margin-bottom: 0px;
+    margin: 5px 0px 5px 0px;
+}
+
+.sel-dd-ul li:hover {
+    background-color: #ededed;
+}
+
+.search-box {
+    height: 30px;
+    border-radius: 0px;
+}
+
+.filters {
+    background-color: white;
+    padding: 5px;
+    width: 140px;
+    text-align: left;
+    border: none;
+}
+
+.close{
+    opacity:1;
+    color:white;
+}
+
+.normalfnt{
+    font-weight:normal;
+}
+
+.resetBut {
+    /*position: absolute;
+    right: 0px;
+    top: 0px;*/
+    padding: 9px;
+    border: none;
+    background-color: #d3d3d3;
+}
+
+.toggleBut {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    padding: 9px;
+    border: none;
+    background-color: #062a53;
+}
+
+.app-table {
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+    .app-table thead tr {
+        background-color: #22466f;
+        color: #fff;
+    }
+
+.app-table-tr {
+    padding: 15px 0px 15px 0px;
+}
+
+.app-table tr {
+    padding: 0px;
+}
+.loader {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    padding-top: 250px;
+    text-align: center;
+    height: 100%;
+}
+
+.histLoader{
+    text-align: center;
+    padding: 20px;
+    border: 1px solid silver;
+    border-top: none
+}
+.transparent{
+opacity: 0 !important;
+}
+.modal-dialog{
+    margin-top: 5%;
+}
+.pm-addBut {
+    border: none;
+    background: #d2232a;
+    color: white;
+    height: 30px;
+}
+
+.table-fixed thead {
+  width: 100%;
+}
+.table-fixed tbody {
+  max-height: 500px;
+  overflow-y: auto;
+  width: 100%;
+}
+.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
+  display: inline-block;
+}
+.table-fixed tbody td, .table-fixed thead > tr> th {
+  float: left;
+  border-bottom-width: 0;
+}
+.table-fixed tbody{
+    border:1px solid silver;
+  border-top:none;
+}
+.full{
+    width:100%
+}
+
+.disabled {
+    background:white;
+    opacity: 0.5;
+}
+
+.histBut {
+    border: none;
+    background: transparent;
+    color: #d2232a;
+}
