@@ -12,23 +12,28 @@
           (chartClick)="chartClicked($event)"></canvas>
   </div> -->
   <div class="row">
-    <div class="col-md-6" style="height:550px;">
-      <div style="text-align: left;padding-top: 10px;">
-        <label style="font-size: 25px;font-weight: normal;">Planned Vs Actual</label>
+    <div class="col-md-6" style="height:380px;">
+      <div style="border:1px solid silver">
+          <div style="text-align: left;padding-top: 15px;padding-left: 15px;">
+          <label style="font-size: 25px;font-weight: normal;">Planned vs Actual</label>
+        </div>
+        <div *ngIf="OrderStatsResp">
+          <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3>
+        </div>
+        <div *ngIf="!OrderStatsResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
       </div>
-      <div *ngIf="OrderStatsResp">
-        <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3>
-      </div>
-      <div *ngIf="!OrderStatsResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
-    <div class="col-md-6" style="height:550px;">
-      <div style="text-align: left;padding-top: 10px;">
-        <label style="font-size: 25px;font-weight: normal;">Orders in next 7 days </label>
+
+    <div class="col-md-6" style="height:380px;">
+      <div style="border:1px solid silver">
+          <div style="text-align: left;padding-top: 15px;padding-left: 15px;">
+          <label style="font-size: 25px;font-weight: normal;">Orders in next 7 days </label>
+        </div>
+        <div *ngIf="FutureAVLOrdersResp">
+          <nvd3 [options]="futAvlOptions" [data]="futAvlData"></nvd3>
+        </div>
+        <div *ngIf="!FutureAVLOrdersResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
       </div>
-      <div *ngIf="FutureAVLOrdersResp">
-        <nvd3 [options]="futAvlOptions" [data]="futAvlData"></nvd3>
-      </div>
-      <div *ngIf="!FutureAVLOrdersResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
   </div>
 
