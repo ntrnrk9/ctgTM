@@ -64,27 +64,14 @@ export class YardCheckComponent implements OnInit {
     action: any = { heading: "", body: "" };
     mapConfig:any={lat:36.090240,lng:-95.712891,mapType:'roadmap',marker:-1};
     historyConfig:any={showHistory:false,allTraillerSubSet:[],dataSet:[],backupDS:[],backupATS:[]};
+    
     allTrailers_bu=[];
-    //allTrailers: any=[];
-    // allTrailers: any = [
-    //     { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-    //     { "trailerID": "25007", "trailerType": "UNK", "latitude": 36.11857, "longitude": -86.41091, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-    //     { "trailerID": "25010", "trailerType": "UNK", "latitude": 36.12121, "longitude": -86.41055, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-    //     { "trailerID": "35531", "trailerType": "DRY", "latitude": 40.6008, "longitude": -75.56779, "location": "South Whitehall Twp, Lehigh Co,PA", "landmark": "Cov Terminal,CM-130238,Allentown TERM", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-    //     { "trailerID": "37733", "trailerType": "DRY", "latitude": 28.42675, "longitude": -81.44616, "location": "Doctor Phillips,FL", "landmark": "Doctor Phillips", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" }
-    // ];
     allTraillerSubSet: any = [];
-    // allTraillerSubSet: any = [
-    //     { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-    //     { "trailerID": "25007", "trailerType": "UNK", "latitude": 36.11857, "longitude": -86.41091, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-    //     { "trailerID": "25010", "trailerType": "UNK", "latitude": 36.12121, "longitude": -86.41055, "location": "Mount Juliet,TN", "landmark": "Amazon.com (AMALEB04) Lebanon, TN", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-    //     { "trailerID": "35531", "trailerType": "DRY", "latitude": 40.6008, "longitude": -75.56779, "location": "South Whitehall Twp, Lehigh Co,PA", "landmark": "Cov Terminal,CM-130238,Allentown TERM", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
-    //     { "trailerID": "37733", "trailerType": "DRY", "latitude": 28.42675, "longitude": -81.44616, "location": "Doctor Phillips,FL", "landmark": "Doctor Phillips", "trailerStatus": "Not Available", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" }
-    // ];
+    
 
     ob = {
         column: [{ name: "Trailer ID", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model/Type", width: "10%" }, { name: "Location", width: "10%" },{ name: "Year", width: "10%" },{ name: "Distance in miles", width: "10%" },
-        { name: "Allocation status", width: "10%" }, { name: "Last DOT inspection date", width: "10%" }, { name: "Last ping date", width: "10%" }, { name: "History", width: "10%" }],
+        { name: "Yard status", width: "10%" }, { name: "Last DOT inspection date", width: "10%" }, { name: "Last ping date", width: "10%" }, { name: "Actions", width: "10%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
@@ -363,13 +350,13 @@ export class YardCheckComponent implements OnInit {
     getStateTrailersStatus() {
         this.trailerStatusResp = false;
         //let url="http://61.16.133.244/HomeService/api/StatesTrailerCounts";
-        let url = config.baseUrl + "/HomeService/api/TrailerStatus?trailerStatus=0&trailerId=0";
+        let url = config.baseUrl + "/YardMGMTService/api/YardTrailers";
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("StatesTrailerCounts data recieved");
-                this.allTrailers = data;
-                this.allTrailers_bu = data;
+                this.allTrailers = data.dataSet;
+                this.allTrailers_bu = data.dataSet;
                 this.trailerStatusResp = true;
                 //this.selectCmp(this.selectedCmp);
                 this.filterMapByCmp();
@@ -471,38 +458,49 @@ export class YardCheckComponent implements OnInit {
             );
     }
 
-        getTrailerDetailsByCustomerId(custID:any) {
-        //this.historyRecv = false;
-        let url = config.baseUrl + "/HomeService/api/TrailerDetailsByCustomerId?customerId="+custID;
-        this.http.get(url).map(res => res.json())
-            .subscribe(
-            (data) => {
-                console.log("StatesTrailerCounts data recieved");
-                if(data.dataSet.length>0){
-                    var poly=data.dataSet[0].yard;
-                    var lat=data.dataSet[0].latitude;
-                    var lng=data.dataSet[0].longitude;
-                    if(this.mgToggleFlag){
-                    this.gmapJs.drawPoly(poly,lat,lng);
-                    this.filterByBounds(poly);
-                    }else{
-                        this.filterByBounds(poly);
-                        this.mapConfig.polygon=poly;
-                        this.mapConfig.lat=lat;
-                        this.mapConfig.lng=lng;
-                    }
+    getTrailerDetailsByCustomerId(custID: any) {
+      var creds = "username=" + config.username + "&password=" + config.password;
 
-                }else{
-                    $('#inValidCustID').modal('show');
-                    this.custID="";
-                }
-                //this.historyRecv = true;
-            }, //For Success Response
-            (err) => {
-                console.log("StatesTrailerCounts error recieved");
-                //this.historyRecv = true;
-            } //For Error Response
-            );
+      let authToken = "Basic";
+      let headers = new Headers({ 'Accept': 'application/json' });
+      headers.append('Authorization', 'Basic ' +
+        btoa(config.username + ':' + config.password));
+
+
+      let options = {
+        headers: headers
+      };
+      let url = config.ctgApiUrl + "/assets/yard/" + custID;
+      //let url = config.baseUrl + "/HomeService/api/TrailerDetailsByCustomerId?customerId="+custID;
+      this.http.get(url,options).map(res => res.json())
+        .subscribe(
+        (data) => {
+          console.log("StatesTrailerCounts data recieved");
+          if (data) {
+            var poly = data.shape;
+            var lat = data.location.position.lat;
+            var lng = data.location.position.lng;
+            if (this.mgToggleFlag) {
+              this.gmapJs.drawPoly(poly, lat, lng);
+              this.filterByBounds(poly);
+            } else {
+              this.filterByBounds(poly);
+              this.mapConfig.polygon = poly;
+              this.mapConfig.lat = lat;
+              this.mapConfig.lng = lng;
+            }
+
+          } else {
+            $('#inValidCustID').modal('show');
+            this.custID = "";
+          }
+          //this.historyRecv = true;
+        }, //For Success Response
+        (err) => {
+          console.log("StatesTrailerCounts error recieved");
+          //this.historyRecv = true;
+        } //For Error Response
+        );
     }
     searchByID() {
         this.selectedID = "";

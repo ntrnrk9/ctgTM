@@ -20,7 +20,7 @@
 
             
             <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
-            <span (keyup.enter)="searchByCustID()"><input  class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Customer ID" [(ngModel)]="custID"
+            <span (keyup.enter)="searchByCustID()"><input  class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Yard ID" [(ngModel)]="custID"
                    (ngModelChange)="toggleSearch(4)"  /></span>
 
             <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button>
@@ -77,10 +77,10 @@
                     <span>{{item.distance}}</span>
                   </td>
                   <td style="text-align:center;width:10%">
-                    <span>{{item.trailerStatus}}</span>
+                    <span>{{(item.isShedTrailer==0)?'No':'Yes'}}</span>
                   </td>
                   <td style="text-align:center;width:10%">
-                    <span>{{formatDateTime(item.dotDate,0)}}</span>
+                    <span>{{formatDateTime(item.dOTDate,0)}}</span>
                   </td>
                   <td style="text-align:center;width:10%">
                     <span>{{formatDateTime(item.lastPingDate,1)}}</span>
@@ -88,7 +88,7 @@
                   <td style="text-align:center;width:10%">
                     <button class="histBut" (click)="showHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Initiate yard check"><img src="../../assets/images/markers/his-order.png" /></button>
                     <button class="histBut" (click)="showTrHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Upload yard check results"><img src="../../assets/images/markers/his-truck.png" /></button>
-                    <button class="histBut" (click)="showTrHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Trailer history"><img src="../../assets/images/markers/his-truck.png" /></button>
+                    <button class="histBut" (click)="showTrHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Yard checks details"><img src="../../assets/images/markers/his-truck.png" /></button>
                     <!-- <a (click)="showHistory(item)" style="cursor: pointer">History</a> -->
                   </td>
                 </tr>
@@ -101,10 +101,7 @@
           <div *ngIf="!trailerStatusResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
         </div>
       </div>
-      <div style="padding-top:5px">
-        <!-- <span>Trailer count={{allTrailers.length}}</span> -->
-        <img src="../../assets/images/markers/legend.png" class="pull-right" />
-      </div>
+      
     </div>
 
     <div id="historyModal" class="modal fade" role="dialog">
