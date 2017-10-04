@@ -1052,8 +1052,8 @@ export class AllocationPageComponent {
 
         let options = new RequestOptions({ headers: headers });
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
-        let url="https://api.drivenanalyticsolutions.com/ctg/assets/tractors";
-        //let url = config.ctgApiUrl + "/assets/tractors";
+        //let url="https://api.drivenanalyticsolutions.com/ctg/assets/tractors";
+        let url = "https://ctgtest.com/AllocationService/api/TruckDetails";
         this.http.get(url, {
             headers: headers
         }).map(res => res.json())
@@ -1061,7 +1061,7 @@ export class AllocationPageComponent {
             (data) => {
                 console.log("tractors data recieved");
 
-                this.trucks.groups = data.data;
+                this.trucks.groups = data.dataSet;
                 for (var i = 0; i < this.trucks.groups.length; i++) {
                     let obj = this.trucks.groups[i];
                     var dist = this.calcTruckDistance(obj['location']['position']['lng'], obj['location']['position']['lat']);
