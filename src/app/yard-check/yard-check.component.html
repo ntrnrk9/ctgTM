@@ -58,31 +58,34 @@
               <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
                 <tr class="full" *ngIf="i<gRowCount">
 
-                  <td style="text-align:center;width:10%">
+                  <td style="text-align:center;width:9%">
                     <span>{{item.trailerID}}</span>
                   </td>
-                  <td style="text-align:center;width:10%">
+                  <td style="text-align:center;width:9%">
+                    <span>{{item.customerid}}</span>
+                  </td>
+                  <td style="text-align:center;width:9%">
                     <span>{{item.trailerName}}</span>
                   </td>
-                  <td style="text-align:center;width:10%">
+                  <td style="text-align:center;width:9%">
                     <span>{{item.trailerType}}</span>
                   </td>
-                  <td style="text-align:center;width:10%">
+                  <td style="text-align:center;width:9%">
                     <span>{{item.location}}</span>
                   </td>
-                  <td style="text-align:center;width:10%">
+                  <td style="text-align:center;width:9%">
                     <span>{{item.trailerYear}}</span>
                   </td>
-                  <td style="text-align:center;width:10%">
+                  <td style="text-align:center;width:9%">
                     <span>{{item.distance}}</span>
                   </td>
-                  <td style="text-align:center;width:10%">
+                  <td style="text-align:center;width:9%">
                     <span>{{(item.isShedTrailer==0)?'No':'Yes'}}</span>
                   </td>
-                  <td style="text-align:center;width:10%">
+                  <td style="text-align:center;width:9%">
                     <span>{{formatDateTime(item.dOTDate,0)}}</span>
                   </td>
-                  <td style="text-align:center;width:10%">
+                  <td style="text-align:center;width:9%">
                     <span>{{formatDateTime(item.lastPingDate,1)}}</span>
                   </td>
                   <td style="text-align:center;width:10%">
