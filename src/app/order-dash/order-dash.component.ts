@@ -24,10 +24,18 @@ export class OrderDashComponent implements OnInit {
       //console.log('click-init ' + JSON.stringify(e));
       ctrl.futAvlOrderchartClicked(e);
     };
-    this.plnVsActoptions.chart.discretebar.dispatch.elementClick=function(e){
+    this.plnVsActoptions.chart.pie.dispatch.elementClick=function(e){
       //console.log('click-init ' + JSON.stringify(e));
       ctrl.plnVsActchartClicked(e);
     };
+    
+    this.futAvlOptions.chart['color'] = function (d, i) {
+      return ctrl.nvd3Colors[i % ctrl.nvd3Colors.length];
+    }
+
+    this.futAvlOptions.chart['color'] = function (d, i) {
+      return ctrl.nvd3Colors[0];
+    }
   }
 
   public barChartOptions: any = {
@@ -113,40 +121,81 @@ export class OrderDashComponent implements OnInit {
 
   ];
 
+  pieOption= {
+    chart: {
+        type: 'pieChart',
+        height: 500,
+        x: function(d){return d.label;},
+        y: function(d){return d.value;},
+        showLabels: true,
+        duration: 500,
+        labelThreshold: 0.01,
+        labelSunbeamLayout: true,
+        legend: {
+            margin: {
+                top: 5,
+                right: 35,
+                bottom: 5,
+                left: 0
+            }
+        }
+    }
+};
+
+
   plnVsActdata = [];
 
   plnVsActoptions = {
     chart: {
-      type: 'discreteBarChart',
-      height: 450,
-      margin: {
-        top: 20,
-        right: 20,
-        bottom: 50,
-        left: 55
-      },
+      type: 'pieChart',
+      height: 400,
+      donut: true,
+      labelType: 'percent',
+      growOnHover: true,
+      labelsOutside: false,
+      donutLabelsOutside: false,
+      showLegend: false,
+      legendPosition: 'bottom',
       x: function (d) { return d.label; },
-      y: function (d) { return d.value + (1e-10); },
-      showValues: true,
-      valueFormat: function (d) {
-        return d3.format(',.0f')(d);
-      },
+      y: function (d) { return d.value; },
+      showLabels: true,
       duration: 500,
-      xAxis: {
-        axisLabel: 'X Axis'
+      tooltip: {
+        enabled: false
       },
-      yAxis: {
-        axisLabel: 'Y Axis',
-        axisLabelDistance: -10
+      legend: {
+        align: false,
+        padding: 50,
+        margin: {
+          top: 5,
+          right: 30,
+          bottom: 0,
+          left: 0
+        }
       },
-      discretebar:{
+      dispatch: {
+        tooltipShow: function (e) { console.log('tooltipShow') },
+        tooltipHide: function (e) { console.log('tooltipHide') },
+      },
+      pie: {
+        margin: {
+          top: -20,
+          right: 50,
+          bottom: 10,
+          left: 0
+        },
         dispatch: {
           elementClick: function (e) {
             console.log('click ' + JSON.stringify(e));
-            
+
           },
         }
-      }
+      },
+    },
+    title: {
+      enable: true,
+      text: 'Status',
+      className: 'h4'
     }
   };
 
@@ -204,9 +253,7 @@ export class OrderDashComponent implements OnInit {
       (data) => {
         console.log("orderStats data recieved");
         this.dataSet = data.dataSet;
-        var bag={
-          key: "Planned Vs Actual",
-          values: [
+        var bag= [
             {
               "label": "Moving as planned",
               "value": 0,
@@ -223,27 +270,26 @@ export class OrderDashComponent implements OnInit {
               "list": []
             }
             
-          ]
-        }
+          ];
+        
         data.dataSet.forEach(element => {
           if (element.isMovingAsPlanned == 1) {
-            bag.values[2].value++;
-            bag.values[2].list.push(element);
+            bag[2].value++;
+            bag[2].list.push(element);
           } else if (element.isMovingAsPlanned == 2) {
-            bag.values[1].value++;
-            bag.values[1].list.push(element);
+            bag[1].value++;
+            bag[1].list.push(element);
           } else if (element.isMovingAsPlanned == 3) {
-            bag.values[2].value++;
-            bag.values[2].list.push(element);
+            bag[2].value++;
+            bag[2].list.push(element);
           } else if (element.isMovingAsPlanned == 4) {
-            bag.values[0].value++;
-            bag.values[0].list.push(element);
-
+            bag[0].value++;
+            bag[0].list.push(element);
           } else { }
         });
-        this.plnVsActdata=[];
+        //this.plnVsActdata=[];
         if (data.dataSet.length > 0) {
-          this.plnVsActdata.push(bag);
+          //this.plnVsActdata=bag;
         }
         this.OrderStatsResp=true;
 
