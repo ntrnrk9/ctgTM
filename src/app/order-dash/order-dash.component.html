@@ -12,9 +12,9 @@
           (chartClick)="chartClicked($event)"></canvas>
   </div> -->
   <div class="row">
-    <div class="col-md-6" style="height:380px;">
-      <div style="border:1px solid silver">
-          <div style="text-align: left;padding-top: 15px;padding-left: 15px;">
+    <div class="col-md-6" style="height:400px;">
+      <div style="border:1px solid silver;height:400px;">
+        <div *ngIf="OrderStatsResp" style="text-align: left;padding-top: 15px;padding-left: 15px;">
           <label style="font-size: 25px;font-weight: normal;">Planned vs Actual</label>
         </div>
         <div *ngIf="OrderStatsResp">
@@ -25,20 +25,20 @@
       </div>
     </div>
 
-    <div class="col-md-6" style="height:380px;">
-      <div style="border:1px solid silver">
-          <div style="text-align: left;padding-top: 15px;padding-left: 15px;">
+    <div class="col-md-6" style="height:400px;">
+      <div style="border:1px solid silver;height:400px;">
+        <div *ngIf="FutureAVLOrdersResp" style="text-align: left;padding-top: 15px;padding-left: 15px;">
           <label style="font-size: 25px;font-weight: normal;">Orders in next 7 days </label>
         </div>
-        <div *ngIf="FutureAVLOrdersResp">
+        <div *ngIf="FutureAVLOrdersResp" style="padding:10px">
           <nvd3 [options]="futAvlOptions" [data]="futAvlData"></nvd3>
         </div>
         <div *ngIf="!FutureAVLOrdersResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
       </div>
     </div>
   </div>
-
-  <div *ngIf="toShowFutAvlTable">
+  <br><br>
+  <div *ngIf="toShowFutAvlTable" style="margin-top:20px">
     <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
       <thead style="font-size: 12px">
         <tr bgcolor="#f7f8fc" class="app-table-tr full">
@@ -51,40 +51,36 @@
         <ng-container *ngFor="let i=index;let item of allTrailler">
           <tr class="full" *ngIf="i<gRowCount">
 
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <!-- <span>{{item.orderNumber}}-{{item.orderCompany}}-{{item.orderStatus}}</span> -->
               <span>{{item.orderNumber}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <a (click)="showPlannedOrder(item)" *ngIf="item.orderStatus=='PLN'"><span>{{item.movementNumber}}</span></a>
               <span *ngIf="item.orderStatus!='PLN'">{{item.movementNumber}}</span>
             </td>
-            <td style="text-align:center;width:10%">
-              <span>{{item.orderRefNumber}}</span>
-            </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderBillTo}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderOrginCity}},{{item.orderOrginState}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderDestCity}},{{item.orderDestState}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderOrginPoint}}</span>
             </td>
-            <td style="text-align:center;width:10%">
-              <span>{{item.orderStartDate}}</span>
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderStartDateTime}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderCompleteDate}}</span>
             </td>
 
-            <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
-              <span>{{item.orderRemark}}</span>
+            <td style="text-align:center;width:12%" data-toggle="tooltip" title={{item.orderRemark}}>
+              <span>{{item.orderRemark.substring(0,25)}}</span>
             </td>
-
           </tr>
         </ng-container>
       </tbody>
@@ -94,7 +90,7 @@
     <div style="padding-top: 10px;">{{allTrailler.length}} record(s) found</div>
   </div>
 
-  <div *ngIf="toShowPlnVsActNAPTable">
+  <div *ngIf="toShowPlnVsActNAPTable" style="margin-top:20px">
     <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
       <thead style="font-size: 12px">
         <tr bgcolor="#f7f8fc" class="app-table-tr full">
@@ -125,16 +121,16 @@
               <span>{{item.orderDestinationCityState}}</span>
             </td>
             <td style="text-align:center;width:10%">
-                <span>{{item.orderOriginPoint}}</span>
+              <span>{{item.orderOriginPoint}}</span>
             </td>
             <td style="text-align:center;width:10%">
               <span>{{item.tMSTrailerID}}</span>
             </td>
             <td style="text-align:center;width:10%">
-                <span>{{item.tMWOrderTrailerID}}</span>
-              </td>
+              <span>{{item.tMWOrderTrailerID}}</span>
+            </td>
             <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
-                <button class="histBut"  style="cursor: pointer" data-toggle="tooltip" title="Sync"><img src="../../assets/images/markers/data-sync.png" /></button>
+              <button class="histBut" style="cursor: pointer" data-toggle="tooltip" title="Sync"><img src="../../assets/images/markers/data-sync.png" /></button>
             </td>
           </tr>
         </ng-container>
@@ -145,7 +141,7 @@
     <div style="padding-top: 10px;">{{allTrailler.length}} record(s) found</div>
   </div>
 
-  <div *ngIf="toShowPlnVsActTable">
+  <div *ngIf="toShowPlnVsActTable" style="margin-top:20px">
     <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
       <thead style="font-size: 12px">
         <tr bgcolor="#f7f8fc" class="app-table-tr full">
@@ -176,15 +172,15 @@
               <span>{{item.orderDestinationCityState}}</span>
             </td>
             <td style="text-align:center;width:11%">
-                <span>{{item.orderOriginPoint}}</span>
+              <span>{{item.orderOriginPoint}}</span>
             </td>
             <td style="text-align:center;width:11%">
               <span>{{item.tMSTrailerID}}</span>
             </td>
             <td style="text-align:center;width:12%">
-                <span>{{item.tMWOrderTrailerID}}</span>
-              </td>
-            
+              <span>{{item.tMWOrderTrailerID}}</span>
+            </td>
+
           </tr>
         </ng-container>
       </tbody>

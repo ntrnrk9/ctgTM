@@ -76,8 +76,8 @@ export class OrderDashComponent implements OnInit {
   };
 
   orders = {
-    column: [{ name: "Order ID", width: "10%" }, { name: "Movement no.", width: "10%" }, { name: "Ref. no.", width: "10%" }, { name: "Bill to name", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Order origin point", width: "10%" },
-    { name: "Order start date", width: "10%" }, { name: "Order end date", width: "10%" }, { name: "Order remark", width: "10%" }],
+    column: [{ name: "Order ID", width: "11%" }, { name: "Movement no.", width: "11%" }, { name: "Bill to name", width: "11%" }, { name: "Origin city", width: "11%" }, { name: "Destination city", width: "11%" }, { name: "Order origin point", width: "11%" },
+    { name: "Order start date", width: "11%" }, { name: "Order end date", width: "11%" }, { name: "Order remark", width: "12%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
 
@@ -148,7 +148,7 @@ export class OrderDashComponent implements OnInit {
   plnVsActoptions = {
     chart: {
       type: 'pieChart',
-      height: 400,
+      height: 340,
       donut: true,
       labelType: 'percent',
       growOnHover: true,
@@ -204,7 +204,7 @@ export class OrderDashComponent implements OnInit {
   futAvlOptions = {
     chart: {
       type: 'discreteBarChart',
-      height: 450,
+      height: 320,
       margin: {
         top: 20,
         right: 20,
@@ -219,10 +219,10 @@ export class OrderDashComponent implements OnInit {
       },
       duration: 500,
       xAxis: {
-        axisLabel: 'X Axis'
+        axisLabel: 'Future 7 days'
       },
       yAxis: {
-        axisLabel: 'Y Axis',
+        axisLabel: 'No. of orders',
         axisLabelDistance: -10
       },
       discretebar:{
