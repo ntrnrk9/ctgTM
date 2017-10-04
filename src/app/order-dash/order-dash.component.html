@@ -14,11 +14,28 @@
   <div class="row">
     <div class="col-md-6" style="height:400px;">
       <div style="border:1px solid silver;height:400px;">
-        <div *ngIf="OrderStatsResp" style="text-align: left;padding-top: 15px;padding-left: 15px;">
-          <label style="font-size: 25px;font-weight: normal;">Planned vs Actual</label>
-        </div>
         <div *ngIf="OrderStatsResp">
-          <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3>
+            <div class="col-md-8">
+                <div style="text-align: left;padding-top: 10px;">
+                  <label style="font-size: 25px;font-weight: normal;">Planned vs Actual</label>
+                </div>
+                <div >
+                    <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3>
+                </div>
+              </div>
+              <div class="col-md-4" style="padding-top:0px;">
+                <table class="table table-striped">
+                  <tr *ngFor="let i=index;let item of plnVsActdata" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item)">
+                    <td><span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span></td>
+                    <td><span class="pull-left">{{item.label}}</span><br><span style="font-size:19px">{{item.value}}</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="lBox pull-left" style="background: white"></span></td>
+                    <td><span class="pull-left">Total</span><br><span style="font-size:19px">{{lotSize}}</span></td>
+                  </tr>
+                </table>
+              </div>
+          <!-- <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3> -->
           <!-- <nvd3 [options]="pieOption" [data]="plnVsActdata"></nvd3> -->
         </div>
         <div *ngIf="!OrderStatsResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
@@ -51,34 +68,40 @@
         <ng-container *ngFor="let i=index;let item of allTrailler">
           <tr class="full" *ngIf="i<gRowCount">
 
-            <td style="text-align:center;width:11%">
+            <td style="text-align:center;width:9%">
               <!-- <span>{{item.orderNumber}}-{{item.orderCompany}}-{{item.orderStatus}}</span> -->
               <span>{{item.orderNumber}}</span>
             </td>
-            <td style="text-align:center;width:11%">
+            <td style="text-align:center;width:9%">
               <a (click)="showPlannedOrder(item)" *ngIf="item.orderStatus=='PLN'"><span>{{item.movementNumber}}</span></a>
               <span *ngIf="item.orderStatus!='PLN'">{{item.movementNumber}}</span>
             </td>
-            <td style="text-align:center;width:11%">
+            <td style="text-align:center;width:9%">
+              <span>{{item.tMSOrderStatus}}</span>
+            </td>
+            <td style="text-align:center;width:9%">
+              <span>{{item.tMWOrderStatus}}</span>
+            </td>
+            <td style="text-align:center;width:9%">
               <span>{{item.orderBillTo}}</span>
             </td>
-            <td style="text-align:center;width:11%">
+            <td style="text-align:center;width:9%">
               <span>{{item.orderOrginCity}},{{item.orderOrginState}}</span>
             </td>
-            <td style="text-align:center;width:11%">
+            <td style="text-align:center;width:9%">
               <span>{{item.orderDestCity}},{{item.orderDestState}}</span>
             </td>
-            <td style="text-align:center;width:11%">
+            <td style="text-align:center;width:9%">
               <span>{{item.orderOrginPoint}}</span>
             </td>
-            <td style="text-align:center;width:11%">
+            <td style="text-align:center;width:9%">
               <span>{{item.orderStartDateTime}}</span>
             </td>
-            <td style="text-align:center;width:11%">
+            <td style="text-align:center;width:9%">
               <span>{{item.orderCompleteDate}}</span>
             </td>
 
-            <td style="text-align:center;width:12%" data-toggle="tooltip" title={{item.orderRemark}}>
+            <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
               <span>{{item.orderRemark.substring(0,25)}}</span>
             </td>
           </tr>

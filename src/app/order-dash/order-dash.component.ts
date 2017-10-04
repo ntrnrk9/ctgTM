@@ -11,6 +11,8 @@ import * as config from '../configs/configs';
   styleUrls: ['./order-dash.component.css']
 })
 export class OrderDashComponent implements OnInit {
+  
+  lotSize=0;
 
   constructor(private http: Http, private cdr: ChangeDetectorRef) {
     this.getOrderStats();
@@ -70,8 +72,8 @@ export class OrderDashComponent implements OnInit {
   futAvlOrder=[];
   allTrailler = [];
   ob = {
-    column: [{ name: "Order ID", width: "11%" }, { name: "Movement no.", width: "11%" }, { name: "Order start date.", width: "11%" }, { name: "Order end date", width: "11%" }, { name: "Origin city", width: "11%" }, { name: "Destination city", width: "11%" }, { name: "Order origin point", width: "11%" },
-    { name: "Planned trailer", width: "11%" }, { name: "Trailer in TMW", width: "12%" }],
+    column: [{ name: "Order ID", width: "9%" }, { name: "Movement no.", width: "9%" }, { name: "TMS status", width: "9%" },{ name: "TMW status", width: "9%" },{ name: "Order start date.", width: "9%" }, { name: "Order end date", width: "9%" }, { name: "Origin city", width: "9%" }, { name: "Destination city", width: "9%" }, { name: "Order origin point", width: "9%" },
+    { name: "Planned trailer", width: "9%" }, { name: "Trailer in TMW", width: "10%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
 
@@ -82,7 +84,7 @@ export class OrderDashComponent implements OnInit {
   };
 
   plnVsActGrid = {
-    column: [{ name: "Order ID", width: "10%" }, { name: "Movement no.", width: "10%" }, { name: "Order start date.", width: "10%" }, { name: "Order end date", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Order origin point", width: "10%" },
+    column: [{ name: "Order ID", width: "10%" }, { name: "Movement no.", width: "10%" },{ name: "TMS status", width: "9%" },{ name: "TMW status", width: "9%" }, { name: "Order start date.", width: "10%" }, { name: "Order end date", width: "10%" }, { name: "Origin city", width: "10%" }, { name: "Destination city", width: "10%" }, { name: "Order origin point", width: "10%" },
     { name: "Planned trailer", width: "10%" }, { name: "Trailer in TMW", width: "10%" }, { name: "Sync. with TMW", width: "10%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
@@ -96,6 +98,20 @@ export class OrderDashComponent implements OnInit {
     this.allTrailler=e.data.list;
     this.toShowPlnVsActTable=false;
     this.toShowFutAvlTable=true;
+    this.toShowPlnVsActNAPTable=false;
+  }
+  getGridData(item){
+    this.gRowCount=50;
+    this.allTrailler=item.list;
+    if(item.label=="Not as per plan"){
+      this.toShowFutAvlTable=false;
+      this.toShowPlnVsActTable=false;
+      this.toShowPlnVsActNAPTable=true;
+    } else {
+      this.toShowFutAvlTable = false;
+      this.toShowPlnVsActTable = true;
+      this.toShowPlnVsActNAPTable=false;
+    }
   }
   plnVsActchartClicked(e){
     this.gRowCount=50;
@@ -287,10 +303,14 @@ export class OrderDashComponent implements OnInit {
             bag[0].list.push(element);
           } else { }
         });
-        this.plnVsActdata=[];
-        if (data.dataSet.length > 0) {
+        if(data.dataSet.length>0){
+          this.lotSize=data.dataSet.length;
           this.plnVsActdata=bag;
+        }else{
+        this.plnVsActdata=bag;
+        this.lotSize=0;
         }
+        //}
         this.OrderStatsResp=true;
 
       }, //For Success Response
