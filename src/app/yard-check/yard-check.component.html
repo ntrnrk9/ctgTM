@@ -77,10 +77,10 @@
                     <span>{{item.trailerYear}}</span>
                   </td>
                   <td style="text-align:center;width:9%">
-                    <span>{{item.distance}}</span>
+                    <span>{{(item.isYardCheck==0)?'No':'Yes'}}</span>
                   </td>
                   <td style="text-align:center;width:9%">
-                    <span>{{(item.isShedTrailer==0)?'No':'Yes'}}</span>
+                    <span>{{(item.isYardCheck==0)?'No':'Yes'}}</span>
                   </td>
                   <td style="text-align:center;width:9%">
                     <span>{{formatDateTime(item.dOTDate,0)}}</span>
@@ -89,9 +89,9 @@
                     <span>{{formatDateTime(item.lastPingDate,1)}}</span>
                   </td>
                   <td style="text-align:center;width:10%">
-                    <button class="histBut" (click)="showHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Initiate yard check"><img src="../../assets/images/markers/his-order.png" /></button>
-                    <button class="histBut" (click)="showTrHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Upload yard check results"><img src="../../assets/images/markers/his-truck.png" /></button>
-                    <button class="histBut" (click)="showTrHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Yard checks details"><img src="../../assets/images/markers/his-truck.png" /></button>
+                    <button class="histBut" (click)="showHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Initiate yard check"><img src="../../assets/images/yard/initiate.png" /></button>
+                    <button class="histBut" (click)="showTrHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Upload yard check results"><img src="../../assets/images/yard/upload.png" /></button>
+                    <button class="histBut" (click)="showTrHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Yard checks details"><img src="../../assets/images/yard/view-report.png" /></button>
                     <!-- <a (click)="showHistory(item)" style="cursor: pointer">History</a> -->
                   </td>
                 </tr>
