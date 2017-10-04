@@ -287,9 +287,9 @@ export class OrderDashComponent implements OnInit {
             bag[0].list.push(element);
           } else { }
         });
-        //this.plnVsActdata=[];
+        this.plnVsActdata=[];
         if (data.dataSet.length > 0) {
-          //this.plnVsActdata=bag;
+          this.plnVsActdata=bag;
         }
         this.OrderStatsResp=true;
 
