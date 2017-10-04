@@ -132,7 +132,7 @@ export class AllocationPageComponent {
     constructor(private http: Http, private cdr: ChangeDetectorRef) {
         //this.getOrderDetails();
         this.initDateFilter();
-        this.getOrderDetailsByFn();
+        this.getOrderDetailsByFn(0);
         this.gettrailers();
     }
 
@@ -181,17 +181,17 @@ export class AllocationPageComponent {
     goToTruck(){
         this.page=1;
         this.truckID="";
-        this.getOrderTrailerType();
-        this.getYardDetailes();
-        this.getLegsOfOrder();
-        this.getTractorsDetails();
+        this.getOrderTrailerType(0);
+        this.getYardDetailes(0);
+        this.getLegsOfOrder(0);
+        this.getTractorsDetails(0);
         
     }
 
     goToOrder(){
         this.page=0;
         //this.getOrderDetails();
-        this.getOrderDetailsByFn();
+        this.getOrderDetailsByFn(0);
     }
 
     goToTrailer(){
@@ -204,7 +204,7 @@ export class AllocationPageComponent {
         this.includeUNK=true;
         this.trailerID="";
         this.selectedTrailer = {trailerID:-1};
-        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
+        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value,0);
         //this.getTrailersDetails(this.selectedTruck.location.position.lat,this.selectedTruck.location.position.lng,50);
         this.trMapConfig['selOrder']=this.selectedOrder;
         this.trMapConfig['selTruck']=this.selectedTruck;
@@ -249,7 +249,7 @@ export class AllocationPageComponent {
 
     orderSearch() {
         if(this.isOrderDateFilterChanged()){
-            this.getOrderDetailsByFn();
+            this.getOrderDetailsByFn(0);
         }
         if (this.omID.length > 0) {
             this.searchByomID();
@@ -407,7 +407,8 @@ export class AllocationPageComponent {
         this.selectedOrder= {number:-1};
         //this.getOrderDetails();
         this.initDateFilter();
-        this.getOrderDetailsByFn();
+        
+        this.getOrderDetailsByFn(0);
     }
 
     resetTruckPage() {
@@ -415,7 +416,7 @@ export class AllocationPageComponent {
         this.truckID = "";
         this.selectedMiles = { lable: "Select radius", value: 0 };
         this.selectedTruck = {number:-1};
-        this.getTractorsDetails();
+        this.getTractorsDetails(0);
     }
 
     resetTrailerPage() {
@@ -428,7 +429,7 @@ export class AllocationPageComponent {
         this.includeUNK=true;
         //this.getTrailersDetails(this.selectedOrder.orderOrginCityLat,this.selectedOrder.orderOrginCityLong,50);
         //this.trailers.groups=[];
-        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
+        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value,0);
     }
 
 
@@ -700,7 +701,7 @@ export class AllocationPageComponent {
 
     filterTrailerByMile(){
         this.selectedTrailer = {trailerID:-1};
-        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value);
+        this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value,0);
     }
 
     filterTrailerByType() {
@@ -909,7 +910,7 @@ export class AllocationPageComponent {
         this.selectedCmp = { lable: "SVN", value: "SVN" };
 
         //this.getOrderDetails();
-        this.getOrderDetailsByFn();
+        this.getOrderDetailsByFn(0);
         if (this.mgToggle) {
 
             this.disableLoc = false;
@@ -1040,7 +1041,7 @@ export class AllocationPageComponent {
         return bag;
     }
 
-    getTractorsDetails() {
+    getTractorsDetails(count: number) {
         this.trucksDetailsResp = false;
         var creds = "username=" + config.username + "&password=" + config.password;
 
@@ -1082,70 +1083,79 @@ export class AllocationPageComponent {
                 this.trucksDetailsResp = true;
             }, //For Success Response
             (err) => {
-                console.log("tractors error recieved");
-                this.trucksDetailsResp = true;
-                this.action.heading="Allocation";
-                this.action.body="Unexpected Error occured. Please contact system administrator.";
-                this.action.details='tractors service failed<br>'+url+'<br>Status: '+err.status;
-                $('#unExpecError').modal('show');
+                console.log("tractors error recieved with count= " + count);
+                if (count < 3) {
+                    this.getTractorsDetails(count+1);
+                } else {
+                    this.trucksDetailsResp = true;
+                    this.action.heading = "Allocation";
+                    this.action.body = "Unexpected Error occured. Please contact system administrator.";
+                    this.action.details = 'tractors service failed<br>' + url + '<br>Status: ' + err.status;
+                    $('#unExpecError').modal('show');
+                }
             } //For Error Response
             );
     }
 
-    getTrailersDetails(lat,lng,dist) {
+    getTrailersDetails(lat, lng, dist, count: number) {
         this.trailerDetailsResp = false;
-        this.trMapshowLoader=false;
+        this.trMapshowLoader = false;
         //let lat=this.selectedOrder.orderOrginCityLat;
         //let lng=this.selectedOrder.orderOrginCityLong;
-        if(lng>0){
-            lng=0-lng;
+        if (lng > 0) {
+            lng = 0 - lng;
         }
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
-        let url = config.baseUrl + "/AllocationService/api/OrderTrailers?latitude="+lat
-        +"&longitude="+lng+"&distance="+dist+"&company="+this.selectedOrder.company+"&trailerId="+this.selectedTruck.trailer;
+        let url = config.baseUrl + "/AllocationService/api/OrderTrailers?latitude=" + lat
+            + "&longitude=" + lng + "&distance=" + dist + "&company=" + this.selectedOrder.company + "&trailerId=" + this.selectedTruck.trailer;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("trailers data recieved");
-                this.trailers.groups=this.trailers.groups.concat(data.dataSet);
-                this.trailerList=this.trailerList.concat(data.dataSet);
+                this.trailers.groups = this.trailers.groups.concat(data.dataSet);
+                this.trailerList = this.trailerList.concat(data.dataSet);
                 this.filterTrailerByType();
-                this.trailers.groups=this.sortList('distance',this.trailers.groups);
-                this.mapTrailers=this.cloneObje(this.trailerList);
+                this.trailers.groups = this.sortList('distance', this.trailers.groups);
+                this.mapTrailers = this.cloneObje(this.trailerList);
                 this.trailerDetailsResp = true;
-                
+
             }, //For Success Response
-            (err) => { console.log("trailers error recieved");
-             this.trailerDetailsResp = true;
-             this.action.heading="Allocation";
-             this.action.body="Unexpected Error occured. Please contact system administrator.";
-             this.action.details='OrderTrailers service failed<br>'+url+'<br>Status: '+err.status;
-             $('#unExpecError').modal('show');
-             } //For Error Response
+            (err) => {
+                console.log("trailers error recieved with count= " + count);
+                if (count < 3) {
+                    this.getTrailersDetails(lat, lng, dist, count + 1);
+                } else {
+                    this.trailerDetailsResp = true;
+                    this.action.heading = "Allocation";
+                    this.action.body = "Unexpected Error occured. Please contact system administrator.";
+                    this.action.details = 'OrderTrailers service failed<br>' + url + '<br>Status: ' + err.status;
+                    $('#unExpecError').modal('show');
+                }
+            } //For Error Response
             );
     }
 
-    getOrderTruckTrailers(lat1,lat2,lng1,lng2,dist) {
+    getOrderTruckTrailers(lat1, lat2, lng1, lng2, dist, count: number) {
         this.trailerDetailsResp = false;
-        this.trMapshowLoader=false;
+        this.trMapshowLoader = false;
         //let lat=this.selectedOrder.orderOrginCityLat;
         //let lng=this.selectedOrder.orderOrginCityLong;
-        if(lng1>0){
-            lng1=0-lng1;
+        if (lng1 > 0) {
+            lng1 = 0 - lng1;
         }
-        if(lng2>0){
-            lng2=0-lng2;
+        if (lng2 > 0) {
+            lng2 = 0 - lng2;
         }
 
         var toShowPool;
-        if(this.poolTrailers){
-            toShowPool='yes';
-        }else{
-            toShowPool='no';
+        if (this.poolTrailers) {
+            toShowPool = 'yes';
+        } else {
+            toShowPool = 'no';
         }
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
-        
-        let url = config.baseUrl + "/AllocationService/api/OrderTruckTrailers?latitude="+lat2+"&longitude="+lng2+"&distance="+dist+"&company="+this.selectedOrder.company+"&trailerId="+this.selectedTruck.trailer+'&pooltrailers='+toShowPool;
+
+        let url = config.baseUrl + "/AllocationService/api/OrderTruckTrailers?latitude=" + lat2 + "&longitude=" + lng2 + "&distance=" + dist + "&company=" + this.selectedOrder.company + "&trailerId=" + this.selectedTruck.trailer + '&pooltrailers=' + toShowPool;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
@@ -1158,25 +1168,16 @@ export class AllocationPageComponent {
                     limit=1;
                 }
                 console.log("trailers data recieved");
-                if(!this.automatedMile && data.dataSet.length <= limit){
-                    $('#cResult').modal('show');
-                    this.automatedMile=false;
-                    this.trailers.groups = data.dataSet;
-                    this.trailerList = data.dataSet;
-                    this.filterTrailerByType();
-                    this.trailers.groups = this.sortList('distance', this.trailers.groups);
-                    this.mapTrailers = this.cloneObje(this.trailerList);
-                    this.trailerDetailsResp = true;
-                }else
-                if (data.dataSet.length <= limit && this.automatedMile && dist <= 100) {
-                    this.getOrderTruckTrailers(lat1, lat2, lng1, lng2, dist + 50);
-                    
+
+                if (data.dataSet.length <= 1 && this.automatedMile && dist <= 100) {
+                    this.getOrderTruckTrailers(lat1, lat2, lng1, lng2, dist + 50, count);
+
                 } else {
-                    if(dist==50){
+                    if (dist == 50) {
                         this.selectedTrailerMile = { lable: "50 Miles", value: 50 };
-                    }else if(dist==100){
+                    } else if (dist == 100) {
                         this.selectedTrailerMile = { lable: "100 Miles", value: 100 };
-                    }else if(dist==150){
+                    } else if (dist == 150) {
                         this.selectedTrailerMile = { lable: "150 Miles", value: 150 };
                     }
                     this.automatedMile=false;
@@ -1187,16 +1188,20 @@ export class AllocationPageComponent {
                     this.mapTrailers = this.cloneObje(this.trailerList);
                     this.trailerDetailsResp = true;
                 }
-                
+
             }, //For Success Response
             (err) => {
-                console.log("trailers error recieved");
-                this.trailerDetailsResp = true;
-                this.action.heading="Allocation";
-                this.action.body="Unexpected Error occured. Please contact system administrator.";
-                this.action.details='OrderTruckTrailers service failed<br>'+url+'<br>Status: '+err.status;
-                $('#unExpecError').modal('show');
-             } //For Error Response
+                console.log("trailers error recieved with count= " + count);
+                if (count < 3) {
+                    this.getOrderTruckTrailers(lat1, lat2, lng1, lng2, dist, count + 1);
+                } else {
+                    this.trailerDetailsResp = true;
+                    this.action.heading = "Allocation";
+                    this.action.body = "Unexpected Error occured. Please contact system administrator.";
+                    this.action.details = 'OrderTruckTrailers service failed<br>' + url + '<br>Status: ' + err.status;
+                    $('#unExpecError').modal('show');
+                }
+            } //For Error Response
             );
     }
 
@@ -1224,8 +1229,7 @@ export class AllocationPageComponent {
             );
     }
 
-    getOrderDetailsByFn() {
-        
+    getOrderDetailsByFn(count: number) {
         this.OrderDetailsResp = false;
         //2017-09-26T10:00:00&end=2017-09-29T10:00:00
         let fDate=this.fromDate.date.year+"-"+this.fromDate.date.month+"-"+this.fromDate.date.day+"T00:00:00";
@@ -1250,9 +1254,9 @@ export class AllocationPageComponent {
             (data) => {
                 
                 console.log("OrderDetailsByFn data recieved");
-                var bag=this.filterInvalidData(data.data,'departure');
-                bag=this.filterAvlOrders(bag);
-                bag=this.sortListByTime(bag,'departure');
+                var bag = this.filterInvalidData(data.data, 'departure');
+                bag = this.filterAvlOrders(bag);
+                bag = this.sortListByTime(bag, 'departure');
                 this.orders.groups = bag;
                 this.orderList = bag;
                 this.orderMasterAndFilter();
@@ -1260,12 +1264,16 @@ export class AllocationPageComponent {
 
             }, //For Success Response
             (err) => {
-                console.log("OrderDetailsByFn error recieved");
-                this.OrderDetailsResp = true;
-                this.action.heading="Allocation";
-                this.action.body="Unexpected Error occured. Please contact system administrator.";
-                this.action.details='orders service failed<br>'+url+'<br>Status: '+err.status;
-                $('#unExpecError').modal('show');
+                console.log("OrderDetailsByFn error recieved with count= " +count);
+                if (count < 3) {
+                    this.getOrderDetailsByFn(count+1);
+                } else {
+                    this.OrderDetailsResp = true;
+                    this.action.heading = "Allocation";
+                    this.action.body = "Unexpected Error occured. Please contact system administrator.";
+                    this.action.details = 'orders service failed<br>' + url + '<br>Status: ' + err.status;
+                    $('#unExpecError').modal('show');
+                }
             } //For Error Response
             );
     }
@@ -1310,7 +1318,7 @@ export class AllocationPageComponent {
             );
     }
 
-    getLegsOfOrder() {
+    getLegsOfOrder(count: number) {
         this.OrderLegsResp = false;
         var creds = "username=" + config.username + "&password=" + config.password;
 
@@ -1335,17 +1343,21 @@ export class AllocationPageComponent {
 
             }, //For Success Response
             (err) => {
-                console.log("OrderLegsOfOrder error recieved");
-                this.OrderLegsResp = false;
-                this.action.heading="Allocation";
-                this.action.body="Unexpected Error occured. Please contact system administrator.";
-                this.action.details='Legs service failed<br>'+url+'<br>Status: '+err.status;
-                $('#unExpecError').modal('show');
+                console.log("OrderLegsOfOrder error recieved with count= " + count);
+                if (count < 3) {
+                    this.getLegsOfOrder(count + 1);
+                } else {
+                    this.OrderLegsResp = false;
+                    this.action.heading = "Allocation";
+                    this.action.body = "Unexpected Error occured. Please contact system administrator.";
+                    this.action.details = 'Legs service failed<br>' + url + '<br>Status: ' + err.status;
+                    $('#unExpecError').modal('show');
+                }
             } //For Error Response
             );
     }
-
-    getOrderTrailerType() {
+//////
+    getOrderTrailerType(count: number) {
         this.OrderTrailerTypeResp = false;
         //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
         let url = config.baseUrl + "/AllocationService/api/OrderTrailerType?orderNumber=" + this.selectedOrder.number;
@@ -1353,25 +1365,29 @@ export class AllocationPageComponent {
             .subscribe(
             (data) => {
                 console.log("OrderTrailerType data recieved");
-                if(data.dataSet.length>0){
-                this.selectedOrder['orderTrailerType']=data.dataSet[0].ordersTrailerType;
-                }else{
-                    this.selectedOrder['orderTrailerType']="";
+                if (data.dataSet.length > 0) {
+                    this.selectedOrder['orderTrailerType'] = data.dataSet[0].ordersTrailerType;
+                } else {
+                    this.selectedOrder['orderTrailerType'] = "";
                     console.log("No specific trailerType for order found");
                 }
             }, //For Success Response
             (err) => {
-                console.log("OrderTrailerType error recieved");
-                this.OrderTrailerTypeResp = false;
-                this.action.heading="Allocation";
-                this.action.body="Unexpected Error occured. Please contact system administrator.";
-                this.action.details='OrderTrailerType service failed<br>'+url+'<br>Status: '+err.status;
-                $('#unExpecError').modal('show');
+                console.log("OrderTrailerType error recieved with count= "+count);
+                if (count < 3) {
+                    this.getOrderTrailerType(count + 1);
+                } else {
+                    this.OrderTrailerTypeResp = false;
+                    this.action.heading = "Allocation";
+                    this.action.body = "Unexpected Error occured. Please contact system administrator.";
+                    this.action.details = 'OrderTrailerType service failed<br>' + url + '<br>Status: ' + err.status;
+                    $('#unExpecError').modal('show');
+                }
             } //For Error Response
             );
     }
 
-    getYardDetailes() {
+    getYardDetailes(count: number) {
         this.yardDetailsResp = false;
         var creds = "username=" + config.username + "&password=" + config.password;
 
@@ -1398,10 +1414,14 @@ export class AllocationPageComponent {
 
             }, //For Success Response
             (err) => {
-                console.log("yardDetails error recieved");
-                this.yardDetailsResp = false;
-                this.getLatLngByGeoCode(this.selectedOrder.origin);
-                
+                console.log("yardDetails error recieved with count= "+count);
+                if (count < 3) {
+                    this.getYardDetailes(count + 1);
+                } else {
+                    this.yardDetailsResp = false;
+                    this.getLatLngByGeoCode(this.selectedOrder.origin);
+                }
+
             } //For Error Response
             );
     }
