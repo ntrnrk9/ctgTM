@@ -31,7 +31,7 @@ export class OrderDashComponent implements OnInit {
       ctrl.plnVsActchartClicked(e);
     };
     
-    this.futAvlOptions.chart['color'] = function (d, i) {
+    this.plnVsActoptions.chart['color'] = function (d, i) {
       return ctrl.nvd3Colors[i % ctrl.nvd3Colors.length];
     }
 
