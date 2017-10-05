@@ -3,6 +3,7 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 
+declare var $: any;
 import * as config from '../configs/configs';
 
 @Component({
@@ -13,6 +14,8 @@ import * as config from '../configs/configs';
 export class OrderDashComponent implements OnInit {
   
   lotSize=0;
+  tableToShow=0;
+  action: any = { heading: "", body: "",details: ""};
 
   constructor(private http: Http, private cdr: ChangeDetectorRef) {
     this.getOrderStats();
@@ -64,13 +67,14 @@ export class OrderDashComponent implements OnInit {
   toShowPlnVsActTable=false;
   toShowFutAvlTable=false;
   toShowPlnVsActNAPTable=false;
+  doDataSyncResp=false;
 
-  public barChartLabels: string[] = ['Moving as planned', 'Not started', 'Not as per plan', 'Not as per plan'];
+  public barChartLabels: string[] = ['Moving as planned', 'Not dispatched', 'Not as per plan', 'Not as per plan'];
   public barChartType: string = 'bar';
   public barChartLegend: boolean = false;
   gRowCount = 50;
   futAvlOrder=[];
-  allTrailler = [];
+  allTrailer = [];
   ob = {
     column: [{ name: "Order ID", width: "11%" }, { name: "Movement no.", width: "11%" },{ name: "TMW status", width: "11%" },
     { name: "Order start date.", width: "11%" }, { name: "Order end date", width: "11%" },{ name: "Order origin point", width: "11%" },
@@ -90,42 +94,54 @@ export class OrderDashComponent implements OnInit {
              { name: "Planned trailer", width: "10%" }, { name: "Trailer in TMW", width: "10%" }, { name: "Status in TMW", width: "10%" }, { name: "Sync. with TMW", width: "10%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
+  historyConfig:any={showHistory:false,allTraillerSubSet:[],dataSet:[],backupDS:[],backupATS:[]};
 
   colorsOPs = ['red'];
   dataSet = [];
   pack = [];
+  
 
   futAvlOrderchartClicked(e){
     this.gRowCount=50;
-    this.allTrailler=e.data.list;
+    this.allTrailer=e.data.list;
+    this.tableToShow=3;
     this.toShowPlnVsActTable=false;
     this.toShowFutAvlTable=true;
     this.toShowPlnVsActNAPTable=false;
+    this.historyConfig.showHistory = false;
   }
   getGridData(item){
     this.gRowCount=50;
-    this.allTrailler=item.list;
+    this.allTrailer=item.list;
     if(item.label=="Not as per plan"){
+      this.tableToShow=2;
       this.toShowFutAvlTable=false;
       this.toShowPlnVsActTable=false;
       this.toShowPlnVsActNAPTable=true;
+      this.historyConfig.showHistory =false;
     } else {
+      this.tableToShow=1;
       this.toShowFutAvlTable = false;
       this.toShowPlnVsActTable = true;
       this.toShowPlnVsActNAPTable=false;
+      this.historyConfig.showHistory = false;
     }
   }
   plnVsActchartClicked(e){
     this.gRowCount=50;
-    this.allTrailler=e.data.list;
+    this.allTrailer=e.data.list;
     if(e.data.label=="Not as per plan"){
+      this.tableToShow=2;
       this.toShowFutAvlTable=false;
       this.toShowPlnVsActTable=false;
       this.toShowPlnVsActNAPTable=true;
+      this.historyConfig.showHistory = false;
     } else {
+      this.tableToShow=1;
       this.toShowFutAvlTable = false;
       this.toShowPlnVsActTable = true;
       this.toShowPlnVsActNAPTable=false;
+      this.historyConfig.showHistory = false;
     }
   }
 
@@ -263,6 +279,66 @@ export class OrderDashComponent implements OnInit {
     console.log(e);
   }
 
+  closeHistory(){
+    if(this.tableToShow==1){
+      this.toShowPlnVsActTable = true;
+    }else if(this.tableToShow==2){
+      this.toShowPlnVsActNAPTable=true;
+    }else if(this.tableToShow==3){
+      this.toShowFutAvlTable = true;
+    }
+  }
+
+  showTrHistory(item) {
+    this.toShowFutAvlTable = false;
+    this.toShowPlnVsActTable = false;
+    this.toShowPlnVsActNAPTable=false;
+    this.historyConfig['trailer'] = item;
+    this.historyConfig.showHistory = true;
+    this.getTrailerPingHistory(item);
+  }
+
+  getTrailerPingHistory(item:any) {
+    this.historyConfig.allTraillerSubSet=[];
+    this.historyConfig.dataSet = [];
+    this.historyConfig.backupATS = [];
+    this.historyConfig.backupDS = [];
+    this.historyConfig.thResp = false;
+    let url = config.baseUrl + "/HomeService/api/TrailerPingHistory?trailerID="+item;
+    //let url = config.baseUrl + "/HomeService/api/TrailerHistory?trailerID=" + this.selectedMarker.trailerID;
+    this.http.get(url).map(res => res.json())
+        .subscribe(
+        (data) => {
+            console.log("StatesTrailerCounts data recieved");
+            this.historyConfig.dataSet = data.dataSet;
+            this.historyConfig.backupDS = data.dataSet;
+            if (data.dataSet.length > 0) {
+                
+                for (let i = 0; i < data.dataSet.length; i++) {
+                    var item = data.dataSet[i];
+                    
+                    if(item.eventDateValues.length>0){
+                        for (let j = 0; j < item.eventDateValues.length; j++) {
+                            var ent=item.eventDateValues[j];
+                            ent['eDate']=item.eventDate;
+                            this.historyConfig.allTraillerSubSet.push(ent);
+                            this.historyConfig.backupATS.push(ent);
+
+                        }
+                    }
+                    
+                }
+            }
+            console.log(this.historyConfig);
+            this.historyConfig.thResp = true;
+        }, //For Success Response
+        (err) => {
+            console.log("StatesTrailerCounts error recieved");
+            this.historyConfig.thResp = true;
+        } //For Error Response
+        );
+}
+
   getOrderStats() {
     let url = config.baseUrl + "/HomeService/api/OrderTrailerTrack";
     this.OrderStatsResp=false;
@@ -278,7 +354,7 @@ export class OrderDashComponent implements OnInit {
               "list": []
             },
             {
-              "label": "Not started",
+              "label": "Not dispatched",
               "value": 0,
               "list": []
             },
@@ -303,7 +379,10 @@ export class OrderDashComponent implements OnInit {
           } else if (element.isMovingAsPlanned == 4) {
             bag[0].value++;
             bag[0].list.push(element);
-          } else { }
+          } else if (element.isMovingAsPlanned == 5) {
+            bag[2].value++;
+            bag[2].list.push(element);
+          }else { }
         });
         if(data.dataSet.length>0){
           this.lotSize=data.dataSet.length;
@@ -353,6 +432,44 @@ export class OrderDashComponent implements OnInit {
         console.log("getFutureAVLOrders error recieved");
         this.FutureAVLOrdersResp=true;
 
+      } //For Error Response
+      );
+  }
+
+  doDataSync(item) {
+    let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
+    let options = new RequestOptions({ headers: headers });
+    let url = config.baseUrl + "/HomeService/api/UpdateTMWTrailerInOrderAllocation";
+    this.doDataSyncResp=false;
+    var body={"OAID":item.oAID,"tMSTrailerID":item.tMSTrailerID,"tMWOrderTrailerID":item.tMWOrderTrailerID};
+
+    this.http.post(url, body, options).map(res => res.json())
+      .subscribe(
+      (data) => {
+        console.log("doDataSync data recieved");
+        this.doDataSyncResp=true;
+        if(data.status==1){
+          this.action.heading="Data Sync.";
+          this.action.body="Successfully synchronized data in TMS";
+          $('#result').modal('show');
+          this.toShowFutAvlTable = false;
+          this.toShowPlnVsActTable = false;
+          this.toShowPlnVsActNAPTable=false;
+          this.historyConfig.showHistory = false;
+          this.getOrderStats();
+        }else{
+          this.action.heading="Data Sync.";
+          this.action.body="Error in synchronizing data in TMS";
+          $('#result').modal('show');
+        }
+
+      }, //For Success Response
+      (err) => {
+        console.log("doDataSync error recieved");
+        this.doDataSyncResp=true;
+        this.action.heading="Data Sync.";
+        this.action.body="Error in synchronizing data";
+        $('result').modal('show');
       } //For Error Response
       );
   }
