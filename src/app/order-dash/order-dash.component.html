@@ -68,41 +68,37 @@
         <ng-container *ngFor="let i=index;let item of allTrailler">
           <tr class="full" *ngIf="i<gRowCount">
 
-            <td style="text-align:center;width:9%">
+            <td style="text-align:center;width:11%">
               <!-- <span>{{item.orderNumber}}-{{item.orderCompany}}-{{item.orderStatus}}</span> -->
               <span>{{item.orderNumber}}</span>
             </td>
-            <td style="text-align:center;width:9%">
+            <td style="text-align:center;width:11%">
               <a (click)="showPlannedOrder(item)" *ngIf="item.orderStatus=='PLN'"><span>{{item.movementNumber}}</span></a>
               <span *ngIf="item.orderStatus!='PLN'">{{item.movementNumber}}</span>
             </td>
-            <td style="text-align:center;width:9%">
-              <span>{{item.tMSOrderStatus}}</span>
-            </td>
-            <td style="text-align:center;width:9%">
-              <span>{{item.tMWOrderStatus}}</span>
-            </td>
-            <td style="text-align:center;width:9%">
+            
+            <td style="text-align:center;width:11%">
               <span>{{item.orderBillTo}}</span>
             </td>
-            <td style="text-align:center;width:9%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderOrginCity}},{{item.orderOrginState}}</span>
             </td>
-            <td style="text-align:center;width:9%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderDestCity}},{{item.orderDestState}}</span>
             </td>
-            <td style="text-align:center;width:9%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderOrginPoint}}</span>
             </td>
-            <td style="text-align:center;width:9%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderStartDateTime}}</span>
             </td>
-            <td style="text-align:center;width:9%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderCompleteDate}}</span>
             </td>
 
-            <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
-              <span>{{item.orderRemark.substring(0,25)}}</span>
+            <td style="text-align:center;width:12%" data-toggle="tooltip" title={{item.orderRemark}}>
+              <span *ngIf="item.orderRemark.length<=25">{{item.orderRemark}}</span>
+              <span *ngIf="item.orderRemark.length>25">{{item.orderRemark.substring(0,25)}}...</span>
             </td>
           </tr>
         </ng-container>
@@ -130,6 +126,12 @@
             </td>
             <td style="text-align:center;width:10%">
               <span>{{item.movementNumber}}</span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span>{{item.orderStartDate}}</span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span>{{item.orderCompletionDate}}</span>
             </td>
             <td style="text-align:center;width:10%">
               <span>{{item.orderStartDate}}</span>
@@ -183,6 +185,9 @@
               <span>{{item.movementNumber}}</span>
             </td>
             <td style="text-align:center;width:11%">
+              <span>{{item.movementNumber}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
               <span>{{item.orderStartDate}}</span>
             </td>
             <td style="text-align:center;width:11%">
@@ -203,7 +208,6 @@
             <td style="text-align:center;width:12%">
               <span>{{item.tMWOrderTrailerID}}</span>
             </td>
-
           </tr>
         </ng-container>
       </tbody>
