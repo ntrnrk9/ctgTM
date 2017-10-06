@@ -91,16 +91,16 @@
           <div *ngIf="!trCountResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
       </div>
     </div> -->
-  <div class="col-md-6" style="height:380px;">
+  <div class="col-md-6" style="height:400px;">
     <!-- <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Status</label></div> -->
-    <div style="height:380px;border:1px solid silver;">
+    <div style="height:400px;border:1px solid silver;">
       <div *ngIf="trailers.length>0">
         <!-- <canvas height="130" baseChart [options]="chartOptions" [colors]="colors" [data]="statusChartData" [labels]="pieChartLabels" [chartType]="pieChartType" (chartClick)="chartClicked($event,1)"></canvas> -->
         <div class="col-md-8">
           <div style="text-align: left;padding-top: 10px;">
             <label style="font-size: 25px;font-weight: normal;">By status</label>
           </div>
-          <div style="margin-top:-35px ">
+          <div style="margin-top:-30px">
             <nvd3 [options]="trStatusChartoptions" [data]="trStatusChartdata"></nvd3>
           </div>
         </div>
@@ -120,9 +120,9 @@
       <div *ngIf="trailers.length==0" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
     </div>
   </div>
-  <div class="col-md-6" style="height:380px;">
+  <div class="col-md-6" style="height:400px;">
     <!-- <div style="height:40px" class="kpi-head"><label class="pull-left kpi-title">Trailer Type</label></div> -->
-    <div style="height:380px;border:1px solid silver;">
+    <div style="height:400px;border:1px solid silver;">
       <div *ngIf="trailers.length>0">
         <!-- <canvas height="130" baseChart [options]="chartOptions" [colors]="colors" [data]="typeChartData" [labels]="typeChartLabels" [chartType]="pieChartType"
           (chartClick)="chartClicked($event,2)"></canvas> -->
@@ -130,7 +130,7 @@
           <div style="text-align: left;padding-top: 10px;">
             <label style="font-size: 25px;font-weight: normal;">By type</label>
           </div>
-          <div style="margin-top:-35px ">
+          <div style="margin-top:-30px">
             <nvd3 [options]="trTypeChartoptions" [data]="trTypeChartData"></nvd3>
           </div>
         </div>

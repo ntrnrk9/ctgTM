@@ -100,7 +100,7 @@ export class TrailerDashComponent implements OnInit {
   trStatusChartoptions = {
     chart: {
       type: 'pieChart',
-      height: 400,
+      height: 340,
       donut: true,
       labelType: 'percent',
       growOnHover: true,
@@ -154,7 +154,7 @@ export class TrailerDashComponent implements OnInit {
   trTypeChartoptions = {
     chart: {
       type: 'pieChart',
-      height: 400,
+      height: 340,
       donut: true,
       labelType: 'percent',
       growOnHover: true,

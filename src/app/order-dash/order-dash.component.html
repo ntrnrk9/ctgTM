@@ -1,10 +1,5 @@
-<p>
-  order-dash works!
-</p>
-
-
-<div style="text-align: center">
-  <div style="height:300px;width:500px;">
+<div>
+  <!-- <div style="height:300px;width:500px;">
     <canvas baseChart
           width="4" height="1"
           [datasets]="barChartData"
@@ -15,5 +10,227 @@
           [chartType]="barChartType"
           (chartHover)="chartHovered($event)"
           (chartClick)="chartClicked($event)"></canvas>
+  </div> -->
+  <div class="row">
+    <div class="col-md-6" style="height:400px;">
+      <div style="border:1px solid silver;height:400px;">
+        <div *ngIf="OrderStatsResp">
+          <div class="col-md-8">
+            <div style="text-align: left;padding-top: 10px;">
+              <label style="font-size: 25px;font-weight: normal;">Planned vs Actual</label>
+            </div>
+            <div>
+              <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3>
+            </div>
+          </div>
+          <div class="col-md-4" style="padding-top:0px;">
+            <table class="table table-striped">
+              <tr *ngFor="let i=index;let item of plnVsActdata" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item)">
+                <td><span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span></td>
+                <td><span class="pull-left">{{item.label}}</span><br><span style="font-size:19px">{{item.value}}</span></td>
+              </tr>
+              <tr>
+                <td><span class="lBox pull-left" style="background: white"></span></td>
+                <td><span class="pull-left">Total</span><br><span style="font-size:19px">{{lotSize}}</span></td>
+              </tr>
+            </table>
+          </div>
+          <!-- <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3> -->
+          <!-- <nvd3 [options]="pieOption" [data]="plnVsActdata"></nvd3> -->
+        </div>
+        <div *ngIf="!OrderStatsResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+      </div>
+    </div>
+
+    <div class="col-md-6" style="height:400px;">
+      <div style="border:1px solid silver;height:400px;">
+        <div *ngIf="FutureAVLOrdersResp" style="text-align: left;padding-top: 15px;padding-left: 15px;">
+          <label style="font-size: 25px;font-weight: normal;">Unplanned orders - 7 days view</label>
+        </div>
+        <div *ngIf="FutureAVLOrdersResp" style="padding:10px">
+          <nvd3 [options]="futAvlOptions" [data]="futAvlData"></nvd3>
+        </div>
+        <div *ngIf="!FutureAVLOrdersResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+      </div>
+    </div>
+  </div>
+  <br><br>
+  <div *ngIf="toShowFutAvlTable" style="margin-top:20px">
+    <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
+      <thead style="font-size: 12px">
+        <tr bgcolor="#f7f8fc" class="app-table-tr full">
+          <ng-container *ngFor="let con of orders.column">
+            <th [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody id="tgBody" *ngIf="allTrailer.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
+        <ng-container *ngFor="let i=index;let item of allTrailer">
+          <tr class="full" *ngIf="i<gRowCount">
+
+            <td style="text-align:center;width:11%">
+              <!-- <span>{{item.orderNumber}}-{{item.orderCompany}}-{{item.orderStatus}}</span> -->
+              <span>{{item.orderNumber}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <a (click)="showPlannedOrder(item)" *ngIf="item.orderStatus=='PLN'"><span>{{item.movementNumber}}</span></a>
+              <span *ngIf="item.orderStatus!='PLN'">{{item.movementNumber}}</span>
+            </td>
+
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderBillTo}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderOrginCity}},{{item.orderOrginState}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderDestCity}},{{item.orderDestState}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderOrginPoint}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderStartDateTime}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderCompleteDate}}</span>
+            </td>
+
+            <td style="text-align:center;width:12%" data-toggle="tooltip" title={{item.orderRemark}}>
+              <span *ngIf="item.orderRemark.length<=25">{{item.orderRemark}}</span>
+              <span *ngIf="item.orderRemark.length>25">{{item.orderRemark.substring(0,25)}}...</span>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="allTrailer.length==0 ">No data found</div>
+    <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTrailer.length}} record(s) found</div>-->
+    <div style="padding-top: 10px;">{{allTrailer.length}} record(s) found</div>
+  </div>
+
+  <div *ngIf="toShowPlnVsActNAPTable" style="margin-top:20px">
+    <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
+      <thead style="font-size: 12px">
+        <tr bgcolor="#f7f8fc" class="app-table-tr full">
+          <ng-container *ngFor="let con of plnVsActGrid.column">
+            <th [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody id="tgBody" *ngIf="allTrailer.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
+        <ng-container *ngFor="let i=index;let item of allTrailer">
+          <tr class="full" *ngIf="i<gRowCount">
+            <td style="text-align:center;width:10%">
+              <span>{{item.orderID}}</span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span>{{item.movementNumber}}</span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span>{{item.tMWOrderStatus}}</span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span>{{item.orderStartDate}}</span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span>{{item.orderCompletionDate}}</span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span>{{item.orderOriginPoint}}</span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span><a (click)="showTrHistory(item.tMSTrailerID)">{{item.tMSTrailerID}}</a></span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span><a (click)="showTrHistory(item.tMWOrderTrailerID)">{{item.tMWOrderTrailerID}}</a></span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span>{{item.tMWTrailerStatus}}</span>
+            </td>
+            <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
+              <button class="histBut" style="cursor: pointer" (click)="doDataSync(item)" data-toggle="tooltip" title="Sync"><img src="../../assets/images/markers/data-sync.png" /></button>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="allTrailer.length==0 ">No data found</div>
+    <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTrailer.length}} record(s) found</div>-->
+    <div style="padding-top: 10px;">{{allTrailer.length}} record(s) found</div>
+  </div>
+
+  <div *ngIf="toShowPlnVsActTable" style="margin-top:20px">
+    <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
+      <thead style="font-size: 12px">
+        <tr bgcolor="#f7f8fc" class="app-table-tr full">
+          <ng-container *ngFor="let con of ob.column">
+            <th [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody id="tgBody" *ngIf="allTrailer.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
+        <ng-container *ngFor="let i=index;let item of allTrailer">
+          <tr class="full" *ngIf="i<gRowCount">
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderID}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.movementNumber}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderStartDate}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderCompletionDate}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderOriginCityState}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderDestinationCityState}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.orderOriginPoint}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span><a (click)="showTrHistory(item.tMSTrailerID)">{{item.tMSTrailerID}}</a></span>
+            </td>
+            <td style="text-align:center;width:12%">
+              <span>{{item.tMWTrailerStatus}}</span>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="allTrailer.length==0 ">No data found</div>
+    <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTrailer.length}} record(s) found</div>-->
+    <div style="padding-top: 10px;">{{allTrailer.length}} record(s) found</div>
+  </div>
+
+  <div *ngIf="historyConfig.showHistory">
+    <app-history-page [(config)]="historyConfig" (configChange)="closeHistory()"></app-history-page>
+  </div>
+
+  <!-- submit conformation div -->
+  <div class="modal fade" id="result" role="dialog">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header page-heading" style="padding:5px">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">{{action.heading}}</h4>
+        </div>
+        <div class="modal-body">
+          <p>{{action.body}}</p>
+            <!-- <a href="#details" data-toggle="collapse">Details</a></p>
+          <div id="details" class="collapse">
+            <p [innerHTML]="action.details" style="word-wrap: break-word"></p>
+          </div> -->
+        </div>
+        <div class="modal-footer page-footer">
+          <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
