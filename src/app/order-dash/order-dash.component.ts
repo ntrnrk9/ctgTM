@@ -39,7 +39,7 @@ export class OrderDashComponent implements OnInit {
     }
 
     this.futAvlOptions.chart['color'] = function (d, i) {
-      return ctrl.nvd3Colors[0];
+      return '#00a0dc';
     }
   }
 
@@ -51,9 +51,9 @@ export class OrderDashComponent implements OnInit {
     }
   };
   nvd3Colors = [
-    '#00a0dc',
-    '#8d6cab',
-    '#dd5143',
+    '#00a65a',
+    '#f39c12',
+    '#dd4b39',
     '#e68523',
     '#00aeb3',
     '#86888a',
@@ -69,7 +69,7 @@ export class OrderDashComponent implements OnInit {
   toShowPlnVsActNAPTable=false;
   doDataSyncResp=false;
 
-  public barChartLabels: string[] = ['Moving as planned', 'Not dispatched', 'Not as per plan', 'Not as per plan'];
+  public barChartLabels: string[] = ['Moving as planned', 'Not dispatched', 'Inconsistant - dispatched', 'Inconsistant - dispatched'];
   public barChartType: string = 'bar';
   public barChartLegend: boolean = false;
   gRowCount = 50;
@@ -113,7 +113,7 @@ export class OrderDashComponent implements OnInit {
   getGridData(item){
     this.gRowCount=50;
     this.allTrailer=item.list;
-    if(item.label=="Not as per plan"){
+    if(item.label=="Inconsistant - dispatched"){
       this.tableToShow=2;
       this.toShowFutAvlTable=false;
       this.toShowPlnVsActTable=false;
@@ -130,7 +130,7 @@ export class OrderDashComponent implements OnInit {
   plnVsActchartClicked(e){
     this.gRowCount=50;
     this.allTrailer=e.data.list;
-    if(e.data.label=="Not as per plan"){
+    if(e.data.label=="Inconsistant - dispatched"){
       this.tableToShow=2;
       this.toShowFutAvlTable=false;
       this.toShowPlnVsActTable=false;
@@ -349,17 +349,17 @@ export class OrderDashComponent implements OnInit {
         this.dataSet = data.dataSet;
         var bag= [
             {
-              "label": "Moving as planned",
+              "label": "Consistant",
               "value": 0,
               "list": []
             },
             {
-              "label": "Not dispatched",
+              "label": "Inconsistant - Not dispatched",
               "value": 0,
               "list": []
             },
             {
-              "label": "Not as per plan",
+              "label": "Inconsistant - dispatched",
               "value": 0,
               "list": []
             }
