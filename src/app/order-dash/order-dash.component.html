@@ -15,7 +15,7 @@
     <div class="col-md-6" style="height:400px;">
       <div style="border:1px solid silver;height:400px;">
         <div *ngIf="OrderStatsResp">
-          <div class="col-md-8">
+          <div class="col-md-7">
             <div style="text-align: left;padding-top: 10px;">
               <label style="font-size: 25px;font-weight: normal;">Planned vs Actual</label>
             </div>
@@ -23,7 +23,7 @@
               <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3>
             </div>
           </div>
-          <div class="col-md-4" style="padding-top:0px;">
+          <div class="col-md-5" style="padding-top:0px;">
             <table class="table table-striped">
               <tr *ngFor="let i=index;let item of plnVsActdata" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item)">
                 <td><span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span></td>
