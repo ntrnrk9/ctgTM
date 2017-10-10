@@ -374,7 +374,7 @@ export class AlloTrGmap {
             custID='<span><b>' + tr.customerId +'</b></span><br>';
         }
 
-        var content = '<div class="infowindow" style="width:200px;padding:0px;height:120px;overflow:hidden;">' +
+        var content = '<div class="infowindow" style="width:200px;padding:0px;height:130px;overflow:hidden;">' +
             '<div class="row header" style="border-bottom: 1px solid gray;padding:0px 0px 2px 30px">' +
             '<div class="row head1" style="font-size:14px;color:black">Trailer #: <b>' + tr.trailerID + ' (' + tr.company + ')</b></div>' +
             '<div class="row head2" style="font-size:13px;color:red"><b>' + tr.trailerName + '</b></div>' 
@@ -386,7 +386,8 @@ export class AlloTrGmap {
             '</div>' +
             '<div class="row content" style="padding:3px 30px 0px 15px">' +
              custID  +
-            '<span>is Empty: ' + isEmpty + '</span><br>' +
+            '<span>Idle time: ' + tr.idlehours + '</span><br>' +
+            '<span>Is Empty: ' + isEmpty + '</span><br>' +
             '<span>' + tr.latitude + ', ' + tr.longitude + '</span><br>' +
             '<span>' + tr.location + '</span><br>' +
             '</div>' +
