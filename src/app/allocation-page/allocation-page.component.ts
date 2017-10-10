@@ -79,6 +79,7 @@ export class AllocationPageComponent {
     includeMT=true;
     trMapshowLoader=false;
     poolTrailers=false;
+    allPoolTrailers=false;
     automatedMile=true;
     alloInProg=false;
     
@@ -699,7 +700,18 @@ export class AllocationPageComponent {
         this.truckList=this.sortList('distance',this.truckList);
     }
 
-    filterTrailerByMile(){
+    filterTrailerByMile(option:number){
+        if(option==1){
+            if(this.poolTrailers){
+                this.allPoolTrailers=false;
+            }
+        }else if(option==2){
+            if(this.allPoolTrailers){
+                this.poolTrailers=false;
+            }    
+        }
+        
+
         this.selectedTrailer = {trailerID:-1};
         this.getOrderTruckTrailers(this.selectedOrder.orderOrginCityLat,this.selectedTruck.location.position.lat,this.selectedOrder.orderOrginCityLong,this.selectedTruck.location.position.lng,this.selectedTrailerMile.value,0);
     }
@@ -1053,15 +1065,15 @@ export class AllocationPageComponent {
 
         let options = new RequestOptions({ headers: headers });
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
-        //let url="https://api.drivenanalyticsolutions.com/ctg/assets/tractors";
-        let url = "https://ctgtest.com/AllocationService/api/TruckDetails";
+        //let url=config.ctgApiUrl+"/assets/tractors";
+        let url = config.baseUrl+"/AllocationService/api/TruckDetails";
         this.http.get(url, {
             headers: headers
         }).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("tractors data recieved");
-
+                //this.trucks.groups = data.data;
                 this.trucks.groups = data.dataSet;
                 for (var i = 0; i < this.trucks.groups.length; i++) {
                     let obj = this.trucks.groups[i];
@@ -1148,7 +1160,7 @@ export class AllocationPageComponent {
         }
 
         var toShowPool;
-        if (this.poolTrailers) {
+        if (this.poolTrailers||this.allPoolTrailers) {
             toShowPool = 'yes';
         } else {
             toShowPool = 'no';
@@ -1181,9 +1193,17 @@ export class AllocationPageComponent {
                         this.selectedTrailerMile = { lable: "150 Miles", value: 150 };
                     }
                     this.automatedMile=false;
-                    this.trailers.groups = data.dataSet;
-                    this.trailerList = data.dataSet;
-                    this.filterTrailerByType();
+                    if(this.allPoolTrailers){
+                        this.trailers.groups = data.dataSet;
+                        this.trailerList = data.dataSet;
+                    } else {
+                        var bag = data.dataSet.filter(
+                            item => item.trailerStatus === "AVL");
+                        this.trailers.groups = bag;
+                        this.trailerList = bag;
+                        this.filterTrailerByType();
+                    }
+                    
                     this.trailers.groups = this.sortList('distance', this.trailers.groups);
                     this.mapTrailers = this.cloneObje(this.trailerList);
                     this.trailerDetailsResp = true;
@@ -1506,21 +1526,21 @@ export class AllocationPageComponent {
                 console.log("allocateInTMW data recieved");
                 if(data.trailer==this.selectedTrailer.trailerID){
                     console.log("TMS Trailers matches with TMW Trailer");
-                    this.allocateInTMS();
+                    this.allocateInTMS(1);
                 }else{
                     console.log("TMS Trailers do not match with TMW Trailer");
-                    this.allocateInTMS();
+                    this.allocateInTMS(0);
                 }
                 //this.allocateInTMS();
             }, //For Success Response
             (err) => {
                 console.log("allocateInTMW error recieved");
-                this.allocateInTMS();
+                this.allocateInTMS(0);
             } //For Error Response
             );
     }
 
-    allocateInTMS() {
+    allocateInTMS(flag) {
         console.log("submit allocation");
         this.OrderDetailsResp = false;
         let headers = new Headers({ 'Content-Type': 'application/json;', 'Accept': 'application/json' });
@@ -1556,8 +1576,14 @@ export class AllocationPageComponent {
                 console.log("OrderDetails data recieved");
                 if (data.status == 1) {
                     
-                    $('#successResult').modal('show');
-                    
+                    if(flag==0){
+                        this.action.heading="Allocation status";
+                        this.action.body="Trailer planned successfully in TMS. Mapping failed in TMW, please update TMW manually.";
+                        $('#failedResult').modal('show');    
+                    }else{
+                        $('#successResult').modal('show');
+                    }
+
                     //reset order page
                     this.orderBylocation = "";
                     this.omID = "";
@@ -1584,9 +1610,12 @@ export class AllocationPageComponent {
                     // this.resetTruckPage();
                     // this.resetOrderPage();
                     // this.resetTrailerPage();
+                    
                     this.goToOrder();
                 } else {
                     //alert("failed");
+                    this.action.heading="Allocation status";
+                    this.action.body="Error in allocating order.";
                     $('#failedResult').modal('show');
                 }
             }, //For Success Response
@@ -1595,6 +1624,8 @@ export class AllocationPageComponent {
                 //$('#waiting').modal('hide');
                 console.log("OrderDetails error recieved");
                 this.OrderDetailsResp = true;
+                this.action.heading="Allocation status";
+                this.action.body="Error in allocating order.";
                 $('#failedResult').modal('show');
             } //For Error Response
             );

@@ -296,14 +296,21 @@
                     </div>
                     <button class="pull-right resetBut" type="button" value="encode" (click)="resetTrailerPage()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
                     <div class="pull-right" style="margin-right: 25px">
-                        <span style="float: left;margin-left: 10px;padding-top: 5px;"><input type="checkbox" [(ngModel)]="includeMT" (change)="filterTrailerByType()"/>
+                        <span style="float: left;margin-left: 10px;padding-top: 5px;">
+                            <input type="checkbox" [(ngModel)]="includeMT" (change)="filterTrailerByType()" [disabled]="allPoolTrailers"/>
                             <label style="font-weight: normal">Include MT</label>
                         </span>
-                        <span style="float: left;margin-left: 10px;padding-top: 5px;"><input type="checkbox" [(ngModel)]="includeUNK" (change)="filterTrailerByType()"/>
+                        <span style="float: left;margin-left: 10px;padding-top: 5px;">
+                            <input type="checkbox" [(ngModel)]="includeUNK" (change)="filterTrailerByType()" [disabled]="allPoolTrailers"/>
                             <label style="font-weight: normal">Include UNK</label>
                         </span>
-                        <span style="float: left;margin-left: 10px;padding-top: 5px;"><input type="checkbox" [(ngModel)]="poolTrailers" (change)="filterTrailerByMile()"/>
-                            <label style="font-weight: normal">Pool trailers only</label>
+                        <span style="float: left;margin-left: 10px;padding-top: 5px;">
+                            <input type="checkbox" [(ngModel)]="poolTrailers" (change)="filterTrailerByMile(1)"/>
+                            <label style="font-weight: normal">AVL Pool trailers</label>
+                        </span>
+                        <span style="float: left;margin-left: 10px;padding-top: 5px;">
+                            <input type="checkbox" [(ngModel)]="allPoolTrailers" (change)="filterTrailerByMile(2)"/>
+                            <label style="font-weight: normal">All Pool trailers</label>
                         </span>
                     </div>
                 </div>
@@ -532,14 +539,14 @@
     </div>
     <!-- submit conformation div -->
     <div class="modal fade" id="failedResult" role="dialog">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
-                <div class="modal-header page-heading" style="padding:5px 15px 5px 15px">
+                <div class="modal-header page-heading" style="padding:5px">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Allocation Status</h4>
+                    <h4 class="modal-title">{{action.heading}}</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Error in allocating order</p>
+                    <p>{{action.body}}</p>
                 </div>
                 <div class="modal-footer page-footer">
                     <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
