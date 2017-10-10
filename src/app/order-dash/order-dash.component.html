@@ -55,6 +55,9 @@
     </div>
   </div>
   <br><br>
+  <!-- <span><a (click)="showTrHistory(item)">Show</a></span> -->
+
+  <label *ngIf="toShowFutAvlTable||toShowPlnVsActNAPTable||toShowPlnVsActTable">{{selectedLable}}</label>
   <div *ngIf="toShowFutAvlTable" style="margin-top:20px">
     <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
       <thead style="font-size: 12px">
@@ -90,10 +93,10 @@
               <span>{{item.orderOrginPoint}}</span>
             </td>
             <td style="text-align:center;width:11%">
-              <span>{{item.orderStartDateTime}}</span>
+              <span>{{formatDateTime(item.orderStartDateTime)}}</span>
             </td>
             <td style="text-align:center;width:11%">
-              <span>{{item.orderCompleteDate}}</span>
+              <span>{{formatDateTime(item.orderCompleteDate)}}</span>
             </td>
 
             <td style="text-align:center;width:12%" data-toggle="tooltip" title={{item.orderRemark}}>
@@ -140,17 +143,20 @@
               <span>{{item.orderOriginPoint}}</span>
             </td>
             <td style="text-align:center;width:10%">
-              <span><a (click)="showTrHistory(item.tMSTrailerID)">{{item.tMSTrailerID}}</a></span>
-            </td>
-            <td style="text-align:center;width:10%">
-              <span><a (click)="showTrHistory(item.tMWOrderTrailerID)">{{item.tMWOrderTrailerID}}</a></span>
-            </td>
-            <td style="text-align:center;width:10%">
-              <span>{{item.tMWTrailerStatus}}</span>
+              <!-- <span><a (click)="showTrHistory(item.tMSTrailerID)">{{item.tMSTrailerID}}</a></span> -->
+              <span>{{item.tMSTrailerID}}</span>
             </td>
             <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
-              <button class="histBut" style="cursor: pointer" (click)="doDataSync(item)" data-toggle="tooltip" title="Sync"><img src="../../assets/images/markers/data-sync.png" /></button>
+                <button class="histBut" style="cursor: pointer" (click)="syncWithTMW(item)" data-toggle="tooltip" title="Sync with TMW"><img src="../../assets/images/dash/RightSync.png" /></button>
+                <br><button style="margin-top:5px" class="histBut" style="cursor: pointer" (click)="allocateInTMW(item)" data-toggle="tooltip" title="Sync with TMS"><img src="../../assets/images/dash/LeftSync.png" /></button>
             </td>
+            <td style="text-align:center;width:10%">
+              <!-- <span><a (click)="showTrHistory(item.tMWOrderTrailerID)">{{item.tMWOrderTrailerID}}</a></span> -->
+              <span>{{item.tMWOrderTrailerID}}</span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span style="cursor: pointer"><a (click)="showTrHistory(item)">Show</a></span>
+            </td> 
           </tr>
         </ng-container>
       </tbody>
@@ -179,25 +185,25 @@
               <span>{{item.movementNumber}}</span>
             </td>
             <td style="text-align:center;width:11%">
+              <span>{{item.tMWOrderStatus}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
               <span>{{item.orderStartDate}}</span>
             </td>
             <td style="text-align:center;width:11%">
               <span>{{item.orderCompletionDate}}</span>
             </td>
             <td style="text-align:center;width:11%">
-              <span>{{item.orderOriginCityState}}</span>
-            </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderDestinationCityState}}</span>
-            </td>
-            <td style="text-align:center;width:11%">
               <span>{{item.orderOriginPoint}}</span>
             </td>
             <td style="text-align:center;width:11%">
-              <span><a (click)="showTrHistory(item.tMSTrailerID)">{{item.tMSTrailerID}}</a></span>
+              <span>{{item.tMSTrailerID}}</span>
+            </td>
+            <td style="text-align:center;width:11%">
+              <span>{{item.tMWOrderTrailerID}}</span>
             </td>
             <td style="text-align:center;width:12%">
-              <span>{{item.tMWTrailerStatus}}</span>
+                <span style="cursor: pointer"><a (click)="showTrHistory(item)">Show</a></span>
             </td>
           </tr>
         </ng-container>
@@ -207,9 +213,19 @@
     <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTrailer.length}} record(s) found</div>-->
     <div style="padding-top: 10px;">{{allTrailer.length}} record(s) found</div>
   </div>
-
+  
   <div *ngIf="historyConfig.showHistory">
-    <app-history-page [(config)]="historyConfig" (configChange)="closeHistory()"></app-history-page>
+    <!-- <allotrgmap [trailers]="mapTrailers" (selectedChange)="trSelectedFromMap($event)" [(selected)]="selectedTrailer" [(config)]="trMapConfig"></allotrgmap> -->
+    <div class="page-heading" style="padding:0px">
+      <div class="pull-left" style="padding:10px">
+        <b>Trailer location</b>
+      </div>
+      <button type="button" (click)="closeHistory()" class="pull-right toggleBut close" data-toggle="tooltip" title="Close">&times;</button>
+    </div>
+    <div>
+      <gmapjs [trailers]="mapTrailers" [(config)]="trMapConfig"></gmapjs>
+    </div>
+    
   </div>
 
   <!-- submit conformation div -->

@@ -56,3 +56,17 @@
     background: transparent;
     color: #d2232a;
 }
+
+.toggleBut {
+    right: 0px;
+    top: 0px;
+    border: none;
+    background-color: #062a53;
+    cursor: pointer
+}
+
+.close{
+    opacity:1;
+    color:white;
+    padding: 9px 12px 9px 12px;
+}

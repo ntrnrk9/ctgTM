@@ -16,6 +16,10 @@ export class OrderDashComponent implements OnInit {
   lotSize=0;
   tableToShow=0;
   action: any = { heading: "", body: "",details: ""};
+  selectedLable="";
+  mapTrailers=[];
+  selectedOrder={};
+  trMapConfig:any={lat:35.96494,lng:-83.95384,zoom:10,mapType:'roadmap',marker:-1};
 
   constructor(private http: Http, private cdr: ChangeDetectorRef) {
     this.getOrderStats();
@@ -28,6 +32,10 @@ export class OrderDashComponent implements OnInit {
     this.futAvlOptions.chart.discretebar.dispatch.elementClick=function(e){
       //console.log('click-init ' + JSON.stringify(e));
       ctrl.futAvlOrderchartClicked(e);
+    };
+    this.futAvlOptions.chart.yAxis['tickFormat']=function(e){
+      //console.log('click-init ' + JSON.stringify(e));
+      return parseFloat(e).toFixed(0);
     };
     this.plnVsActoptions.chart.pie.dispatch.elementClick=function(e){
       //console.log('click-init ' + JSON.stringify(e));
@@ -69,7 +77,7 @@ export class OrderDashComponent implements OnInit {
   toShowPlnVsActNAPTable=false;
   doDataSyncResp=false;
 
-  public barChartLabels: string[] = ['Moving as planned', 'Not dispatched', 'Inconsistant - dispatched', 'Inconsistant - dispatched'];
+  public barChartLabels: string[] = ['Moving as planned', 'Not dispatched', 'Inconsistent - dispatched', 'Inconsistent - dispatched'];
   public barChartType: string = 'bar';
   public barChartLegend: boolean = false;
   gRowCount = 50;
@@ -78,7 +86,7 @@ export class OrderDashComponent implements OnInit {
   ob = {
     column: [{ name: "Order ID", width: "11%" }, { name: "Movement no.", width: "11%" },{ name: "TMW status", width: "11%" },
     { name: "Order start date.", width: "11%" }, { name: "Order end date", width: "11%" },{ name: "Order origin point", width: "11%" },
-    { name: "Planned trailer", width: "11%" }, { name: "Trailer in TMW", width: "11%" },{ name: "Status in TMW", width: "12%" }],
+    { name: "Planned trailer", width: "11%" }, { name: "Trailer in TMW", width: "11%" },{ name: "Show in map", width: "12%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
 
@@ -91,7 +99,7 @@ export class OrderDashComponent implements OnInit {
   plnVsActGrid = {
     column: [{ name: "Order ID", width: "10%" }, { name: "Movement no.", width: "10%" },{ name: "TMW status", width: "10%" },
              { name: "Order start date.", width: "10%" }, { name: "Order end date", width: "10%" },{ name: "Order origin point", width: "10%" }, 
-             { name: "Planned trailer", width: "10%" }, { name: "Trailer in TMW", width: "10%" }, { name: "Status in TMW", width: "10%" }, { name: "Sync. with TMW", width: "10%" }],
+             { name: "Planned trailer", width: "10%" },{ name: "Sync data", width: "10%" }, { name: "Trailer in TMW", width: "10%" },  { name: "Show in map", width: "10%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
   historyConfig:any={showHistory:false,allTraillerSubSet:[],dataSet:[],backupDS:[],backupATS:[]};
@@ -105,6 +113,7 @@ export class OrderDashComponent implements OnInit {
     this.gRowCount=50;
     this.allTrailer=e.data.list;
     this.tableToShow=3;
+    this.selectedLable="Unplanned orders - 7 days view";
     this.toShowPlnVsActTable=false;
     this.toShowFutAvlTable=true;
     this.toShowPlnVsActNAPTable=false;
@@ -113,14 +122,23 @@ export class OrderDashComponent implements OnInit {
   getGridData(item){
     this.gRowCount=50;
     this.allTrailer=item.list;
-    if(item.label=="Inconsistant - dispatched"){
+    if(item.label=="Inconsistent - dispatched"){
       this.tableToShow=2;
+      this.selectedLable="Inconsistent - dispatched";
       this.toShowFutAvlTable=false;
       this.toShowPlnVsActTable=false;
       this.toShowPlnVsActNAPTable=true;
       this.historyConfig.showHistory =false;
-    } else {
+    } else if(item.label=="Inconsistent - Not dispatched"){
+      this.tableToShow=2;
+      this.selectedLable="Inconsistent - Not dispatched";
+      this.toShowFutAvlTable = false;
+      this.toShowPlnVsActTable = false;
+      this.toShowPlnVsActNAPTable=true;
+      this.historyConfig.showHistory = false;
+    }else if(item.label=="Consistent"){
       this.tableToShow=1;
+      this.selectedLable="Consistent";
       this.toShowFutAvlTable = false;
       this.toShowPlnVsActTable = true;
       this.toShowPlnVsActNAPTable=false;
@@ -130,14 +148,23 @@ export class OrderDashComponent implements OnInit {
   plnVsActchartClicked(e){
     this.gRowCount=50;
     this.allTrailer=e.data.list;
-    if(e.data.label=="Inconsistant - dispatched"){
+    if(e.data.label=="Inconsistent - dispatched"){
       this.tableToShow=2;
+      this.selectedLable="Inconsistent - dispatched";
       this.toShowFutAvlTable=false;
       this.toShowPlnVsActTable=false;
       this.toShowPlnVsActNAPTable=true;
       this.historyConfig.showHistory = false;
-    } else {
+    } else if(e.data.label=="Inconsistent - Not dispatched"){
+      this.tableToShow=2;
+      this.selectedLable="Inconsistent - Not dispatched";
+      this.toShowFutAvlTable = false;
+      this.toShowPlnVsActTable = false;
+      this.toShowPlnVsActNAPTable=true;
+      this.historyConfig.showHistory = false;
+    }else if(e.data.label=="Consistent"){
       this.tableToShow=1;
+      this.selectedLable="Consistent";
       this.toShowFutAvlTable = false;
       this.toShowPlnVsActTable = true;
       this.toShowPlnVsActNAPTable=false;
@@ -287,12 +314,50 @@ export class OrderDashComponent implements OnInit {
     }else if(this.tableToShow==3){
       this.toShowFutAvlTable = true;
     }
+    this.historyConfig.showHistory=false;
   }
 
   showTrHistory(item) {
+    this.selectedOrder=item;
     this.toShowFutAvlTable = false;
     this.toShowPlnVsActTable = false;
     this.toShowPlnVsActNAPTable=false;
+    
+    
+    // var orderLat=34.040537;
+    // var orderLng=-117.728784;
+
+    // var tmwLat=34.040301;
+    // var tmwLng=-117.729578;
+
+    // var tmsLat=34.040322;
+    // var tmsLng=-117.728956;
+
+    var orderLat=item.orderLatitude;
+    var orderLng=item.orderLongitude;
+
+    var tmwLat=item.tMWTrailerLatitude;
+    var tmwLng=item.tMWTrailerLongitude;
+
+    var tmsLat=item.tMSTrailerLatitude;
+    var tmsLng=item.tMSTrailerLongitude;
+
+    this.mapTrailers=[];
+    this.mapTrailers[0]={
+      latitude:tmwLat,
+      longitude:tmwLng,
+      trailerID:item.tMWOrderTrailerID
+    };
+    this.mapTrailers[1]={
+      latitude:tmsLat,
+      longitude:tmsLng,
+      trailerID:item.tMSTrailerID
+    };
+
+    this.trMapConfig.lat=orderLat;
+    this.trMapConfig.lng=orderLng;
+    
+
     this.historyConfig['trailer'] = item;
     this.historyConfig.showHistory = true;
     this.getTrailerPingHistory(item);
@@ -349,43 +414,47 @@ export class OrderDashComponent implements OnInit {
         this.dataSet = data.dataSet;
         var bag= [
             {
-              "label": "Consistant",
+              "label": "Consistent",
               "value": 0,
               "list": []
             },
             {
-              "label": "Inconsistant - Not dispatched",
+              "label": "Inconsistent - Not dispatched",
               "value": 0,
               "list": []
             },
             {
-              "label": "Inconsistant - dispatched",
+              "label": "Inconsistent - dispatched",
               "value": 0,
               "list": []
             }
             
           ];
-        
+          this.lotSize=0;
         data.dataSet.forEach(element => {
           if (element.isMovingAsPlanned == 1) {
-            bag[2].value++;
-            bag[2].list.push(element);
-          } else if (element.isMovingAsPlanned == 2) {
             bag[1].value++;
             bag[1].list.push(element);
+            this.lotSize++;
+          } else if (element.isMovingAsPlanned == 2) {
+            bag[0].value++;
+            bag[0].list.push(element);
+            this.lotSize++;
           } else if (element.isMovingAsPlanned == 3) {
             bag[2].value++;
             bag[2].list.push(element);
+            this.lotSize++;
           } else if (element.isMovingAsPlanned == 4) {
             bag[0].value++;
             bag[0].list.push(element);
+            this.lotSize++;
           } else if (element.isMovingAsPlanned == 5) {
-            bag[2].value++;
-            bag[2].list.push(element);
+            // bag[2].value++;
+            // bag[2].list.push(element);
           }else { }
         });
         if(data.dataSet.length>0){
-          this.lotSize=data.dataSet.length;
+          //this.lotSize=data.dataSet.length;
           this.plnVsActdata=bag;
         }else{
         this.plnVsActdata=bag;
@@ -436,7 +505,7 @@ export class OrderDashComponent implements OnInit {
       );
   }
 
-  doDataSync(item) {
+  syncWithTMW(item) {
     let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
     let options = new RequestOptions({ headers: headers });
     let url = config.baseUrl + "/HomeService/api/UpdateTMWTrailerInOrderAllocation";
@@ -473,6 +542,56 @@ export class OrderDashComponent implements OnInit {
       } //For Error Response
       );
   }
+
+  allocateInTMW(item){    
+    
+    var creds = "username=" + config.username + "&password=" + config.password;
+
+    let authToken = "Basic";
+    let headers = new Headers({ 'Accept': 'application/json' });
+    headers.append('Authorization', 'Basic ' +
+        btoa(config.username + ':' + config.password));
+
+    //let options = new RequestOptions({ headers: headers });
+    let options={
+        headers: headers
+    };
+    let postBody = {
+        "order": item.orderID,
+        "trailer": item.tMSTrailerID,
+        "legs": []
+    };
+    //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
+    let url = config.ctgApiUrl + "/assets/order/assign_trailer";
+    this.doDataSyncResp=false;
+    
+    this.http.post(url,postBody,options ).map(res => res.json())
+        .subscribe(
+        (data) => {
+            console.log("allocateInTMW data recieved");
+            this.doDataSyncResp=true;
+            if(data.trailer==item.tMSTrailerID){
+                console.log("TMS Trailers matches with TMW Trailer");
+                this.action.heading="Data Sync.";
+                this.action.body="Successfully synchronized data in TMS";
+                $('#result').modal('show');
+            }else{
+                console.log("TMS Trailers do not match with TMW Trailer");
+                this.action.heading="Data Sync.";
+                this.action.body="Error in synchronizing data in TMS";
+                $('#result').modal('show');
+            }
+            //this.allocateInTMS();
+        }, //For Success Response
+        (err) => {
+            console.log("allocateInTMW error recieved");
+            this.action.heading="Data Sync.";
+            this.action.body="Error in synchronizing data in TMS";
+            $('#result').modal('show');
+            this.doDataSyncResp=true;
+        } //For Error Response
+        );
+}
 
   tableScrolled(this: any) {
     console.log("scrolling");
