@@ -231,7 +231,7 @@ export class Gmtest {
             '</div>' +
             '<div class="row title" style="border-bottom:1px solid silver;height:35px;padding:0px 30px 0px 15px">' +
             '<span class="vehicle-date" style="font-size:10px;float:left;padding-top:5px"><b>DOT Date:</b><br>' + this.formatDateTime(tr.dotDate,0) + '</span>' +
-            '<span class=" row vehicletype available" style="float:right;font-size:14px;margin-top:4px;font-weight:bold;color:' + color + '">' + status + '</span>' +
+            '<span class=" row vehicletype available" style="float:right;font-size:14px;margin-top:4px;font-weight:bold;color:' + color + '">' + tr.trailerStatus + '</span>' +
             '</div>' +
             '<div class="row content" style="padding:3px 30px 0px 15px">' +
             '<span><b>Location</b></span><br>' + tr.location +
