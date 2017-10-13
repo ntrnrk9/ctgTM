@@ -344,15 +344,19 @@ export class TrailerDashComponent implements OnInit {
         trTypeMap.set(item.trailerType, true);
         this.typeChartLabels.push(item.trailerType);
       }
-      if (item.company == 'CVEN') {
+      var cmp=item.company;
+      if (cmp == 'UNKNOWN') {
+        cmp = "CVEN";
+      }
+      if (cmp == 'CVEN') {
         this.segData.cven.list.push(item);
         var key = this.checkStatusOfTrailer(item);
         this.segData.cven.byStatus[key].push(item);
-      } else if (item.company == "SRT") {
+      } else if (cmp == "SRT") {
         this.segData.srt.list.push(item);
         var key = this.checkStatusOfTrailer(item);
         this.segData.srt.byStatus[key].push(item);
-      } else if (item.company == "STAR") {
+      } else if (cmp == "STAR") {
         this.segData.star.list.push(item);
         var key = this.checkStatusOfTrailer(item);
         this.segData.star.byStatus[key].push(item);
@@ -360,13 +364,13 @@ export class TrailerDashComponent implements OnInit {
 
       if (item.country.toUpperCase() == 'USA') {
         this.segByCountryData.usa.list.push(item);
-        this.segByCountryData.usa[item.company.toLowerCase()].push(item);
+        this.segByCountryData.usa[cmp.toLowerCase()].push(item);
       } else if (item.country.toUpperCase() == 'MEXICO') {
         this.segByCountryData.mexico.list.push(item);
-        this.segByCountryData.mexico[item.company.toLowerCase()].push(item);
+        this.segByCountryData.mexico[cmp.toLowerCase()].push(item);
       } else if (item.country.toUpperCase() == 'CANADA') {
         this.segByCountryData.canada.list.push(item);
-        this.segByCountryData.canada[item.company.toLowerCase()].push(item);
+        this.segByCountryData.canada[cmp.toLowerCase()].push(item);
       }
     }
 
