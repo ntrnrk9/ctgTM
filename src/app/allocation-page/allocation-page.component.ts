@@ -105,7 +105,7 @@ export class AllocationPageComponent {
 
     trucks = {
         column: [{ name: "Truck ID", width: "10%" }, { name: "Company", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model", width: "10%" },
-        { name: "Year", width: "10%" },{ name: "Type", width: "10%" },{ name: "Trailer", width: "10%" },{ name: "Distance (Approx. radius in miles)", width: "15%" },{ name: "Landmark", width: "15%" }],
+        { name: "Year", width: "10%" },{ name: "Type", width: "10%" },{ name: "Trailer", width: "10%" },{ name: "Distance (Approx. radius in miles)", width: "15%" },{ name: "Location", width: "15%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
     
@@ -1265,8 +1265,8 @@ export class AllocationPageComponent {
 
 
         let options = new RequestOptions({ headers: headers });
-        //let url = config.ctgApiUrl + "/assets/orders/AVL";
-        let url = config.ctgApiUrl + "/assets/orders/avl?start="+fDate+"&end="+eDate;
+        let url = config.ctgApiUrl + "/assets/orders/AVL";
+        //let url = config.ctgApiUrl + "/assets/orders/avl?start="+fDate+"&end="+eDate;
         this.http.get(url, {
             headers: headers
         }).map(res => res.json())
@@ -1612,7 +1612,12 @@ export class AllocationPageComponent {
                     // this.resetTrailerPage();
                     
                     this.goToOrder();
-                } else {
+                } else if(data.status == 2) {
+                    //alert("failed");
+                    this.action.heading="Allocation status";
+                    this.action.body="Trailer "+data.tMSTrailerID+" has already been planned for this order in TMS. Please update TMW with this details.";
+                    $('#failedResult').modal('show');
+                }else {
                     //alert("failed");
                     this.action.heading="Allocation status";
                     this.action.body="Error in allocating order.";

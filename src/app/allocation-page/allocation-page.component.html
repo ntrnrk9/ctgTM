@@ -51,14 +51,14 @@
                                     </ul>
                                 </div>
                             </div>
-                            <span class="pull-left" style="margin-left:15px;padding-top:5px">Order range</span>
-                             <div class="pull-left adp">
-                                 <my-date-picker name="fromDate" [options]="myDatePickerOptions" [(ngModel)]="fromDate" required></my-date-picker>
-                             </div>
-                             <span class="pull-left" style="margin-left:10px;padding-top:5px"> - </span>
-                             <div  class="pull-left adp">
-                                 <my-date-picker name="endDate" [options]="myDatePickerOptions" [(ngModel)]="endDate" required></my-date-picker>
-                             </div>
+                            <!-- <span class="pull-left" style="margin-left:15px;padding-top:5px">Order range</span>
+                            <div class="pull-left adp">
+                                <my-date-picker name="fromDate" [options]="myDatePickerOptions" [(ngModel)]="fromDate" required></my-date-picker>
+                            </div>
+                            <span class="pull-left" style="margin-left:10px;padding-top:5px"> - </span>
+                            <div class="pull-left adp">
+                                <my-date-picker name="endDate" [options]="myDatePickerOptions" [(ngModel)]="endDate" required></my-date-picker>
+                            </div> -->
                         </div>
                         <div class="pull-left" style="padding:5px;">
                             <span (keyup.enter)="searchByomID()">
@@ -453,7 +453,7 @@
                                 <span style="font-size: 16px"><b>{{selectedTruck.distance}}</b></span>
                             </div>
                             <div style="padding-top:10px;height:52px">
-                                <span>Landmark</span><br>
+                                <span>Location</span><br>
                                 <span style="font-size: 16px"><b>{{selectedTruck.location.landmark}}</b></span>
                             </div>
                         </div>
