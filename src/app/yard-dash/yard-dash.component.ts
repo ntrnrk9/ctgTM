@@ -13,23 +13,23 @@ declare let d3: any;
   styleUrls: ['./yard-dash.component.css']
 })
 export class YardDashComponent implements OnInit {
+
+
   @Input() config;
   lotSize = 0;
   tableToShow = 0;
   action: any = { heading: "", body: "", details: "" };
   selectedLable = "";
+  selectedCat="";
   mapTrailers = [];
   selectedOrder = {};
   trMapConfig: any = { lat: 35.96494, lng: -83.95384, zoom: 10, mapType: 'roadmap', marker: -1 };
+  tDate=new Date();
 
   constructor(private http: Http, private cdr: ChangeDetectorRef) {
     this.getOrderStats();
     this.getFutureAVLOrders();
-    
-  }
-
-  ngOnChanges(changes: any) {
-    this.ngOnInit();
+    //this.getStateTrailersStatus();
   }
 
   ngOnInit() {
@@ -54,8 +54,6 @@ export class YardDashComponent implements OnInit {
     this.futAvlOptions.chart['color'] = function (d, i) {
       return '#00a0dc';
     }
-
-    this.getFutureAVLOrders();
   }
 
   public barChartOptions: any = {
@@ -66,10 +64,13 @@ export class YardDashComponent implements OnInit {
     }
   };
   nvd3Colors = [
-    '#00a65a',
-    '#f39c12',
     '#dd4b39',
     '#e68523',
+    '#00a0dc',
+    '#7cb82f',
+    '#8d6cab',
+    '#dd5143',
+    
     '#00aeb3',
     '#86888a',
     '#dc4b89',
@@ -98,15 +99,20 @@ export class YardDashComponent implements OnInit {
   };
 
   orders = {
-    column: [{ name: "Order ID", width: "11%" }, { name: "Movement no.", width: "11%" }, { name: "Bill to name", width: "11%" }, { name: "Origin city", width: "11%" }, { name: "Destination city", width: "11%" }, { name: "Order origin point", width: "11%" },
-    { name: "Order start date", width: "11%" }, { name: "Order end date", width: "11%" }, { name: "Order remark", width: "12%" }],
-    groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
+    column: [{ name: "Trailer ID", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model/Type", width: "10%" }, 
+    { name: "Year", width: "10%" }, { name: "Allocation status", width: "10%" }, { name: "Company", width: "10%" },
+    { name: "location", width: "10%" }, { name: "Last ping date", width: "10%" }, { name: "Last DOT done", width: "10%" },
+    { name: "Next DOT due", width: "10%" }
+  ],
+    groups: []
   };
 
   plnVsActGrid = {
-    column: [{ name: "Order ID", width: "11%" }, { name: "Movement no.", width: "11%" }, { name: "TMW status", width: "11%" },
-    { name: "Order start date.", width: "11%" }, { name: "Order end date", width: "11%" }, { name: "Order origin point", width: "11%" },
-    { name: "Planned trailer", width: "11%" }, { name: "Trailer in TMW", width: "11%" }, { name: "Show in map", width: "12%" }],
+    column: [
+      { name: "Trailer ID", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model/Type", width: "10%" }, 
+      { name: "Year", width: "10%" }, { name: "Allocation status", width: "10%" }, { name: "Company", width: "10%" },
+      { name: "location", width: "10%" }, { name: "Shed status", width: "10%" }, { name: "Last ping date", width: "10%" },
+      { name: "Date opened", width: "10%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
 
@@ -127,65 +133,47 @@ export class YardDashComponent implements OnInit {
     this.gRowCount = 50;
     this.allTrailer = e.data.list;
     this.tableToShow = 3;
-    this.selectedLable = "Unplanned orders - 7 days view";
+    this.selectedLable = "DOT due - "+e.data.label;
     this.toShowPlnVsActTable = false;
     this.toShowFutAvlTable = true;
     this.toShowPlnVsActNAPTable = false;
     this.historyConfig.showHistory = false;
   }
-
   getGridData(item) {
     this.gRowCount = 50;
     this.allTrailer = item.list;
-    if (item.label == "Inconsistent - STD") {
-      this.tableToShow = 2;
-      this.selectedLable = "Inconsistent - STD";
-      this.toShowFutAvlTable = false;
-      this.toShowPlnVsActTable = false;
-      this.toShowPlnVsActNAPTable = true;
-      this.historyConfig.showHistory = false;
-    } else if (item.label == "Inconsistent - DSP") {
-      this.tableToShow = 2;
-      this.selectedLable = "Inconsistent - DSP";
-      this.toShowFutAvlTable = false;
-      this.toShowPlnVsActTable = false;
-      this.toShowPlnVsActNAPTable = true;
-      this.historyConfig.showHistory = false;
-    } else if (item.label == "Consistent") {
-      this.tableToShow = 1;
-      this.selectedLable = "Consistent";
-      this.toShowFutAvlTable = false;
-      this.toShowPlnVsActTable = true;
-      this.toShowPlnVsActNAPTable = false;
-      this.historyConfig.showHistory = false;
+    this.tableToShow = 2;
+    this.selectedLable = "Shed status - "+item.label;
+    this.selectedCat = item.label;
+    this.toShowFutAvlTable = false;
+    this.toShowPlnVsActNAPTable = true;
+    if (item.label == "OPEN") {
+      this.plnVsActGrid.column[9].name="Date opened";
+    } else if (item.label == "PENDING") {
+      this.plnVsActGrid.column[9].name="Date opened";
+    } else if (item.label == "COMPLETE") {
+      this.plnVsActGrid.column[9].name="Date complete";
+    } else if (item.label == "CLOSED") {
+      this.plnVsActGrid.column[9].name="Date closed";      
     }
   }
-  
   plnVsActchartClicked(e) {
     this.gRowCount = 50;
     this.allTrailer = e.data.list;
-    if (e.data.label == "Inconsistent - STD") {
-      this.tableToShow = 2;
-      this.selectedLable = "Inconsistent - STD";
-      this.toShowFutAvlTable = false;
-      this.toShowPlnVsActTable = false;
-      this.toShowPlnVsActNAPTable = true;
-      this.historyConfig.showHistory = false;
-    } else if (e.data.label == "Inconsistent - DSP") {
-      this.tableToShow = 2;
-      this.selectedLable = "Inconsistent - DSP";
-      this.toShowFutAvlTable = false;
-      this.toShowPlnVsActTable = false;
-      this.toShowPlnVsActNAPTable = true;
-      this.historyConfig.showHistory = false;
-    } else if (e.data.label == "Consistent") {
-      this.tableToShow = 1;
-      this.selectedLable = "Consistent";
-      this.toShowFutAvlTable = false;
-      this.toShowPlnVsActTable = true;
-      this.toShowPlnVsActNAPTable = false;
-      this.historyConfig.showHistory = false;
-    }
+    this.tableToShow = 2;
+    this.selectedLable = "Shed status - "+e.data.label;
+    this.selectedCat = e.data.label;
+    this.toShowFutAvlTable = false;
+    this.toShowPlnVsActNAPTable = true;
+    if (e.data.label == "OPEN") {
+      this.plnVsActGrid.column[9].name="Date opened";
+    } else if (e.data.label == "PENDING") {
+      this.plnVsActGrid.column[9].name="Date opened";
+    } else if (e.data.label == "COMPLETE") {
+      this.plnVsActGrid.column[9].name="Date complete";
+    } else if (e.data.label == "CLOSED") {
+      this.plnVsActGrid.column[9].name="Date closed";      
+    }  
   }
 
   public barChartData: any[] = [
@@ -296,10 +284,10 @@ export class YardDashComponent implements OnInit {
       },
       duration: 500,
       xAxis: {
-        axisLabel: 'Future 7 days'
+        //axisLabel: 'Future 7 days'
       },
       yAxis: {
-        axisLabel: 'No. of orders',
+        //axisLabel: 'No. of trailers',
         axisLabelDistance: -10
       },
       discretebar: {
@@ -376,54 +364,104 @@ export class YardDashComponent implements OnInit {
 
     this.historyConfig['trailer'] = item;
     this.historyConfig.showHistory = true;
-    
+    this.getTrailerPingHistory(item);
+  }
+
+  getTrailerPingHistory(item: any) {
+    this.historyConfig.allTraillerSubSet = [];
+    this.historyConfig.dataSet = [];
+    this.historyConfig.backupATS = [];
+    this.historyConfig.backupDS = [];
+    this.historyConfig.thResp = false;
+    let url = config.baseUrl + "/HomeService/api/TrailerPingHistory?trailerID=" + item;
+    //let url = config.baseUrl + "/HomeService/api/TrailerHistory?trailerID=" + this.selectedMarker.trailerID;
+    this.http.get(url).map(res => res.json())
+      .subscribe(
+      (data) => {
+        console.log("StatesTrailerCounts data recieved");
+        this.historyConfig.dataSet = data.dataSet;
+        this.historyConfig.backupDS = data.dataSet;
+        if (data.dataSet.length > 0) {
+
+          for (let i = 0; i < data.dataSet.length; i++) {
+            var item = data.dataSet[i];
+
+            if (item.eventDateValues.length > 0) {
+              for (let j = 0; j < item.eventDateValues.length; j++) {
+                var ent = item.eventDateValues[j];
+                ent['eDate'] = item.eventDate;
+                this.historyConfig.allTraillerSubSet.push(ent);
+                this.historyConfig.backupATS.push(ent);
+
+              }
+            }
+
+          }
+        }
+        console.log(this.historyConfig);
+        this.historyConfig.thResp = true;
+      }, //For Success Response
+      (err) => {
+        console.log("StatesTrailerCounts error recieved");
+        this.historyConfig.thResp = true;
+      } //For Error Response
+      );
   }
 
   getOrderStats() {
+    let url = config.baseUrl + "/YardMGMTService/api/ShedTrailers";
+    //let url = config.baseUrl + "/HomeService/api/OrderTrailerTrack";
+    this.OrderStatsResp = false;
+    this.http.get(url).map(res => res.json())
+      .subscribe(
+      (data) => {
         console.log("orderStats data recieved");
-        this.dataSet = this.config.trailers;
+        this.dataSet = data.dataSet;
         var bag = [
           {
-            "label": "Consistent",
+            "label": "OPEN",
             "value": 0,
             "list": []
           },
           {
-            "label": "Inconsistent - DSP",
+            "label": "PENDING",
             "value": 0,
             "list": []
           },
           {
-            "label": "Inconsistent - STD",
+            "label": "COMPLETE",
+            "value": 0,
+            "list": []
+          },
+          {
+            "label": "CLOSED",
             "value": 0,
             "list": []
           }
 
         ];
         this.lotSize = 0;
-        this.config.trailers.forEach(element => {
-          if (element.isMovingAsPlanned == 1) {
+        data.dataSet.forEach(element => {
+          if (element.shedStatus == "OPEN") {
+            bag[0].value++;
+            bag[0].list.push(element);
+            this.lotSize++;
+          } else if (element.shedStatus == "CLOSED") {
+            bag[3].value++;
+            bag[3].list.push(element);
+            this.lotSize++;
+          } else if (element.shedStatus == "PENDING") {
             bag[1].value++;
             bag[1].list.push(element);
             this.lotSize++;
-          } else if (element.isMovingAsPlanned == 2) {
-            bag[0].value++;
-            bag[0].list.push(element);
-            this.lotSize++;
-          } else if (element.isMovingAsPlanned == 3) {
+          } else if (element.shedStatus == "COMPLETE") {
             bag[2].value++;
             bag[2].list.push(element);
             this.lotSize++;
-          } else if (element.isMovingAsPlanned == 4) {
-            bag[0].value++;
-            bag[0].list.push(element);
-            this.lotSize++;
-          } else if (element.isMovingAsPlanned == 5) {
-            // bag[2].value++;
-            // bag[2].list.push(element);
-          } else { }
+          }
+           else { }
         });
-        if (this.config.trailers.length > 0) {
+        if (data.dataSet.length > 0) {
           //this.lotSize=data.dataSet.length;
           this.plnVsActdata = bag;
         } else {
@@ -431,33 +469,72 @@ export class YardDashComponent implements OnInit {
           this.lotSize = 0;
         }
         //}
-        this.OrderStatsResp = this.config.isAvail;
+        this.OrderStatsResp = true;
+
+      }, //For Success Response
+      (err) => {
+        console.log("StatesTrailerCounts error recieved");
+        this.OrderStatsResp = true;
+      } //For Error Response
+      );
   }
 
   getFutureAVLOrders() {
-   
-    //this.FutureAVLOrdersResp = false;
+    let url=config.baseUrl + "/YardMGMTService/api/DOTDueTrailers"
+    //let url = config.baseUrl + "/HomeService/api/FutureAVLOrders";
+    this.FutureAVLOrdersResp = false;
 
-    console.log("getFutureAVLOrders data recieved");
-    this.futAvlOrder = this.config.trailers;
-    var bag = { key: "", values: [] }
-    this.futAvlOrder.forEach(element => {
-      var obj = {
-        "label": "",
-        "value": 0,
-        "list": []
-      };
-      obj.label = element.orderStartDate;
-      obj.value = element.orderStartDateValues.length;
-      obj.list = element.orderStartDateValues;
-      bag.values.push(obj);
-    });
-    this.futAvlData = [];
-    this.futAvlData.push(bag);
-    this.FutureAVLOrdersResp = this.config.isAvail;
+    this.http.get(url).map(res => res.json())
+      .subscribe(
+      (data) => {
+        console.log("getFutureAVLOrders data recieved");
+        var bag = { key: "", values: [] };
+        
+        for (let i = 0; i < 7; i++) {
+          let date=new Date();
+          date.setDate(date.getDate() + i );
+          var str=(date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+          var obj = {
+            "label": str,
+            "value": 0,
+            "list": []
+          };
+          bag.values.push(obj);
+        }
+        
+        data.dataSet.forEach(element => {
+          if(element.dOTDueDays<=7){
+            bag.values[element.dOTDueDays-1].list.push(element);
+            bag.values[element.dOTDueDays-1].value++;
+          }
+        });
 
+        console.log(bag);
+        this.futAvlOrder = data.dataSet;
+        //var bag = { key: "", values: [] }
+        // this.futAvlOrder.forEach(element => {
+        //   var obj = {
+        //     "label": "",
+        //     "value": 0,
+        //     "list": []
+        //   };
+        //   obj.label = element.orderStartDate;
+        //   obj.value = element.orderStartDateValues.length;
+        //   obj.list = element.orderStartDateValues;
+        //   bag.values.push(obj);
+        // });
+        this.futAvlData = [];
+        this.futAvlData.push(bag);
+        this.FutureAVLOrdersResp = true;
+
+      }, //For Success Response
+      (err) => {
+        console.log("getFutureAVLOrders error recieved");
+        this.FutureAVLOrdersResp = true;
+
+      } //For Error Response
+      );
   }
-
 
   syncWithTMW(item) {
     let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
@@ -559,6 +636,35 @@ export class YardDashComponent implements OnInit {
     }
   }
 
+  readyDdata() {
+    var one = { length: 0, list: [] };
+    var two = { length: 0, list: [] };
+    var three = { length: 0, list: [] };
+    var four = { length: 0, list: [] };
+    for (let i = 0; i < this.dataSet.length; i++) {
+      var item = this.dataSet[i];
+      if (item.isMovingAsPlanned == 1) {
+        one.length++;
+        one.list.push(item);
+      } else if (item.isMovingAsPlanned == 2) {
+        two.length++;
+        two.list.push(item);
+      } else if (item.isMovingAsPlanned == 3) {
+        three.length++;
+        three.list.push(item);
+      } else if (item.isMovingAsPlanned == 4) {
+        four.length++;
+        four.list.push(item);
+      }
+
+      this.pack.push(one);
+      this.pack.push(two);
+      this.pack.push(three);
+      this.pack.push(four);
+      this.barChartData[0].data = [one.length, two.length, three.length, four.length]
+    }
+  }
+
   formatDateTime(item: any) {
     if (item != "") {
       if (item != "UNKNOWN") {
@@ -576,6 +682,5 @@ export class YardDashComponent implements OnInit {
     }
 
   }
-
 }
 

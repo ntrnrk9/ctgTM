@@ -1,23 +1,12 @@
 <div>
-  <!-- <div style="height:300px;width:500px;">
-    <canvas baseChart
-          width="4" height="1"
-          [datasets]="barChartData"
-          [labels]="barChartLabels"
-          [options]="barChartOptions"
-          [legend]="barChartLegend"
-          [colors]="colorsOPs"
-          [chartType]="barChartType"
-          (chartHover)="chartHovered($event)"
-          (chartClick)="chartClicked($event)"></canvas>
-  </div> -->
+
   <div class="row">
     <div class="col-md-6" style="height:400px;">
       <div style="border:1px solid silver;height:400px;">
         <div *ngIf="OrderStatsResp">
           <div class="col-md-7">
             <div style="text-align: left;padding-top: 10px;">
-              <label style="font-size: 25px;font-weight: normal;">Planned vs Actual</label>
+              <label style="font-size: 25px;font-weight: normal;">Shed status - {{(tDate.getMonth() + 1) + '/' + tDate.getDate() + '/' + tDate.getFullYear()}}</label>
             </div>
             <div>
               <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3>
@@ -26,35 +15,52 @@
           <div class="col-md-5" style="padding-top:0px;">
             <table class="table table-striped">
               <tr *ngFor="let i=index;let item of plnVsActdata" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item)">
-                <td><span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span></td>
-                <td><span class="pull-left">{{item.label}}</span><br><span style="font-size:19px">{{item.value}}</span></td>
+                <td>
+                  <span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span>
+                </td>
+                <td>
+                  <span class="pull-left">{{item.label}}</span>
+                  <br>
+                  <span style="font-size:19px">{{item.value}}</span>
+                </td>
               </tr>
               <tr>
-                <td><span class="lBox pull-left" style="background: white"></span></td>
-                <td><span class="pull-left">Total</span><br><span style="font-size:19px">{{lotSize}}</span></td>
+                <td>
+                  <span class="lBox pull-left" style="background: white"></span>
+                </td>
+                <td>
+                  <span class="pull-left">Total</span>
+                  <br>
+                  <span style="font-size:19px">{{lotSize}}</span>
+                </td>
               </tr>
             </table>
           </div>
           <!-- <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3> -->
           <!-- <nvd3 [options]="pieOption" [data]="plnVsActdata"></nvd3> -->
         </div>
-        <div *ngIf="!OrderStatsResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+        <div *ngIf="!OrderStatsResp" class="histLoader">
+          <img src="../../assets/images/loader.gif" />
+        </div>
       </div>
     </div>
 
     <div class="col-md-6" style="height:400px;">
       <div style="border:1px solid silver;height:400px;">
         <div *ngIf="FutureAVLOrdersResp" style="text-align: left;padding-top: 15px;padding-left: 15px;">
-          <label style="font-size: 25px;font-weight: normal;">Unplanned orders - 7 days view</label>
+          <label style="font-size: 25px;font-weight: normal;">DOT due - 7 days view</label>
         </div>
         <div *ngIf="FutureAVLOrdersResp" style="padding:10px">
           <nvd3 [options]="futAvlOptions" [data]="futAvlData"></nvd3>
         </div>
-        <div *ngIf="!FutureAVLOrdersResp" class="histLoader"><img src="../../assets/images/loader.gif" /></div>
+        <div *ngIf="!FutureAVLOrdersResp" class="histLoader">
+          <img src="../../assets/images/loader.gif" />
+        </div>
       </div>
     </div>
   </div>
-  <br><br>
+  <br>
+  <br>
   <!-- <span><a (click)="showTrHistory(item)">Show</a></span> -->
 
   <label *ngIf="toShowFutAvlTable||toShowPlnVsActNAPTable||toShowPlnVsActTable">{{selectedLable}}</label>
@@ -71,37 +77,37 @@
         <ng-container *ngFor="let i=index;let item of allTrailer">
           <tr class="full" *ngIf="i<gRowCount">
 
-            <td style="text-align:center;width:11%">
+            <td style="text-align:center;width:10%">
               <!-- <span>{{item.orderNumber}}-{{item.orderCompany}}-{{item.orderStatus}}</span> -->
-              <span>{{item.orderNumber}}</span>
-            </td>
-            <td style="text-align:center;width:11%">
-              <a (click)="showPlannedOrder(item)" *ngIf="item.orderStatus=='PLN'"><span>{{item.movementNumber}}</span></a>
-              <span *ngIf="item.orderStatus!='PLN'">{{item.movementNumber}}</span>
+              <span>{{item.trailerID}}</span>
             </td>
 
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderBillTo}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.trailerName}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderOrginCity}},{{item.orderOrginState}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.trailerType}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderDestCity}},{{item.orderDestState}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.trailerYear}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderOrginPoint}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.trailerStatus}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{formatDateTime(item.orderStartDateTime)}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.company}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{formatDateTime(item.orderCompleteDate)}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.location}}</span>
             </td>
-
-            <td style="text-align:center;width:12%" data-toggle="tooltip" title={{item.orderRemark}}>
-              <span *ngIf="item.orderRemark.length<=25">{{item.orderRemark}}</span>
-              <span *ngIf="item.orderRemark.length>25">{{item.orderRemark.substring(0,25)}}...</span>
+            <td style="text-align:center;width:10%">
+              <span>{{formatDateTime(item.lastPingDate)}}</span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span>{{formatDateTime(item.lastDOTInspectionDone)}}</span>
+            </td>
+            <td style="text-align:center;width:10%">
+              <span>{{formatDateTime(item.nextDOTInspectionDue)}}</span>
             </td>
           </tr>
         </ng-container>
@@ -124,86 +130,39 @@
       <tbody id="tgBody" *ngIf="allTrailer.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
         <ng-container *ngFor="let i=index;let item of allTrailer">
           <tr class="full" *ngIf="i<gRowCount">
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderID}}</span>
+            <td style="text-align:center;width:10%">
+              <!-- <span>{{item.orderNumber}}-{{item.orderCompany}}-{{item.orderStatus}}</span> -->
+              <span>{{item.trailerID}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.movementNumber}}</span>
-            </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.tMWOrderStatus}}</span>
-            </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderStartDate}}</span>
-            </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderCompletionDate}}</span>
-            </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderOriginPoint}}</span>
-            </td>
-            <td style="text-align:center;width:11%">
-              <!-- <span><a (click)="showTrHistory(item.tMSTrailerID)">{{item.tMSTrailerID}}</a></span> -->
-              <span>{{item.tMSTrailerID}}</span>
-            </td>
-            <!-- <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
-                <button class="histBut" style="cursor: pointer" (click)="syncWithTMW(item)" data-toggle="tooltip" title="Sync with TMW"><img src="../../assets/images/dash/RightSync.png" /></button>
-                <br><button style="margin-top:5px" class="histBut" style="cursor: pointer" (click)="allocateInTMW(item)" data-toggle="tooltip" title="Sync with TMS"><img src="../../assets/images/dash/LeftSync.png" /></button>
-            </td> -->
-            <td style="text-align:center;width:11%">
-              <!-- <span><a (click)="showTrHistory(item.tMWOrderTrailerID)">{{item.tMWOrderTrailerID}}</a></span> -->
-              <span>{{item.tMWOrderTrailerID}}</span>
-            </td>
-            <td style="text-align:center;width:12%">
-              <span style="cursor: pointer"><a (click)="showTrHistory(item)">Show</a></span>
-            </td> 
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
-    <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="allTrailer.length==0 ">No data found</div>
-    <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTrailer.length}} record(s) found</div>-->
-    <div style="padding-top: 10px;">{{allTrailer.length}} record(s) found</div>
-  </div>
 
-  <div *ngIf="toShowPlnVsActTable" style="margin-top:20px">
-    <table class="app-table table-striped table-hover table-bordered1 table table-fixed">
-      <thead style="font-size: 12px">
-        <tr bgcolor="#f7f8fc" class="app-table-tr full">
-          <ng-container *ngFor="let con of ob.column">
-            <th [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
-          </ng-container>
-        </tr>
-      </thead>
-      <tbody id="tgBody" *ngIf="allTrailer.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
-        <ng-container *ngFor="let i=index;let item of allTrailer">
-          <tr class="full" *ngIf="i<gRowCount">
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderID}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.trailerName}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.movementNumber}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.trailerType}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.tMWOrderStatus}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.trailerYear}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderStartDate}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.trailerStatus}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderCompletionDate}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.company}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.orderOriginPoint}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.location}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.tMSTrailerID}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{item.shedStatus}}</span>
             </td>
-            <td style="text-align:center;width:11%">
-              <span>{{item.tMWOrderTrailerID}}</span>
+            <td style="text-align:center;width:10%">
+              <span>{{formatDateTime(item.lastPingDate)}}</span>
             </td>
-            <td style="text-align:center;width:12%">
-                <span style="cursor: pointer"><a (click)="showTrHistory(item)">Show</a></span>
+            <td style="text-align:center;width:10%">
+              <span *ngIf="selectedCat=='OPEN' || selectedCat=='PENDING'">{{item.dateOpened}}</span>
+              <span *ngIf="selectedCat=='CLOSED'">{{item.dateClosed}}</span>
+              <span *ngIf="selectedCat=='COMPLETE'">{{item.dateComplete}}</span>
             </td>
           </tr>
         </ng-container>
@@ -212,41 +171,5 @@
     <div style="text-align:center;border:1px solid silver;padding:10px;border-top:none" *ngIf="allTrailer.length==0 ">No data found</div>
     <!--<div *ngIf="trailerStatusResp" style="padding-top: 10px;">1 - {{gRowCount}} out of {{allTrailer.length}} record(s) found</div>-->
     <div style="padding-top: 10px;">{{allTrailer.length}} record(s) found</div>
-  </div>
-  
-  <div *ngIf="historyConfig.showHistory">
-    <!-- <allotrgmap [trailers]="mapTrailers" (selectedChange)="trSelectedFromMap($event)" [(selected)]="selectedTrailer" [(config)]="trMapConfig"></allotrgmap> -->
-    <div class="page-heading" style="padding:0px">
-      <div class="pull-left" style="padding:10px">
-        <b>Trailer location</b>
-      </div>
-      <button type="button" (click)="closeHistory()" class="pull-right toggleBut close" data-toggle="tooltip" title="Close">&times;</button>
-    </div>
-    <div>
-      <gmapjs [trailers]="mapTrailers" [(config)]="trMapConfig"></gmapjs>
-    </div>
-    
-  </div>
-
-  <!-- submit conformation div -->
-  <div class="modal fade" id="result" role="dialog">
-    <div class="modal-dialog modal-md">
-      <div class="modal-content">
-        <div class="modal-header page-heading" style="padding:5px">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">{{action.heading}}</h4>
-        </div>
-        <div class="modal-body">
-          <p>{{action.body}}</p>
-            <!-- <a href="#details" data-toggle="collapse">Details</a></p>
-          <div id="details" class="collapse">
-            <p [innerHTML]="action.details" style="word-wrap: break-word"></p>
-          </div> -->
-        </div>
-        <div class="modal-footer page-footer">
-          <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
-        </div>
-      </div>
-    </div>
   </div>
 </div>

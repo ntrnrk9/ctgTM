@@ -49,7 +49,7 @@ export class YardCheckComponent implements OnInit {
     modeSelectConfig={
         filter:true
     }
-    mgToggleFlag = false;
+    mgToggleFlag = true;
     trailerStatusResp = false;
     historyRecv = false;
     disableTS = false;

@@ -25,6 +25,7 @@ export class YardMangPageComponent {
         trailers: [],
         isAvail: false
     }
+    
     trailers = [];
 
 

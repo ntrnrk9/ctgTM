@@ -13,8 +13,8 @@
 
     <!-- <button (click)="getStateTrailersStatus()">refresh</button> -->
     <div [ngSwitch]="toShowTab" style="margin-top:10px">
-        <app-yard-dash  *ngSwitchCase=1 [config]="ymConfig"></app-yard-dash>
+        <!-- <app-test *ngSwitchCase=1 [config]="ycConfig"></app-test> -->
+        <app-yard-dash  *ngSwitchCase=1 ></app-yard-dash>
         <app-yard-check *ngSwitchCase=2 ></app-yard-check>
-        
     </div>
 </div>
