@@ -77,7 +77,7 @@ export class OrderDashComponent implements OnInit {
   toShowPlnVsActNAPTable=false;
   doDataSyncResp=false;
 
-  public barChartLabels: string[] = ['Moving as planned', 'Not dispatched', 'Inconsistent - dispatched', 'Inconsistent - dispatched'];
+  public barChartLabels: string[] = ['Moving as planned', 'DSP', 'Inconsistent - STD', 'Inconsistent - STD'];
   public barChartType: string = 'bar';
   public barChartLegend: boolean = false;
   gRowCount = 50;
@@ -97,11 +97,18 @@ export class OrderDashComponent implements OnInit {
   };
 
   plnVsActGrid = {
-    column: [{ name: "Order ID", width: "10%" }, { name: "Movement no.", width: "10%" },{ name: "TMW status", width: "10%" },
-             { name: "Order start date.", width: "10%" }, { name: "Order end date", width: "10%" },{ name: "Order origin point", width: "10%" }, 
-             { name: "Planned trailer", width: "10%" },{ name: "Sync data", width: "10%" }, { name: "Trailer in TMW", width: "10%" },  { name: "Show in map", width: "10%" }],
+    column: [{ name: "Order ID", width: "11%" }, { name: "Movement no.", width: "11%" },{ name: "TMW status", width: "11%" },
+             { name: "Order start date.", width: "11%" }, { name: "Order end date", width: "11%" },{ name: "Order origin point", width: "11%" }, 
+             { name: "Planned trailer", width: "11%" }, { name: "Trailer in TMW", width: "11%" },  { name: "Show in map", width: "12%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
+
+  // plnVsActGrid = {
+  //   column: [{ name: "Order ID", width: "10%" }, { name: "Movement no.", width: "10%" },{ name: "TMW status", width: "10%" },
+  //            { name: "Order start date.", width: "10%" }, { name: "Order end date", width: "10%" },{ name: "Order origin point", width: "10%" }, 
+  //            { name: "Planned trailer", width: "10%" },{ name: "Sync data", width: "10%" }, { name: "Trailer in TMW", width: "10%" },  { name: "Show in map", width: "10%" }],
+  //   groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
+  // };
   historyConfig:any={showHistory:false,allTraillerSubSet:[],dataSet:[],backupDS:[],backupATS:[]};
 
   colorsOPs = ['red'];
@@ -122,16 +129,16 @@ export class OrderDashComponent implements OnInit {
   getGridData(item){
     this.gRowCount=50;
     this.allTrailer=item.list;
-    if(item.label=="Inconsistent - dispatched"){
+    if(item.label=="Inconsistent - STD"){
       this.tableToShow=2;
-      this.selectedLable="Inconsistent - dispatched";
+      this.selectedLable="Inconsistent - STD";
       this.toShowFutAvlTable=false;
       this.toShowPlnVsActTable=false;
       this.toShowPlnVsActNAPTable=true;
       this.historyConfig.showHistory =false;
-    } else if(item.label=="Inconsistent - Not dispatched"){
+    } else if(item.label=="Inconsistent - DSP"){
       this.tableToShow=2;
-      this.selectedLable="Inconsistent - Not dispatched";
+      this.selectedLable="Inconsistent - DSP";
       this.toShowFutAvlTable = false;
       this.toShowPlnVsActTable = false;
       this.toShowPlnVsActNAPTable=true;
@@ -148,16 +155,16 @@ export class OrderDashComponent implements OnInit {
   plnVsActchartClicked(e){
     this.gRowCount=50;
     this.allTrailer=e.data.list;
-    if(e.data.label=="Inconsistent - dispatched"){
+    if(e.data.label=="Inconsistent - STD"){
       this.tableToShow=2;
-      this.selectedLable="Inconsistent - dispatched";
+      this.selectedLable="Inconsistent - STD";
       this.toShowFutAvlTable=false;
       this.toShowPlnVsActTable=false;
       this.toShowPlnVsActNAPTable=true;
       this.historyConfig.showHistory = false;
-    } else if(e.data.label=="Inconsistent - Not dispatched"){
+    } else if(e.data.label=="Inconsistent - DSP"){
       this.tableToShow=2;
-      this.selectedLable="Inconsistent - Not dispatched";
+      this.selectedLable="Inconsistent - DSP";
       this.toShowFutAvlTable = false;
       this.toShowPlnVsActTable = false;
       this.toShowPlnVsActNAPTable=true;
@@ -419,12 +426,12 @@ export class OrderDashComponent implements OnInit {
               "list": []
             },
             {
-              "label": "Inconsistent - Not dispatched",
+              "label": "Inconsistent - DSP",
               "value": 0,
               "list": []
             },
             {
-              "label": "Inconsistent - dispatched",
+              "label": "Inconsistent - STD",
               "value": 0,
               "list": []
             }

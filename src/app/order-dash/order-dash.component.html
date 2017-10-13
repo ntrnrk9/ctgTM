@@ -124,37 +124,37 @@
       <tbody id="tgBody" *ngIf="allTrailer.length!=0 " style="font-size: 12px;border: 1px solid silver;border-top: none;" (scroll)="tableScrolled(this)">
         <ng-container *ngFor="let i=index;let item of allTrailer">
           <tr class="full" *ngIf="i<gRowCount">
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderID}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <span>{{item.movementNumber}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <span>{{item.tMWOrderStatus}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderStartDate}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderCompletionDate}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <span>{{item.orderOriginPoint}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:11%">
               <!-- <span><a (click)="showTrHistory(item.tMSTrailerID)">{{item.tMSTrailerID}}</a></span> -->
               <span>{{item.tMSTrailerID}}</span>
             </td>
-            <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
+            <!-- <td style="text-align:center;width:10%" data-toggle="tooltip" title={{item.orderRemark}}>
                 <button class="histBut" style="cursor: pointer" (click)="syncWithTMW(item)" data-toggle="tooltip" title="Sync with TMW"><img src="../../assets/images/dash/RightSync.png" /></button>
                 <br><button style="margin-top:5px" class="histBut" style="cursor: pointer" (click)="allocateInTMW(item)" data-toggle="tooltip" title="Sync with TMS"><img src="../../assets/images/dash/LeftSync.png" /></button>
-            </td>
-            <td style="text-align:center;width:10%">
+            </td> -->
+            <td style="text-align:center;width:11%">
               <!-- <span><a (click)="showTrHistory(item.tMWOrderTrailerID)">{{item.tMWOrderTrailerID}}</a></span> -->
               <span>{{item.tMWOrderTrailerID}}</span>
             </td>
-            <td style="text-align:center;width:10%">
+            <td style="text-align:center;width:12%">
               <span style="cursor: pointer"><a (click)="showTrHistory(item)">Show</a></span>
             </td> 
           </tr>
