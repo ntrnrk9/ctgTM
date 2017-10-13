@@ -8,154 +8,235 @@
         <div class="row">
             <div *ngIf="!showManageBox" class="col-md-12">
                 <div style="background: #ededed;height:40px">
-                   
-                    <button class="pull-right resetBut" type="button" value="encode" (click)="reset()" data-toggle="tooltip" title="Reset"><img src="../../assets/images/markers/refresh.png" /></button>
+                
+                    <button class="pull-right resetBut" type="button" value="encode" (click)="reset()" data-toggle="tooltip" title="Reset">
+                        <img src="../../assets/images/markers/refresh.png" />
+                    </button>
                     <div class="pull-left" style="padding:5px">
-                    <div class="dropdown pull-left pm-select-cont" style="width:auto;">
-                        <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedVarience.lable}}/>
-                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
-                        <div class="dropdown-menu no-padding sel-dd">
-                            <ul class="sel-dd-ul">
-                                <li *ngFor="let item of varianceList" (click)="selectVarience(item)" class="pointer"><label class="lblLI">{{item.lable}}</label></li>
-                            </ul>
+                        
+                        <!-- select varience -->
+                        <div class="dropdown pull-left pm-select-cont" style="width:auto;">
+                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedVarience.lable}}/>
+                            <button class="caretBut" data-toggle="dropdown">
+                                <span class="caret pointer"></span>
+                            </button>
+                            <div class="dropdown-menu no-padding sel-dd">
+                                <ul class="sel-dd-ul">
+                                    <li *ngFor="let item of varianceList" (click)="selectVarience(item)" class="pointer">
+                                        <label class="lblLI">{{item.lable}}</label>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
-                        <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" (click)="restoreccList()" value={{ccSFlabel}}
-                        />
-                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
-                        <div class="dropdown-menu no-padding mulSel-dd">
-                            <div class="input-group">
-                                <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="ccFil">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-default search-box" type="submit">
-                                        <i class="glyphicon glyphicon-search"></i>
-                                    </button>
+                
+                        <!-- select customer -->
+                        <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
+                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" (click)="restoreccList()" value={{ccSFlabel}}
+                            />
+                            <button class="caretBut" data-toggle="dropdown">
+                                <span class="caret pointer"></span>
+                            </button>
+                            <div class="dropdown-menu no-padding mulSel-dd">
+                                <div class="input-group">
+                                    <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="ccFil">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-default search-box" type="submit">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style="padding:5px 0px">
+                                    <input class="pull-left pu-selAll" type="button" (click)="ccCheckAllFun()" value="Select All" />
+                                    <input class="pull-right pu-selAll" type="button" (click)="ccClearAllFun()" value="Clear All" />
+                                </div>
+                                <form>
+                                    <table class="ddTable">
+                                        <tbody *ngIf="allCcRecev" class="ddtbody">
+                                            <tr *ngFor="let i=index;let item of allCC|filterC:ccFil:'cmpName'" class="pointer">
+                                                <td style="vertical-align:top">
+                                                    <input class="pull-left inpLI" type="checkbox" id="cc_{{i}}" name="cc_{{i}}" value="" [(ngModel)]="item.isSelected"
+                                                        (change)="ccCheckEvent($event.target.checked,item.cmpName)" />
+                                                </td>
+                                                <td class="full">
+                                                    <label class="lblLI" for="cc_{{i}}">{{item.cmpName}}</label>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div *ngIf="!allCcRecev" class="loader" style="border:none;">
+                                        <img style="width: 34px;height: 34px;" src="../../assets/images/loader.gif" />
+                                    </div>
+                                </form>
+                                <div class="div-center">
+                                    <input type="button" class="pm-addBut pm-whiteBut pull-left" data-toggle="dropdown" value="Cancel" />
+                                    <input type="button" class="pm-addBut pull-right" data-toggle="dropdown" value="Apply" (click)="masterFilter()" />
                                 </div>
                             </div>
-                            <div style="padding:5px 0px">
-                                <input class="pull-left pu-selAll" type="button" (click)="ccCheckAllFun()" value="Select All" />
-                                <input class="pull-right pu-selAll" type="button" (click)="ccClearAllFun()" value="Clear All" />
-                            </div>
-                            <form>
-                                <table class="ddTable">
-                                    <tbody *ngIf="allCcRecev" class="ddtbody">
-                                        <tr *ngFor="let i=index;let item of allCC|filterC:ccFil:'cmpName'" class="pointer">
-                                            <td style="vertical-align:top"><input class="pull-left inpLI" type="checkbox" id="cc_{{i}}" name="cc_{{i}}"
-                                                    value="" [(ngModel)]="item.isSelected" (change)="ccCheckEvent($event.target.checked,item.cmpName)"
-                                                /></td>
-                                            <td class="full"><label class="lblLI" for="cc_{{i}}">{{item.cmpName}}</label></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div *ngIf="!allCcRecev" class="loader" style="border:none;"><img style="width: 34px;height: 34px;" src="../../assets/images/loader.gif" /></div>
-                            </form>
-                            <div class="div-center">
-                                <input type="button" class="pm-addBut pm-whiteBut pull-left" data-toggle="dropdown" value="Cancel" />
-                                <input type="button" class="pm-addBut pull-right" data-toggle="dropdown" value="Apply" (click)="masterFilter()" />
-                            </div>
                         </div>
-                    </div>
-
-                    <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
-                        <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" (click)="restorePlannerList()" value={{plannerSFlabel}}
-                        />
-                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
-                        <div class="dropdown-menu no-padding mulSel-dd">
-
-                            <div class="input-group">
-                                <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="plannerFil">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-default search-box" type="submit">
-                                        <i class="glyphicon glyphicon-search"></i>
-                                    </button>
+                
+                        <!-- select planner -->
+                        <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
+                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" (click)="restorePlannerList()" value={{plannerSFlabel}}
+                            />
+                            <button class="caretBut" data-toggle="dropdown">
+                                <span class="caret pointer"></span>
+                            </button>
+                            <div class="dropdown-menu no-padding mulSel-dd">
+                
+                                <div class="input-group">
+                                    <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="plannerFil">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-default search-box" type="submit">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style="padding:5px 0px">
+                                    <input class="pull-left pu-selAll" type="button" (click)="plannerCheckAllFun()" value="Select All" />
+                                    <input class="pull-right pu-selAll" type="button" (click)="plannerClearAllFun()" value="Clear All" />
+                                </div>
+                                <form style="padding:5px 0px">
+                                    <table class="ddTable">
+                                        <tbody class="ddtbody">
+                                            <tr *ngFor="let i=index;let item of allPlanners|filterC:plannerFil:'planner'" class="pointer">
+                                                <td style="vertical-align:top">
+                                                    <input class="pull-left inpLI" type="checkbox" id="planner_{{i}}" name="planner_{{i}}" value=""
+                                                        [(ngModel)]="item.isSelected" (change)="plannerCheckEvent($event.target.checked,item.planner)"
+                                                    />
+                                                </td>
+                                                <td class="full">
+                                                    <label class="lblLI" for="planner_{{i}}">{{item.planner}}</label>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                
+                                <div class="div-center">
+                                    <input type="button" class="pm-addBut pm-whiteBut pull-left" data-toggle="dropdown" value="Cancel" />
+                                    <input type="button" data-toggle="dropdown" class="pm-addBut pull-right" value="Apply" (click)="masterFilter()" />
                                 </div>
                             </div>
-                            <div style="padding:5px 0px">
-                                <input class="pull-left pu-selAll" type="button" (click)="plannerCheckAllFun()" value="Select All" />
-                                <input class="pull-right pu-selAll" type="button" (click)="plannerClearAllFun()" value="Clear All" />
-                            </div>
-                            <form style="padding:5px 0px">
-                                <table class="ddTable">
-                                    <tbody class="ddtbody">
-                                        <tr *ngFor="let i=index;let item of allPlanners|filterC:plannerFil:'planner'" class="pointer">
-                                            <td style="vertical-align:top"><input class="pull-left inpLI" type="checkbox" id="planner_{{i}}" name="planner_{{i}}"
-                                                    value="" [(ngModel)]="item.isSelected" (change)="plannerCheckEvent($event.target.checked,item.planner)"
-                                                /></td>
-                                            <td class="full"><label class="lblLI" for="planner_{{i}}">{{item.planner}}</label></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </form>
-
-                            <div class="div-center">
-                                <input type="button" class="pm-addBut pm-whiteBut pull-left" data-toggle="dropdown" value="Cancel" />
-                                <input type="button" data-toggle="dropdown" class="pm-addBut pull-right" value="Apply" (click)="masterFilter()" />
-                            </div>
                         </div>
-                    </div>
 
-
-
-                    <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
-                        <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" (click)="restoreStateList()" value={{stateSFlabel}}
-                        />
-                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
-                        <div class="dropdown-menu no-padding mulSel-dd">
-                            <div class="input-group">
-                                <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="stateFil">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-default search-box" type="submit">
-                                        <i class="glyphicon glyphicon-search"></i>
-                                    </button>
+                        <!-- select csr -->
+                        <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
+                            <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" (click)="restoreCsrList()" value={{csrSFlabel}}
+                            />
+                            <button class="caretBut" data-toggle="dropdown">
+                                <span class="caret pointer"></span>
+                            </button>
+                            <div class="dropdown-menu no-padding mulSel-dd">
+                        
+                                <div class="input-group">
+                                    <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="csrFil">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-default search-box" type="submit">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style="padding:5px 0px">
+                                    <input class="pull-left pu-selAll" type="button" (click)="csrCheckAllFun()" value="Select All" />
+                                    <input class="pull-right pu-selAll" type="button" (click)="csrClearAllFun()" value="Clear All" />
+                                </div>
+                                <form style="padding:5px 0px">
+                                    <table class="ddTable">
+                                        <tbody class="ddtbody">
+                                            <tr *ngFor="let i=index;let item of allCsr|filterC:csrFil:'csr'" class="pointer">
+                                                <td style="vertical-align:top">
+                                                    <input class="pull-left inpLI" type="checkbox" id="csr_{{i}}" name="csr_{{i}}" value="" [(ngModel)]="item.isSelected"
+                                                        (change)="csrCheckEvent($event.target.checked,item.csr)" />
+                                                </td>
+                                                <td class="full">
+                                                    <label class="lblLI" for="csr_{{i}}">{{item.csr}}</label>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                        
+                                <div class="div-center">
+                                    <input type="button" class="pm-addBut pm-whiteBut pull-left" data-toggle="dropdown" value="Cancel" />
+                                    <input type="button" data-toggle="dropdown" class="pm-addBut pull-right" value="Apply" (click)="masterFilter()" />
                                 </div>
                             </div>
-                            <div style="padding:5px 0px">
-                                <input class="pull-left pu-selAll" type="button" (click)="stateCheckAllFun()" value="Select All" />
-                                <input class="pull-right pu-selAll" type="button" (click)="stateClearAllFun()" value="Clear All" />
+                        </div>
+                
+                        <!-- select state -->
+                        <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;">
+                            <input style="width:100px" class="filters dropdown-toggle" type="button" data-toggle="dropdown" (click)="restoreStateList()"
+                                value={{stateSFlabel}} />
+                            <button class="caretBut" data-toggle="dropdown">
+                                <span class="caret pointer"></span>
+                            </button>
+                            <div class="dropdown-menu no-padding mulSel-dd">
+                                <div class="input-group">
+                                    <input type="text" class="form-control search-box" placeholder="Search" [(ngModel)]="stateFil">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-default search-box" type="submit">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style="padding:5px 0px">
+                                    <input class="pull-left pu-selAll" type="button" (click)="stateCheckAllFun()" value="Select All" />
+                                    <input class="pull-right pu-selAll" type="button" (click)="stateClearAllFun()" value="Clear All" />
+                                </div>
+                                <form style="padding:5px 0px">
+                                    <table class="ddTable">
+                                        <tbody class="ddtbody">
+                                            <tr *ngFor="let i=index;let item of allStates|filterC:stateFil:'stateCode'" class="pointer">
+                                                <td style="vertical-align:top">
+                                                    <input class="pull-left inpLI" type="checkbox" id="state_{{i}}" name="state_{{i}}" value=""
+                                                        [(ngModel)]="item.isSelected" (change)="stateCheckEvent($event.target.checked,item.stateCode)"
+                                                    />
+                                                </td>
+                                                <td class="full">
+                                                    <label class="lblLI" for="state_{{i}}">{{item.stateCode}}</label>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                                <div class="div-center">
+                                    <input type="button" class="pm-addBut pm-whiteBut pull-left" data-toggle="dropdown" value="Cancel" />
+                                    <input type="button" data-toggle="dropdown" class="pm-addBut pull-right" value="Apply" (click)="masterFilter()" />
+                                </div>
                             </div>
-                            <form style="padding:5px 0px">
-                                <table class="ddTable">
-                                    <tbody class="ddtbody">
-                                        <tr *ngFor="let i=index;let item of allStates|filterC:stateFil:'stateCode'" class="pointer">
-                                            <td style="vertical-align:top"><input class="pull-left inpLI" type="checkbox" id="state_{{i}}" name="state_{{i}}"
-                                                    value="" [(ngModel)]="item.isSelected" (change)="stateCheckEvent($event.target.checked,item.stateCode)"
-                                                /></td>
-                                            <td class="full"><label class="lblLI" for="state_{{i}}">{{item.stateCode}}</label></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </form>
-                            <div class="div-center">
-                                <input type="button" class="pm-addBut pm-whiteBut pull-left" data-toggle="dropdown" value="Cancel" />
-                                <input type="button" data-toggle="dropdown" class="pm-addBut pull-right" value="Apply" (click)="masterFilter()" />
+                        </div>
+                
+                        <!-- select shipper/reciever -->
+                        <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;width:auto;">
+                            <input style="width:100px" class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedSR.lable}}/>
+                            <button class="caretBut" data-toggle="dropdown">
+                                <span class="caret pointer"></span>
+                            </button>
+                            <div class="dropdown-menu no-padding sel-dd" style="width: auto">
+                                <ul class="sel-dd-ul">
+                                    <li *ngFor="let item of sRList" (click)="selectSR(item)" class="pointer">
+                                        <label class="lblLI">{{item.lable}}</label>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-                    </div>
-
-
-                     <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;width:auto;">
-                        <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedSR.lable}}/>
-                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
-                        <div class="dropdown-menu no-padding sel-dd">
-                            <ul class="sel-dd-ul">
-                                <li *ngFor="let item of sRList" (click)="selectSR(item)" class="pointer"><label class="lblLI">{{item.lable}}</label></li>
-                            </ul>
+                        <!-- select cven/srt -->
+                        <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;width:auto;">
+                            <input style="width:100px" class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedBrand.lable}}/>
+                            <button class="caretBut" data-toggle="dropdown">
+                                <span class="caret pointer"></span>
+                            </button>
+                            <div class="dropdown-menu no-padding sel-dd" style="width: auto">
+                                <ul class="sel-dd-ul">
+                                    <li *ngFor="let item of brandList" (click)="selectBrand(item)" class="pointer">
+                                        <label class="lblLI">{{item.lable}}</label>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
+                
                     </div>
-
-                    <div class="dropdown pull-left pm-select-cont" style="margin-left:10px;width:auto;">
-                        <input class="filters dropdown-toggle" type="button" data-toggle="dropdown" value={{selectedBrand.lable}}/>
-                        <button class="caretBut" data-toggle="dropdown"><span class="caret pointer" ></span></button>
-                        <div class="dropdown-menu no-padding sel-dd">
-                            <ul class="sel-dd-ul">
-                                <li *ngFor="let item of brandList" (click)="selectBrand(item)" class="pointer"><label class="lblLI">{{item.lable}}</label></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                </div></div>
+                </div>
             </div>
             <div *ngIf="!showManageBox" class="col-md-12" style="padding:15px">
                 <div style="background: white;">

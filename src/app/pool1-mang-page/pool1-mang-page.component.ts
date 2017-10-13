@@ -23,6 +23,7 @@ export class Pool1MangPageComponent {
     ccSFlabel: any = 'Company';
     selectedCmpLbl: any = "Select a company";
     plannerSFlabel: any = 'Planner';
+    csrSFlabel: any = 'CSR';
     selectedCompany: any = "Select a company";
     selectedState: any = "Select a state";
     selectedCity: any = "Select a city";
@@ -30,7 +31,6 @@ export class Pool1MangPageComponent {
     selectedCsr: string = "Select a CSR";
     selectedPlanner: any = "Select a planner";
     toAddBrand: String = "";
-    allCsr: any;
     allCsrResp=false;
     asc = true;
     ttAsc=true;
@@ -48,6 +48,7 @@ export class Pool1MangPageComponent {
     accFil: String = "";
     ccFil: String = "";
     plannerFil: String = "";
+    csrFil: String = "";
     selectedVarience: any = { lable: "Pools having variance", value: 1 };
     varianceList: any = [{ lable: "Pools having variance", value: 1 }, { lable: "Pools having no variance", value: 0 }, { lable: "All pools", value: -1 }]
     selectedSR: any = { lable: "Shipper", value: 0 };
@@ -68,6 +69,7 @@ export class Pool1MangPageComponent {
     allStates1: any = [];
     allCC1: any = [];
     allPlanners1: any = [];
+    allCsr1: any = [];
     allPlannersResp=false;
     allPools: any = [];
     allCCForAdd: any = [];
@@ -78,6 +80,7 @@ export class Pool1MangPageComponent {
     allStates = JSON.parse(JSON.stringify(this.allStates1));
     allCities = JSON.parse(JSON.stringify(this.allCities1));
     allPlanners = JSON.parse(JSON.stringify(this.allPlanners1));
+    allCsr = JSON.parse(JSON.stringify(this.allCsr1));
 
     csrTable = {
         column: [{ name: "CSR code", width: "33%" }, { name: "CSR name", width: "33%" },{ name: "Action", width: "34%" }],
@@ -131,6 +134,7 @@ export class Pool1MangPageComponent {
     choosenCity: any = [];
     choosenCC: any = [];
     choosenPlanner: any = [];
+    choosenCsr: any = [];
 
     managecsrPlanner() {
         this.showManageBox = true;
@@ -204,6 +208,23 @@ export class Pool1MangPageComponent {
         this.choosenPlanner = [];
         for (var i = 0; i < this.allPlanners.length; i++) {
             this.allPlanners[i].isSelected = false;
+        }
+    }
+
+    private csrCheckAllFun() {
+        //this.ccCheckAll = true;
+        this.choosenCsr = [];
+        for (var i = 0; i < this.allCsr.length; i++) {
+            this.choosenCsr.push(this.allCsr[i].csr);
+            this.allCsr[i].isSelected = true;
+        }
+    }
+
+    private csrClearAllFun() {
+        //this.ccCheckAll = false;
+        this.choosenCsr = [];
+        for (var i = 0; i < this.allCsr.length; i++) {
+            this.allCsr[i].isSelected = false;
         }
     }
 
@@ -303,12 +324,29 @@ export class Pool1MangPageComponent {
         console.log(this.allPlanners);
     }
 
+    private csrCheckEvent(item: any, value: any) {
+        console.log(item);
+        var index = this.inArray(this.choosenCsr, value);
+        if (item) {
+            console.log("selected");
+            if (index != -1) { } else {
+                this.choosenCsr.push(value);
+            }
+        } else {
+            console.log("unselected");
+            this.choosenCsr.splice(index, 1);
+        }
+        console.log(this.choosenCsr);
+        console.log(this.allCsr);
+    }
+
     private masterFilter() {
         var temp = JSON.parse(JSON.stringify(this.result));
         temp = this.filterByState(temp);
         //temp = this.filterByCity(temp);
         temp = this.filterByCC(temp);
         temp = this.filterByPlanner(temp);
+        temp = this.filterByCsr(temp);
         temp = this.filterBySR(temp);
         temp = this.filterByBrand(temp);
 
@@ -457,6 +495,29 @@ export class Pool1MangPageComponent {
             this.plannerSFlabel = this.choosenPlanner.length + " planner(s) selected";
             for (var i = 0; i < temp.length; i++) {
                 if (this.inArray(this.choosenPlanner, temp[i].planner) != -1) {
+
+                } else {
+                    temp.splice(i, 1); i--;
+                }
+            }
+        }
+
+        //this.data = JSON.parse(JSON.stringify(temp));
+        //this.resetPage();
+
+        return temp
+    }
+
+    private filterByCsr(result: any) {
+        var temp = JSON.parse(JSON.stringify(result));
+        this.allCsr1 = JSON.parse(JSON.stringify(this.allCsr));
+        if (this.choosenCsr.length == 0) {
+            this.csrSFlabel = 'Select a CSR';
+            return result;
+        } else {
+            this.csrSFlabel = this.choosenCsr.length + " CSR(s) selected";
+            for (var i = 0; i < temp.length; i++) {
+                if (this.inArray(this.choosenCsr, temp[i].csr) != -1) {
 
                 } else {
                     temp.splice(i, 1); i--;
@@ -696,7 +757,7 @@ export class Pool1MangPageComponent {
         let url = config.baseUrl+"/CommonService/api/Csr?csr=0&csrCode=0";
         this.http.get(url).map(res => res.json())
             .subscribe(
-            (data) => { console.log("getAllCsr data recieved"); this.allCsr = data;this.allCsrResp=true; }, //For Success Response
+            (data) => { console.log("getAllCsr data recieved"); this.allCsr1 = data; this.allCsr = JSON.parse(JSON.stringify(this.allCsr1));this.allCsrResp=true; }, //For Success Response
             (err) => { console.log("getAllCsr error recieved"); this.allCsrResp=true;} //For Error Response
             );
     }
@@ -773,6 +834,12 @@ export class Pool1MangPageComponent {
         this.plannerFil = "";
         for (var i = 0; i < this.allPlanners1.length; i++)
             this.allPlanners[i]['isSelected'] = this.allPlanners1[i]['isSelected'];
+    }
+
+    private restoreCsrList() {
+        this.csrFil = "";
+        for (var i = 0; i < this.allCsr1.length; i++)
+            this.allCsr[i]['isSelected'] = this.allCsr1[i]['isSelected'];
     }
 
     private insertSelected(items: any) {
