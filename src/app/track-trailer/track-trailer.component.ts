@@ -1,4 +1,4 @@
-import { Component, ViewChild,NgZone,ChangeDetectorRef   } from '@angular/core';
+import { Component, ViewChild, NgZone, ChangeDetectorRef } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
@@ -24,29 +24,30 @@ export class TrackTrailerComponent {
     selectedState: any = "alabama";
     selectedTrStatus: any = { status: "Available", value: 2 };
     selectedAvailability: number = -1;
-    bylocation: String="";
+    bylocation: String = "";
     selectedID: any;
-    searchID: String="";
-    searchMake: String="";
-    searchTrYear:String="";
-    custID:String="";
+    searchID: String = "";
+    searchMake: String = "";
+    searchTrYear: String = "";
+    custID: String = "";
     trailHistory: any;
     test: Number = 9;
-    
+
     selectedMarker: any = { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" };
     stateList: any = [{ "stateDesc": "Alaska", "stateCode": "AK", "country": "USA" }, { "stateDesc": "Alabama", "stateCode": "AL", "country": "USA" }, { "stateDesc": "Arkansas", "stateCode": "AR", "country": "USA" }, { "stateDesc": "Arizona", "stateCode": "AZ", "country": "USA" }, { "stateDesc": "California", "stateCode": "CA", "country": "USA" }, { "stateDesc": "Colorado", "stateCode": "CO", "country": "USA" }, { "stateDesc": "Connecticut", "stateCode": "CT", "country": "USA" }, { "stateDesc": "District of Columbia", "stateCode": "DC", "country": "USA" }, { "stateDesc": "Delaware", "stateCode": "DE", "country": "USA" }, { "stateDesc": "Florida", "stateCode": "FL", "country": "USA" }, { "stateDesc": "Georgia", "stateCode": "GA", "country": "USA" }, { "stateDesc": "Hawaii", "stateCode": "HA", "country": "USA" }, { "stateDesc": "Iowa", "stateCode": "IA", "country": "USA" }, { "stateDesc": "Idaho", "stateCode": "ID", "country": "USA" }, { "stateDesc": "Illinois", "stateCode": "IL", "country": "USA" }, { "stateDesc": "Indiana", "stateCode": "IN", "country": "USA" }, { "stateDesc": "Kansas", "stateCode": "KS", "country": "USA" }, { "stateDesc": "Kentucky", "stateCode": "KY", "country": "USA" }, { "stateDesc": "Louisiana", "stateCode": "LA", "country": "USA" }, { "stateDesc": "Massachusetts", "stateCode": "MA", "country": "USA" }, { "stateDesc": "Maryland", "stateCode": "MD", "country": "USA" }, { "stateDesc": "Maine", "stateCode": "ME", "country": "USA" }, { "stateDesc": "Michigan", "stateCode": "MI", "country": "USA" }, { "stateDesc": "Minnesota", "stateCode": "MN", "country": "USA" }, { "stateDesc": "Missouri", "stateCode": "MO", "country": "USA" }, { "stateDesc": "Mississippi", "stateCode": "MS", "country": "USA" }, { "stateDesc": "Montana", "stateCode": "MT", "country": "USA" }, { "stateDesc": "North Carolina", "stateCode": "NC", "country": "USA" }, { "stateDesc": "North Dakota", "stateCode": "ND", "country": "USA" }, { "stateDesc": "Nebraska", "stateCode": "NE", "country": "USA" }, { "stateDesc": "New Hampshire", "stateCode": "NH", "country": "USA" }, { "stateDesc": "New Jersey", "stateCode": "NJ", "country": "USA" }, { "stateDesc": "New Mexico", "stateCode": "NM", "country": "USA" }, { "stateDesc": "Nevada", "stateCode": "NV", "country": "USA" }, { "stateDesc": "New York", "stateCode": "NY", "country": "USA" }, { "stateDesc": "Ohio", "stateCode": "OH", "country": "USA" }, { "stateDesc": "Oklahoma", "stateCode": "OK", "country": "USA" }, { "stateDesc": "Oregon", "stateCode": "OR", "country": "USA" }, { "stateDesc": "Pennsylvania", "stateCode": "PA", "country": "USA" }, { "stateDesc": "Rhode Island", "stateCode": "RI", "country": "USA" }, { "stateDesc": "South Carolina", "stateCode": "SC", "country": "USA" }, { "stateDesc": "South Dakota", "stateCode": "SD", "country": "USA" }, { "stateDesc": "Tennessee", "stateCode": "TN", "country": "USA" }, { "stateDesc": "Texas", "stateCode": "TX", "country": "USA" }, { "stateDesc": "Utah", "stateCode": "UT", "country": "USA" }, { "stateDesc": "Virginia", "stateCode": "VA", "country": "USA" }, { "stateDesc": "Vermont", "stateCode": "VT", "country": "USA" }, { "stateDesc": "Washington", "stateCode": "WA", "country": "USA" }, { "stateDesc": "Wisconsin", "stateCode": "WI", "country": "USA" }, { "stateDesc": "West Virginia", "stateCode": "WV", "country": "USA" }, { "stateDesc": "Wyoming", "stateCode": "WY", "country": "USA" }];
-    trStatusList: any = [{ status: "Select a status", value: -1 },{ status: "Available", value: 2 }, { status: "Planned", value: 1 },{ status: "Pool", value: 3 },{ status: "Others", value: 0 }]
+    trStatusList: any = [{ status: "Select a status", value: -1 }, { status: "Available", value: 2 }, { status: "Planned", value: 1 }, { status: "Pool", value: 3 }, { status: "Others", value: 0 }]
     milesList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedMiles = { lable: "150 Miles", value: 150 };
-    cmpList: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "STAR", value: "STAR" }];
-    selectedCmp = { lable: "Covenant", value: "CVEN" };
-    modelList: any = [{ lable: "All types", value: "-1" },{ lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" },{ lable: "UNK", value: "UNK" }];
+    cmpList: any = [{ lable: "Covenant", value: "CVEN", selected: true }, { lable: "SRT", value: "SRT", selected: false }, { lable: "STAR", value: "STAR", selected: false }];
+    selectedCmp = { lable: "Covenant", value: "CVEN", selected: true };
+    modelList: any = [{ lable: "All types", value: "-1" }, { lable: "Reefer", value: "REEFER" }, { lable: "Dry", value: "DRY" }, { lable: "UNK", value: "UNK" }];
     selectedModel = { lable: "All types", value: "-1" };
-    cmpSelectConfig={
-        filter:true
+    cmpSelectConfig = {
+        filter: false,
+        multisel: true
     };
-    modeSelectConfig={
-        filter:true
+    modeSelectConfig = {
+        filter: false
     }
     mgToggleFlag = true;
     trailerStatusResp = false;
@@ -54,16 +55,16 @@ export class TrackTrailerComponent {
     disableTS = false;
     disableLoc = false;
     disableStatus = false;
-    ifFirst=true;
-    asToggle=true;
+    ifFirst = true;
+    asToggle = true;
 
     gRowCount = 100;
     geocoder = new google.maps.Geocoder();
-    zone:NgZone;
+    zone: NgZone;
     action: any = { heading: "", body: "" };
-    mapConfig:any={lat:36.090240,lng:-95.712891,mapType:'roadmap',marker:-1};
-    historyConfig:any={showHistory:false,allTraillerSubSet:[],dataSet:[],backupDS:[],backupATS:[]};
-    allTrailers_bu=[];
+    mapConfig: any = { lat: 36.090240, lng: -95.712891, mapType: 'roadmap', marker: -1 };
+    historyConfig: any = { showHistory: false, allTraillerSubSet: [], dataSet: [], backupDS: [], backupATS: [] };
+    allTrailers_bu = [];
     //allTrailers: any=[];
     // allTrailers: any = [
     //     { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" },
@@ -82,14 +83,17 @@ export class TrackTrailerComponent {
     // ];
 
     ob = {
-        column: [{ name: "Trailer ID", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model/Type", width: "10%" }, { name: "Location", width: "10%" },{ name: "Year", width: "10%" },{ name: "Distance in miles", width: "10%" },
-        { name: "Allocation status", width: "10%" }, { name: "Last DOT inspection date", width: "10%" }, { name: "Last ping date", width: "10%" }, { name: "History", width: "10%" }],
-        groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
+        column: [
+            { name: "Trailer ID", width: "9%" }, { name: "Make", width: "9%" }, { name: "Model/Type", width: "9%" },
+            { name: "Company", width: "9%",toSort:true,key:'company' },{ name: "Location", width: "9%" }, { name: "Year", width: "9%" },
+            { name: "Distance in miles", width: "9%" },{ name: "Allocation status", width: "9%" }, { name: "Last DOT inspection date", width: "9%" },
+            { name: "Last ping date", width: "9%" },{ name: "History", width: "10%" }],
+        groups: []
     };
 
     history = {
         column: [{ name: "Date", width: "25%" }, { name: "Order ID", width: "25%" }, { name: "Start City", width: "25%" }, { name: "Destination City", width: "25%" }],
-        groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
+        groups: []
     };
 
     ngOnInit() {
@@ -97,44 +101,44 @@ export class TrackTrailerComponent {
 
         var input = document.getElementById('ctgGeoCode');
         var autoCompOptions = {
-            componentRestrictions: { country: ['us','mx','ca'] }
+            componentRestrictions: { country: ['us', 'mx', 'ca'] }
         };
         var autocomplete = new google.maps.places.Autocomplete(input, autoCompOptions);
-        var obj=this;
-        autocomplete.addListener('place_changed', function() {
-          var place = autocomplete.getPlace();
-          if (!place.geometry) {
-            // User entered the name of a Place that was not suggested and
-            // pressed the Enter key, or the Place Details request failed.
-            //window.alert("No details available for input: '" + place.name + "'");
-            //obj.action.heading = "Trailer search";
-            //obj.action.body = "Please enter a valid input!12";
-            //$('#result').modal('show');
-            
-            return;
-          }
+        var obj = this;
+        autocomplete.addListener('place_changed', function () {
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                // User entered the name of a Place that was not suggested and
+                // pressed the Enter key, or the Place Details request failed.
+                //window.alert("No details available for input: '" + place.name + "'");
+                //obj.action.heading = "Trailer search";
+                //obj.action.body = "Please enter a valid input!12";
+                //$('#result').modal('show');
 
-          // If the place has a geometry, then present it on a map.
-          if (place.geometry.viewport) {
-            
-          } else {
-            //map.setCenter(place.geometry.location);
-            //map.setZoom(17);  // Why 17? Because it looks good.
-          }
-          var address = '';
-          if (place.address_components) {
-            address = [
-              (place.address_components[0] && place.address_components[0].short_name || ''),
-              (place.address_components[1] && place.address_components[1].short_name || ''),
-              (place.address_components[2] && place.address_components[2].short_name || '')
-            ].join(' ');
-            console.log(address);
-            obj.setByLocation();
+                return;
+            }
 
-          }
+            // If the place has a geometry, then present it on a map.
+            if (place.geometry.viewport) {
+
+            } else {
+                //map.setCenter(place.geometry.location);
+                //map.setZoom(17);  // Why 17? Because it looks good.
+            }
+            var address = '';
+            if (place.address_components) {
+                address = [
+                    (place.address_components[0] && place.address_components[0].short_name || ''),
+                    (place.address_components[1] && place.address_components[1].short_name || ''),
+                    (place.address_components[2] && place.address_components[2].short_name || '')
+                ].join(' ');
+                console.log(address);
+                obj.setByLocation();
+
+            }
         });
     }
-    constructor(private http: Http,private cdr:ChangeDetectorRef ) {
+    constructor(private http: Http, private cdr: ChangeDetectorRef) {
         this.getStateTrailersStatus();
         //this.getStateTrailersStatus();
         // setTimeout(() => {
@@ -163,46 +167,46 @@ export class TrackTrailerComponent {
             //this.disableStatus = false;
             //this.disableTS = false;
         } else {
-            
+
             //this.searchID = "";
             //this.bylocation = "";
             //this.disableLoc = true;
             //this.disableStatus = false;
             //this.disableTS = true;
-            this.gRowCount=100;
+            this.gRowCount = 100;
         }
     }
 
     toggleSearch(item: any) {
         if (item == 2) {
             this.searchID = "";
-            this.custID="";
+            this.custID = "";
             this.selectedTrStatus = { status: "Select a status", value: -1 };
             //this.selectTrStatus(this.selectedTrStatus);
         } else if (item == 3) {
             this.searchID = "";
             this.bylocation = "";
-            this.custID="";
+            this.custID = "";
 
-        }else if(item==4){
+        } else if (item == 4) {
             this.searchID = "";
             this.bylocation = "";
             this.selectedTrStatus = { status: "Select a status", value: -1 };
         }
         else {
             this.bylocation = "";
-            this.custID="";
+            this.custID = "";
             this.selectedTrStatus = { status: "Select a status", value: -1 };
             //this.selectTrStatus(this.selectedTrStatus);
         }
 
-    }    
+    }
     search() {
         if (this.bylocation.length > 0) {
             this.getvalue();
-        }else if (this.searchID.length > 0) {
+        } else if (this.searchID.length > 0) {
             this.searchByID();
-        }else if(this.custID.length>0){
+        } else if (this.custID.length > 0) {
             this.searchByCustID();
         } else {
             if (this.disableStatus) {
@@ -213,7 +217,7 @@ export class TrackTrailerComponent {
         }
     }
 
-    getLatLngByGeoCode(){
+    getLatLngByGeoCode() {
         var input = $('#ctgGeoCode').val();
         console.log(input);
         this.bylocation = input;
@@ -221,12 +225,12 @@ export class TrackTrailerComponent {
         var geocoder = this.geocoder;
         var combo = "";
         var address = this.bylocation;
-        this.mapConfig.polygon=undefined;
-         this.geocoder.geocode({ 'address': address }, function (results: any, status: any) {
+        this.mapConfig.polygon = undefined;
+        this.geocoder.geocode({ 'address': address }, function (results: any, status: any) {
             if (status === 'OK') {
-                var lat=results[0].geometry.location.lat();
-                var lng=results[0].geometry.location.lng();
-                combo="latitude="+lat+"&longitude="+lng;
+                var lat = results[0].geometry.location.lat();
+                var lng = results[0].geometry.location.lng();
+                combo = "latitude=" + lat + "&longitude=" + lng;
                 if (!this.mgToggleFlag) {
                     ctrl.mapConfig.lat = lat;
                     ctrl.mapConfig.lng = lng;
@@ -240,13 +244,13 @@ export class TrackTrailerComponent {
                 console.log("getLatLngByGeoCode:no location to search");
             }
         });
-        
+
     }
 
-    
+
 
     getvalue() {
-        this.mapConfig.marker=-1;
+        this.mapConfig.marker = -1;
         var input = $('#ctgGeoCode').val();
         console.log(input);
         this.bylocation = input;
@@ -263,16 +267,16 @@ export class TrackTrailerComponent {
             this.action.body = 'Please enter a location to search.';
             $('#result').modal('show');
         }
-        if(this.asToggle){
-            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
-            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
+        if (this.asToggle) {
+            this.allTrailers = this.advanceSearchFilter(this.allTrailers);
+            this.allTraillerSubSet = this.advanceSearchFilter(this.allTraillerSubSet);
 
         }
         //f.geocodeAddress(this.bylocation);
     }
 
-    formatDateTime(item: any,choice) {
-        if(!item){
+    formatDateTime(item: any, choice) {
+        if (!item) {
             return item;
         }
         else if (item != "") {
@@ -281,7 +285,7 @@ export class TrackTrailerComponent {
                 var ary = item.split(' ');
                 var date = ary[0].split('-');
                 var newD = new Date(date[0], date[1] - 1, date[2]);
-                var tim=ary[1].split('.');
+                var tim = ary[1].split('.');
                 //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
                 if (choice == 0) {
                     var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear();
@@ -290,10 +294,10 @@ export class TrackTrailerComponent {
                     var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + tim[0];
                 }
                 return SDate;
-            }else{
+            } else {
                 return item;
             }
-        }else{
+        } else {
             return item;
         }
 
@@ -301,7 +305,7 @@ export class TrackTrailerComponent {
 
     setByLocation() {
         var input = $('#ctgGeoCode').val();
-        this.mapConfig.marker=-1;
+        this.mapConfig.marker = -1;
         console.log(input);
         this.bylocation = input;
         if (this.mgToggleFlag) {
@@ -311,23 +315,23 @@ export class TrackTrailerComponent {
             this.getLatLngByGeoCode();
         }
 
-        if(this.asToggle){
-            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
-            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
-        }        
+        if (this.asToggle) {
+            this.allTrailers = this.advanceSearchFilter(this.allTrailers);
+            this.allTraillerSubSet = this.advanceSearchFilter(this.allTraillerSubSet);
+        }
     }
 
     reset() {
         this.bylocation = "";
         this.searchID = "";
         this.selectedID = "";
-        this.custID="";
-        this.searchMake="";
-        this.searchTrYear="";
-        this.selectedModel={lable: "All types", value: "-1" };
-        this.mapConfig={lat:36.090240,lng:-95.712891,mapType:'roadmap'};
+        this.custID = "";
+        this.searchMake = "";
+        this.searchTrYear = "";
+        this.selectedModel = { lable: "All types", value: "-1" };
+        this.mapConfig = { lat: 36.090240, lng: -95.712891, mapType: 'roadmap' };
         this.selectedMiles = { lable: "150 Miles", value: 150 };
-        this.selectedCmp = { lable: "Covenant", value: "CVEN" };
+        //this.selectedCmp = { lable: "Covenant", value: "CVEN", selected: true };
         this.selectCmp(this.selectedCmp);
 
         this.getStateTrailersStatus();
@@ -346,16 +350,16 @@ export class TrackTrailerComponent {
         console.log("scrolling");
         var raw = document.getElementById('tgBody');
         if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
-            
+
             this.gRowCount += 100;
-            if(this.gRowCount>this.allTrailers.length){
-                this.gRowCount=this.allTrailers.length;
+            if (this.gRowCount > this.allTrailers.length) {
+                this.gRowCount = this.allTrailers.length;
             }
         }
     }
 
-    cloneObj(list:any){
-        var clone=JSON.parse(JSON.stringify(list));
+    cloneObj(list: any) {
+        var clone = JSON.parse(JSON.stringify(list));
         return clone;
     }
 
@@ -372,14 +376,14 @@ export class TrackTrailerComponent {
                 this.trailerStatusResp = true;
                 //this.selectCmp(this.selectedCmp);
                 this.filterMapByCmp();
-                this.allTraillerSubSet1=this.cloneObj(this.allTrailers);
+                this.allTraillerSubSet1 = this.cloneObj(this.allTrailers);
                 this.selectTrStatus(this.selectedTrStatus);
             }, //For Success Response
             (err) => { console.log("StatesTrailerCounts error recieved"); this.trailerStatusResp = true; } //For Error Response
             );
     }
 
-    getTrailerStatusByFilter(add:any) {
+    getTrailerStatusByFilter(add: any) {
         this.trailerStatusResp = false;
         //let url="http://61.16.133.244/HomeService/api/StatesTrailerCounts";
         let url = config.baseUrl + "/HomeService/api/TrailerStatusByFilter?" + add;
@@ -387,10 +391,12 @@ export class TrackTrailerComponent {
             .subscribe(
             (data) => {
                 this.attachSubSet(data);
-                
+
             }, //For Success Response
-            (err) => { console.log("StatesTrailerCounts error recieved");
-                this.trailerStatusResp = true; } //For Error Response
+            (err) => {
+                console.log("StatesTrailerCounts error recieved");
+                this.trailerStatusResp = true;
+            } //For Error Response
             );
     }
 
@@ -400,12 +406,12 @@ export class TrackTrailerComponent {
         this.allTraillerSubSet = item;
         this.allTraillerSubSet1 = item;
         this.selectMiles(this.selectedMiles);
-        var obj=this;
+        var obj = this;
         this.cdr.detectChanges();
-        if(this.asToggle){
-            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
-            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
-        }        
+        if (this.asToggle) {
+            this.allTrailers = this.advanceSearchFilter(this.allTrailers);
+            this.allTraillerSubSet = this.advanceSearchFilter(this.allTraillerSubSet);
+        }
         setTimeout(function () {
             obj.trailerStatusResp = true;
             obj.cdr.detectChanges();
@@ -429,13 +435,13 @@ export class TrackTrailerComponent {
             );
     }
 
-    getTrailerPingHistory(item:any) {
-        this.historyConfig.allTraillerSubSet=[];
+    getTrailerPingHistory(item: any) {
+        this.historyConfig.allTraillerSubSet = [];
         this.historyConfig.dataSet = [];
         this.historyConfig.backupATS = [];
         this.historyConfig.backupDS = [];
         this.historyConfig.thResp = false;
-        let url = config.baseUrl + "/HomeService/api/TrailerPingHistory?trailerID="+item.trailerID;
+        let url = config.baseUrl + "/HomeService/api/TrailerPingHistory?trailerID=" + item.trailerID;
         //let url = config.baseUrl + "/HomeService/api/TrailerHistory?trailerID=" + this.selectedMarker.trailerID;
         this.http.get(url).map(res => res.json())
             .subscribe(
@@ -444,20 +450,20 @@ export class TrackTrailerComponent {
                 this.historyConfig.dataSet = data.dataSet;
                 this.historyConfig.backupDS = data.dataSet;
                 if (data.dataSet.length > 0) {
-                    
+
                     for (let i = 0; i < data.dataSet.length; i++) {
                         var item = data.dataSet[i];
-                        
-                        if(item.eventDateValues.length>0){
+
+                        if (item.eventDateValues.length > 0) {
                             for (let j = 0; j < item.eventDateValues.length; j++) {
-                                var ent=item.eventDateValues[j];
-                                ent['eDate']=item.eventDate;
+                                var ent = item.eventDateValues[j];
+                                ent['eDate'] = item.eventDate;
                                 this.historyConfig.allTraillerSubSet.push(ent);
                                 this.historyConfig.backupATS.push(ent);
 
                             }
                         }
-                        
+
                     }
                 }
                 console.log(this.historyConfig);
@@ -470,30 +476,31 @@ export class TrackTrailerComponent {
             );
     }
 
-        getTrailerDetailsByCustomerId(custID:any) {
+
+    getTrailerDetailsByCustomerId(custID: any) {
         //this.historyRecv = false;
-        let url = config.baseUrl + "/HomeService/api/TrailerDetailsByCustomerId?customerId="+custID;
+        let url = config.baseUrl + "/HomeService/api/TrailerDetailsByCustomerId?customerId=" + custID;
         this.http.get(url).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("StatesTrailerCounts data recieved");
-                if(data.dataSet.length>0){
-                    var poly=data.dataSet[0].yard;
-                    var lat=data.dataSet[0].latitude;
-                    var lng=data.dataSet[0].longitude;
-                    if(this.mgToggleFlag){
-                    this.gmapJs.drawPoly(poly,lat,lng);
-                    this.filterByBounds(poly);
-                    }else{
-                        this.filterByBounds(poly);
-                        this.mapConfig.polygon=poly;
-                        this.mapConfig.lat=lat;
-                        this.mapConfig.lng=lng;
+                if (data.dataSet.length > 0) {
+                    var poly = data.dataSet[0].yard;
+                    var lat = data.dataSet[0].latitude;
+                    var lng = data.dataSet[0].longitude;
+                    if (this.mgToggleFlag) {
+                        this.gmapJs.drawPoly(poly, lat, lng);
+                        this.filterByBounds(poly, data.dataSet[0].trailers);
+                    } else {
+                        this.filterByBounds(poly, data.dataSet[0].trailers);
+                        this.mapConfig.polygon = poly;
+                        this.mapConfig.lat = lat;
+                        this.mapConfig.lng = lng;
                     }
 
-                }else{
+                } else {
                     $('#inValidCustID').modal('show');
-                    this.custID="";
+                    this.custID = "";
                 }
                 //this.historyRecv = true;
             }, //For Success Response
@@ -510,8 +517,8 @@ export class TrackTrailerComponent {
         this.allTraillerSubSet = [];
         if (this.searchID && this.searchID != "") {
 
-            for (var i = 0; i < this.allTrailers_bu.length; i++) {
-                let item = this.allTrailers_bu[i];
+            for (var i = 0; i < this.allTrailers.length; i++) {
+                let item = this.allTrailers[i];
                 if (item.trailerID == this.searchID) {
                     this.selectedID = item.latitude + "," + item.longitude;
                     this.allTraillerSubSet.push(item);
@@ -519,8 +526,8 @@ export class TrackTrailerComponent {
                     this.mapConfig.lng = item.longitude;
                     this.mapConfig.zoom = 19;
                     this.mapConfig.mapType = 'satellite';
-                    this.mapConfig.marker=i;
-                    this.mapConfig.polygon=undefined;
+                    this.mapConfig.marker = i;
+                    this.mapConfig.polygon = undefined;
                     index = i;
                 }
             }
@@ -540,8 +547,8 @@ export class TrackTrailerComponent {
                 }
             }
             this.allTraillerSubSet = [];
-            for (var i = 0; i < this.allTrailers_bu.length; i++) {
-                let item = this.allTrailers_bu[i];
+            for (var i = 0; i < this.allTrailers.length; i++) {
+                let item = this.allTrailers[i];
                 if (item.trailerID == this.searchID) {
                     this.allTraillerSubSet.push(item);
                 }
@@ -555,9 +562,9 @@ export class TrackTrailerComponent {
                 $('#result').modal('show');
             }
         }
-        if(this.asToggle){
-            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
-            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
+        if (this.asToggle) {
+            this.allTrailers = this.advanceSearchFilter(this.allTrailers);
+            this.allTraillerSubSet = this.advanceSearchFilter(this.allTraillerSubSet);
 
         }
     }
@@ -575,32 +582,32 @@ export class TrackTrailerComponent {
         this.selectedMarker = item;
         //$('#historyModal').modal('show');
         setTimeout(function () {
-             $('#historyModal').modal('show');
-         }, 500);
+            $('#historyModal').modal('show');
+        }, 500);
         this.getTrailerHistory();
     }
 
-    showTrHistory(item){
-        this.historyConfig['trailer']=item;
-        this.historyConfig.showHistory=true;
+    showTrHistory(item) {
+        this.historyConfig['trailer'] = item;
+        this.historyConfig.showHistory = true;
         this.getTrailerPingHistory(item);
     }
 
 
-    searchByCustID(){
-        
-            //this.gmapJs.drawPoly();
-            //this.allTraillerSubSet=[];
-            //this.allTraillerSubSet=this.mapConfig.trailesInBound;
-            this.mapConfig.marker=-1;
-            this.custID=this.custID.toUpperCase();
-            this.getTrailerDetailsByCustomerId(this.custID);
-            
-        
+    searchByCustID() {
+
+        //this.gmapJs.drawPoly();
+        //this.allTraillerSubSet=[];
+        //this.allTraillerSubSet=this.mapConfig.trailesInBound;
+        this.mapConfig.marker = -1;
+        this.custID = this.custID.toUpperCase();
+        this.getTrailerDetailsByCustomerId(this.custID);
+
+
     }
 
-    filterByBounds(multipolygonWKT:any){
-        
+    filterByBounds(multipolygonWKT: any, trList) {
+
         var polylines = [];
         var toReturn = [];
         //var multipolygonWKT="POLYGON ((-106.29151225090025 31.719999517096294, -106.28837943077087 31.719944759613266, -106.28841161727905 31.721541839581246, -106.29127621650696 31.721468830811506, -106.29151225090025 31.719999517096294))";
@@ -630,8 +637,8 @@ export class TrackTrailerComponent {
                 var coordinates = strCoordinates.split(" ");
                 console.log(coordinates);
                 var latlng = new google.maps.LatLng(parseFloat(coordinates[1]), parseFloat(coordinates[0]));
-                console.log("{lat:"+parseFloat(coordinates[1])+",lng:"+ parseFloat(coordinates[0])+"}");
-                polyBound.extend(latlng);    
+                console.log("{lat:" + parseFloat(coordinates[1]) + ",lng:" + parseFloat(coordinates[0]) + "}");
+                polyBound.extend(latlng);
                 polylines[i].push(latlng);
 
             }
@@ -639,17 +646,24 @@ export class TrackTrailerComponent {
 
         //by now you should have the polylines array filled with arrays that hold the coordinates of the polylines of the multipolyline
         //lets loop thru this array
-        
-        var trailesInBound=[];
-        for(var i=0;i<this.allTrailers.length;i++){
-            var tr=this.allTrailers[i];
+
+        var trailesInBound = [];
+        for (var i = 0; i < this.allTrailers.length; i++) {
+            var tr = this.allTrailers[i];
             var latlng = new google.maps.LatLng(tr.latitude, tr.longitude);
-            if(polyBound.contains(latlng)){
-                
+            if (polyBound.contains(latlng)) {
+
                 trailesInBound.push(tr);
             }
         }
-        this.allTraillerSubSet=trailesInBound;
+        var bag = []
+        this.allTrailers.forEach(element => {
+            if (trList.includes(element.trailerID)) {
+                bag.push(element);
+            }
+        });
+        this.allTraillerSubSet = bag;
+        this.allTrailers = bag;
     }
     selectTrStatus(item: any) {
         this.allTraillerSubSet = [];
@@ -669,12 +683,12 @@ export class TrackTrailerComponent {
                             this.allTraillerSubSet.push(obj);
                     }
                     break;
-                    case 3:
+                case 3:
                     {
                         if (obj['isPool'] == 1)
                             this.allTraillerSubSet.push(obj);
                     }
-                    break;    
+                    break;
                 case 0:
                     {
                         if (obj.trailerStatus != "PLN" && obj.trailerStatus != "AVL")
@@ -683,36 +697,36 @@ export class TrackTrailerComponent {
                     break;
                 case -1:
                     {
-                        
-                            this.allTraillerSubSet.push(obj);
+
+                        this.allTraillerSubSet.push(obj);
                     }
-                    break;    
-                    
+                    break;
+
             }
         }
     }
     selectCmp(item) {
         this.selectedCmp = item;
         this.filterMapByCmp();
-        if(this.bylocation.length==0 && this.custID.length==0 && this.searchID.length==0){
-           this.selectTrStatus(this.selectedTrStatus);
-           //this.allTraillerSubSet=this.filterGridByCmp(this.allTrailers);
-        }else{
-            if(this.bylocation.length>0){
+        if (this.bylocation.length == 0 && this.custID.length == 0 && this.searchID.length == 0) {
+            this.selectTrStatus(this.selectedTrStatus);
+            //this.allTraillerSubSet=this.filterGridByCmp(this.allTrailers);
+        } else {
+            if (this.bylocation.length > 0) {
                 this.getvalue();
                 this.selectMiles(this.selectedMiles);
-            }else if(this.searchID.length>0){
+            } else if (this.searchID.length > 0) {
                 this.searchByID();
-                this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet);
-            }else if(this.custID.length>0){
+                this.allTraillerSubSet = this.filterGridByCmp(this.allTraillerSubSet);
+            } else if (this.custID.length > 0) {
                 this.searchByCustID();
-                this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet);
+                this.allTraillerSubSet = this.filterGridByCmp(this.allTraillerSubSet);
             }
         }
-        
-        if(this.asToggle){
-            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
-            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
+
+        if (this.asToggle) {
+            this.allTrailers = this.advanceSearchFilter(this.allTrailers);
+            this.allTraillerSubSet = this.advanceSearchFilter(this.allTraillerSubSet);
 
         }
 
@@ -720,127 +734,163 @@ export class TrackTrailerComponent {
 
     filterMapByCmp() {
         this.allTrailers = [];
-        
+        this.cmpList;
         for (var i = 0; i < this.allTrailers_bu.length; i++) {
             var obj = this.allTrailers_bu[i];
-            if(obj['company']==this.selectedCmp.value){
-                this.allTrailers.push(obj);
-            }
+            this.cmpList.forEach(element => {
+                if (element.value == obj['company'] && element.selected) {
+                    this.allTrailers.push(obj);
+                }
+            });
+
         }
     }
 
-    filterGridByCmp(lists:any) {
-       //this.selectTrStatus(this.selectedTrStatus);
-       var bag=[]
-           for (var i = 0; i < lists.length; i++) {
-               var obj = lists[i];
-               if (obj['company'] == this.selectedCmp.value) {
-                   bag.push(obj);
-               }
-           }
-       return bag;
+    filterGridByCmp(lists: any) {
+        //this.selectTrStatus(this.selectedTrStatus);
+        var bag = []
+        for (var i = 0; i < lists.length; i++) {
+            var obj = lists[i];
+            this.cmpList.forEach(element => {
+                if (element.value == obj['company'] && element.selected) {
+                    bag.push(obj);
+                }
+            });
+
+        }
+        return bag;
     }
 
     allTraillerSubSet1: any = [];
-    selectMiles(item){
-        this.allTraillerSubSet =[] ;
+    selectMiles(item) {
+        this.allTraillerSubSet = [];
         this.selectedMiles = item;
-        var plm=0;
-        var avl=0;
-        var com=0;
+        var plm = 0;
+        var avl = 0;
+        var com = 0;
         for (var i = 0; i < this.allTraillerSubSet1.length; i++) {
             var obj = this.allTraillerSubSet1[i];
             switch (this.selectedMiles.value) {
                 case 50:
                     {
-                        if (obj.distance < 50){
-                            this.allTraillerSubSet.push(obj);plm++;
+                        if (obj.distance < 50) {
+                            this.allTraillerSubSet.push(obj); plm++;
                         }
                     }
                     break;
                 case 100:
                     {
-                        if (obj.distance < 100){
-                            this.allTraillerSubSet.push(obj);plm++;
+                        if (obj.distance < 100) {
+                            this.allTraillerSubSet.push(obj); plm++;
                         }
                     }
                     break;
                 case 150:
                     {
-                        if (obj.distance < 150){
-                            this.allTraillerSubSet.push(obj);plm++;
+                        if (obj.distance < 150) {
+                            this.allTraillerSubSet.push(obj); plm++;
                         }
                     }
                     break;
-                    default:{
+                default: {
 
-                    }
+                }
                     break;
             }
         }
-        this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet);
-        console.log("pln "+plm+" avl "+avl+" com "+com+" total "+this.allTrailers.length);
+        this.allTraillerSubSet = this.filterGridByCmp(this.allTraillerSubSet);
+        console.log("pln " + plm + " avl " + avl + " com " + com + " total " + this.allTrailers.length);
 
-    
+
 
     }
 
-    advanceSearchFilter(bag){
-        var list=this.filterByMake(bag);
-        list=this.filterByTrYear(list);
-        list=this.filterByModel(list);
+    advanceSearchFilter(bag) {
+        var list = this.filterByMake(bag);
+        list = this.filterByTrYear(list);
+        list = this.filterByModel(list);
         //list=this.filterByIOT(list);
         //list=this.filterByLMD(list);
         //list=this.filterByDOT(list);
         return list;
     }
 
-    filterByMake(list:any){
-        var bag=[];
-        this.searchMake=this.searchMake.toUpperCase();
-        for(var i=0;i<list.length;i++){
-            var item=list[i];
-            if(this.searchMake==""){
+    filterByMake(list: any) {
+        var bag = [];
+        this.searchMake = this.searchMake.toUpperCase();
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            if (this.searchMake == "") {
                 bag.push(item);
-            }else
-            if(item.trailerName==this.searchMake){
-                bag.push(item);
-            }
+            } else
+                if (item.trailerName == this.searchMake) {
+                    bag.push(item);
+                }
         }
         return bag;
     }
-    filterByTrYear(list:any){
-        var bag=[];
-        this.searchTrYear=this.searchTrYear.toUpperCase();
-        for(var i=0;i<list.length;i++){
-            var item=list[i];
-            if(this.searchTrYear==""){
+    filterByTrYear(list: any) {
+        var bag = [];
+        this.searchTrYear = this.searchTrYear.toUpperCase();
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            if (this.searchTrYear == "") {
                 bag.push(item);
-            }else
-            if(item.trailerYear==this.searchTrYear){
-                bag.push(item);
-            }
+            } else
+                if (item.trailerYear == this.searchTrYear) {
+                    bag.push(item);
+                }
         }
         return bag;
     }
 
-    filterByModel(list:any){
-        var bag=[];
-        for(var i=0;i<list.length;i++){
-            var item=list[i];
-            if(this.selectedModel.value=="-1"){
+    filterByModel(list: any) {
+        var bag = [];
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            if (this.selectedModel.value == "-1") {
                 bag.push(item);
-            }else{
-                if(this.selectedModel.value==item.trailerType){
+            } else {
+                if (this.selectedModel.value == item.trailerType) {
                     bag.push(item);
                 }
             }
-            
+
         }
         return bag;
     }
 
-    allTrailers=[{
+    sortTrailers(list, key, asc) {
+        var bag;
+        if (key == "dotDate") {
+          //bag = this.sortTrailersByTime(list, key, asc);
+        } else if (key == "lastPingDate") {
+          //bag = this.sortTrailersByTime(list, key, asc);
+        } else {
+          bag = list.sort((item1, item2) => {
+            if (asc == 0) {
+              if (item1[key] > item2[key]) {
+                return 1;
+              } else if (item1[key] < item2[key]) {
+                return -1;
+              } else {
+                return 0;
+              }
+            } else {
+              if (item1[key] < item2[key]) {
+                return 1;
+              } else if (item1[key] > item2[key]) {
+                return -1;
+              } else {
+                return 0;
+              }
+            }
+          });
+        }
+        return bag;
+      }
+
+    allTrailers = [{
         "trailerID": "42531",
         "trailerType": "DRY",
         "trailerName": "HYUND",

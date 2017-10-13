@@ -84,9 +84,9 @@
             </div>
             <div *ngIf="asToggle" style="margin-top: 5px;background-color: #d3d3d3;" class="filter-container" >
                 <div style="padding:5px;float:left;width:100%">
-                    <div class="pull-left" style="width:150px"><app-singleselect [items]="cmpList" [config]="cmpSelectConfig" [(selectedItem)]="selectedCmp" [key]="'lable'"></app-singleselect></div>
+                    <div class="pull-left" style="width:170px"><app-singleselect [items]="cmpList" [config]="cmpSelectConfig" [(selectedItem)]="selectedCmp" [key]="'lable'" (selectedItemChange)="selectCmp(selectedCmp)"></app-singleselect></div>
                     <input class="ctg-textbox pull-left" style="margin-left:10px; width:120px" type="text" placeholder="Trailer make" [(ngModel)]="searchMake"/>
-                    <div class="pull-left" style="margin-left:10px;width:150px"><app-singleselect [items]="modelList" [config]="modeSelectConfig" [(selectedItem)]="selectedModel" [key]="'lable'"></app-singleselect></div>
+                    <div class="pull-left" style="margin-left:10px;width:150px"><app-singleselect [items]="modelList" [config]="modeSelectConfig" [(selectedItem)]="selectedModel" [key]="'lable'" (selectedItemChange)="selectCmp(selectedCmp)"></app-singleselect></div>
                     <input class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Trailer year" [(ngModel)]="searchTrYear"/>
                     
                     
@@ -121,7 +121,11 @@
                         <thead style="font-size: 12px">
                             <tr bgcolor="#f7f8fc" class="app-table-tr full">
                                 <ng-container *ngFor="let con of ob.column">
-                                    <th [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+                                    <th [ngStyle]="{'width':con.width}" style="text-align:center;">
+                                        <span>{{con.name}}</span>
+                                        <span *ngIf="con.toSort" class="caret pointer" (click)="sortTrailers(allTraillerSubSet,con.key,1)"></span>
+                                        <span *ngIf="con.toSort" class="caret caret-reversed pointer" (click)="sortTrailers(allTraillerSubSet,con.key,0)"></span>
+                                    </th>
                                 </ng-container>
                             </tr>
                         </thead>
@@ -129,31 +133,34 @@
                             <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
                                 <tr class="full" *ngIf="i<gRowCount">
 
-                                    <td style="text-align:center;width:10%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.trailerID}}</span>
                                     </td>
-                                    <td style="text-align:center;width:10%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.trailerName}}</span>
                                     </td>
-                                    <td style="text-align:center;width:10%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.trailerType}}</span>
                                     </td>
-                                    <td style="text-align:center;width:10%">
+                                    <td style="text-align:center;width:9%">
+                                        <span>{{item.company}}</span>
+                                    </td>
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.location}}</span>
                                     </td>
-                                    <td style="text-align:center;width:10%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.trailerYear}}</span>
                                     </td>
-                                    <td style="text-align:center;width:10%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.distance}}</span>
                                     </td>
-                                    <td style="text-align:center;width:10%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{item.trailerStatus}}</span>
                                     </td>
-                                    <td style="text-align:center;width:10%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{formatDateTime(item.dotDate,0)}}</span>
                                     </td>
-                                    <td style="text-align:center;width:10%">
+                                    <td style="text-align:center;width:9%">
                                         <span>{{formatDateTime(item.lastPingDate,1)}}</span>
                                     </td>
                                     <td style="text-align:center;width:10%">
