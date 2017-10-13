@@ -1,24 +1,43 @@
 <div class="dropdown pull-left ss-select-cont pointer">
-    <button class="ss-button dropdown-toggle"  type="button" data-toggle="dropdown">
+    <button class="ss-button dropdown-toggle" type="button" data-toggle="dropdown">
         <span class="pull-left">{{selectedItem[key]}}</span>
-        <span class="caret pull-right" style="margin-top:9px" data-toggle="dropdown" ></span>
+        <span class="caret pull-right" style="margin-top:9px" data-toggle="dropdown"></span>
     </button>
-    <div *ngIf="!config.filter" class="dropdown-menu no-padding ss-dd">
-        <ul class="ss-dd-ul">
-            <li *ngFor="let item of items" (click)="selectItem(item)" class="pointer">{{item[key]}}</li>
-        </ul>
-    </div>
-    <div *ngIf="config.filter" class="dropdown-menu no-padding ss-dd" style="padding-top:5px">
-        <div class="input-group" style="border:1px solid #ededed">
-            <input type="text" class="form-control search-box ss-button" placeholder="Search" [(ngModel)]="search" style="box-shadow: none">
-            <div class="input-group-btn">
-                <button class="btn btn-default search-box ss-button" type="submit">
+    <ng-container *ngIf="!config.multisel">
+        <div *ngIf="!config.filter" class="dropdown-menu no-padding ss-dd">
+            <ul class="ss-dd-ul">
+                <li *ngFor="let item of items" (click)="selectItem(item)" class="pointer">{{item[key]}}</li>
+            </ul>
+        </div>
+        <div *ngIf="config.filter" class="dropdown-menu no-padding ss-dd" style="padding-top:5px">
+            <div class="input-group" style="border:1px solid #ededed">
+                <input type="text" class="form-control search-box ss-button" placeholder="Search" [(ngModel)]="search" style="box-shadow: none">
+                <div class="input-group-btn">
+                    <button class="btn btn-default search-box ss-button" type="submit">
                         <i class="glyphicon glyphicon-search"></i>
                     </button>
+                </div>
             </div>
+            <ul class="ssf-dd-ul">
+                <li *ngFor="let item of items|filterC:search:key" (click)="selectItem(item)" class="pointer">{{item[key]}}</li>
+            </ul>
         </div>
-        <ul class="ssf-dd-ul">
-            <li *ngFor="let item of items|filterC:search:key" (click)="selectItem(item)" class="pointer">{{item[key]}}</li>
-        </ul>
+    </ng-container>
+    <div *ngIf="config.multisel" class="dropdown-menu no-padding ss-dd">
+        <form>
+            <table class="ddTable">
+                <tbody class="ddtbody">
+                    <tr *ngFor="let i=index;let item of items" class="pointer">
+                        <td style="vertical-align:top">
+                            <input class="pull-left inpLI" type="checkbox" id="cc_{{i}}" name="cc_{{i}}" value="" [checked]="item.selected" (change)="item.selected=$event.target.checked;multiSelect()"
+                            />
+                        </td>
+                        <td class="full">
+                            <label class="lblLI" for="cc_{{i}}">{{item[key]}}</label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
     </div>
 </div>

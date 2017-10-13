@@ -22,11 +22,36 @@ export class SingleselectComponent implements OnInit {
     this.emit();
   }
 
+  multiSelect(){
+    this.selectedItem={lable:""};
+    let count=0;
+    if(this.config.multisel){
+      this.items.forEach(element => {
+        if(element.selected){
+          count++;
+        }
+
+      });
+      if(count==0){
+        this.selectedItem={lable:"Company"};
+      }else{
+        let value=count+" Company(s) selected"
+        this.selectedItem={lable:value};
+      }
+
+    }
+
+    this.emit();
+  }
+
   emit() {
     this.selectedItemChange.emit(this.selectedItem);
   }
 
   ngOnInit() {
+    if(this.config.multisel){
+      this.multiSelect();
+    }
   }
 
 }
