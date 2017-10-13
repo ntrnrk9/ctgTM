@@ -3,6 +3,7 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 
+declare var $: any;
 import * as config from '../configs/configs';
 declare let d3: any;
 
@@ -12,50 +13,62 @@ declare let d3: any;
   styleUrls: ['./yard-dash.component.css']
 })
 export class YardDashComponent implements OnInit {
+  @Input() config;
+  lotSize = 0;
+  tableToShow = 0;
+  action: any = { heading: "", body: "", details: "" };
+  selectedLable = "";
+  mapTrailers = [];
+  selectedOrder = {};
+  trMapConfig: any = { lat: 35.96494, lng: -83.95384, zoom: 10, mapType: 'roadmap', marker: -1 };
 
-  gRowCount = 50;
-  trailers = [];
-
-  public pieChartLabels: string[] = ['Planned', 'Available', 'Inactive', 'Pool', 'Others'];
-  public typeChartLabels: string[] = [];
-
-  segData = {
-    cven: { list: [], byStatus: { POOL: [], INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
-    srt: { list: [], byStatus: { POOL: [], INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
-    star: { list: [], byStatus: { POOL: [], INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
-  };
-
-  segByCountryData = {
-    usa: { list: [], cven: [], srt: [], star: [] },
-    mexico: { list: [], cven: [], srt: [], star: [] },
-    canada: { list: [], cven: [], srt: [], star: [] }
-  };
-
-  byCmpTotal = {
-    gTot: 0,
-    cven: 0,
-    srt: 0,
-    star: 0
-  };
-
-
-  allStates = [];
-  stateSelectConfig = {
-    filter: true
-  }
-  cmpSelectConfig = {
-    filter: false
-  }
-  countrySelectConfig = {
-    filter: false
+  constructor(private http: Http, private cdr: ChangeDetectorRef) {
+    this.getOrderStats();
+    this.getFutureAVLOrders();
+    
   }
 
-  selectedState = { country: "", stateCode: "", stateDesc: "Select a state" };
+  ngOnChanges(changes: any) {
+    this.ngOnInit();
+  }
 
+  ngOnInit() {
+    let ctrl = this;
+    this.futAvlOptions.chart.discretebar.dispatch.elementClick = function (e) {
+      //console.log('click-init ' + JSON.stringify(e));
+      ctrl.futAvlOrderchartClicked(e);
+    };
+    this.futAvlOptions.chart.yAxis['tickFormat'] = function (e) {
+      //console.log('click-init ' + JSON.stringify(e));
+      return parseFloat(e).toFixed(0);
+    };
+    this.plnVsActoptions.chart.pie.dispatch.elementClick = function (e) {
+      //console.log('click-init ' + JSON.stringify(e));
+      ctrl.plnVsActchartClicked(e);
+    };
+
+    this.plnVsActoptions.chart['color'] = function (d, i) {
+      return ctrl.nvd3Colors[i % ctrl.nvd3Colors.length];
+    }
+
+    this.futAvlOptions.chart['color'] = function (d, i) {
+      return '#00a0dc';
+    }
+
+    this.getFutureAVLOrders();
+  }
+
+  public barChartOptions: any = {
+    scaleShowVerticalLines: true,
+    responsive: true,
+    scales: {
+      xAxes: [{ barThickness: 20 }]
+    }
+  };
   nvd3Colors = [
-    '#00a0dc',
-    '#8d6cab',
-    '#dd5143',
+    '#00a65a',
+    '#f39c12',
+    '#dd4b39',
     '#e68523',
     '#00aeb3',
     '#86888a',
@@ -64,37 +77,152 @@ export class YardDashComponent implements OnInit {
     '#7cb82f',
   ];
 
-  chartOptions = { legend: { position: 'right' } };
+  OrderStatsResp = false;
+  FutureAVLOrdersResp = false;
+  toShowPlnVsActTable = false;
+  toShowFutAvlTable = false;
+  toShowPlnVsActNAPTable = false;
+  doDataSyncResp = false;
 
-  cmpList: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "STAR", value: "STAR" }];
-  selectedCmp = { lable: "Covenant", value: "CVEN" };
-
-  countryList: any = [{ lable: "USA", value: "USA" }, { lable: "Mexico", value: "MEXICO" }, { lable: "Canada", value: "CANADA" }];
-  selectedCountry = { lable: "USA", value: "USA" };
-
-
-  allTrailler = [];
+  public barChartLabels: string[] = ['Moving as planned', 'DSP', 'Inconsistent - STD', 'Inconsistent - STD'];
+  public barChartType: string = 'bar';
+  public barChartLegend: boolean = false;
+  gRowCount = 50;
+  futAvlOrder = [];
+  allTrailer = [];
   ob = {
-    column: [{ name: "Trailer ID", width: "12%", key: 'trailerID' }, { name: "Make", width: "12%", key: 'trailerName' }, { name: "Model/Type", width: "12%", key: 'trailerType' }, { name: "Year", width: "12%", key: 'trailerYear' }, { name: "Location", width: "12%", key: 'location' },
-    { name: "Allocation status", width: "12%", key: 'trailerStatus' }, { name: "Last DOT inspection date", width: "16%", key: 'dotDate' }, { name: "Last ping date", width: "12%", key: 'lastPingDate' }],
+    column: [{ name: "Order ID", width: "11%" }, { name: "Movement no.", width: "11%" }, { name: "TMW status", width: "11%" },
+    { name: "Order start date.", width: "11%" }, { name: "Order end date", width: "11%" }, { name: "Order origin point", width: "11%" },
+    { name: "Planned trailer", width: "11%" }, { name: "Trailer in TMW", width: "11%" }, { name: "Show in map", width: "12%" }],
     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
   };
 
+  orders = {
+    column: [{ name: "Order ID", width: "11%" }, { name: "Movement no.", width: "11%" }, { name: "Bill to name", width: "11%" }, { name: "Origin city", width: "11%" }, { name: "Destination city", width: "11%" }, { name: "Order origin point", width: "11%" },
+    { name: "Order start date", width: "11%" }, { name: "Order end date", width: "11%" }, { name: "Order remark", width: "12%" }],
+    groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
+  };
+
+  plnVsActGrid = {
+    column: [{ name: "Order ID", width: "11%" }, { name: "Movement no.", width: "11%" }, { name: "TMW status", width: "11%" },
+    { name: "Order start date.", width: "11%" }, { name: "Order end date", width: "11%" }, { name: "Order origin point", width: "11%" },
+    { name: "Planned trailer", width: "11%" }, { name: "Trailer in TMW", width: "11%" }, { name: "Show in map", width: "12%" }],
+    groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
+  };
+
+  // plnVsActGrid = {
+  //   column: [{ name: "Order ID", width: "10%" }, { name: "Movement no.", width: "10%" },{ name: "TMW status", width: "10%" },
+  //            { name: "Order start date.", width: "10%" }, { name: "Order end date", width: "10%" },{ name: "Order origin point", width: "10%" }, 
+  //            { name: "Planned trailer", width: "10%" },{ name: "Sync data", width: "10%" }, { name: "Trailer in TMW", width: "10%" },  { name: "Show in map", width: "10%" }],
+  //   groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
+  // };
+  historyConfig: any = { showHistory: false, allTraillerSubSet: [], dataSet: [], backupDS: [], backupATS: [] };
+
+  colorsOPs = ['red'];
+  dataSet = [];
+  pack = [];
 
 
-  public selectedLable: string = '';
-  totalTrailers = 0;
-  lotSize = 0;
-  emptyTrailers = 0;
-  movingTrailers = 0;
-  shedTrailers = 0;
+  futAvlOrderchartClicked(e) {
+    this.gRowCount = 50;
+    this.allTrailer = e.data.list;
+    this.tableToShow = 3;
+    this.selectedLable = "Unplanned orders - 7 days view";
+    this.toShowPlnVsActTable = false;
+    this.toShowFutAvlTable = true;
+    this.toShowPlnVsActNAPTable = false;
+    this.historyConfig.showHistory = false;
+  }
 
-  public toShowLegend = true;
-  showGrid = false;
-  trCountResp = false;
-  toShowStateFilter = true;
+  getGridData(item) {
+    this.gRowCount = 50;
+    this.allTrailer = item.list;
+    if (item.label == "Inconsistent - STD") {
+      this.tableToShow = 2;
+      this.selectedLable = "Inconsistent - STD";
+      this.toShowFutAvlTable = false;
+      this.toShowPlnVsActTable = false;
+      this.toShowPlnVsActNAPTable = true;
+      this.historyConfig.showHistory = false;
+    } else if (item.label == "Inconsistent - DSP") {
+      this.tableToShow = 2;
+      this.selectedLable = "Inconsistent - DSP";
+      this.toShowFutAvlTable = false;
+      this.toShowPlnVsActTable = false;
+      this.toShowPlnVsActNAPTable = true;
+      this.historyConfig.showHistory = false;
+    } else if (item.label == "Consistent") {
+      this.tableToShow = 1;
+      this.selectedLable = "Consistent";
+      this.toShowFutAvlTable = false;
+      this.toShowPlnVsActTable = true;
+      this.toShowPlnVsActNAPTable = false;
+      this.historyConfig.showHistory = false;
+    }
+  }
+  
+  plnVsActchartClicked(e) {
+    this.gRowCount = 50;
+    this.allTrailer = e.data.list;
+    if (e.data.label == "Inconsistent - STD") {
+      this.tableToShow = 2;
+      this.selectedLable = "Inconsistent - STD";
+      this.toShowFutAvlTable = false;
+      this.toShowPlnVsActTable = false;
+      this.toShowPlnVsActNAPTable = true;
+      this.historyConfig.showHistory = false;
+    } else if (e.data.label == "Inconsistent - DSP") {
+      this.tableToShow = 2;
+      this.selectedLable = "Inconsistent - DSP";
+      this.toShowFutAvlTable = false;
+      this.toShowPlnVsActTable = false;
+      this.toShowPlnVsActNAPTable = true;
+      this.historyConfig.showHistory = false;
+    } else if (e.data.label == "Consistent") {
+      this.tableToShow = 1;
+      this.selectedLable = "Consistent";
+      this.toShowFutAvlTable = false;
+      this.toShowPlnVsActTable = true;
+      this.toShowPlnVsActNAPTable = false;
+      this.historyConfig.showHistory = false;
+    }
+  }
 
-  trStatusChartoptions = {
+  public barChartData: any[] = [
+    {
+      data: [65, 59, 80, 90], label: 'Series A',
+      backgroundColor: [
+        '#22466f', '#22466f', '#22466f', '#22466f'
+      ]
+    }
+
+  ];
+
+  pieOption = {
+    chart: {
+      type: 'pieChart',
+      height: 500,
+      x: function (d) { return d.label; },
+      y: function (d) { return d.value; },
+      showLabels: true,
+      duration: 500,
+      labelThreshold: 0.01,
+      labelSunbeamLayout: true,
+      legend: {
+        margin: {
+          top: 5,
+          right: 35,
+          bottom: 5,
+          left: 0
+        }
+      }
+    }
+  };
+
+
+  plnVsActdata = [];
+
+  plnVsActoptions = {
     chart: {
       type: 'pieChart',
       height: 340,
@@ -105,8 +233,8 @@ export class YardDashComponent implements OnInit {
       donutLabelsOutside: false,
       showLegend: false,
       legendPosition: 'bottom',
-      x: function (d) { return d.key; },
-      y: function (d) { return d.y; },
+      x: function (d) { return d.label; },
+      y: function (d) { return d.value; },
       showLabels: true,
       duration: 500,
       tooltip: {
@@ -148,456 +276,275 @@ export class YardDashComponent implements OnInit {
     }
   };
 
-  trTypeChartoptions = {
+  futAvlData = [];
+
+  futAvlOptions = {
     chart: {
-      type: 'pieChart',
-      height: 340,
-      donut: true,
-      labelType: 'percent',
-      growOnHover: true,
-      labelsOutside: false,
-      donutLabelsOutside: false,
-      showLegend: false,
-      legendPosition: 'bottom',
-      x: function (d) { return d.key; },
-      y: function (d) { return d.y; },
-      showLabels: true,
+      type: 'discreteBarChart',
+      height: 320,
+      margin: {
+        top: 20,
+        right: 20,
+        bottom: 50,
+        left: 55
+      },
+      x: function (d) { return d.label; },
+      y: function (d) { return d.value + (1e-10); },
+      showValues: true,
+      valueFormat: function (d) {
+        return d3.format(',.0f')(d);
+      },
       duration: 500,
-      tooltip: {
-        enabled: false
+      xAxis: {
+        axisLabel: 'Future 7 days'
       },
-      legend: {
-        align: false,
-        padding: 50,
-        margin: {
-          top: 5,
-          right: 60,
-          bottom: 0,
-          left: 0
-        }
+      yAxis: {
+        axisLabel: 'No. of orders',
+        axisLabelDistance: -10
       },
-      dispatch: {
-        tooltipShow: function (e) { console.log('tooltipShow') },
-        tooltipHide: function (e) { console.log('tooltipHide') },
-      },
-      pie: {
-        margin: {
-          top: -20,
-          right: 50,
-          bottom: 0,
-          left: 0
-        },
+      discretebar: {
         dispatch: {
           elementClick: function (e) {
             console.log('click ' + JSON.stringify(e));
 
           },
         }
-      },
-    },
-    title: {
-      enable: true,
-      text: 'Type',
-      className: 'h4'
+      }
     }
   };
-  trStatusChartdata = [];
-  trTypeChartData = [];
 
-
-  constructor(private http: Http, private cdr: ChangeDetectorRef) {
-    //this.getTrailerCountSummary();
-    this.getStateTrailersStatus();
-    this.getAllStates();
-  }
-
-  ngOnChanges(changes: any) {
-    this.ngOnInit();
-
-  }
-
-  ngOnInit() {
-
-    var ctrl = this;
-    this.segData = {
-      cven: { list: [], byStatus: { POOL: [], INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
-      srt: { list: [], byStatus: { POOL: [], INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
-      star: { list: [], byStatus: { POOL: [], INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
-    };
-    this.segByCountryData = {
-      usa: { list: [], cven: [], srt: [], star: [] },
-      mexico: { list: [], cven: [], srt: [], star: [] },
-      canada: { list: [], cven: [], srt: [], star: [] }
-    };
-    this.byCmpTotal = {
-      gTot: 0,
-      cven: 0,
-      srt: 0,
-      star: 0
-    };
-
-    this.trStatusChartoptions.chart.pie.dispatch.elementClick = function (e) {
-      //console.log('click-init ' + JSON.stringify(e));
-      ctrl.nvd3chartClicked(e, 1);
-    };
-    this.trStatusChartoptions.chart['color'] = function (d, i) {
-      return ctrl.nvd3Colors[i % ctrl.nvd3Colors.length]
-    }
-
-    this.trTypeChartoptions.chart.pie.dispatch.elementClick = function (e) {
-      //console.log('click-init ' + JSON.stringify(e));
-      ctrl.nvd3chartClicked(e, 2);
-    };
-    this.trTypeChartoptions.chart['color'] = function (d, i) {
-      return ctrl.nvd3Colors[i % ctrl.nvd3Colors.length]
-    }
-
-    this.prepSegData();
-    this.filterByCmpnState(0);
-  }
-
-  sortTrailers(list, key, asc) {
-    var bag;
-    if (key == "dotDate") {
-      bag = this.sortTrailersByTime(list, key, asc);
-    } else if (key == "lastPingDate") {
-      bag = this.sortTrailersByTime(list, key, asc);
-    } else {
-      bag = list.sort((item1, item2) => {
-        if (asc == 0) {
-          if (item1[key] > item2[key]) {
-            return 1;
-          } else if (item1[key] < item2[key]) {
-            return -1;
-          } else {
-            return 0;
-          }
-        } else {
-          if (item1[key] < item2[key]) {
-            return 1;
-          } else if (item1[key] > item2[key]) {
-            return -1;
-          } else {
-            return 0;
-          }
-        }
-      });
-    }
-    return bag;
-  }
-
-  sortTrailersByTime(list, key, asc) {
-    var bag = list.sort((item1, item2) => {
-      if (item1[key] == null || item1[key] == "") {
-        return 1;
-      }
-      if (item2[key] == null || item2[key] == "") {
-        return -1;
-      }
-      var ary1 = item1[key].split(' ');
-      var date1 = ary1[0].split('-');
-      var item1D = new Date(date1[0], date1[1] - 1, date1[2]);
-      var tim1 = ary1[1].split('.');
-      var time1 = tim1[0].split(':');
-      item1D.setHours(time1[0], time1[1], time1[2]);
-
-      var ary2 = item2[key].split(' ');
-      var date2 = ary2[0].split('-');
-      var item2D = new Date(date2[0], date2[1] - 1, date2[2]);
-      var tim2 = ary2[1].split('.');
-      var time2 = tim2[0].split(':');
-      item2D.setHours(time2[0], time2[1], time2[2]);
-      if (asc == 0) {
-        if (item1D > item2D) {
-          return 1;
-        } else if (item1D < item2D) {
-          return -1;
-        } else {
-          return 0;
-        }
-      } else {
-        if (item1D < item2D) {
-          return 1;
-        } else if (item1D > item2D) {
-          return -1;
-        } else {
-          return 0;
-        }
-      }
-    });
-    return bag;
-  }
-
-
-  prepSegData() {
-    let map = new Map();
-    let trTypeMap = new Map();
-    this.typeChartLabels = [];
-    for (var i = 0; i < this.trailers.length; i++) {
-      var item = this.trailers[i];
-      if (!map.has(item.trailerStatus)) {
-        map.set(item.trailerStatus, true);
-      }
-      if (!trTypeMap.has(item.trailerType)) {
-        trTypeMap.set(item.trailerType, true);
-        this.typeChartLabels.push(item.trailerType);
-      }
-      if (item.company == 'CVEN') {
-        this.segData.cven.list.push(item);
-        var key = this.checkStatusOfTrailer(item);
-        this.segData.cven.byStatus[key].push(item);
-      } else if (item.company == "SRT") {
-        this.segData.srt.list.push(item);
-        var key = this.checkStatusOfTrailer(item);
-        this.segData.srt.byStatus[key].push(item);
-      } else if (item.company == "STAR") {
-        this.segData.star.list.push(item);
-        var key = this.checkStatusOfTrailer(item);
-        this.segData.star.byStatus[key].push(item);
-      }
-
-      if (item.country.toUpperCase() == 'USA') {
-        this.segByCountryData.usa.list.push(item);
-        this.segByCountryData.usa[item.company.toLowerCase()].push(item);
-      } else if (item.country.toUpperCase() == 'MEXICO') {
-        this.segByCountryData.mexico.list.push(item);
-        this.segByCountryData.mexico[item.company.toLowerCase()].push(item);
-      } else if (item.country.toUpperCase() == 'CANADA') {
-        this.segByCountryData.canada.list.push(item);
-        this.segByCountryData.canada[item.company.toLowerCase()].push(item);
-      }
-    }
-
-    this.segData.cven.byType = this.segrigateTrailerByType(this.segData.cven.list, 'CVEN');
-    this.segData.srt.byType = this.segrigateTrailerByType(this.segData.srt.list, 'SRT');
-    this.segData.star.byType = this.segrigateTrailerByType(this.segData.star.list, 'STAR');
-
-    console.log("byType");
-    console.log(this.segData.cven.byType);
-    console.log("byStatus");
-    console.log(this.segData.cven.byStatus);
-
-  }
-
-  checkStatusOfTrailer(item) {
-    if (item.isPool == 1) {
-      return 'POOL';
-    } else if (this.isInactive(item.lastPingDate)) {
-      return 'INACT';
-    } else if (item.trailerStatus == 'AVL') {
-      return item.trailerStatus;
-    } else if (item.trailerStatus == 'PLN') {
-      return item.trailerStatus;
-    } else {
-      return 'OTH';
-    }
-  }
-
-  filterByCmpnState(choice) {
-    this.showGrid = false;
-    this.gRowCount = 50;
-    var lot = this.cloneObj(this.filterByCmp());
-    lot = this.filterByCmpnCountry(lot);
-    var lotSize = 0;
-    if (choice == 0) {
-      this.byCmpTotal.gTot = this.segByCountryData[this.selectedCountry.value.toLowerCase()].list.length;
-      this.byCmpTotal.cven = this.segByCountryData[this.selectedCountry.value.toLowerCase()].cven.length;
-      this.byCmpTotal.srt = this.segByCountryData[this.selectedCountry.value.toLowerCase()].srt.length;
-      this.byCmpTotal.star = this.segByCountryData[this.selectedCountry.value.toLowerCase()].star.length;
-    }
-
-    this.trStatusChartdata = [];
-    if (this.selectedState.country == "") {
-
-      var item = { key: 'Planned', y: lot.byStatus.PLN.length, list: lot.byStatus.PLN };
-      lotSize += lot.byStatus.PLN.length
-      this.trStatusChartdata.push(item);
-      var item = { key: 'Available', y: lot.byStatus.AVL.length, list: lot.byStatus.AVL };
-      lotSize += lot.byStatus.AVL.length
-      this.trStatusChartdata.push(item);
-      var item = { key: 'Pool', y: lot.byStatus.POOL.length, list: lot.byStatus.POOL };
-      lotSize += lot.byStatus.POOL.length
-      this.trStatusChartdata.push(item);
-      var item = { key: 'Inactive', y: lot.byStatus.INACT.length, list: lot.byStatus.INACT };
-      lotSize += lot.byStatus.INACT.length
-      this.trStatusChartdata.push(item);
-      var item = { key: 'Others', y: lot.byStatus.OTH.length, list: lot.byStatus.OTH };
-      lotSize += lot.byStatus.OTH.length
-      this.trStatusChartdata.push(item);
-
-      this.trTypeChartData = [];
-      lot.byType.forEach(element => {
-        var item = { key: element.label, y: element.length, list: element.list };
-        this.trTypeChartData.push(item);
-      });
-      this.lotSize = lotSize;
-    } else if (this.selectedState.country != "") {
-      var bag = this.filterByState(lot.byStatus.PLN);
-      var item1 = { key: 'Planned', y: bag.length, list: bag };
-      lotSize += bag.length;
-      this.trStatusChartdata.push(item1);
-
-      bag = this.filterByState(lot.byStatus.AVL);
-      item1 = { key: 'Available', y: bag.length, list: bag };
-      lotSize += bag.length;
-      this.trStatusChartdata.push(item1);
-
-      bag = this.filterByState(lot.byStatus.POOL);
-      item1 = { key: 'Pool', y: bag.length, list: bag };
-      lotSize += bag.length;
-      this.trStatusChartdata.push(item1);
-
-      bag = this.filterByState(lot.byStatus.INACT);
-      item1 = { key: 'Inactive', y: bag.length, list: bag };
-      lotSize += bag.length;
-      this.trStatusChartdata.push(item1);
-
-      bag = this.filterByState(lot.byStatus.OTH);
-      item1 = { key: 'Others', y: bag.length, list: bag };
-      lotSize += bag.length;
-      this.trStatusChartdata.push(item1);
-
-      this.trTypeChartData = [];
-      lot.byType.forEach(element => {
-        bag = this.filterByState(element.list);
-        var item = { key: element.label, y: bag.length, list: bag };
-        this.trTypeChartData.push(item);
-      });
-      this.lotSize = lotSize;
-    }
-  }
-
-  filterByCmpnCountry(lot) {
-    this.showGrid = false;
-    this.gRowCount = 50;
-    var lotSize = 0;
-
-    lot.byStatus.PLN = this.filterByCountry(lot.byStatus.PLN);
-    lot.byStatus.AVL = this.filterByCountry(lot.byStatus.AVL);
-    lot.byStatus.POOL = this.filterByCountry(lot.byStatus.POOL);
-    lot.byStatus.INACT = this.filterByCountry(lot.byStatus.INACT);
-    lot.byStatus.OTH = this.filterByCountry(lot.byStatus.OTH);
-
-    this.trTypeChartData = [];
-    lot.byType.forEach(element => {
-      element.list = this.filterByCountry(element.list);
-      element.length = element.list.length;
-    });
-    this.lotSize = lotSize;
-    return lot;
-  }
-
-  filterByCmp() {
-    return this.segData[this.selectedCmp.value.toLowerCase()];
-  }
-
-  filterByState(list) {
-    var bag = [];
-    list.forEach(element => {
-      if (this.selectedState.stateCode == element.state) {
-        bag.push(element);
-      }
-    });
-    return bag;
-  }
-
-  filterByCountry(list) {
-    var bag = [];
-    list.forEach(element => {
-      if (this.selectedCountry.value.toLowerCase() == element.country.toLowerCase()) {
-        bag.push(element);
-      }
-    });
-    return bag;
-  }
-
-
-  public testFunction(val: any) {
-    console.log('val', val);
-  }
   // events
-
+  public chartClicked(e: any): void {
+    console.log(e);
+  }
 
   public chartHovered(e: any): void {
     console.log(e);
   }
 
-  public nvd3chartClicked(e: any, type): void {
-    //console.log(e);
-    //console.log(e.active[0]._index);
-    this.showGrid = true;
-    this.gRowCount = 50;
-    if (type == 1) {
-      this.selectedLable = e.data.key;
-      this.allTrailler = this.sortTrailersByTime(e.data.list, 'lastPingDate', 0);
-    } else if (type == 2) {
-      //var ind=e.dataactive[0]._index;
-      this.selectedLable = e.data.key;
-      this.allTrailler = this.sortTrailersByTime(e.data.list, 'lastPingDate', 0);
+  closeHistory() {
+    if (this.tableToShow == 1) {
+      this.toShowPlnVsActTable = true;
+    } else if (this.tableToShow == 2) {
+      this.toShowPlnVsActNAPTable = true;
+    } else if (this.tableToShow == 3) {
+      this.toShowFutAvlTable = true;
     }
+    this.historyConfig.showHistory = false;
   }
 
-  stateSelected(item) {
-    this.showGrid = false;
-    this.gRowCount = 50;
-    this.selectedState = item;
+  showTrHistory(item) {
+    this.selectedOrder = item;
+    this.toShowFutAvlTable = false;
+    this.toShowPlnVsActTable = false;
+    this.toShowPlnVsActNAPTable = false;
+
+
+    // var orderLat=34.040537;
+    // var orderLng=-117.728784;
+
+    // var tmwLat=34.040301;
+    // var tmwLng=-117.729578;
+
+    // var tmsLat=34.040322;
+    // var tmsLng=-117.728956;
+
+    var orderLat = item.orderLatitude;
+    var orderLng = item.orderLongitude;
+
+    var tmwLat = item.tMWTrailerLatitude;
+    var tmwLng = item.tMWTrailerLongitude;
+
+    var tmsLat = item.tMSTrailerLatitude;
+    var tmsLng = item.tMSTrailerLongitude;
+
+    this.mapTrailers = [];
+    this.mapTrailers[0] = {
+      latitude: tmwLat,
+      longitude: tmwLng,
+      trailerID: item.tMWOrderTrailerID
+    };
+    this.mapTrailers[1] = {
+      latitude: tmsLat,
+      longitude: tmsLng,
+      trailerID: item.tMSTrailerID
+    };
+
+    this.trMapConfig.lat = orderLat;
+    this.trMapConfig.lng = orderLng;
+
+
+    this.historyConfig['trailer'] = item;
+    this.historyConfig.showHistory = true;
+    
   }
 
-  cmpSelected(item) {
-    this.showGrid = false;
-    this.gRowCount = 50;
-    this.selectedCmp = item;
+  getOrderStats() {
+        console.log("orderStats data recieved");
+        this.dataSet = this.config.trailers;
+        var bag = [
+          {
+            "label": "Consistent",
+            "value": 0,
+            "list": []
+          },
+          {
+            "label": "Inconsistent - DSP",
+            "value": 0,
+            "list": []
+          },
+          {
+            "label": "Inconsistent - STD",
+            "value": 0,
+            "list": []
+          }
+
+        ];
+        this.lotSize = 0;
+        this.config.trailers.forEach(element => {
+          if (element.isMovingAsPlanned == 1) {
+            bag[1].value++;
+            bag[1].list.push(element);
+            this.lotSize++;
+          } else if (element.isMovingAsPlanned == 2) {
+            bag[0].value++;
+            bag[0].list.push(element);
+            this.lotSize++;
+          } else if (element.isMovingAsPlanned == 3) {
+            bag[2].value++;
+            bag[2].list.push(element);
+            this.lotSize++;
+          } else if (element.isMovingAsPlanned == 4) {
+            bag[0].value++;
+            bag[0].list.push(element);
+            this.lotSize++;
+          } else if (element.isMovingAsPlanned == 5) {
+            // bag[2].value++;
+            // bag[2].list.push(element);
+          } else { }
+        });
+        if (this.config.trailers.length > 0) {
+          //this.lotSize=data.dataSet.length;
+          this.plnVsActdata = bag;
+        } else {
+          this.plnVsActdata = bag;
+          this.lotSize = 0;
+        }
+        //}
+        this.OrderStatsResp = this.config.isAvail;
   }
 
-  countrySelected(item) {
-    this.showGrid = false;
-    this.gRowCount = 50;
-    this.selectedCountry = item;
-    if (item.value == "USA") {
-      this.toShowStateFilter = true;
-    } else {
-      this.toShowStateFilter = false;
-    }
-  }
+  getFutureAVLOrders() {
+   
+    //this.FutureAVLOrdersResp = false;
 
-
-  segrigateTrailerByType(list, cmp) {
-    let bag = [];
-    this.typeChartLabels.forEach(obj => {
-      var item = { length: 0, list: [], label: obj, percent: 0 };
-      bag.push(item);
+    console.log("getFutureAVLOrders data recieved");
+    this.futAvlOrder = this.config.trailers;
+    var bag = { key: "", values: [] }
+    this.futAvlOrder.forEach(element => {
+      var obj = {
+        "label": "",
+        "value": 0,
+        "list": []
+      };
+      obj.label = element.orderStartDate;
+      obj.value = element.orderStartDateValues.length;
+      obj.list = element.orderStartDateValues;
+      bag.values.push(obj);
     });
+    this.futAvlData = [];
+    this.futAvlData.push(bag);
+    this.FutureAVLOrdersResp = this.config.isAvail;
 
-    for (let i = 0; i < list.length; i++) {
-      var item = list[i];
-      var ind = this.typeChartLabels.indexOf(item.trailerType);
-      if (ind != -1) {
-        bag[ind].length++;
-        bag[ind].list.push(item);
-      }
-    }
-    return bag;
   }
 
 
-  private getAllStates() {
-    //alert("hi");
-    var url = config.baseUrl + "/CommonService/api/State";
-    this.selectedState = { country: "", stateCode: "", stateDesc: "Select a state" };
-    this.allStates = [{ country: "", stateCode: "", stateDesc: "Select a state" }];
-    this.http.get(url).map(res => res.json())
+  syncWithTMW(item) {
+    let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
+    let options = new RequestOptions({ headers: headers });
+    let url = config.baseUrl + "/HomeService/api/UpdateTMWTrailerInOrderAllocation";
+    this.doDataSyncResp = false;
+    var body = { "OAID": item.oAID, "tMSTrailerID": item.tMSTrailerID, "tMWOrderTrailerID": item.tMWOrderTrailerID };
+
+    this.http.post(url, body, options).map(res => res.json())
       .subscribe(
       (data) => {
-        console.log("getAllStates data recieved");
-        this.allStates = this.allStates.concat(data);
+        console.log("doDataSync data recieved");
+        this.doDataSyncResp = true;
+        if (data.status == 1) {
+          this.action.heading = "Data Sync.";
+          this.action.body = "Successfully synchronized data in TMS";
+          $('#result').modal('show');
+          this.toShowFutAvlTable = false;
+          this.toShowPlnVsActTable = false;
+          this.toShowPlnVsActNAPTable = false;
+          this.historyConfig.showHistory = false;
+          this.getOrderStats();
+        } else {
+          this.action.heading = "Data Sync.";
+          this.action.body = "Error in synchronizing data in TMS";
+          $('#result').modal('show');
+        }
+
       }, //For Success Response
-      (err) => { console.log("getAllStates error recieved"); } //For Error Response
+      (err) => {
+        console.log("doDataSync error recieved");
+        this.doDataSyncResp = true;
+        this.action.heading = "Data Sync.";
+        this.action.body = "Error in synchronizing data";
+        $('result').modal('show');
+      } //For Error Response
       );
   }
 
-  cloneObj(list: any) {
-    var clone = JSON.parse(JSON.stringify(list));
-    return clone;
+  allocateInTMW(item) {
+
+    var creds = "username=" + config.username + "&password=" + config.password;
+
+    let authToken = "Basic";
+    let headers = new Headers({ 'Accept': 'application/json' });
+    headers.append('Authorization', 'Basic ' +
+      btoa(config.username + ':' + config.password));
+
+    //let options = new RequestOptions({ headers: headers });
+    let options = {
+      headers: headers
+    };
+    let postBody = {
+      "order": item.orderID,
+      "trailer": item.tMSTrailerID,
+      "legs": []
+    };
+    //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
+    let url = config.ctgApiUrl + "/assets/order/assign_trailer";
+    this.doDataSyncResp = false;
+
+    this.http.post(url, postBody, options).map(res => res.json())
+      .subscribe(
+      (data) => {
+        console.log("allocateInTMW data recieved");
+        this.doDataSyncResp = true;
+        if (data.trailer == item.tMSTrailerID) {
+          console.log("TMS Trailers matches with TMW Trailer");
+          this.action.heading = "Data Sync.";
+          this.action.body = "Successfully synchronized data in TMS";
+          $('#result').modal('show');
+        } else {
+          console.log("TMS Trailers do not match with TMW Trailer");
+          this.action.heading = "Data Sync.";
+          this.action.body = "Error in synchronizing data in TMS";
+          $('#result').modal('show');
+        }
+        //this.allocateInTMS();
+      }, //For Success Response
+      (err) => {
+        console.log("allocateInTMW error recieved");
+        this.action.heading = "Data Sync.";
+        this.action.body = "Error in synchronizing data in TMS";
+        $('#result').modal('show');
+        this.doDataSyncResp = true;
+      } //For Error Response
+      );
   }
 
   tableScrolled(this: any) {
@@ -612,101 +559,22 @@ export class YardDashComponent implements OnInit {
     }
   }
 
-  formatDateTime(item: any, dt) {
-    if (!item) {
-      return item;
-    }
-    else if (item != "") {
-      //var str=item.toUpperCase();
-      if (item.toUpperCase() != "UNKNOWN") {
-        var ary = item.split(' ');
-        var date = ary[0].split('-');
-        var newD = new Date(date[0], date[1] - 1, date[2]);
-
-        var tim = ary[1].split('.');
-        var time = tim[0].split(':');
-
-        newD.setHours(time[0], time[1], time[2]);
-        //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
-        if (dt == 1) {
-          var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + tim[0];
-        } else {
-          var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear();
-        }
-        return SDate;
-      } else {
-        return item;
-      }
-    } else {
-      return item;
-    }
-  }
-
-  getGridData(item) {
-    this.gRowCount = 50;
-    this.selectedLable = item.key;
-    this.allTrailler = item.list;
-    this.showGrid = true;
-  }
-
-  public isInactive(item) {
-    var date1: any = new Date();
-    var date2: any = new Date();
-
+  formatDateTime(item: any) {
     if (item != "") {
       if (item != "UNKNOWN") {
         var ary = item.split(' ');
         var date = ary[0].split('-');
         var time = ary[1].split(':');
         var secs = time[2].split('.');
-        date2 = new Date(date[0], date[1] - 1, date[2]);
-        date2.setHours(time[0], time[1], time[2]);
-        var hours = Math.abs(date1 - date2) / 36e5;
-        if (hours <= 72) {
-          return false;
-        }
+        var newD = new Date(date[0], date[1] - 1, date[2]);
+        //var SDate=newD.getMonth()+"/"+newD.getDay()+"/"+newD.getFullYear();      
+        var SDate = (newD.getMonth() + 1) + '/' + newD.getDate() + '/' + newD.getFullYear() + " " + time[0] + ":" + time[1] + ":" + secs[0];
+        return SDate;
       } else {
-        return true;
+        return item;
       }
     }
 
-    return true;
-  }
-
-  saveToFile(data) {
-    data = JSON.stringify(data, undefined, 4);
-    var filename = "dow.txt";
-    var blob = new Blob([data], { type: 'text/json' }),
-      e = document.createEvent('MouseEvents'),
-      a = document.createElement('a')
-
-    a.download = filename
-    a.href = window.URL.createObjectURL(blob)
-    a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
-    e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-    a.dispatchEvent(e)
-
-  }
-
-  getStateTrailersStatus() {
-
-    //let url="http://61.16.133.244/HomeService/api/StatesTrailerCounts";
-    let url = config.baseUrl + "/YardMGMTService/api/YardTrailers";
-    this.http.get(url).map(res => res.json())
-      .subscribe(
-      (data) => {
-        console.log("StatesTrailerCounts data recieved");
-        this.trailers = data.dataSet;
-        var bag = [];
-        this.trailers.forEach(element => {
-          if (element.dOTDueDays <= 7) {
-            bag.push(element);
-          }
-        });
-
-      }, //For Success Response
-      (err) => { console.log("StatesTrailerCounts error recieved"); } //For Error Response
-      );
   }
 
 }
