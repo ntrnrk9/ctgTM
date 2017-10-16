@@ -63,7 +63,7 @@ export class Pool1MangPageComponent {
         {regionID:"Mid_West",list:[{label:'pa01'},{label:'md01'}]}];
     srgnList:any=[];
     selectedRgn={regionID:"Select a region",list:[]};
-    selectedSRgn={regionID:"Select a sub region",list:[]};
+    selectedSRgn={label:"Select a sub region",list:[]};
     rgnSelectConfig = {
         filter: false,
         multisel: false
@@ -72,7 +72,8 @@ export class Pool1MangPageComponent {
         filter: false,
         multisel: true,
         singleSelLabel:"Sub region",
-        multiSelLabel:"option(s) selected"
+        multiSelLabel:"option(s) selected",
+        isDisabled:false
     };
     data: any[] = [];
     result: any[] = [];
@@ -174,13 +175,15 @@ export class Pool1MangPageComponent {
 
     selectRgn(item) {
         if (item.regionID != "Select a region") {
+
             let bag=item.subRegionID.split(",");
             let lot=[];
             bag.forEach(element => {
-               let obj={ label:element,list:[]};
+               let obj={ label:element,list:[],selected:false};
                lot.push(obj);
             });
             this.srgnList = lot;
+            this.srgnSelectConfig.isDisabled=false;
         }
 
     }
@@ -1262,7 +1265,21 @@ export class Pool1MangPageComponent {
             let options = new RequestOptions({ headers: headers });
             this.plannerCrud.planner=this.plannerCrud.planner.toUpperCase();
             this.plannerCrud.plannerCode=this.plannerCrud.plannerCode.toUpperCase();
+            let subRegionList=[];
+            let str="";
+            this.srgnList.forEach(element => {
+                if (element.selected) {
+                    subRegionList.push(element);
+                    if (str == "") {
+                        str = element.label;
+                    } else {
+                        str += ","+element.label;
+                    }
+                }
+            });
 
+            this.plannerCrud['regionID']=this.selectedRgn.regionID;
+            this.plannerCrud['subRegionID']=str;
             let url = config.baseUrl + "/PoolMGMTService/api/InsertPlanner";
             let object = this;
             this.http.post(url, this.plannerCrud, options).map(res => res.json())
@@ -1581,6 +1598,11 @@ export class Pool1MangPageComponent {
     }
 
     private toAddPlanner() {
+        this.srgnList.forEach(element => {
+            element.selected=false;
+        });
+        this.selectedRgn={regionID:"Select a region",list:[]};
+        this.selectedSRgn={label:"Select a sub region",list:[]};
         this.isValidFields['isValidPlannerCode']=true;
         this.isValidFields['isValidPlannerName']=true;
         this.plannerCrud={plannerId: -1, planner: "", plannerCode: ""};

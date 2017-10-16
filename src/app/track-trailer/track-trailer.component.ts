@@ -660,6 +660,9 @@ export class TrackTrailerComponent {
         }
         var bag = []
         this.allTrailers.forEach(element => {
+            if(element.trailerID=="R3003"){
+                console.log("ro");
+            }
             if (trList.includes(element.trailerID)) {
                 bag.push(element);
             }
