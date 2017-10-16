@@ -663,7 +663,7 @@ export class TrackTrailerComponent {
             }
         });
         this.allTraillerSubSet = bag;
-        this.allTrailers = bag;
+        //this.allTrailers = bag;
     }
     selectTrStatus(item: any) {
         this.allTraillerSubSet = [];
