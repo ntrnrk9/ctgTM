@@ -33,16 +33,18 @@ export class SingleselectComponent implements OnInit {
 
       });
       if (count == 0) {
-        this.selectedItem = { lable: "Company" };
+        //this.selectedItem = { lable: "Company" };
+        this.selectedItem[this.key] = this.config.singleSelLabel;
       } else if (count==1){
         this.items.forEach(element => {
           if(element.selected){
-            this.selectedItem = { lable: element.lable };
+            this.selectedItem[this.key] = element[this.key];
           }
         });
       } else {
-        let value = count + " Company(s) selected"
-        this.selectedItem = { lable: value };
+        //let value = count + " Company(s) selected";
+        let value = count + " "+this.config.multiSelLabel;
+        this.selectedItem[this.key] = value;
       }
 
     }

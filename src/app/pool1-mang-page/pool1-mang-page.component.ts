@@ -55,7 +55,25 @@ export class Pool1MangPageComponent {
     sRList: any = [{ lable: "Shipper", value: 0 }, { lable: "Receiver", value: 1 }]
     selectedBrand: any = { lable: "Covenant", value: "CVEN" };
     brandList: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "Both", value: "ALL" }];
-    brandListForAdd: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }]
+    brandListForAdd: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }];
+    rgnList:any=[
+        {regionID:"N_East",list:[{label:'ri01'},{label:'ma01'}]},
+        {regionID:"Pac_NW",list:[{label:'me01'},{label:'ct01'}]},
+        {regionID:"OH_Vly",list:[{label:'vt01'},{label:'nj01'}]},
+        {regionID:"Mid_West",list:[{label:'pa01'},{label:'md01'}]}];
+    srgnList:any=[];
+    selectedRgn={regionID:"Select a region",list:[]};
+    selectedSRgn={regionID:"Select a sub region",list:[]};
+    rgnSelectConfig = {
+        filter: false,
+        multisel: false
+    };
+    srgnSelectConfig = {
+        filter: false,
+        multisel: true,
+        singleSelLabel:"Sub region",
+        multiSelLabel:"option(s) selected"
+    };
     data: any[] = [];
     result: any[] = [];
     pageNum: Number = 1;
@@ -152,6 +170,23 @@ export class Pool1MangPageComponent {
     private sortByTT(prop) {
         this.ttAsc = !this.ttAsc;
         this.sortResults(prop,this.ttAsc);
+    }
+
+    selectRgn(item) {
+        if (item.regionID != "Select a region") {
+            let bag=item.subRegionID.split(",");
+            let lot=[];
+            bag.forEach(element => {
+               let obj={ label:element,list:[]};
+               lot.push(obj);
+            });
+            this.srgnList = lot;
+        }
+
+    }
+
+    selectSRgn(item){
+
     }
 
     sortResults(prop, asc) {
@@ -762,6 +797,26 @@ export class Pool1MangPageComponent {
             );
     }
 
+    private getAllRegions() {
+        //alert("hi");
+        this.allCsrResp = false;
+        let headers = new Headers({ 'Content-Type': 'text/plain' });
+        let options = new RequestOptions({ headers: headers });
+        let obj = { 'csr': 0, 'csrCode': 0 };
+        let url = config.baseUrl + "/CommonService/api/RegionAndSubRegion";
+        this.http.get(url).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("getAllCsr data recieved");
+                this.rgnList = data.dataSet;
+                this.allCsrResp = true;
+            }, //For Success Response
+            (err) => {
+                console.log("getAllCsr error recieved"); this.allCsrResp = true;
+            } //For Error Response
+            );
+    }
+
     private getAllPlanner() {
         //alert("hi");
         this.allPlannersResp=false;
@@ -853,6 +908,7 @@ export class Pool1MangPageComponent {
         //this.ob['groups'] = [];
         this.selectVarience(this.selectedVarience);
         //this.getAllCities();
+        this.getAllRegions();
         this.getAllStates();
         this.getAllCompany();
         this.getAllCsr();

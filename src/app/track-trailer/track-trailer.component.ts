@@ -44,7 +44,9 @@ export class TrackTrailerComponent {
     selectedModel = { lable: "All types", value: "-1" };
     cmpSelectConfig = {
         filter: false,
-        multisel: true
+        multisel: true,
+        singleSelLabel:"Company",
+        multiSelLabel:"company(s) selected"
     };
     modeSelectConfig = {
         filter: false
