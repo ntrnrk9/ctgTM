@@ -1064,17 +1064,17 @@ export class AllocationPageComponent {
 
 
         let options = new RequestOptions({ headers: headers });
-        //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
-        //let url=config.ctgApiUrl+"/assets/tractors";
-        let url = config.baseUrl+"/AllocationService/api/TruckDetails";
+        let url="https://api.drivenanalyticsolutions.com/ctg/assets/tractors";
+        // let url=config.ctgApiUrl+"/assets/tractors";
+        // let url = config.baseUrl+"/AllocationService/api/TruckDetails";
         this.http.get(url, {
             headers: headers
         }).map(res => res.json())
             .subscribe(
             (data) => {
                 console.log("tractors data recieved");
-                //this.trucks.groups = data.data;
-                this.trucks.groups = data.dataSet;
+                this.trucks.groups = data.data;
+                // this.trucks.groups = data.dataSet;
                 for (var i = 0; i < this.trucks.groups.length; i++) {
                     let obj = this.trucks.groups[i];
                     var dist = this.calcTruckDistance(obj['location']['position']['lng'], obj['location']['position']['lat']);
@@ -1516,8 +1516,8 @@ export class AllocationPageComponent {
             "trailer": this.selectedTrailer.trailerID,
             "legs": this.selectedOrder.legs
         };
-        //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
-        let url = config.ctgApiUrl + "/assets/order/assign_trailer";
+        let url = "https://test.drivenanalyticsolutions.com/ctg/assets/order/assign_trailer";
+        // let url = config.ctgApiUrl + "/assets/order/assign_trailer";
         
         
         this.http.post(url,postBody,options ).map(res => res.json())
