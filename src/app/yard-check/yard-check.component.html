@@ -1,6 +1,10 @@
 <div>
+    <div *ngIf="historyConfig.showHistory"> 
+        <!-- <div> -->
+        <app-history-page [(config)]="historyConfig"></app-history-page>
+    </div>
 
-  <div class="row page-container" style="margin:0px">
+  <div [hidden]="historyConfig.showHistory" class="row page-container" style="margin:0px">
 
     <div class="col-md-12 page-heading" style="position:relative">
       <b>Locate Trailer</b>
@@ -38,7 +42,7 @@
         <div *ngIf="mgToggleFlag">
           
           <div [ngClass]="{'transparent': !trailerStatusResp}">
-            <gmtest [trailers]="allTrailers" [(item)]="searchID" [(loc)]="location" [(config)]="mapConfig"></gmtest>
+            <gmtest [trailers]="allTrailers" [(item)]="searchID" [(loc)]="location" [(config)]="mapConfig" (configChange)="showTrHistory(mapConfig.selectedMarker)"></gmtest>
           </div>
 
           <div *ngIf="!trailerStatusResp" class="loader"><img src="../../assets/images/loader.gif" /></div>
