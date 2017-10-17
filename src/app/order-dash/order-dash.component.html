@@ -19,7 +19,12 @@
             <div style="text-align: left;padding-top: 10px;">
               <label style="font-size: 25px;font-weight: normal;">Planned vs Actual</label>
             </div>
-            <div>
+            <div *ngIf="!pvaNoData" class="centered" style="
+                        height: 300px;
+                        font-weight: bold;
+                        font-size: 20px;
+                    "> No Data Available</div>
+            <div *ngIf="pvaNoData">
               <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3>
             </div>
           </div>

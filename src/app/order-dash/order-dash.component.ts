@@ -20,7 +20,8 @@ export class OrderDashComponent implements OnInit {
   mapTrailers=[];
   selectedOrder={};
   trMapConfig:any={lat:35.96494,lng:-83.95384,zoom:10,mapType:'roadmap',marker:-1};
-
+  pvaNoData=false;
+  
   constructor(private http: Http, private cdr: ChangeDetectorRef) {
     this.getOrderStats();
     this.getFutureAVLOrders();
@@ -486,6 +487,9 @@ export class OrderDashComponent implements OnInit {
       .subscribe(
       (data) => {
         console.log("getFutureAVLOrders data recieved");
+        if(data.dataSet.length==0){
+          this.pvaNoData=true;
+        }
         this.futAvlOrder = data.dataSet;
         var bag={key:"",values:[]}
         this.futAvlOrder.forEach(element => {
