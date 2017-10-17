@@ -18,7 +18,7 @@ export class SingleselectComponent implements OnInit {
 
   selectItem(item: any) {
     console.log("searchFilter: " + JSON.stringify(item[this.key]));
-    this.selectedItem = item;
+    this.selectedItem = this.cloneObj(item);
     this.emit();
   }
 
@@ -64,6 +64,11 @@ export class SingleselectComponent implements OnInit {
 
   ngOnChange() {
     this.ngOnInit()
+  }
+
+  cloneObj(list: any) {
+    var clone = JSON.parse(JSON.stringify(list));
+    return clone;
   }
 
 }

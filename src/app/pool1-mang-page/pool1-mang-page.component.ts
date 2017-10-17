@@ -64,6 +64,7 @@ export class Pool1MangPageComponent {
     srgnList:any=[];
     selectedRgn={regionID:"Select a region",list:[]};
     selectedSRgn={label:"Select a sub region",list:[]};
+    actualRecode="";
     rgnSelectConfig = {
         filter: false,
         multisel: false
@@ -173,7 +174,7 @@ export class Pool1MangPageComponent {
         this.sortResults(prop,this.ttAsc);
     }
 
-    selectRgn(item) {
+    selectRgn(item,option) {
         if (item.regionID != "Select a region") {
 
             let bag=item.subRegionID.split(",");
@@ -184,6 +185,13 @@ export class Pool1MangPageComponent {
             });
             this.srgnList = lot;
             this.srgnSelectConfig.isDisabled=false;
+        }
+
+        if(option==2){
+            if(this.actualRecode!=item.regionID){
+                this.actualRecode=item.regionID;
+                this.selectedSRgn.label="Select a sub region";
+            }
         }
 
     }
@@ -921,8 +929,37 @@ export class Pool1MangPageComponent {
     }
 
     private toEditPlanner(item,index){
+        this.rgnList.forEach(element => {
+            if(element.regionID==item.regionID){
+                this.actualRecode=item.regionID;
+                this.selectedRgn.regionID=this.cloneObj(element.regionID);
+                this.selectRgn(element,2);
+            }
+        });
+        
+        let count=0;
+        let op=""
+        this.srgnList.forEach(element => {
+            if(item.subRegionID.includes(element.label)){
+                element.selected=true;
+                count++;
+                op=(count==1)?element.label:"";
+            }
+        });
+
+        if(count==0){
+            this.selectedSRgn.label="Select a sub region";
+        }else if(count==1){
+            this.selectedSRgn.label=op;
+        }else{
+            this.selectedSRgn.label=count+" option(s) selected";
+        }
+
+        //this.selectedSRgn={label:"Select a sub region",list:[]};
         this.isValidFields['isValidPlannerCode']=true;
         this.isValidFields['isValidPlannerName']=true;
+        this.isValidFields['isValidRegion']=true;
+        this.isValidFields['isValidSubRegion']=true;
         this.plannerCrud.planner=item.planner;
         this.plannerCrud.plannerCode=item.plannerCode;
         this.plannerCrud.plannerId=item.plannerId;
@@ -1320,6 +1357,22 @@ export class Pool1MangPageComponent {
         
         this.plannerCrud.planner=this.plannerCrud.planner.toUpperCase();
         this.plannerCrud.plannerCode=this.plannerCrud.plannerCode.toUpperCase();
+
+        let subRegionList=[];
+        let str="";
+        this.srgnList.forEach(element => {
+            if (element.selected) {
+                subRegionList.push(element);
+                if (str == "") {
+                    str = element.label;
+                } else {
+                    str += ","+element.label;
+                }
+            }
+        });
+
+        this.plannerCrud['regionID']=this.selectedRgn.regionID;
+        this.plannerCrud['subRegionID']=str;
         // if(orPlanner==newPlanner && orPlannerCode==newPlannerCode){
         //     console.log("no edit made");
         //     $('#editPlannerModal').modal('hide');
@@ -1390,16 +1443,28 @@ export class Pool1MangPageComponent {
     validatePlanner(){
         var isnameValid=false,isCodeValid=false;
         var isnamelenthy=false,isCodelenthy=false;
+        var isRgnVaild=false,isSrgnValid=false;
         var codeValidator=/^[a-zA-Z0-9]+$/;
         var nameValidatoe=/^[a-zA-Z\s\-']+$/;
         isnameValid=nameValidatoe.test(this.plannerCrud.planner);
         isCodeValid=codeValidator.test(this.plannerCrud.plannerCode);
         
+        if(this.selectedRgn.regionID!="Select a region"){
+            isRgnVaild=true;
+        }
+
+        if(this.selectedSRgn.label!="Select a sub region"){
+            isSrgnValid=true;
+        }
+        
         isnamelenthy=(this.plannerCrud.planner.length>70)?false:true;
         isCodelenthy=(this.plannerCrud.plannerCode.length>20)?false:true;
         this.isValidFields['isValidPlannerCode']=(isCodeValid && isCodelenthy)?true:false;
         this.isValidFields['isValidPlannerName']=(isnameValid && isnamelenthy)?true:false;
-        if(this.isValidFields['isValidPlannerCode'] && this.isValidFields['isValidPlannerName']){
+        this.isValidFields['isValidRegion']=isRgnVaild;
+        this.isValidFields['isValidSubRegion']=isSrgnValid;
+        if (this.isValidFields['isValidPlannerCode'] && this.isValidFields['isValidPlannerName']
+            && isSrgnValid && isRgnVaild) {
             return true;
         }
         return false;
@@ -1601,10 +1666,13 @@ export class Pool1MangPageComponent {
         this.srgnList.forEach(element => {
             element.selected=false;
         });
+        this.srgnList = [];
         this.selectedRgn={regionID:"Select a region",list:[]};
         this.selectedSRgn={label:"Select a sub region",list:[]};
         this.isValidFields['isValidPlannerCode']=true;
         this.isValidFields['isValidPlannerName']=true;
+        this.isValidFields['isValidRegion']=true;
+        this.isValidFields['isValidSubRegion']=true;
         this.plannerCrud={plannerId: -1, planner: "", plannerCode: ""};
         
     }
@@ -1726,6 +1794,11 @@ export class Pool1MangPageComponent {
         this.plannerClearAllFun();
         this.selectVarience(this.selectedVarience);
         this.masterFilter();
+    }
+
+    cloneObj(list: any) {
+        var clone = JSON.parse(JSON.stringify(list));
+        return clone;
     }
 
 }

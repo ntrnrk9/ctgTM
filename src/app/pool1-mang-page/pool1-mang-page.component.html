@@ -293,12 +293,10 @@
                                     </td>
                                     <td style="text-align:center;width:34%">
                                         <button type="button" class="action" (click)="toEditCSR(item,i)">
-                                            <img width="20px" src="../../assets/images/markers/edit.png" data-toggle="tooltip"
-                                                title="Edit" />
+                                            <img width="20px" src="../../assets/images/markers/edit.png" data-toggle="tooltip" title="Edit" />
                                         </button>
                                         <button class="action" (click)="getConfirmationToDeleteCP(item,'CSR')">
-                                            <img width="20px" src="../../assets/images/markers/delete.png" data-toggle="tooltip"
-                                                title="Delete" />
+                                            <img width="20px" src="../../assets/images/markers/delete.png" data-toggle="tooltip" title="Delete" />
                                         </button>
                                         <!-- <button class="action"><img width="20px" src="../../assets/images/markers/reposition.png" data-toggle="tooltip" title="Reposition"/></button> -->
                                     </td>
@@ -347,12 +345,10 @@
                                     </td>
                                     <td style="text-align:center;width:34%">
                                         <button type="button" class="action" (click)="toEditPlanner(item,i)">
-                                            <img width="20px" src="../../assets/images/markers/edit.png" data-toggle="tooltip"
-                                                title="Edit" />
+                                            <img width="20px" src="../../assets/images/markers/edit.png" data-toggle="tooltip" title="Edit" />
                                         </button>
                                         <button class="action" (click)="getConfirmationToDeleteCP(item,'planner')">
-                                            <img width="20px" src="../../assets/images/markers/delete.png" data-toggle="tooltip"
-                                                title="Delete" />
+                                            <img width="20px" src="../../assets/images/markers/delete.png" data-toggle="tooltip" title="Delete" />
                                         </button>
                                     </td>
                                 </tr>
@@ -424,12 +420,10 @@
                                 </td>
                                 <td style="text-align:center;width:12%">
                                     <button type="button" class="action" data-toggle="modal" data-target="#editModal" (click)="toEdit(item)">
-                                        <img width="20px" src="../../assets/images/markers/edit.png" data-toggle="tooltip" title="Edit"
-                                        />
+                                        <img width="20px" src="../../assets/images/markers/edit.png" data-toggle="tooltip" title="Edit" />
                                     </button>
                                     <button class="action" (click)="getConfirmationToDelete(item)">
-                                        <img width="20px" src="../../assets/images/markers/delete.png" data-toggle="tooltip"
-                                            title="Delete" />
+                                        <img width="20px" src="../../assets/images/markers/delete.png" data-toggle="tooltip" title="Delete" />
                                     </button>
                                     <!-- <button class="action"><img width="20px" src="../../assets/images/markers/reposition.png" data-toggle="tooltip" title="Reposition"/></button> -->
                                 </td>
@@ -487,8 +481,7 @@
                                                     </li>
                                                 </ul>
                                                 <div *ngIf="!poolForAddRecieved" class="loader" style="border:none;">
-                                                    <img style="width: 34px;height: 34px;" src="../../assets/images/loader.gif"
-                                                    />
+                                                    <img style="width: 34px;height: 34px;" src="../../assets/images/loader.gif" />
                                                 </div>
                                             </div>
                                         </div>
@@ -557,11 +550,9 @@
                                         </label>
                                         <br>
                                         <label class="normalfnt">
-                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isShipper"
-                                            />Shipper</label>
+                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isShipper" />Shipper</label>
                                         <label class="normalfnt" style="margin-left:15px;">
-                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isReceiver"
-                                            />Receiver</label>
+                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isReceiver" />Receiver</label>
                                     </div>
                                     <!-- <div class="col-md-6 olPad" [ngClass]="{'redAlert':isValidFields.isValidTT }">
                                         <label>Trailer type <span class="first"> *</span></label><br>
@@ -576,8 +567,7 @@
                                         <label class="normalfnt">
                                             <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isReef" />Reefer</label>
                                         <label class="normalfnt" style="margin-left:15px;">
-                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isDryvan"
-                                            />Dry van</label>
+                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToAdd.isDryvan" />Dry van</label>
                                     </div>
                                 </div>
                             </div>
@@ -651,11 +641,11 @@
                                         </label>
                                         <br>
                                         <label class="normalfnt">
-                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isShip"
-                                                (change)="checkSRFun($event.target.checked)" />Shipper</label>
+                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isShip" (change)="checkSRFun($event.target.checked)"
+                                            />Shipper</label>
                                         <label class="normalfnt" style="margin-left:15px;">
-                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isReciev"
-                                                (click)="checkSRFun($event.target.checked)" />Receiver</label>
+                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isReciev" (click)="checkSRFun($event.target.checked)"
+                                            />Receiver</label>
                                     </div>
                                     <div class="col-md-6 olPad" [ngClass]="{'redAlert':isValidFields.isValidTT }">
                                         <label>Trailer Type
@@ -663,11 +653,11 @@
                                         </label>
                                         <br>
                                         <label class="normalfnt">
-                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isReef"
-                                                (change)="checkTTFun($event.target.checked)" />Reefer</label>
+                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isReef" (change)="checkTTFun($event.target.checked)"
+                                            />Reefer</label>
                                         <label class="normalfnt" style="margin-left:15px;">
-                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isDryvan"
-                                                (click)="checkTTFun($event.target.checked)" />Dry van</label>
+                                            <input type="checkbox" style="margin-right:5px;" [(ngModel)]="poolToEdit.isDryvan" (click)="checkTTFun($event.target.checked)"
+                                            />Dry van</label>
                                     </div>
                                 </div>
                             </div>
@@ -795,8 +785,8 @@
                                             <span class="first"> *</span>
                                         </label>
                                         <br />
-                                        <div class="pull-left" style="width:171px;border:1px solid silver">
-                                            <app-singleselect [items]="rgnList" [config]="rgnSelectConfig" [(selectedItem)]="selectedRgn" [key]="'regionID'" (selectedItemChange)="selectRgn(selectedRgn)"></app-singleselect>
+                                        <div class="pull-left" style="width:171px;border:1px solid silver" [ngClass]="{'redAlert':!isValidFields.isValidRegion }">
+                                            <app-singleselect [items]="rgnList" [config]="rgnSelectConfig" [(selectedItem)]="selectedRgn" [key]="'regionID'" (selectedItemChange)="selectRgn(selectedRgn,1)"></app-singleselect>
                                         </div>
                                     </div>
                                     <div class="col-md-6 olPad">
@@ -804,7 +794,7 @@
                                             <span class="first"> *</span>
                                         </label>
                                         <br />
-                                        <div class="pull-left" style="width:171px;border:1px solid silver">
+                                        <div class="pull-left" style="width:171px;border:1px solid silver" [ngClass]="{'redAlert':!isValidFields.isValidSubRegion }">
                                             <app-singleselect [items]="srgnList" [config]="srgnSelectConfig" [(selectedItem)]="selectedSRgn" [key]="'label'" (selectedItemChange)="selectSRgn(selectedSRgn)"></app-singleselect>
                                         </div>
                                     </div>
@@ -893,6 +883,26 @@
                                             placeholder="Max 70 char" />
                                     </div>
                                     <!-- <span class="note">Note: Maximum 70 charecters</span> -->
+                                </div>
+                                <div class="row pu-row">
+                                    <div class="col-md-6 orPad">
+                                        <label>Region
+                                            <span class="first"> *</span>
+                                        </label>
+                                        <br />
+                                        <div class="pull-left" style="width:171px;border:1px solid silver" [ngClass]="{'redAlert':!isValidFields.isValidRegion }">
+                                            <app-singleselect [items]="rgnList" [config]="rgnSelectConfig" [(selectedItem)]="selectedRgn" [key]="'regionID'" (selectedItemChange)="selectRgn(selectedRgn,2)"></app-singleselect>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 olPad">
+                                        <label>Sub Region
+                                            <span class="first"> *</span>
+                                        </label>
+                                        <br />
+                                        <div class="pull-left" style="width:171px;border:1px solid silver" [ngClass]="{'redAlert':!isValidFields.isValidSubRegion }">
+                                            <app-singleselect [items]="srgnList" [config]="srgnSelectConfig" [(selectedItem)]="selectedSRgn" [key]="'label'" (selectedItemChange)="selectSRgn(selectedSRgn)"></app-singleselect>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
