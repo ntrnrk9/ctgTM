@@ -266,8 +266,10 @@ export class Gmtest {
     selectMarker(item) {
 
         this.selectedMarker = item;
-        this.getTrailerHistory();
-        $('#gmHistoryModal').modal('show');
+        this.config.selectedMarker=this.selectedMarker;
+        this.emit();
+        //this.getTrailerHistory();
+        //$('#gmHistoryModal').modal('show');
 
         //this.selectedMarkerChange.emit(this.selectedMarker);
 
