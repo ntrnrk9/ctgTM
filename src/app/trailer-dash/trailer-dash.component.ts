@@ -534,7 +534,11 @@ export class TrailerDashComponent implements OnInit {
     this.showGrid = true;
     this.gRowCount = 50;
     if (type == 1) {
-      this.selectedLable = e.data.key;
+      if (e.data.key == "Others") {
+        this.selectedLable = "Other";
+      } else {
+        this.selectedLable = e.data.key;
+      }
       this.allTrailler = this.sortTrailersByTime(e.data.list, 'lastPingDate', 0);
     } else if (type == 2) {
       //var ind=e.dataactive[0]._index;
@@ -650,7 +654,11 @@ export class TrailerDashComponent implements OnInit {
 
   getGridData(item) {
     this.gRowCount = 50;
-    this.selectedLable = item.key;
+    if (item.key == "Others") {
+      this.selectedLable="Other";
+    } else {
+      this.selectedLable = item.key;
+    }
     this.allTrailler = item.list;
     this.showGrid = true;
   }
