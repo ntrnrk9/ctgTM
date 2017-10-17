@@ -101,13 +101,13 @@
               <span>{{item.location}}</span>
             </td>
             <td style="text-align:center;width:10%">
-              <span>{{formatDateTime(item.lastPingDate)}}</span>
+              <span>{{formatDateTime(item.lastPingDate,1)}}</span>
             </td>
             <td style="text-align:center;width:10%">
-              <span>{{formatDateTime(item.lastDOTInspectionDone)}}</span>
+              <span>{{formatDateTime(item.lastDOTInspectionDone,0)}}</span>
             </td>
             <td style="text-align:center;width:10%">
-              <span>{{formatDateTime(item.nextDOTInspectionDue)}}</span>
+              <span>{{formatDateTime(item.nextDOTInspectionDue,1)}}</span>
             </td>
           </tr>
         </ng-container>
@@ -157,7 +157,7 @@
               <span>{{item.shedStatus}}</span>
             </td>
             <td style="text-align:center;width:10%">
-              <span>{{formatDateTime(item.lastPingDate)}}</span>
+              <span>{{formatDateTime(item.lastPingDate,1)}}</span>
             </td>
             <td style="text-align:center;width:10%">
               <span *ngIf="selectedCat=='OPEN' || selectedCat=='PENDING'">{{item.dateOpened}}</span>

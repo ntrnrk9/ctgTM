@@ -55,7 +55,27 @@ export class Pool1MangPageComponent {
     sRList: any = [{ lable: "Shipper", value: 0 }, { lable: "Receiver", value: 1 }]
     selectedBrand: any = { lable: "Covenant", value: "CVEN" };
     brandList: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "Both", value: "ALL" }];
-    brandListForAdd: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }]
+    brandListForAdd: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }];
+    rgnList:any=[
+        {regionID:"N_East",list:[{label:'ri01'},{label:'ma01'}]},
+        {regionID:"Pac_NW",list:[{label:'me01'},{label:'ct01'}]},
+        {regionID:"OH_Vly",list:[{label:'vt01'},{label:'nj01'}]},
+        {regionID:"Mid_West",list:[{label:'pa01'},{label:'md01'}]}];
+    srgnList:any=[];
+    selectedRgn={regionID:"Select a region",list:[]};
+    selectedSRgn={label:"Select a sub region",list:[]};
+    actualRecode="";
+    rgnSelectConfig = {
+        filter: false,
+        multisel: false
+    };
+    srgnSelectConfig = {
+        filter: false,
+        multisel: true,
+        singleSelLabel:"Sub region",
+        multiSelLabel:"option(s) selected",
+        isDisabled:false
+    };
     data: any[] = [];
     result: any[] = [];
     pageNum: Number = 1;
@@ -152,6 +172,32 @@ export class Pool1MangPageComponent {
     private sortByTT(prop) {
         this.ttAsc = !this.ttAsc;
         this.sortResults(prop,this.ttAsc);
+    }
+
+    selectRgn(item,option) {
+        if (item.regionID != "Select a region") {
+
+            let bag=item.subRegionID.split(",");
+            let lot=[];
+            bag.forEach(element => {
+               let obj={ label:element,list:[],selected:false};
+               lot.push(obj);
+            });
+            this.srgnList = lot;
+            this.srgnSelectConfig.isDisabled=false;
+        }
+
+        if(option==2){
+            if(this.actualRecode!=item.regionID){
+                this.actualRecode=item.regionID;
+                this.selectedSRgn.label="Select a sub region";
+            }
+        }
+
+    }
+
+    selectSRgn(item){
+
     }
 
     sortResults(prop, asc) {
@@ -762,6 +808,26 @@ export class Pool1MangPageComponent {
             );
     }
 
+    private getAllRegions() {
+        //alert("hi");
+        this.allCsrResp = false;
+        let headers = new Headers({ 'Content-Type': 'text/plain' });
+        let options = new RequestOptions({ headers: headers });
+        let obj = { 'csr': 0, 'csrCode': 0 };
+        let url = config.baseUrl + "/CommonService/api/RegionAndSubRegion";
+        this.http.get(url).map(res => res.json())
+            .subscribe(
+            (data) => {
+                console.log("getAllCsr data recieved");
+                this.rgnList = data.dataSet;
+                this.allCsrResp = true;
+            }, //For Success Response
+            (err) => {
+                console.log("getAllCsr error recieved"); this.allCsrResp = true;
+            } //For Error Response
+            );
+    }
+
     private getAllPlanner() {
         //alert("hi");
         this.allPlannersResp=false;
@@ -853,6 +919,7 @@ export class Pool1MangPageComponent {
         //this.ob['groups'] = [];
         this.selectVarience(this.selectedVarience);
         //this.getAllCities();
+        this.getAllRegions();
         this.getAllStates();
         this.getAllCompany();
         this.getAllCsr();
@@ -862,8 +929,37 @@ export class Pool1MangPageComponent {
     }
 
     private toEditPlanner(item,index){
+        this.rgnList.forEach(element => {
+            if(element.regionID==item.regionID){
+                this.actualRecode=item.regionID;
+                this.selectedRgn.regionID=this.cloneObj(element.regionID);
+                this.selectRgn(element,2);
+            }
+        });
+        
+        let count=0;
+        let op=""
+        this.srgnList.forEach(element => {
+            if(item.subRegionID.includes(element.label)){
+                element.selected=true;
+                count++;
+                op=(count==1)?element.label:"";
+            }
+        });
+
+        if(count==0){
+            this.selectedSRgn.label="Select a sub region";
+        }else if(count==1){
+            this.selectedSRgn.label=op;
+        }else{
+            this.selectedSRgn.label=count+" option(s) selected";
+        }
+
+        //this.selectedSRgn={label:"Select a sub region",list:[]};
         this.isValidFields['isValidPlannerCode']=true;
         this.isValidFields['isValidPlannerName']=true;
+        this.isValidFields['isValidRegion']=true;
+        this.isValidFields['isValidSubRegion']=true;
         this.plannerCrud.planner=item.planner;
         this.plannerCrud.plannerCode=item.plannerCode;
         this.plannerCrud.plannerId=item.plannerId;
@@ -1206,7 +1302,21 @@ export class Pool1MangPageComponent {
             let options = new RequestOptions({ headers: headers });
             this.plannerCrud.planner=this.plannerCrud.planner.toUpperCase();
             this.plannerCrud.plannerCode=this.plannerCrud.plannerCode.toUpperCase();
+            let subRegionList=[];
+            let str="";
+            this.srgnList.forEach(element => {
+                if (element.selected) {
+                    subRegionList.push(element);
+                    if (str == "") {
+                        str = element.label;
+                    } else {
+                        str += ","+element.label;
+                    }
+                }
+            });
 
+            this.plannerCrud['regionID']=this.selectedRgn.regionID;
+            this.plannerCrud['subRegionID']=str;
             let url = config.baseUrl + "/PoolMGMTService/api/InsertPlanner";
             let object = this;
             this.http.post(url, this.plannerCrud, options).map(res => res.json())
@@ -1247,6 +1357,22 @@ export class Pool1MangPageComponent {
         
         this.plannerCrud.planner=this.plannerCrud.planner.toUpperCase();
         this.plannerCrud.plannerCode=this.plannerCrud.plannerCode.toUpperCase();
+
+        let subRegionList=[];
+        let str="";
+        this.srgnList.forEach(element => {
+            if (element.selected) {
+                subRegionList.push(element);
+                if (str == "") {
+                    str = element.label;
+                } else {
+                    str += ","+element.label;
+                }
+            }
+        });
+
+        this.plannerCrud['regionID']=this.selectedRgn.regionID;
+        this.plannerCrud['subRegionID']=str;
         // if(orPlanner==newPlanner && orPlannerCode==newPlannerCode){
         //     console.log("no edit made");
         //     $('#editPlannerModal').modal('hide');
@@ -1317,16 +1443,28 @@ export class Pool1MangPageComponent {
     validatePlanner(){
         var isnameValid=false,isCodeValid=false;
         var isnamelenthy=false,isCodelenthy=false;
+        var isRgnVaild=false,isSrgnValid=false;
         var codeValidator=/^[a-zA-Z0-9]+$/;
         var nameValidatoe=/^[a-zA-Z\s\-']+$/;
         isnameValid=nameValidatoe.test(this.plannerCrud.planner);
         isCodeValid=codeValidator.test(this.plannerCrud.plannerCode);
         
+        if(this.selectedRgn.regionID!="Select a region"){
+            isRgnVaild=true;
+        }
+
+        if(this.selectedSRgn.label!="Select a sub region"){
+            isSrgnValid=true;
+        }
+        
         isnamelenthy=(this.plannerCrud.planner.length>70)?false:true;
         isCodelenthy=(this.plannerCrud.plannerCode.length>20)?false:true;
         this.isValidFields['isValidPlannerCode']=(isCodeValid && isCodelenthy)?true:false;
         this.isValidFields['isValidPlannerName']=(isnameValid && isnamelenthy)?true:false;
-        if(this.isValidFields['isValidPlannerCode'] && this.isValidFields['isValidPlannerName']){
+        this.isValidFields['isValidRegion']=isRgnVaild;
+        this.isValidFields['isValidSubRegion']=isSrgnValid;
+        if (this.isValidFields['isValidPlannerCode'] && this.isValidFields['isValidPlannerName']
+            && isSrgnValid && isRgnVaild) {
             return true;
         }
         return false;
@@ -1525,8 +1663,16 @@ export class Pool1MangPageComponent {
     }
 
     private toAddPlanner() {
+        this.srgnList.forEach(element => {
+            element.selected=false;
+        });
+        this.srgnList = [];
+        this.selectedRgn={regionID:"Select a region",list:[]};
+        this.selectedSRgn={label:"Select a sub region",list:[]};
         this.isValidFields['isValidPlannerCode']=true;
         this.isValidFields['isValidPlannerName']=true;
+        this.isValidFields['isValidRegion']=true;
+        this.isValidFields['isValidSubRegion']=true;
         this.plannerCrud={plannerId: -1, planner: "", plannerCode: ""};
         
     }
@@ -1648,6 +1794,11 @@ export class Pool1MangPageComponent {
         this.plannerClearAllFun();
         this.selectVarience(this.selectedVarience);
         this.masterFilter();
+    }
+
+    cloneObj(list: any) {
+        var clone = JSON.parse(JSON.stringify(list));
+        return clone;
     }
 
 }

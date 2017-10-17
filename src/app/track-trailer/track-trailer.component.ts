@@ -44,7 +44,9 @@ export class TrackTrailerComponent {
     selectedModel = { lable: "All types", value: "-1" };
     cmpSelectConfig = {
         filter: false,
-        multisel: true
+        multisel: true,
+        singleSelLabel:"Company",
+        multiSelLabel:"company(s) selected"
     };
     modeSelectConfig = {
         filter: false
@@ -216,7 +218,12 @@ export class TrackTrailerComponent {
             }
         }
     }
-
+    
+    openHistory() {
+        this.showTrHistory(this.mapConfig.selectedMarker);
+        // showTrHistory(mapConfig.selectedMarker);
+    }
+    
     getLatLngByGeoCode() {
         var input = $('#ctgGeoCode').val();
         console.log(input);
@@ -658,6 +665,9 @@ export class TrackTrailerComponent {
         }
         var bag = []
         this.allTrailers.forEach(element => {
+            if(element.trailerID=="R3003"){
+                console.log("ro");
+            }
             if (trList.includes(element.trailerID)) {
                 bag.push(element);
             }
