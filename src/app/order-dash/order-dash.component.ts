@@ -419,6 +419,9 @@ export class OrderDashComponent implements OnInit {
       .subscribe(
       (data) => {
         console.log("orderStats data recieved");
+        if(data.dataSet.length==0){
+          this.pvaNoData=true;
+        }
         this.dataSet = data.dataSet;
         var bag= [
             {
@@ -487,9 +490,7 @@ export class OrderDashComponent implements OnInit {
       .subscribe(
       (data) => {
         console.log("getFutureAVLOrders data recieved");
-        if(data.dataSet.length==0){
-          this.pvaNoData=true;
-        }
+        
         this.futAvlOrder = data.dataSet;
         var bag={key:"",values:[]}
         this.futAvlOrder.forEach(element => {
