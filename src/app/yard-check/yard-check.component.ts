@@ -201,6 +201,13 @@ export class YardCheckComponent implements OnInit {
         }
     }
 
+    openHistory() {
+        if (this.mapConfig.selectedMarker) {
+            this.showTrHistory(this.mapConfig.selectedMarker);
+        }
+        // showTrHistory(mapConfig.selectedMarker);
+    }
+
     getLatLngByGeoCode(){
         var input = $('#ctgGeoCode').val();
         console.log(input);
