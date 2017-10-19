@@ -69,9 +69,15 @@ export class YardCheckComponent implements OnInit {
     allTraillerSubSet: any = [];
     
 
+    // ob = {
+    //     column: [{ name: "Trailer ID", width: "9%" },{ name: "Yard ID", width: "9%" }, { name: "Make", width: "9%" }, { name: "Model/Type", width: "9%" }, { name: "Location", width: "9%" },{ name: "Year", width: "9%" },
+    //     { name: "Yard status", width: "9%" },{ name: "Yard check date", width: "9%" },{ name: "Last DOT inspection date", width: "9%" }, { name: "Last ping date", width: "9%" }, { name: "Actions", width: "10%" }],
+    //     groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
+    // };
+
     ob = {
-        column: [{ name: "Trailer ID", width: "9%" },{ name: "Yard ID", width: "9%" }, { name: "Make", width: "9%" }, { name: "Model/Type", width: "9%" }, { name: "Location", width: "9%" },{ name: "Year", width: "9%" },
-        { name: "Yard status", width: "9%" },{ name: "Yard check date", width: "9%" },{ name: "Last DOT inspection date", width: "9%" }, { name: "Last ping date", width: "9%" }, { name: "Actions", width: "10%" }],
+        column: [{ name: "Trailer ID", width: "10%" },{ name: "Yard ID", width: "10%" }, { name: "Make", width: "10%" }, { name: "Model/Type", width: "10%" }, { name: "Location", width: "10%" },{ name: "Year", width: "10%" },
+        { name: "Yard status", width: "10%" },{ name: "Yard check date", width: "10%" },{ name: "Last DOT inspection date", width: "10%" }, { name: "Last ping date", width: "10%" }],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
@@ -478,7 +484,7 @@ export class YardCheckComponent implements OnInit {
         headers: headers
       };
       let url = config.ctgApiUrl + "/assets/yard/" + custID;
-      //let url = config.baseUrl + "/HomeService/api/TrailerDetailsByCustomerId?customerId="+custID;
+    //let url = config.baseUrl + "/HomeService/api/TrailerDetailsByCustomerId?customerId="+custID;
       this.http.get(url,options).map(res => res.json())
         .subscribe(
         (data) => {
@@ -491,7 +497,7 @@ export class YardCheckComponent implements OnInit {
               this.gmapJs.drawPoly(poly, lat, lng);
               this.filterByBounds(poly);
             } else {
-              this.filterByBounds(poly);
+                this.filterByBounds(poly);
               this.mapConfig.polygon = poly;
               this.mapConfig.lat = lat;
               this.mapConfig.lng = lng;

@@ -62,42 +62,41 @@
               <ng-container *ngFor="let i=index;let item of allTraillerSubSet">
                 <tr class="full" *ngIf="i<gRowCount">
 
-                  <td style="text-align:center;width:9%">
+                  <td style="text-align:center;width:10%">
                     <span>{{item.trailerID}}</span>
                   </td>
-                  <td style="text-align:center;width:9%">
+                  <td style="text-align:center;width:10%">
                     <span>{{item.customerid}}</span>
                   </td>
-                  <td style="text-align:center;width:9%">
+                  <td style="text-align:center;width:10%">
                     <span>{{item.trailerName}}</span>
                   </td>
-                  <td style="text-align:center;width:9%">
+                  <td style="text-align:center;width:10%">
                     <span>{{item.trailerType}}</span>
                   </td>
-                  <td style="text-align:center;width:9%">
+                  <td style="text-align:center;width:10%">
                     <span>{{item.location}}</span>
                   </td>
-                  <td style="text-align:center;width:9%">
+                  <td style="text-align:center;width:10%">
                     <span>{{item.trailerYear}}</span>
                   </td>
-                  <td style="text-align:center;width:9%">
+                  <td style="text-align:center;width:10%">
                     <span>{{(item.isYardCheck==0)?'No':'Yes'}}</span>
-                  </td>
-                  <td style="text-align:center;width:9%">
-                    <span>{{(item.isYardCheck==0)?'No':'Yes'}}</span>
-                  </td>
-                  <td style="text-align:center;width:9%">
-                    <span>{{formatDateTime(item.dOTDate,0)}}</span>
-                  </td>
-                  <td style="text-align:center;width:9%">
-                    <span>{{formatDateTime(item.lastPingDate,1)}}</span>
                   </td>
                   <td style="text-align:center;width:10%">
+                    <span>{{(item.isYardCheck==0)?'No':'Yes'}}</span>
+                  </td>
+                  <td style="text-align:center;width:10%">
+                    <span>{{formatDateTime(item.dOTDate,0)}}</span>
+                  </td>
+                  <td style="text-align:center;width:10%">
+                    <span>{{formatDateTime(item.lastPingDate,1)}}</span>
+                  </td>
+                  <!-- <td style="text-align:center;width:10%">
                     <button class="histBut" (click)="showHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Initiate yard check"><img src="../../assets/images/yard/initiate.png" /></button>
                     <button class="histBut" (click)="showTrHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Upload yard check results"><img src="../../assets/images/yard/upload.png" /></button>
                     <button class="histBut" (click)="showTrHistory(item)" style="cursor: pointer" data-toggle="tooltip" title="Yard checks details"><img src="../../assets/images/yard/view-report.png" /></button>
-                    <!-- <a (click)="showHistory(item)" style="cursor: pointer">History</a> -->
-                  </td>
+                  </td> -->
                 </tr>
               </ng-container>
             </tbody>
