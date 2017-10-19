@@ -226,9 +226,22 @@ export class Pool1MangPageComponent {
     private ccCheckAllFun() {
         this.ccCheckAll = true;
         this.choosenCC = [];
-        for (var i = 0; i < this.allCC.length; i++) {
-            this.choosenCC.push(this.allCC[i].cmpName);
-            this.allCC[i].isSelected = true;
+        var search = this.ccFil;
+        var ctrl = this
+        if (this.ccFil.length > 0) {
+            this.allCC.forEach(item => {
+                var check = item.cmpName;
+                if (check.toLowerCase().includes(search.toLowerCase())) {
+                    ctrl.choosenCC.push(item.cmpName);
+                    item.isSelected = true;
+                }
+            });
+
+        } else {
+            for (var i = 0; i < this.allCC.length; i++) {
+                this.choosenCC.push(this.allCC[i].cmpName);
+                this.allCC[i].isSelected = true;
+            }
         }
     }
 
