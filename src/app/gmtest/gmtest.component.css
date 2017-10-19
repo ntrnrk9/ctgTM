@@ -120,3 +120,21 @@
     color: white;
     height: 30px;
 }
+
+.resetMap{
+    position: absolute;
+    right: 14px;
+    top:60px;
+    border: none;
+    background-color: white;
+    padding: 0px;
+}
+
+.info{
+    position: absolute;
+    right: 14px;
+    top:110px;
+    border: none;
+    background-color: white;
+    padding: 0px;
+}

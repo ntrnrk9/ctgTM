@@ -28,7 +28,10 @@ export class Gmtest {
     index: any=-1;
     historyRecv: any = false;
     polyBound:any;
-    
+    markerCluster:any;
+    maxZoomLevel=18;
+    minimumClusterSize=10;
+
     markerList: any = {
         yellowMark: '../../assets/images/markers/trailer-yellow.png',
         redMark: '../../assets/images/markers/trailer-red.png',
@@ -185,12 +188,12 @@ export class Gmtest {
                 width: 90,
                 textColor: "white"
             }],
-            maxZoom:18,
-            //minimumClusterSize:5
+            maxZoom:this.maxZoomLevel,
+            minimumClusterSize:this.minimumClusterSize
         }
         var obj=this;
 
-        var markerCluster = new MarkerClusterer(this.map, this.markers,
+        this.markerCluster = new MarkerClusterer(this.map, this.markers,
             mcOptions);
         if(this.config.marker>0){
         setTimeout(function () {
@@ -498,6 +501,30 @@ export class Gmtest {
         this.map.setCenter(latlng);
         this.map.setZoom(15);
         return toReturn;
+    }
+
+    resetMap() {
+        var ctrl=this;
+        this.map.setZoom(4);
+    }
+
+    declusterMap() {
+        var ctrl = this;
+        if (this.maxZoomLevel == 3) {
+            this.maxZoomLevel = 7;
+            this.markerCluster.setMaxZoom(7);
+            this.markerCluster.resetViewport();
+        } else if (this.maxZoomLevel == 7) {
+            this.maxZoomLevel = 3;
+            this.markerCluster.setMaxZoom(3);
+            this.markerCluster.resetViewport();
+        }
+        
+        
+        //this.markerCluster.redraw();
+        //this.map.setZoom(5);
+
+
     }
 
 
