@@ -19,12 +19,12 @@
 
           <div class="pull-left" style="padding:5px;">
 
-            <span (keyup.enter)="searchByID()"><input  class="ctg-textbox pull-left" style="width:120px" type="text" placeholder="Trailer ID" [(ngModel)]="searchID"
-                   (ngModelChange)="toggleSearch(1)"  /></span>
+            <!-- <span (keyup.enter)="searchByID()"><input  class="ctg-textbox pull-left" style="width:120px" type="text" placeholder="Trailer ID" [(ngModel)]="searchID"
+                   (ngModelChange)="toggleSearch(1)"  /></span> -->
 
             
-            <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
-            <span (keyup.enter)="searchByCustID()"><input  class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Yard ID" [(ngModel)]="custID"
+            <!-- <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span> -->
+            <span (keyup.enter)="searchByCustID()"><input  class="ctg-textbox pull-left" style="width:120px" type="text" placeholder="Yard ID" [(ngModel)]="custID"
                    (ngModelChange)="toggleSearch(4)"  /></span>
 
             <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button>

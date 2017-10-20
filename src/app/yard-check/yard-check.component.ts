@@ -86,48 +86,8 @@ export class YardCheckComponent implements OnInit {
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
-    ngOnInit() {
-        //var geocoder = new google.maps.Geocoder();
+    ngOnInit() {}
 
-        var input = document.getElementById('ctgGeoCode');
-        var autoCompOptions = {
-            componentRestrictions: { country: ['us','mx','ca'] }
-        };
-        var autocomplete = new google.maps.places.Autocomplete(input, autoCompOptions);
-        var obj=this;
-        autocomplete.addListener('place_changed', function() {
-          var place = autocomplete.getPlace();
-          if (!place.geometry) {
-            // User entered the name of a Place that was not suggested and
-            // pressed the Enter key, or the Place Details request failed.
-            //window.alert("No details available for input: '" + place.name + "'");
-            //obj.action.heading = "Trailer search";
-            //obj.action.body = "Please enter a valid input!12";
-            //$('#result').modal('show');
-            
-            return;
-          }
-
-          // If the place has a geometry, then present it on a map.
-          if (place.geometry.viewport) {
-            
-          } else {
-            //map.setCenter(place.geometry.location);
-            //map.setZoom(17);  // Why 17? Because it looks good.
-          }
-          var address = '';
-          if (place.address_components) {
-            address = [
-              (place.address_components[0] && place.address_components[0].short_name || ''),
-              (place.address_components[1] && place.address_components[1].short_name || ''),
-              (place.address_components[2] && place.address_components[2].short_name || '')
-            ].join(' ');
-            console.log(address);
-            obj.setByLocation();
-
-          }
-        });
-    }
     constructor(private http: Http,private cdr:ChangeDetectorRef ) {
         this.getStateTrailersStatus();
         //this.getStateTrailersStatus();
@@ -190,11 +150,10 @@ export class YardCheckComponent implements OnInit {
             //this.selectTrStatus(this.selectedTrStatus);
         }
 
-    }    
+    }
+
     search() {
-        if (this.bylocation.length > 0) {
-            this.getvalue();
-        }else if (this.searchID.length > 0) {
+        if (this.searchID.length > 0) {
             this.searchByID();
         }else if(this.custID.length>0){
             this.searchByCustID();
@@ -208,70 +167,13 @@ export class YardCheckComponent implements OnInit {
     }
 
     openHistory() {
-        if (this.mapConfig.selectedMarker) {
+        if (this.mapConfig.selectedMarker && this.mapConfig.event=="markerSelected") {
             this.showTrHistory(this.mapConfig.selectedMarker);
         }
         // showTrHistory(mapConfig.selectedMarker);
     }
 
-    getLatLngByGeoCode(){
-        var input = $('#ctgGeoCode').val();
-        console.log(input);
-        this.bylocation = input;
-        var ctrl = this;
-        var geocoder = this.geocoder;
-        var combo = "";
-        var address = this.bylocation;
-        this.mapConfig.polygon=undefined;
-         this.geocoder.geocode({ 'address': address }, function (results: any, status: any) {
-            if (status === 'OK') {
-                var lat=results[0].geometry.location.lat();
-                var lng=results[0].geometry.location.lng();
-                combo="latitude="+lat+"&longitude="+lng;
-                if (!this.mgToggleFlag) {
-                    ctrl.mapConfig.lat = lat;
-                    ctrl.mapConfig.lng = lng;
-                }
-                //ctrl.mapConfig.zoom=10;
-                ctrl.getTrailerStatusByFilter(combo);
-            } else {
-                //alert('Geocode was not successful for the following reason: ' + status);
-                $('#inValidRes').modal('show');
-                $('#ctgGeoCode').val("");
-                console.log("getLatLngByGeoCode:no location to search");
-            }
-        });
-        
-    }
-
-    
-
-    getvalue() {
-        this.mapConfig.marker=-1;
-        var input = $('#ctgGeoCode').val();
-        console.log(input);
-        this.bylocation = input;
-        if (this.bylocation != "") {
-            if (this.mgToggleFlag) {
-                this.gmapJs.geocodeAddress(this.bylocation);
-                this.getLatLngByGeoCode();
-            } else {
-                this.getLatLngByGeoCode();
-            }
-        } else {
-            //alert("Enter a location to search");
-            this.action.heading = "Geocode";
-            this.action.body = 'Please enter a location to search.';
-            $('#result').modal('show');
-        }
-        if(this.asToggle){
-            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
-            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
-
-        }
-        //f.geocodeAddress(this.bylocation);
-    }
-
+   
     formatDateTime(item: any,choice) {
         if(!item){
             return item;
@@ -300,23 +202,7 @@ export class YardCheckComponent implements OnInit {
 
     }
 
-    setByLocation() {
-        var input = $('#ctgGeoCode').val();
-        this.mapConfig.marker=-1;
-        console.log(input);
-        this.bylocation = input;
-        if (this.mgToggleFlag) {
-            this.gmapJs.geocodeAddress(this.bylocation);
-            this.getLatLngByGeoCode();
-        } else {
-            this.getLatLngByGeoCode();
-        }
-
-        if(this.asToggle){
-            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
-            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
-        }        
-    }
+    
 
     reset() {
         this.bylocation = "";
@@ -329,7 +215,8 @@ export class YardCheckComponent implements OnInit {
         this.mapConfig={lat:36.090240,lng:-95.712891,mapType:'roadmap'};
         this.selectedMiles = { lable: "150 Miles", value: 150 };
         this.selectedCmp = { lable: "Covenant", value: "CVEN" };
-        this.selectCmp(this.selectedCmp);
+        this.allTrailers=[];
+        // this.selectCmp(this.selectedCmp);
 
         this.getStateTrailersStatus();
         if (this.mgToggleFlag) {
@@ -343,6 +230,7 @@ export class YardCheckComponent implements OnInit {
             this.disableTS = true;
         }
     }
+
     tableScrolled(this: any) {
         console.log("scrolling");
         var raw = document.getElementById('tgBody');
@@ -368,50 +256,19 @@ export class YardCheckComponent implements OnInit {
             .subscribe(
             (data) => {
                 console.log("StatesTrailerCounts data recieved");
-                this.allTrailers = data.dataSet;
+                //this.allTrailers = data.dataSet;
                 this.allTrailers_bu = data.dataSet;
                 this.trailerStatusResp = true;
                 //this.selectCmp(this.selectedCmp);
-                this.filterMapByCmp();
+                // this.filterMapByCmp();
                 this.allTraillerSubSet1=this.cloneObj(this.allTrailers);
-                this.selectTrStatus(this.selectedTrStatus);
+                // this.selectTrStatus(this.selectedTrStatus);
             }, //For Success Response
             (err) => { console.log("StatesTrailerCounts error recieved"); this.trailerStatusResp = true; } //For Error Response
             );
     }
 
-    getTrailerStatusByFilter(add:any) {
-        this.trailerStatusResp = false;
-        //let url="http://61.16.133.244/HomeService/api/StatesTrailerCounts";
-        let url = config.baseUrl + "/HomeService/api/TrailerStatusByFilter?" + add;
-        this.http.get(url).map(res => res.json())
-            .subscribe(
-            (data) => {
-                this.attachSubSet(data);
-                
-            }, //For Success Response
-            (err) => { console.log("StatesTrailerCounts error recieved");
-                this.trailerStatusResp = true; } //For Error Response
-            );
-    }
-
-    attachSubSet(item: any) {
-        //this.trailerStatusResp = true;
-        console.log("StatesTrailerCounts data recieved");
-        this.allTraillerSubSet = item;
-        this.allTraillerSubSet1 = item;
-        this.selectMiles(this.selectedMiles);
-        var obj=this;
-        this.cdr.detectChanges();
-        if(this.asToggle){
-            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
-            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
-        }        
-        setTimeout(function () {
-            obj.trailerStatusResp = true;
-            obj.cdr.detectChanges();
-        }, 500);
-    }
+    
 
     getTrailerHistory() {
         this.historyRecv = false;
@@ -483,30 +340,34 @@ export class YardCheckComponent implements OnInit {
       let options = {
         headers: headers
       };
-      let url = config.ctgApiUrl + "/assets/yard/" + custID;
-    //let url = config.baseUrl + "/HomeService/api/TrailerDetailsByCustomerId?customerId="+custID;
+    //   let url = config.ctgApiUrl + "/assets/yard/" + custID;
+    let url = config.baseUrl + "/HomeService/api/TrailerDetailsByCustomerId?customerId="+custID;
       this.http.get(url,options).map(res => res.json())
         .subscribe(
         (data) => {
-          console.log("StatesTrailerCounts data recieved");
-          if (data) {
-            var poly = data.shape;
-            var lat = data.location.position.lat;
-            var lng = data.location.position.lng;
-            if (this.mgToggleFlag) {
-              this.gmapJs.drawPoly(poly, lat, lng);
-              this.filterByBounds(poly);
-            } else {
-                this.filterByBounds(poly);
-              this.mapConfig.polygon = poly;
-              this.mapConfig.lat = lat;
-              this.mapConfig.lng = lng;
-            }
+            console.log("StatesTrailerCounts data recieved");
+            if (data.dataSet.length > 0) {
+                var poly = data.dataSet[0].yard;
+                var lat = data.dataSet[0].latitude;
+                var lng = data.dataSet[0].longitude;
+                if (this.mgToggleFlag) {
+                    this.mapConfig.showOnly=data.dataSet[0].trailers;
+                    this.mapConfig.polygon = poly;
+                    this.mapConfig.lat = lat;
+                    this.mapConfig.lng = lng;
+                    //this.gmapJs.drawPoly(poly, lat, lng);
+                    this.filterByBounds(poly, data.dataSet[0].trailers);
+                } else {
+                    this.filterByBounds(poly, data.dataSet[0].trailers);
+                    this.mapConfig.polygon = poly;
+                    this.mapConfig.lat = lat;
+                    this.mapConfig.lng = lng;
+                }
 
-          } else {
-            $('#inValidCustID').modal('show');
-            this.custID = "";
-          }
+            } else {
+                $('#inValidCustID').modal('show');
+                this.custID = "";
+            }
           //this.historyRecv = true;
         }, //For Success Response
         (err) => {
@@ -568,15 +429,13 @@ export class YardCheckComponent implements OnInit {
             }
         }
         if(this.asToggle){
-            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
-            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
+            //this.allTrailers=this.advanceSearchFilter(this.allTrailers);
+            //this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
 
         }
     }
 
-    //http://61.16.133.244/HomeService/api/TrailerStatus?trailerStatus=Available
-    //http://61.16.133.244/HomeService/api/TrailerStatus?trailerStatus=Scheduled
-    //http://61.16.133.244/HomeService/api/TrailerStatus?trailerStatus=NotAvailable
+    
 
     markerClicked() {
 
@@ -611,7 +470,7 @@ export class YardCheckComponent implements OnInit {
         
     }
 
-    filterByBounds(multipolygonWKT:any){
+    filterByBounds(multipolygonWKT:any,trList){
         
         var polylines = [];
         var toReturn = [];
@@ -652,302 +511,45 @@ export class YardCheckComponent implements OnInit {
         //by now you should have the polylines array filled with arrays that hold the coordinates of the polylines of the multipolyline
         //lets loop thru this array
         
-        var trailesInBound=[];
-        for(var i=0;i<this.allTrailers.length;i++){
-            var tr=this.allTrailers[i];
+        var trailesInBound = [];
+        for (var i = 0; i < this.allTrailers.length; i++) {
+            var tr = this.allTrailers[i];
             var latlng = new google.maps.LatLng(tr.latitude, tr.longitude);
-            if(polyBound.contains(latlng)){
-                
+            if (polyBound.contains(latlng)) {
+
                 trailesInBound.push(tr);
             }
         }
-        this.allTraillerSubSet=trailesInBound;
-    }
-    selectTrStatus(item: any) {
-        this.allTraillerSubSet = [];
-        this.selectedTrStatus = item;
-        for (var i = 0; i < this.allTrailers.length; i++) {
-            var obj = this.allTrailers[i];
-            switch (this.selectedTrStatus.value) {
-                case 1:
-                    {
-                        if (obj.trailerStatus == "PLN")
-                            this.allTraillerSubSet.push(obj);
-                    }
-                    break;
-                case 2:
-                    {
-                        if (obj.trailerStatus == "AVL")
-                            this.allTraillerSubSet.push(obj);
-                    }
-                    break;
-                    case 3:
-                    {
-                        if (obj['isPool'] == 1)
-                            this.allTraillerSubSet.push(obj);
-                    }
-                    break;    
-                case 0:
-                    {
-                        if (obj.trailerStatus != "PLN" && obj.trailerStatus != "AVL")
-                            this.allTraillerSubSet.push(obj);
-                    }
-                    break;
-                case -1:
-                    {
-                        
-                            this.allTraillerSubSet.push(obj);
-                    }
-                    break;    
-                    
+        var bag = []
+        this.allTrailers_bu.forEach(element => {
+            if(element.trailerID=="R3003"){
+                console.log("ro");
             }
-        }
-    }
-    selectCmp(item) {
-        this.selectedCmp = item;
-        this.filterMapByCmp();
-        if(this.bylocation.length==0 && this.custID.length==0 && this.searchID.length==0){
-           this.selectTrStatus(this.selectedTrStatus);
-           //this.allTraillerSubSet=this.filterGridByCmp(this.allTrailers);
-        }else{
-            if(this.bylocation.length>0){
-                this.getvalue();
-                this.selectMiles(this.selectedMiles);
-            }else if(this.searchID.length>0){
-                this.searchByID();
-                this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet);
-            }else if(this.custID.length>0){
-                this.searchByCustID();
-                this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet);
+            if (trList.includes(element.trailerID)) {
+                bag.push(element);
             }
-        }
-        
-        if(this.asToggle){
-            this.allTrailers=this.advanceSearchFilter(this.allTrailers);
-            this.allTraillerSubSet=this.advanceSearchFilter(this.allTraillerSubSet);
-
-        }
-
+        });
+        this.allTraillerSubSet = bag;
+        this.allTrailers = bag;
     }
-
-    filterMapByCmp() {
-        this.allTrailers = [];
-        
-        for (var i = 0; i < this.allTrailers_bu.length; i++) {
-            var obj = this.allTrailers_bu[i];
-            if(obj['company']==this.selectedCmp.value){
-                this.allTrailers.push(obj);
-            }
-        }
-    }
-
-    filterGridByCmp(lists:any) {
-       //this.selectTrStatus(this.selectedTrStatus);
-       var bag=[]
-           for (var i = 0; i < lists.length; i++) {
-               var obj = lists[i];
-               if (obj['company'] == this.selectedCmp.value) {
-                   bag.push(obj);
-               }
-           }
-       return bag;
-    }
-
-    allTraillerSubSet1: any = [];
-    selectMiles(item){
-        this.allTraillerSubSet =[] ;
-        this.selectedMiles = item;
-        var plm=0;
-        var avl=0;
-        var com=0;
-        for (var i = 0; i < this.allTraillerSubSet1.length; i++) {
-            var obj = this.allTraillerSubSet1[i];
-            switch (this.selectedMiles.value) {
-                case 50:
-                    {
-                        if (obj.distance < 50){
-                            this.allTraillerSubSet.push(obj);plm++;
-                        }
-                    }
-                    break;
-                case 100:
-                    {
-                        if (obj.distance < 100){
-                            this.allTraillerSubSet.push(obj);plm++;
-                        }
-                    }
-                    break;
-                case 150:
-                    {
-                        if (obj.distance < 150){
-                            this.allTraillerSubSet.push(obj);plm++;
-                        }
-                    }
-                    break;
-                    default:{
-
-                    }
-                    break;
-            }
-        }
-        this.allTraillerSubSet=this.filterGridByCmp(this.allTraillerSubSet);
-        console.log("pln "+plm+" avl "+avl+" com "+com+" total "+this.allTrailers.length);
+    
+    
 
     
 
-    }
+    
 
-    advanceSearchFilter(bag){
-        var list=this.filterByMake(bag);
-        list=this.filterByTrYear(list);
-        list=this.filterByModel(list);
-        //list=this.filterByIOT(list);
-        //list=this.filterByLMD(list);
-        //list=this.filterByDOT(list);
-        return list;
-    }
+    allTraillerSubSet1: any = [];
+    
 
-    filterByMake(list:any){
-        var bag=[];
-        this.searchMake=this.searchMake.toUpperCase();
-        for(var i=0;i<list.length;i++){
-            var item=list[i];
-            if(this.searchMake==""){
-                bag.push(item);
-            }else
-            if(item.trailerName==this.searchMake){
-                bag.push(item);
-            }
-        }
-        return bag;
-    }
-    filterByTrYear(list:any){
-        var bag=[];
-        this.searchTrYear=this.searchTrYear.toUpperCase();
-        for(var i=0;i<list.length;i++){
-            var item=list[i];
-            if(this.searchTrYear==""){
-                bag.push(item);
-            }else
-            if(item.trailerYear==this.searchTrYear){
-                bag.push(item);
-            }
-        }
-        return bag;
-    }
+    
 
-    filterByModel(list:any){
-        var bag=[];
-        for(var i=0;i<list.length;i++){
-            var item=list[i];
-            if(this.selectedModel.value=="-1"){
-                bag.push(item);
-            }else{
-                if(this.selectedModel.value==item.trailerType){
-                    bag.push(item);
-                }
-            }
-            
-        }
-        return bag;
-    }
+    
+   
 
-    allTrailers=[{
-        "trailerID": "42531",
-        "trailerType": "DRY",
-        "trailerName": "HYUND",
-        "latitude": 34.0449685,
-        "longitude": -117.3770988,
-        "location": "Bloomington,CA",
-        "landmark": "FEDEX Ground (FEDBLO) Bloomington, CA",
-        "trailerStatus": "OUT",
-        "idleDuration": 0.0,
-        "lastMovementDate": "12/24/2016",
-        "dotDate": "12/24/2016",
-        "iotInfo": "INACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    },
-    {
-        "trailerID": "42532",
-        "trailerType": "DRY",
-        "trailerName": "HYUND",
-        "latitude": 39.7409019470215,
-        "longitude": -86.2154922485352,
-        "location": "Indianapolis city (balance),IN",
-        "landmark": "Shop,McGlothlin & Son (MCGIND01) Indianapolis",
-        "trailerStatus": "OUT",
-        "idleDuration": 0.0,
-        "lastMovementDate": "06/10/2016",
-        "dotDate": "06/10/2016",
-        "iotInfo": "INACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    },
-    {
-        "trailerID": "42533",
-        "trailerType": "DRY",
-        "trailerName": "HYUND",
-        "latitude": 34.0622706,
-        "longitude": -117.5057201,
-        "location": "Fontana,CA",
-        "landmark": "DO NOT REMOVE - North American Trailer Fontana - Trade Trailer location (NORFON)",
-        "trailerStatus": "PLN",
-        "idleDuration": 0.0,
-        "lastMovementDate": "06/23/2017",
-        "dotDate": "06/23/2017",
-        "iotInfo": "ACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    },
-    {
-        "trailerID": "42534",
-        "trailerType": "DRY",
-        "trailerName": "HYUND",
-        "latitude": 35.0055011,
-        "longitude": -85.391794,
-        "location": "Chattanooga,TN",
-        "landmark": "Amazon Hill (BUFFET02) Chatt, TN TERM",
-        "trailerStatus": "OUT",
-        "idleDuration": 0.0,
-        "lastMovementDate": "03/07/2016",
-        "dotDate": "03/07/2016",
-        "iotInfo": "INACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    },
-    {
-        "trailerID": "42534",
-        "trailerType": "UNK",
-        "trailerName": "",
-        "latitude": 35.0055011,
-        "longitude": -85.391794,
-        "location": "Chattanooga,TN",
-        "landmark": "Amazon Hill (BUFFET02) Chatt, TN TERM",
-        "trailerStatus": "AVL",
-        "idleDuration": 0.0,
-        "lastMovementDate": "03/07/2016",
-        "dotDate": "03/07/2016",
-        "iotInfo": "INACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    },
-    {
-        "trailerID": "42536",
-        "trailerType": "DRY",
-        "trailerName": "HYUND",
-        "latitude": 35.0014228820801,
-        "longitude": -85.3906784057617,
-        "location": "Chattanooga,TN",
-        "landmark": "Chattanooga Body Shop TERM",
-        "trailerStatus": "OUT",
-        "idleDuration": 0.0,
-        "lastMovementDate": "06/15/2016",
-        "dotDate": "06/15/2016",
-        "iotInfo": "INACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    }];
+    
+
+    allTrailers=[];
 }
 
 
