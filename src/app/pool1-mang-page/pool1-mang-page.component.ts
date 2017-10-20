@@ -1413,7 +1413,7 @@ export class Pool1MangPageComponent {
                         this.getAllPlanner();
                     }else if (resp.status == 2) {
                         this.action.heading = "Update Planner";
-                        this.action.body = "No change to update.!";
+                        this.action.body = "Planner Code already exists.!";
                         $('#result').modal('show');
                         this.getAllPlanner();
                     }
