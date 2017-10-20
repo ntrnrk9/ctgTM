@@ -55,7 +55,8 @@ export class Gmtest {
         }
     }
 
-    emit() {
+    emit(event:any) {
+        this.config.event=event;
         this.configChange.emit(this.config);
         console.log(this.config);
     }
@@ -76,7 +77,7 @@ export class Gmtest {
         this.config.lng = this.map.getCenter().lng();
         this.config.zoom = this.map.getZoom();
         //console.log(JSON.stringify(this.config));
-        this.emit();
+        this.emit("destroy");
 
     }
     ngOnInit() {
@@ -270,7 +271,7 @@ export class Gmtest {
 
         this.selectedMarker = item;
         this.config.selectedMarker=this.selectedMarker;
-        this.emit();
+        this.emit("markerSelected");
         //this.getTrailerHistory();
         //$('#gmHistoryModal').modal('show');
 
@@ -313,7 +314,7 @@ export class Gmtest {
                 ctrl.config.lng = this.map.getCenter().lng();
                 ctrl.config.zoom = this.map.getZoom();
                 //console.log(JSON.stringify(this.config));
-                ctrl.emit();
+                ctrl.emit("setLatLng");
                 //ctrl.test(results[0].geometry.bounds);
             } else {
                 console.log('Geocode was not successful for the following reason: ' + status);
@@ -330,7 +331,7 @@ export class Gmtest {
         this.config.lat = lat;
         this.config.lng = lng;
         this.config.zoom = zoom;
-        this.emit();
+        this.emit("setMapCenter");
     }
     call(item: any) {
         item = item.toUpperCase();
@@ -496,7 +497,7 @@ export class Gmtest {
             }
         }
 
-        this.emit();
+        this.emit("setPolygon");
         var latlng = new google.maps.LatLng(lat,lng);
         this.map.setCenter(latlng);
         this.map.setZoom(15);
