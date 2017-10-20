@@ -220,7 +220,7 @@ export class TrackTrailerComponent {
     }
     
     openHistory() {
-        if (this.mapConfig.selectedMarker) {
+        if (this.mapConfig.selectedMarker && this.mapConfig.event=="markerSelected") {
             this.showTrHistory(this.mapConfig.selectedMarker);
         }
         // showTrHistory(mapConfig.selectedMarker);
