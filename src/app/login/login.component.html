@@ -18,7 +18,12 @@
         <span>Invalid Login Credentials.!</span>
       </div>
       <br>
-      <button class="loginBut" (click)="login()">Login</button>
+      <div style="width: 349px;">
+        <button class="loginBut" (click)="login()" style="margin-right: 10px">Login
+          <!-- <img src="../../assets/images/loader.gif"/> -->
+        </button>
+        <img *ngIf="loggedIn" src="../../assets/images/Spin.gif" />
+      </div>
     </div>
   </div>
   <div class="modal fade" id="unExpecError" role="dialog">
@@ -36,7 +41,9 @@
                 </div>
             </div>
             <div class="modal-footer page-footer">
-                <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
+                <button type="button" class="pm-addBut" data-dismiss="modal">Ok
+                  
+                </button>
             </div>
         </div>
     </div>

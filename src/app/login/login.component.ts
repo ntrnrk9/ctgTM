@@ -1,5 +1,6 @@
 import { Component, Input, Output, ViewChild, NgZone, ChangeDetectorRef, OnInit, EventEmitter } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { MasterServService } from '../service/master-serv.service';
 import 'rxjs/add/operator/map';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { GmapjsComponent } from '../gmapjs/gmapjs.component';
@@ -20,12 +21,13 @@ export class LoginComponent implements OnInit {
   authToken = ""
   user = "";
   invalidCred=false;
+  loggedIn=false;
   action: any = { heading: "", body: "",details: ""};
+  ;
 
-  constructor(private http: Http) { }
+  constructor(private http: Http,private masterServ:MasterServService) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   emit() {
     this.configChange.emit(this.config);
@@ -39,6 +41,7 @@ export class LoginComponent implements OnInit {
   }
 
   getAuthToken() {
+    this.loggedIn=true;
 
     var creds = "username=" + config.username + "&password=" + config.password;
 
@@ -66,16 +69,20 @@ export class LoginComponent implements OnInit {
           console.log(data.ADUser.cn);
           this.authToken = (data.Token);
           this.user = (data.ADUser.cn);
+          this.masterServ.$sessionUser=(this.user);
+          this.masterServ.$authToken=(this.authToken);
           this.verifyToken();
 
         } else {
           console.log("getAuthToken recieved invalid data");
+          this.loggedIn=false;
         }
 
       }, //For Success Response
       (err) => {
         console.log("getAuthToken error recieved");
         this.invalidCred=true;
+        this.loggedIn=false;
         // var result={};
         // this.action.heading = "Authentication";
         // this.action.body = "Unexpected Error occured. Please contact system administrator.";
@@ -114,8 +121,10 @@ export class LoginComponent implements OnInit {
           if (data.is_valid) {
             this.config.isValid = true;
             this.invalidCred=false;
+            this.loggedIn=false;
             this.emit();
           }else{
+            this.loggedIn=false;
             this.action.heading = "Authentication";
             this.action.body = "Invalid token. Please login again.";
             this.action.details = "";
@@ -124,6 +133,7 @@ export class LoginComponent implements OnInit {
 
         } else {
           console.log("TMS Trailers do not match with TMW Trailer");
+          this.loggedIn=false;
           this.action.heading = "Authentication";
           this.action.body = "Unexpected Error occured. Please contact system administrator.";
           this.action.details = 'Token validation service recieved invalid data<br>' + url;
@@ -133,6 +143,7 @@ export class LoginComponent implements OnInit {
       }, //For Success Response
       (err) => {
         console.log("allocateInTMW error recieved");
+        this.loggedIn=false;
         this.action.heading = "Authentication";
         this.action.body = "Unexpected Error occured. Please contact system administrator.";
         this.action.details = 'Token validation service failed<br>' + url + '<br>Status: ' + err.status;
