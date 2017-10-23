@@ -13,6 +13,7 @@ import { NvD3Module } from 'ng2-nvd3';
 
 import { AppComponent } from './app.component';
 
+import { MasterServService } from './service/master-serv.service';
 
 import { HeaderComponent } from './header/header.component';
 import { MainTabsComponent } from './mainTabs/mainTabs.component';
@@ -62,7 +63,7 @@ import { LoginComponent } from './login/login.component';
         , HomeMainComponent, TrailerDashComponent, 
         OrderDashComponent, YardDashComponent, YardCheckComponent, LoginComponent
     ],
-    //providers:[{ provide: RequestOptions, useClass: HttpInject }],
+    providers: [MasterServService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
