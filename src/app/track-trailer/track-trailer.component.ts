@@ -206,10 +206,12 @@ export class TrackTrailerComponent {
     search() {
         if (this.bylocation.length > 0) {
             this.getvalue();
+            this.mapConfig.marker=-1;
         } else if (this.searchID.length > 0) {
             this.searchByID();
         } else if (this.custID.length > 0) {
             this.searchByCustID();
+            this.mapConfig.marker=-1;
         } else {
             if (this.disableStatus) {
                 this.action.heading = "Trailer search";
@@ -313,6 +315,7 @@ export class TrackTrailerComponent {
     }
 
     setByLocation() {
+        this.filterMapByCmp();
         var input = $('#ctgGeoCode').val();
         this.mapConfig.marker = -1;
         console.log(input);
@@ -498,13 +501,16 @@ export class TrackTrailerComponent {
                     var lat = data.dataSet[0].latitude;
                     var lng = data.dataSet[0].longitude;
                     if (this.mgToggleFlag) {
-                        this.gmapJs.drawPoly(poly, lat, lng);
-                        this.filterByBounds(poly, data.dataSet[0].trailers);
-                    } else {
-                        this.filterByBounds(poly, data.dataSet[0].trailers);
+                        //this.gmapJs.drawPoly(poly, lat, lng);
                         this.mapConfig.polygon = poly;
                         this.mapConfig.lat = lat;
                         this.mapConfig.lng = lng;
+                        this.filterByBounds(poly, data.dataSet[0].trailers);
+                    } else {
+                        this.mapConfig.polygon = poly;
+                        this.mapConfig.lat = lat;
+                        this.mapConfig.lng = lng;
+                        this.filterByBounds(poly, data.dataSet[0].trailers);
                     }
 
                 } else {
@@ -666,7 +672,7 @@ export class TrackTrailerComponent {
             }
         }
         var bag = []
-        this.allTrailers.forEach(element => {
+        this.allTrailers_bu.forEach(element => {
             if(element.trailerID=="R3003"){
                 console.log("ro");
             }
@@ -675,7 +681,7 @@ export class TrackTrailerComponent {
             }
         });
         this.allTraillerSubSet = bag;
-        //this.allTrailers = bag;
+        this.allTrailers = bag;
     }
     selectTrStatus(item: any) {
         this.allTraillerSubSet = [];
@@ -721,16 +727,19 @@ export class TrackTrailerComponent {
         this.selectedCmp = item;
         this.filterMapByCmp();
         if (this.bylocation.length == 0 && this.custID.length == 0 && this.searchID.length == 0) {
+            this.mapConfig.marker=-1;
             this.selectTrStatus(this.selectedTrStatus);
             //this.allTraillerSubSet=this.filterGridByCmp(this.allTrailers);
         } else {
             if (this.bylocation.length > 0) {
+                this.mapConfig.marker=-1;
                 this.getvalue();
                 this.selectMiles(this.selectedMiles);
             } else if (this.searchID.length > 0) {
                 this.searchByID();
                 this.allTraillerSubSet = this.filterGridByCmp(this.allTraillerSubSet);
             } else if (this.custID.length > 0) {
+                this.mapConfig.marker=-1;
                 this.searchByCustID();
                 this.allTraillerSubSet = this.filterGridByCmp(this.allTraillerSubSet);
             }
