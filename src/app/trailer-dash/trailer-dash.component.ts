@@ -25,7 +25,8 @@ export class TrailerDashComponent implements OnInit {
   segData = {
     cven: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
     srt: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
-    star: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
+    star: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
+    all: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
   };
 
   segByCountryData = {
@@ -69,7 +70,7 @@ export class TrailerDashComponent implements OnInit {
 
   chartOptions = { legend: { position: 'right' } };
 
-  cmpList: any = [{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "STAR", value: "STAR" }];
+  cmpList: any = [{ lable: "ALL", value: "ALL" },{ lable: "Covenant", value: "CVEN" }, { lable: "SRT", value: "SRT" }, { lable: "STAR", value: "STAR" }];
   selectedCmp = { lable: "Covenant", value: "CVEN" };
 
   countryList: any = [{ lable: "USA", value: "USA" }, { lable: "Mexico", value: "MEXICO" }, { lable: "Canada", value: "CANADA" }];
@@ -224,7 +225,8 @@ export class TrailerDashComponent implements OnInit {
     this.segData = {
       cven: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
       srt: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
-      star: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
+      star: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
+      all: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] }
     };
     this.segByCountryData = {
       usa: { list: [],cven:[],srt:[],star:[]},
@@ -374,14 +376,57 @@ export class TrailerDashComponent implements OnInit {
       }
     }
 
+    this.prepAllCmpData();
+
     this.segData.cven.byType = this.segrigateTrailerByType(this.segData.cven.list, 'CVEN');
     this.segData.srt.byType = this.segrigateTrailerByType(this.segData.srt.list, 'SRT');
     this.segData.star.byType = this.segrigateTrailerByType(this.segData.star.list, 'STAR');
+    this.segData.all.byType = this.segrigateTrailerByType(this.segData.all.list, 'ALL');
 
     console.log("byType");
     console.log(this.segData.cven.byType);
     console.log("byStatus");
     console.log(this.segData.cven.byStatus);
+
+  }
+
+  prepAllCmpData(){
+    var bag=[];
+    bag=bag.concat(this.segData.cven.list);
+    bag=bag.concat(this.segData.srt.list);
+    bag=bag.concat(this.segData.star.list);
+    this.segData.all.list=bag;
+
+    bag=[];
+    bag=bag.concat(this.segData.cven.byStatus.POOL);
+    bag=bag.concat(this.segData.srt.byStatus.POOL);
+    bag=bag.concat(this.segData.star.byStatus.POOL);
+    this.segData.all.byStatus.POOL=bag;
+
+    bag=[];
+    bag=bag.concat(this.segData.cven.byStatus.INACT);
+    bag=bag.concat(this.segData.srt.byStatus.INACT);
+    bag=bag.concat(this.segData.star.byStatus.INACT);
+    this.segData.all.byStatus.INACT=bag;
+
+    bag=[];
+    bag=bag.concat(this.segData.cven.byStatus.PLN);
+    bag=bag.concat(this.segData.srt.byStatus.PLN);
+    bag=bag.concat(this.segData.star.byStatus.PLN);
+    this.segData.all.byStatus.PLN=bag;
+
+    bag=[];
+    bag=bag.concat(this.segData.cven.byStatus.AVL);
+    bag=bag.concat(this.segData.srt.byStatus.AVL);
+    bag=bag.concat(this.segData.star.byStatus.AVL);
+    this.segData.all.byStatus.AVL=bag;
+
+    bag=[];
+    bag=bag.concat(this.segData.cven.byStatus.OTH);
+    bag=bag.concat(this.segData.srt.byStatus.OTH);
+    bag=bag.concat(this.segData.star.byStatus.OTH);
+    this.segData.all.byStatus.OTH=bag;
+
 
   }
 

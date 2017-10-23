@@ -1,59 +1,59 @@
-<div class="row" style="margin-top:20px">
-  <div class="col-lg-3 col-xs-6 ">
+<div class="row">
+  <div class="col-lg-3 col-xs-6" [ngClass]="(selectedCmp.lable=='ALL') ? 'selbox-cont' : 'box-cont'">
     <!-- small box -->
-    <div class="small-box b1">
+    <div class="small-box b1" [ngClass]="(selectedCmp.lable=='ALL') ? 'selsmallBox' : 'dselsmallBox'">
       <div class="inner">
         <h3 *ngIf="trailers.length>0">{{this.byCmpTotal.gTot}}</h3>
         <h3 *ngIf="trailers.length==0">...</h3>
         <p>Grand Total</p>
       </div>
-      <div class="icon">
-        <img width="100" src="../../assets/images/dash/GrandTotal.png" />
+      <div class="icon" [ngStyle]="{'opacity': (selectedCmp.lable=='ALL') ? .3 : .2}">
+        <img width="100" src="../../assets/images/transDash/GrandTotal.png" />
       </div>
 
     </div>
   </div>
   <!-- ./col -->
-  <div class="col-lg-3 col-xs-6 ">
+  <div class="col-lg-3 col-xs-6 " [ngClass]="(selectedCmp.lable=='Covenant') ? 'selbox-cont' : 'box-cont'">
     <!-- small box -->
-    <div class="small-box b2">
+    <div class="small-box b2" [ngClass]="(selectedCmp.lable=='Covenant') ? 'selsmallBox' : 'dselsmallBox'">
       <div class="inner">
         <h3 *ngIf="trailers.length>0">{{this.byCmpTotal.cven}}</h3>
         <h3 *ngIf="trailers.length==0">...</h3>
         <p>Covenant</p>
       </div>
-      <div class="icon">
-        <img width="100" src="../../assets/images/dash/CVEN.png" />
+      <div class="icon" [ngStyle]="{'opacity': (selectedCmp.lable=='Covenant') ? .3 : .2}">
+        <img width="100" src="../../assets/images/transDash/CVEN.png" />
       </div>
 
     </div>
   </div>
   <!-- ./col -->
-  <div class="col-lg-3 col-xs-6 ">
+  <div class="col-lg-3 col-xs-6 " [ngClass]="(selectedCmp.lable=='SRT') ? 'selbox-cont' : 'box-cont'">
     <!-- small box -->
-    <div class="small-box b3">
+    <div class="small-box b3" [ngClass]="(selectedCmp.lable=='SRT') ? 'selsmallBox' : 'dselsmallBox'">
       <div class="inner">
         <h3 *ngIf="trailers.length>0">{{this.byCmpTotal.srt}}</h3>
         <h3 *ngIf="trailers.length==0">...</h3>
         <p>SRT</p>
       </div>
-      <div class="icon">
-        <img width="100" src="../../assets/images/dash/SRT.png" />
+      <div class="icon" [ngStyle]="{'opacity': (selectedCmp.lable=='SRT') ? .3 : .2}">
+        <img width="100" src="../../assets/images/transDash/SRT.png" />
       </div>
 
     </div>
   </div>
   <!-- ./col -->
-  <div class="col-lg-3 col-xs-6 ">
+  <div class="col-lg-3 col-xs-6 " [ngClass]="(selectedCmp.lable=='STAR') ? 'selbox-cont' : 'box-cont'">
     <!-- small box -->
-    <div class="small-box b4">
+    <div class="small-box b4" [ngClass]="(selectedCmp.lable=='STAR') ? 'selsmallBox' : 'dselsmallBox'">
       <div class="inner">
         <h3 *ngIf="trailers.length>0">{{this.byCmpTotal.star}}</h3>
         <h3 *ngIf="trailers.length==0">...</h3>
         <p>STAR</p>
       </div>
-      <div class="icon">
-        <img width="100" src="../../assets/images/dash/STAR.png" />
+      <div class="icon" [ngStyle]="{'opacity': (selectedCmp.lable=='STAR') ? .3 : .2}">
+        <img width="100" src="../../assets/images/transDash/STAR.png" />
       </div>
 
     </div>
@@ -61,7 +61,7 @@
   <!-- ./col -->
 </div>
 
-<div class="row" style="margin:20px 0px 0px 0px">
+<div class="row" style="margin:18px 0px 0px 0px">
 
   <div style="width:180px;border: 1px solid #d3d3d3;height: 32px;" class="pull-left">
     <app-singleselect [items]="countryList" [config]="countrySelectConfig" (selectedItemChange)="countrySelected($event);filterByCmpnState(0)"
