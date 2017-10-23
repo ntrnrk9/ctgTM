@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { GmapjsComponent } from '../gmapjs/gmapjs.component';
 import { Gmtest } from '../gmtest/gmtest.component';
+import { MasterServService } from '../service/master-serv.service';
 import { IMyDpOptions, IMyDateModel, IMyInputFieldChanged } from 'mydatepicker';
 
 declare var google: any;
@@ -130,7 +131,7 @@ export class AllocationPageComponent {
         this.page=this.config.page;
     }
 
-    constructor(private http: Http, private cdr: ChangeDetectorRef) {
+    constructor(private http: Http, private cdr: ChangeDetectorRef,private masterServ:MasterServService) {
         //this.getOrderDetails();
         this.initDateFilter();
         this.getOrderDetailsByFn(0);
@@ -1565,6 +1566,7 @@ export class AllocationPageComponent {
             "trailerID": this.selectedTrailer.trailerID,
             "trailerType": this.selectedTrailer.trailerType,
             "trailerName": this.selectedTrailer.trailerName,
+            'updatedBy':this.masterServ.$sessionUser
         };
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         let url = config.baseUrl + "/AllocationService/api/InsertOrderAllocation";

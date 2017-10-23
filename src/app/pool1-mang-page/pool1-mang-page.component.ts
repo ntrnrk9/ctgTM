@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { FilterCPipe } from '../Filters/filterC.pipe';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
+import { MasterServService } from '../service/master-serv.service';
+
 import * as config from '../configs/configs';
 declare var $: any;
 @Component({
@@ -928,7 +930,7 @@ export class Pool1MangPageComponent {
         //console.log(JSON.stringify(items));
     }
 
-    constructor(private http: Http) {
+    constructor(private http: Http,private masterServ:MasterServService) {
         //this.ob['groups'] = [];
         this.selectVarience(this.selectedVarience);
         //this.getAllCities();
@@ -1085,6 +1087,7 @@ export class Pool1MangPageComponent {
             delete this.poolToEdit['isReciev'];
             delete this.poolToEdit['isReef'];
             delete this.poolToEdit['isDryvan'];
+            this.poolToEdit['updatedBy']=this.masterServ.$sessionUser;
 
             let headers = new Headers({ 'Content-Type': 'application/json;', 'Accept': 'application/json' });
             let options = new RequestOptions({ headers: headers });
@@ -1238,6 +1241,7 @@ export class Pool1MangPageComponent {
             }else if(this.poolToAdd.isDryvan){
                 data.trailerType = 1;
             }
+            data['updatedBy']=this.masterServ.$sessionUser;
 
             console.log("add: " + this.selectedState);
             console.log("add: " + this.selectedCity);
@@ -1332,6 +1336,7 @@ export class Pool1MangPageComponent {
             this.plannerCrud['subRegionID']=str;
             let url = config.baseUrl + "/PoolMGMTService/api/InsertPlanner";
             let object = this;
+            this.plannerCrud['updatedBy']=this.masterServ.$sessionUser;
             this.http.post(url, this.plannerCrud, options).map(res => res.json())
                 .subscribe(
                 (resp) => {
@@ -1402,6 +1407,7 @@ export class Pool1MangPageComponent {
 
             let url = config.baseUrl + "/PoolMGMTService/api/UpdatePlanner";
             let object = this;
+            this.plannerCrud['updatedBy']=this.masterServ.$sessionUser;
             this.http.post(url, this.plannerCrud, options).map(res => res.json())
                 .subscribe(
                 (resp) => {
@@ -1493,6 +1499,7 @@ export class Pool1MangPageComponent {
 
             let url = config.baseUrl + "/PoolMGMTService/api/InsertCSR";
             let object = this;
+            this.csrCrud['updatedBy']=this.masterServ.$sessionUser;
             this.http.post(url, this.csrCrud, options).map(res => res.json())
                 .subscribe(
                 (resp) => {
@@ -1547,8 +1554,11 @@ export class Pool1MangPageComponent {
             let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
             let options = new RequestOptions({ headers: headers });
             var data = {
-                csrCode: this.csrCrud.csrCode, csr: this.csrCrud.csr
+                csrCode: this.csrCrud.csrCode, 
+                csr: this.csrCrud.csr,
+                updatedBy:this.masterServ.$sessionUser
             }
+            this.csrCrud['updatedBy']=this.masterServ.$sessionUser;
 
             let url = config.baseUrl + "/PoolMGMTService/api/UpdateCSR";
             let object = this;
@@ -1592,6 +1602,7 @@ export class Pool1MangPageComponent {
 
         //let url = "http://61.16.133.244/PoolMGMTService/api/DeletePool?pid="+item.pID+"&poolid="+item.poolID+"&cmpid="+item.cmpID;
         let url = config.baseUrl+"/PoolMGMTService/api/DeleteCSR";
+        this.csrCrud['updatedBy']=this.masterServ.$sessionUser;
         this.http.post(url, this.csrCrud, options).map(res => res.json())
             .subscribe(
             (resp) => {
@@ -1626,6 +1637,7 @@ export class Pool1MangPageComponent {
 
         //let url = "http://61.16.133.244/PoolMGMTService/api/DeletePool?pid="+item.pID+"&poolid="+item.poolID+"&cmpid="+item.cmpID;
         let url = config.baseUrl+"/PoolMGMTService/api/DeletePlanner";
+        this.plannerCrud['updatedBy']=this.masterServ.$sessionUser;
         this.http.post(url, this.plannerCrud, options).map(res => res.json())
             .subscribe(
             (resp) => {
@@ -1766,6 +1778,7 @@ export class Pool1MangPageComponent {
 
         //let url = "http://61.16.133.244/PoolMGMTService/api/DeletePool?pid="+item.pID+"&poolid="+item.poolID+"&cmpid="+item.cmpID;
         let url = config.baseUrl+"/PoolMGMTService/api/DeletePool";
+        this.poolToDel['updatedBy']=this.masterServ.$sessionUser;
         this.http.post(url, this.poolToDel, options).map(res => res.json())
             .subscribe(
             (resp) => {

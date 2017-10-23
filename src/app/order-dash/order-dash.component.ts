@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, NgZone, ChangeDetectorRef } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
-
+import { MasterServService } from '../service/master-serv.service';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 
 declare var $: any;
@@ -22,7 +22,7 @@ export class OrderDashComponent implements OnInit {
   trMapConfig:any={lat:35.96494,lng:-83.95384,zoom:10,mapType:'roadmap',marker:-1};
   pvaNoData=false;
   
-  constructor(private http: Http, private cdr: ChangeDetectorRef) {
+  constructor(private http: Http, private cdr: ChangeDetectorRef,private masterServ:MasterServService) {
     this.getOrderStats();
     this.getFutureAVLOrders();
     //this.getStateTrailersStatus();
@@ -522,7 +522,12 @@ export class OrderDashComponent implements OnInit {
     let options = new RequestOptions({ headers: headers });
     let url = config.baseUrl + "/HomeService/api/UpdateTMWTrailerInOrderAllocation";
     this.doDataSyncResp=false;
-    var body={"OAID":item.oAID,"tMSTrailerID":item.tMSTrailerID,"tMWOrderTrailerID":item.tMWOrderTrailerID};
+    var body = { 
+      "OAID": item.oAID, 
+      "tMSTrailerID": item.tMSTrailerID, 
+      "tMWOrderTrailerID": item.tMWOrderTrailerID,
+      'updatedBy':this.masterServ.$sessionUser
+     };
 
     this.http.post(url, body, options).map(res => res.json())
       .subscribe(
