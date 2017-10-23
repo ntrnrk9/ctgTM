@@ -1,5 +1,8 @@
 <header>head</header>
 <div class="container">
-    <mainTabs></mainTabs>
+    <div [ngSwitch]="toShowTab">
+    <mainTabs *ngSwitchCase=2></mainTabs>
+    <app-login *ngSwitchCase=1 [config]="loginConfig" (configChange)="login()"></app-login>
+    </div>
 </div>
 <footer1></footer1>

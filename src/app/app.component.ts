@@ -9,4 +9,11 @@ import 'rxjs/add/operator/map';
 })
 export class AppComponent {
   title = 'app';
+  toShowTab = 1;
+  loginConfig={isValid:false};
+  login(){
+    if(this.loginConfig.isValid){
+      this.toShowTab=2;
+    }
+  }
 }
