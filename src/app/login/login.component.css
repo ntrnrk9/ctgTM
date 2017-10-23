@@ -1,0 +1,16 @@
+.loginFields{
+    width:300px;
+    border-radius: 5px;
+    height: 40px;
+    border: 1px solid silver;
+    padding-left: 10px;
+}
+
+.loginBut{
+    height: 40px;
+    border: none;
+    width: 300px;
+    border-radius: 5px;
+    background: #d2232a;
+    color: white;
+}

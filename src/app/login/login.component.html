@@ -1,3 +1,44 @@
-<p>
-  login works!
-</p>
+<div class=" row centered" style="height:500px">
+  <!-- <div class="col-md-6 centered" style="height:100%;border-right:1px solid silver">logo</div> -->
+  <div class=" centered" style="height:100%">
+    <div>
+      <div style="margin-bottom: 5px;">
+        <label>Login</label>
+      </div>
+      <div>
+        <input type="text" placeholder="Username" class="loginFields" [(ngModel)]="username" />
+      </div>
+      <br>
+      <div>
+        <input type="password" placeholder="Password" class="loginFields" [(ngModel)]="password" />
+      </div>
+      
+      <div style="color:#d2232a" *ngIf="invalidCred">
+        <br>
+        <span>Invalid Login Credentials.!</span>
+      </div>
+      <br>
+      <button class="loginBut" (click)="login()">Login</button>
+    </div>
+  </div>
+  <div class="modal fade" id="unExpecError" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header page-heading" style="padding:5px">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{{action.heading}}</h4>
+            </div>
+            <div class="modal-body">
+                <p>{{action.body}}
+                <a *ngIf="action.details!=''" href="#details" data-toggle="collapse">Details</a></p>
+                <div id="details" class="collapse">
+                   <p [innerHTML]="action.details" style="word-wrap: break-word"></p>
+                </div>
+            </div>
+            <div class="modal-footer page-footer">
+                <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
