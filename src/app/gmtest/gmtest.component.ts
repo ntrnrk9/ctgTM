@@ -30,8 +30,9 @@ export class Gmtest {
     polyBound:any;
     markerCluster:any;
     maxZoomLevel=18;
-    minimumClusterSize=10;
-
+    minimumClusterSize=11;
+    isClustured=true;
+    mcOptions={};
     markerList: any = {
         yellowMark: '../../assets/images/markers/trailer-yellow.png',
         redMark: '../../assets/images/markers/trailer-red.png',
@@ -47,7 +48,12 @@ export class Gmtest {
 
     mapIcon(trailer: any) {
         if (trailer.trailerStatus == "AVL") {
-            return this.markerList.greenMark;
+            if(trailer.dOTDueDays<=7||trailer.isShedTrailer){
+                return this.markerList.redMark;
+            }else{
+                return this.markerList.greenMark;
+            }
+            
         } else if (trailer.trailerStatus == "PLN") {
             return this.markerList.yellowMark;
         } else {
@@ -158,7 +164,7 @@ export class Gmtest {
             this.bindInfoWindow(tr, marker, this.map, this.infowindow, this.createinfoWinContent(tr));
             this.markers.push(marker);
         }
-        var mcOptions = {
+        this.mcOptions = {
             styles: [{
                 height: 53,
                 url: "../../assets/images/markers/running1.png",
@@ -195,15 +201,15 @@ export class Gmtest {
         var obj=this;
 
         this.markerCluster = new MarkerClusterer(this.map, this.markers,
-            mcOptions);
+            this.mcOptions);
         if(this.config.marker>0){
-        setTimeout(function () {
-            google.maps.event.trigger(obj.markers[obj.config.marker], 'mouseover');
-        }, 700);
+            setTimeout(function () {
+                google.maps.event.trigger(obj.markers[obj.config.marker], 'mouseover');
+            }, 700);
         }
-    if(this.config.polygon){
-        this.drawPoly(this.config.polygon,this.config.lat,this.config.lng);
-    }
+        if(this.config.polygon){
+            this.drawPoly(this.config.polygon,this.config.lat,this.config.lng);
+        }
         
 
     }
@@ -504,31 +510,37 @@ export class Gmtest {
         return toReturn;
     }
 
-    resetMap() {
-        var ctrl=this;
-        this.map.setZoom(4);
-    }
-
+    
     declusterMap() {
         var ctrl = this;
-        if (this.maxZoomLevel == 3) {
-            this.maxZoomLevel = 7;
-            this.markerCluster.setMaxZoom(7);
-            this.markerCluster.resetViewport();
-        } else if (this.maxZoomLevel == 7) {
-            this.maxZoomLevel = 3;
-            this.markerCluster.setMaxZoom(3);
-            this.markerCluster.resetViewport();
+       
+        if(this.isClustured){
+            this.unclusterMap();
+            this.isClustured=false;
+        }else{
+            this.clusterMap();
+            this.isClustured=true;
         }
         
-        
-        //this.markerCluster.redraw();
-        //this.map.setZoom(5);
-
-
     }
 
+    clusterMap() {
+        this.markers.forEach(element => {
+            element.setOptions({ map: null, visible: false });
+        });
 
+        this.markerCluster = new MarkerClusterer(this.map, this.markers, this.mcOptions);
+        //this.markerCluster.refresh();
+    }
+
+    unclusterMap() {
+        this.markerCluster.clearMarkers();
+        // markerCluster.refresh();
+
+        for (var i = 0; i < this.markers.length; i++) {
+            this.markers[i].setOptions({ map: this.map, visible: true });
+        }
+    }
 }
 
 // This code copy to app.module.ts
