@@ -192,13 +192,23 @@ export class Gmtest {
                 if (tr.trailerID == this.config.marker) {
                     this.index = i;
                 }
+                let icon=this.mapIcon(tr);
+
                 var marker = new google.maps.Marker(
                     {
                         position: myLatLng,
                         //map: this.map,
                         title: tr.trailerID,
-                        icon: this.mapIcon(tr)
+                        icon: icon
                     });
+                if(icon==this.markerList.yellowMark){
+                    marker.color="yellow";
+                }else if(icon==this.markerList.redMark){
+                    marker.color="red";
+                }else if(icon==this.markerList.greenMark){
+                    marker.color="green";
+                }    
+                marker.tr=tr;    
                 var ob = this.createinfoWinContent(tr);
                 this.bindInfoWindow(tr, marker, this.map, this.infowindow, this.createinfoWinContent(tr));
                 this.markers.push(marker);
@@ -241,6 +251,52 @@ export class Gmtest {
 
         this.markerCluster = new MarkerClusterer(this.map, this.markers,
             this.mcOptions);
+        google.maps.event.addListener(this.markerCluster, "mouseover", function (cluster) {
+            console.log('test');
+            var markers = cluster.getMarkers();
+            var content = '';
+            let bag={red:0,green:0,yellow:0};
+            let red=0,green=0,yellow=0;
+            markers.forEach(element => {
+                if (element.color == "yellow") {
+                    bag.yellow++;
+                    yellow++
+                } else if (element.color == "red") {
+                    bag.red++;
+                    red++;
+                } else if (element.color == "green") {
+                    bag.green++;
+                    green++;
+                }
+            });
+            console.log(bag);
+            var content = '<div class="infowindow" style="width:100px;padding:0px;height:50px;overflow:hidden;">' +
+            '<div class="row header" style="border-bottom: 2px solid gray;padding:0px 0px 0px 30px">' +
+            '<div class="row head1" style="font-weight:normal;font-size:14px;color:black">AVL: <b>' + bag.green+ '</b></div>' +
+            '<div class="row head2" style="font-weight:normal;font-size:14px;color:black">PLANNED: <b>' + bag.yellow + '</b></div>' +
+            '<div class="row head3" style="font-weight:normal;font-size:14px;color:black">OTHERS: <b>' + bag.red + '</b></div>' +
+            '</div>' +
+            '</div>';
+            var info = new google.maps.MVCObject;
+            info.set('position', cluster.center_);
+            var infowindow = new google.maps.InfoWindow();
+            let ctrl=this
+            infowindow.close();
+            infowindow.setContent(content);
+            infowindow.open(this.map, info);
+            cluster.infow=infowindow;
+        });
+        
+        google.maps.event.addListener(this.markerCluster, "mouseout", function (cluster) {
+            console.log('out');
+            var info = new google.maps.MVCObject;
+            info.set('position', cluster.center_);
+            var infowindow = new google.maps.InfoWindow();
+            let ctrl=this
+            cluster.infow.close();
+            
+        });
+
         if(this.config.marker>0){
             setTimeout(function () {
                 google.maps.event.trigger(obj.markers[obj.config.marker], 'mouseover');
@@ -288,6 +344,19 @@ export class Gmtest {
             '</div>' +
 
             '</div>';
+        return content;
+    }
+
+    createClusterinfoWinContent(tr: any) {
+       
+        var content = '<div class="infowindow" style="width:200px;padding:0px;height:170px;overflow:hidden;">' +
+            '<div class="row header" style="border-bottom: 2px solid gray;padding:0px 0px 0px 30px">' +
+            '<div class="row head1" style="font-weight:bold;font-size:14px;color:green">AVL: ' + tr.green + '</div>' +
+            '<div class="row head2" style="font-weight:bold;font-size:14px;color:yellow">' + tr.yellow + '</div>' +
+            '<div class="row head3" style="font-weight:bold;font-size:14px;color:red">' + tr.yellow + '</div>' +
+            '</div>' +
+            '</div>';
+
         return content;
     }
 
