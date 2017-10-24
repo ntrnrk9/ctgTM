@@ -47,18 +47,57 @@ export class Gmtest {
     action: any = { heading: "Geocode", body: "Please enter a valid location." };
 
     mapIcon(trailer: any) {
-        if (trailer.trailerStatus == "AVL") {
-            if(trailer.dOTDueDays<=7||trailer.isShedTrailer){
+        let utilized = "STD,SPU";
+        let planned = "PLN,PLNLD";
+        //check for pool trailers
+        if (trailer.isPool == 1) {
+            return this.markerList.yellowMark;
+        }//check for inactive
+        else if (this.isInactive(trailer.lastPingDate)) {
+            return this.markerList.redMark;
+
+        }//check for utilized
+        else if (utilized.includes(trailer.trailerStatus)) {
+            return this.markerList.yellowMark;
+        }//check for planned
+        else if (planned.includes(trailer.trailerStatus)) {
+            return this.markerList.yellowMark;
+        }//check for available
+        else if (trailer.trailerStatus == "AVL") {
+            if (trailer.dOTDueDays <= 7 || trailer.isShedTrailer) {
                 return this.markerList.redMark;
-            }else{
+            } else {
                 return this.markerList.greenMark;
             }
-            
-        } else if (trailer.trailerStatus == "PLN") {
-            return this.markerList.yellowMark;
-        } else {
+
+        }//rest are others 
+        else {
             return this.markerList.redMark;
         }
+    }
+
+    public isInactive(item) {
+        var date1: any = new Date();
+        var date2: any = new Date();
+
+        if (item != "") {
+            if (item != "UNKNOWN") {
+                var ary = item.split(' ');
+                var date = ary[0].split('-');
+                var time = ary[1].split(':');
+                var secs = time[2].split('.');
+                date2 = new Date(date[0], date[1] - 1, date[2]);
+                date2.setHours(time[0], time[1], time[2]);
+                var hours = Math.abs(date1 - date2) / 36e5;
+                if (hours <= 72) {
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        }
+
+        return true;
     }
 
     emit(event:any) {
@@ -146,24 +185,24 @@ export class Gmtest {
         //     componentRestrictions: { country: 'us' }
         // };
         // var autocomplete = new google.maps.places.Autocomplete(input, autoCompOptions);
-
-        for (var i = 0; i < this.trailers.length; i++) {
-            var tr = this.trailers[i];
-            var myLatLng = new google.maps.LatLng(tr.latitude, tr.longitude);
-            if (tr.trailerID == this.config.marker) {
-                this.index = i;
-            }
-            var marker = new google.maps.Marker(
-                {
-                    position: myLatLng,
-                    //map: this.map,
-                    title: tr.trailerID,
-                    icon: this.mapIcon(tr)
-                });
-            var ob = this.createinfoWinContent(tr);
-            this.bindInfoWindow(tr, marker, this.map, this.infowindow, this.createinfoWinContent(tr));
-            this.markers.push(marker);
-        }
+       
+            for (var i = 0; i < this.trailers.length; i++) {
+                var tr = this.trailers[i];
+                var myLatLng = new google.maps.LatLng(tr.latitude, tr.longitude);
+                if (tr.trailerID == this.config.marker) {
+                    this.index = i;
+                }
+                var marker = new google.maps.Marker(
+                    {
+                        position: myLatLng,
+                        //map: this.map,
+                        title: tr.trailerID,
+                        icon: this.mapIcon(tr)
+                    });
+                var ob = this.createinfoWinContent(tr);
+                this.bindInfoWindow(tr, marker, this.map, this.infowindow, this.createinfoWinContent(tr));
+                this.markers.push(marker);
+            }        
         this.mcOptions = {
             styles: [{
                 height: 53,
