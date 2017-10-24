@@ -13,6 +13,7 @@ import * as config from '../configs/configs';
 export class HomeMainComponent implements OnInit {
   toShowTab = 1;
   allTrailers = [];
+  trDashConfig={trailerStatusResp:false};
 
   trailerStatusResp = false;
 
@@ -25,6 +26,7 @@ export class HomeMainComponent implements OnInit {
 
   getStateTrailersStatus() {
     this.trailerStatusResp = false;
+    this.trDashConfig.trailerStatusResp=false;
 
     let url = config.baseUrl + "/HomeService/api/TrailerStatus?trailerStatus=0&trailerId=0";
     this.http.get(url).map(res => res.json())
@@ -33,11 +35,13 @@ export class HomeMainComponent implements OnInit {
         console.log("StatesTrailerCounts data recieved");
         this.allTrailers = data;
         this.trailerStatusResp = true;
+        this.trDashConfig.trailerStatusResp=true;
 
       }, //For Success Response
       (err) => {
         console.log("StatesTrailerCounts error recieved");
         this.trailerStatusResp = true;
+        this.trDashConfig.trailerStatusResp=true;
       } //For Error Response
       );
   }

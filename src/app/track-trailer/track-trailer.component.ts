@@ -383,7 +383,9 @@ export class TrackTrailerComponent {
             .subscribe(
             (data) => {
                 console.log("StatesTrailerCounts data recieved");
+                if(data.length>0){
                 this.allTrailers = data;
+                }
                 this.allTrailers_bu = data;
                 this.trailerStatusResp = true;
                 //this.selectCmp(this.selectedCmp);
@@ -683,6 +685,61 @@ export class TrackTrailerComponent {
         this.allTraillerSubSet = bag;
         this.allTrailers = bag;
     }
+
+    public isInactive(item) {
+        var date1: any = new Date();
+        var date2: any = new Date();
+
+        if (item != "") {
+            if (item != "UNKNOWN") {
+                var ary = item.split(' ');
+                var date = ary[0].split('-');
+                var time = ary[1].split(':');
+                var secs = time[2].split('.');
+                date2 = new Date(date[0], date[1] - 1, date[2]);
+                date2.setHours(time[0], time[1], time[2]);
+                var hours = Math.abs(date1 - date2) / 36e5;
+                if (hours <= 72) {
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    trStatus(trailer: any) {
+        let utilized = "STD,SPU";
+        let planned = "PLN,PLNLD";
+        //check for pool trailers
+        if (trailer.isPool == 1) {
+            return "pool";
+        }//check for inactive
+        else if (this.isInactive(trailer.lastPingDate)) {
+            return "inact";
+
+        }//check for utilized
+        else if (utilized.includes(trailer.trailerStatus)) {
+            return "utz";
+        }//check for planned
+        else if (planned.includes(trailer.trailerStatus)) {
+            return "pln";
+        }//check for available
+        else if (trailer.trailerStatus == "AVL") {
+            if (trailer.dOTDueDays <= 7 || trailer.isShedTrailer) {
+                return "oth";
+            } else {
+                return "avl";
+            }
+
+        }//rest are others 
+        else {
+            return "oth";
+        }
+    }
+
     selectTrStatus(item: any) {
         this.allTraillerSubSet = [];
         this.selectedTrStatus = item;
@@ -691,25 +748,26 @@ export class TrackTrailerComponent {
             switch (this.selectedTrStatus.value) {
                 case 1:
                     {
-                        if (obj.trailerStatus == "PLN")
+                        if (this.trStatus(obj)=="pln")
                             this.allTraillerSubSet.push(obj);
                     }
                     break;
                 case 2:
                     {
-                        if (obj.trailerStatus == "AVL")
+                        if (this.trStatus(obj)=="avl")
                             this.allTraillerSubSet.push(obj);
                     }
                     break;
                 case 3:
                     {
-                        if (obj['isPool'] == 1)
+                        if (this.trStatus(obj)=="pool")
                             this.allTraillerSubSet.push(obj);
                     }
                     break;
                 case 0:
                     {
-                        if (obj.trailerStatus != "PLN" && obj.trailerStatus != "AVL")
+                        let other="oth,inact,utz";
+                        if (other.includes(this.trStatus(obj)))
                             this.allTraillerSubSet.push(obj);
                     }
                     break;
@@ -911,102 +969,29 @@ export class TrackTrailerComponent {
         return bag;
       }
 
-    allTrailers = [{
-        "trailerID": "42531",
-        "trailerType": "DRY",
-        "trailerName": "HYUND",
-        "latitude": 34.0449685,
-        "longitude": -117.3770988,
-        "location": "Bloomington,CA",
-        "landmark": "FEDEX Ground (FEDBLO) Bloomington, CA",
-        "trailerStatus": "OUT",
-        "idleDuration": 0.0,
-        "lastMovementDate": "12/24/2016",
-        "dotDate": "12/24/2016",
-        "iotInfo": "INACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    },
-    {
-        "trailerID": "42532",
-        "trailerType": "DRY",
-        "trailerName": "HYUND",
-        "latitude": 39.7409019470215,
-        "longitude": -86.2154922485352,
-        "location": "Indianapolis city (balance),IN",
-        "landmark": "Shop,McGlothlin & Son (MCGIND01) Indianapolis",
-        "trailerStatus": "OUT",
-        "idleDuration": 0.0,
-        "lastMovementDate": "06/10/2016",
-        "dotDate": "06/10/2016",
-        "iotInfo": "INACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    },
-    {
-        "trailerID": "42533",
-        "trailerType": "DRY",
-        "trailerName": "HYUND",
-        "latitude": 34.0622706,
-        "longitude": -117.5057201,
-        "location": "Fontana,CA",
-        "landmark": "DO NOT REMOVE - North American Trailer Fontana - Trade Trailer location (NORFON)",
-        "trailerStatus": "PLN",
-        "idleDuration": 0.0,
-        "lastMovementDate": "06/23/2017",
-        "dotDate": "06/23/2017",
-        "iotInfo": "ACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    },
-    {
-        "trailerID": "42534",
-        "trailerType": "DRY",
-        "trailerName": "HYUND",
-        "latitude": 35.0055011,
-        "longitude": -85.391794,
-        "location": "Chattanooga,TN",
-        "landmark": "Amazon Hill (BUFFET02) Chatt, TN TERM",
-        "trailerStatus": "OUT",
-        "idleDuration": 0.0,
-        "lastMovementDate": "03/07/2016",
-        "dotDate": "03/07/2016",
-        "iotInfo": "INACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    },
-    {
-        "trailerID": "42534",
-        "trailerType": "UNK",
-        "trailerName": "",
-        "latitude": 35.0055011,
-        "longitude": -85.391794,
-        "location": "Chattanooga,TN",
-        "landmark": "Amazon Hill (BUFFET02) Chatt, TN TERM",
-        "trailerStatus": "AVL",
-        "idleDuration": 0.0,
-        "lastMovementDate": "03/07/2016",
-        "dotDate": "03/07/2016",
-        "iotInfo": "INACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    },
-    {
-        "trailerID": "42536",
-        "trailerType": "DRY",
-        "trailerName": "HYUND",
-        "latitude": 35.0014228820801,
-        "longitude": -85.3906784057617,
-        "location": "Chattanooga,TN",
-        "landmark": "Chattanooga Body Shop TERM",
-        "trailerStatus": "OUT",
-        "idleDuration": 0.0,
-        "lastMovementDate": "06/15/2016",
-        "dotDate": "06/15/2016",
-        "iotInfo": "INACTIVE",
-        "compliance": "",
-        "roadWorthiness": ""
-    }];
+    allTrailers = [{"trailerID": "162052",
+	"trailerType": "UNK",
+	"trailerName": "",
+	"latitude": 34.9994005,
+	"longitude": -85.3899438,
+	"location": "Chattanooga,TN",
+	"landmark": "Chattanooga Body Shop TERM",
+	"state": "TN",
+	"company": "SRT",
+	"trailerStatus": "AVL",
+	"idleDuration": 0.0,
+	"dotDate": "",
+	"iotInfo": "INACTIVE",
+	"compliance": "",
+	"roadWorthiness": "",
+	"distance": "NA",
+	"trailerYear": "",
+	"lastPingDate": "2015-12-19 13:58:09.000",
+	"isEmpty": 1,
+	"isPool": 0,
+	"country": "USA",
+	"isShedTrailer": 0,
+	"dOTDueDays": 0}];
 }
 
 // This code copy to app.module.ts

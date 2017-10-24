@@ -5,6 +5,7 @@ import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 
 import * as config from '../configs/configs';
 declare let d3: any;
+declare var $: any;
 
 @Component({
   selector: 'app-trailer-dash',
@@ -16,6 +17,7 @@ declare let d3: any;
 export class TrailerDashComponent implements OnInit {
 
   @Input() trailers;
+  @Input() config;
 
   gRowCount = 50;
 
@@ -220,7 +222,7 @@ export class TrailerDashComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    $('[data-toggle="popover"]').popover(); 
     var ctrl = this;
     this.segData = {
       cven: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },
@@ -352,15 +354,15 @@ export class TrailerDashComponent implements OnInit {
       }
       if (cmp == 'CVEN') {
         this.segData.cven.list.push(item);
-        var key = this.checkStatusOfTrailer(item);
+        var key = this.trStatus(item);
         this.segData.cven.byStatus[key].push(item);
       } else if (cmp == "SRT") {
         this.segData.srt.list.push(item);
-        var key = this.checkStatusOfTrailer(item);
+        var key = this.trStatus(item);
         this.segData.srt.byStatus[key].push(item);
       } else if (cmp == "STAR") {
         this.segData.star.list.push(item);
-        var key = this.checkStatusOfTrailer(item);
+        var key = this.trStatus(item);
         this.segData.star.byStatus[key].push(item);
       }
 
@@ -441,6 +443,36 @@ export class TrailerDashComponent implements OnInit {
       return item.trailerStatus;
     } else {
       return 'OTH';
+    }
+  }
+
+  trStatus(trailer: any) {
+    let utilized = "STD,SPU";
+    let planned = "PLN,PLNLD";
+    //check for pool trailers
+    if (trailer.isPool == 1) {
+      return "POOL";
+    }//check for inactive
+    else if (this.isInactive(trailer.lastPingDate)) {
+      return "INACT";
+
+    }//check for utilized
+    else if (utilized.includes(trailer.trailerStatus)) {
+      return "POOL";
+    }//check for planned
+    else if (planned.includes(trailer.trailerStatus)) {
+      return "PLN";
+    }//check for available
+    else if (trailer.trailerStatus == "AVL") {
+      if (trailer.dOTDueDays <= 7 || trailer.isShedTrailer) {
+        return "OTH";
+      } else {
+        return "AVL";
+      }
+
+    }//rest are others 
+    else {
+      return "OTH";
     }
   }
 
