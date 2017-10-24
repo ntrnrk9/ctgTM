@@ -27,7 +27,15 @@ export class LoginComponent implements OnInit {
 
   constructor(private http: Http,private masterServ:MasterServService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // $('#abc').popover({
+    //   placement: 'right',
+    //   toggle: 'popover',
+    //   //title: 'khcksahkdfs',
+    //   html: true,
+    //   content: $('#pop').html()
+    // });
+  }
 
   emit() {
     this.configChange.emit(this.config);
