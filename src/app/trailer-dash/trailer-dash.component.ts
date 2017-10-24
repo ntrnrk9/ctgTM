@@ -222,7 +222,7 @@ export class TrailerDashComponent implements OnInit {
   }
 
   ngOnInit() {
-    $('[data-toggle="popover"]').popover(); 
+     
     var ctrl = this;
     this.segData = {
       cven: { list: [], byStatus: { POOL:[],INACT: [], PLN: [], AVL: [], OTH: [] }, byType: [] },

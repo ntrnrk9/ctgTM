@@ -383,9 +383,7 @@ export class TrackTrailerComponent {
             .subscribe(
             (data) => {
                 console.log("StatesTrailerCounts data recieved");
-                if(data.length>0){
                 this.allTrailers = data;
-                }
                 this.allTrailers_bu = data;
                 this.trailerStatusResp = true;
                 //this.selectCmp(this.selectedCmp);
