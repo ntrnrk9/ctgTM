@@ -207,3 +207,37 @@ svg text {
     background-color: #eaeaea;
     border: 1px solid #dedede;
 }
+
+.subPop{
+    transition: all .2s ease-out;
+    top: 0px;
+    right: 0px !important;
+    left: auto;
+    display: block;
+    max-width: none;
+    border-radius: 0px;
+    background-color: #fafafa;
+}
+
+.splitClose{
+    padding: 5px 10px;
+    color: grey;
+    opacity: 1;
+    font-size: 30px;
+    float: right;
+    font-weight: bold;
+    line-height: 1;
+    border: none;
+    background: transparent;
+}
+.splitTitle{
+    font-size: 25px;font-weight: normal;padding-top: 10px;padding-left: 15px;
+}
+
+.popover.right>.arrow:after {
+    bottom: -10px;
+    left: 1px;
+    content: " ";
+    border-right-color: #fafafa;
+    border-left-width: 0;
+}

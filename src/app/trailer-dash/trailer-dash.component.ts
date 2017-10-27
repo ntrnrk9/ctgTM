@@ -20,7 +20,7 @@ export class TrailerDashComponent implements OnInit {
   @Input() config;
 
   gRowCount = 50;
-
+  showSplit=false;
   public pieChartLabels: string[] = ['Planned', 'Available', 'Inactive', 'Pool','Others'];
   public typeChartLabels: string[] = [];
 
@@ -89,8 +89,11 @@ export class TrailerDashComponent implements OnInit {
 
   
   public selectedLable: string = '';
+  pointerPos='';
+  sublotLable:string="";
   totalTrailers = 0;
   lotSize = 0;
+  sublotSize=0;
   emptyTrailers = 0;
   movingTrailers = 0;
   shedTrailers = 0;
@@ -209,6 +212,7 @@ export class TrailerDashComponent implements OnInit {
   };
   trStatusChartdata = [];
   trTypeChartData = [];
+  strTypeChartData = [];
 
 
   constructor(private http: Http, private cdr: ChangeDetectorRef) {
@@ -352,17 +356,23 @@ export class TrailerDashComponent implements OnInit {
       if (cmp == 'UNKNOWN') {
         cmp = "CVEN";
       }
+      var key = this.trStatus(item);
+      if (key == "UTL") {
+        key = "POOL";
+      }
+
       if (cmp == 'CVEN') {
         this.segData.cven.list.push(item);
-        var key = this.trStatus(item);
-        this.segData.cven.byStatus[key].push(item);
+        //var key = this.trStatus(item);
+          this.segData.cven.byStatus[key].push(item);
+        //this.segData.cven.byStatus[key].push(item);
       } else if (cmp == "SRT") {
         this.segData.srt.list.push(item);
-        var key = this.trStatus(item);
+        //var key = this.trStatus(item);
         this.segData.srt.byStatus[key].push(item);
       } else if (cmp == "STAR") {
         this.segData.star.list.push(item);
-        var key = this.trStatus(item);
+        //var key = this.trStatus(item);
         this.segData.star.byStatus[key].push(item);
       }
 
@@ -447,7 +457,7 @@ export class TrailerDashComponent implements OnInit {
   }
 
   trStatus(trailer: any) {
-    let utilized = "STD,SPU";
+    let utilized = "STD,SPU,DSP";
     let planned = "PLN,PLNLD";
     //check for pool trailers
     if (trailer.isPool == 1) {
@@ -458,7 +468,7 @@ export class TrailerDashComponent implements OnInit {
 
     }//check for utilized
     else if (utilized.includes(trailer.trailerStatus)) {
-      return "POOL";
+      return "UTL";
     }//check for planned
     else if (planned.includes(trailer.trailerStatus)) {
       return "PLN";
@@ -498,7 +508,7 @@ export class TrailerDashComponent implements OnInit {
       var item = { key: 'Available', y: lot.byStatus.AVL.length, list: lot.byStatus.AVL };
       lotSize += lot.byStatus.AVL.length
       this.trStatusChartdata.push(item);
-      var item = { key: 'Pool', y: lot.byStatus.POOL.length, list: lot.byStatus.POOL };
+      var item = { key: 'Utilized', y: lot.byStatus.POOL.length, list: lot.byStatus.POOL };
       lotSize += lot.byStatus.POOL.length
       this.trStatusChartdata.push(item);
       var item = { key: 'Inactive', y: lot.byStatus.INACT.length, list: lot.byStatus.INACT };
@@ -526,7 +536,7 @@ export class TrailerDashComponent implements OnInit {
       this.trStatusChartdata.push(item1);
 
       bag = this.filterByState(lot.byStatus.POOL);
-      item1 = { key: 'Pool', y: bag.length, list: bag };
+      item1 = { key: 'UTILIZED', y: bag.length, list: bag };
       lotSize += bag.length;
       this.trStatusChartdata.push(item1);
 
@@ -631,12 +641,14 @@ export class TrailerDashComponent implements OnInit {
   }
 
   cmpSelected(item) {
+    this.showSplit=false;
     this.showGrid = false;
     this.gRowCount = 50;
     this.selectedCmp = item;
   }
 
   countrySelected(item) {
+    this.showSplit=false;
     this.showGrid = false;
     this.gRowCount = 50;
     this.selectedCountry = item;
@@ -729,15 +741,82 @@ export class TrailerDashComponent implements OnInit {
     }
   }
 
-  getGridData(item) {
+  getGridData(item,id) {
     this.gRowCount = 50;
     if (item.key == "Others") {
+      this.prepSubGrpData(item,1);
       this.selectedLable="Other";
+      this.showSplit=true;
+    }else  if (item.key == "Utilized") {
+      this.prepSubGrpData(item,0);
+      this.selectedLable="Utilized";
+      this.showSplit=true;
     } else {
       this.selectedLable = item.key;
+      this.showSplit=false;
     }
     this.allTrailler = item.list;
     this.showGrid = true;
+  }
+
+  prepSubGrpData(item, type) {
+    this.strTypeChartData = [];
+    let bag = [];
+    this.sublotSize=item.y;
+    this.sublotLable=item.key;
+    if (type == 0) {
+      this.pointerPos='40%';
+      var pool = { key: 'Pool', y: 0, list: [] };
+      var std = { key: 'STD', y: 0, list: [] };
+      var spu = { key: 'SPU', y: 0, list: [] };
+      var dsp = { key: 'DSP', y: 0, list: [] };
+
+      item.list.forEach(element => {
+        if (this.trStatus(element) == "POOL") {
+          pool.list.push(element);
+
+        } else if (this.trStatus(element) == "UTL") {
+          if(element.trailerStatus=="STD"){
+            std.list.push(element);  
+          }else if(element.trailerStatus=="SPU"){
+            spu.list.push(element);  
+          }else if(element.trailerStatus=="DSP"){
+            dsp.list.push(element);  
+          }
+          
+        }
+      });
+
+      pool.y = pool.list.length;
+      std.y = std.list.length;
+      spu.y = spu.list.length;
+      dsp.y = dsp.list.length;
+
+      this.strTypeChartData.push(dsp);
+      this.strTypeChartData.push(std);
+      this.strTypeChartData.push(spu);
+      this.strTypeChartData.push(pool);
+    } else {
+      this.pointerPos='70%';
+      let map = new Map();
+      let bag=[];
+      var dot = { key: 'DOT in 7 days', y: 0, list: [] };
+      var inShed = { key: 'In Shed', y: 0, list: [] };
+
+      item.list.forEach(element => {
+        if (element.dOTDueDays <= 7) {
+          dot.list.push(element);
+        }else
+        if (element.isShedTrailer) {
+          inShed.list.push(element);
+        }                
+      });
+
+    inShed.y = inShed.list.length;
+    dot.y = dot.list.length;
+    this.strTypeChartData.push(inShed);
+    this.strTypeChartData.push(dot);
+    }
   }
 
   public isInactive(item) {
