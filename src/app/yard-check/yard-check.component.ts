@@ -62,7 +62,7 @@ export class YardCheckComponent implements OnInit {
     geocoder = new google.maps.Geocoder();
     zone:NgZone;
     action: any = { heading: "", body: "" };
-    mapConfig:any={lat:36.090240,lng:-95.712891,mapType:'roadmap',marker:-1};
+    mapConfig:any={lat:36.090240,lng:-95.712891,mapType:'roadmap',marker:-1,decluster:false};
     historyConfig:any={showHistory:false,allTraillerSubSet:[],dataSet:[],backupDS:[],backupATS:[]};
     
     allTrailers_bu=[];
