@@ -13,10 +13,11 @@
     <button class="resetMap" (click)="reset()" data-toggle="tooltip" title="Show all trailers">
         <img style="height:25px " src="../../assets/images/markers/map-refresh.png" />
     </button>
-    <button style="height:25px" type="button" class="info" (click)="declusterMap()" data-toggle="tooltip" title="Show order and truck">
-            <!-- <span class="glyphicon glyphicon-info-sign"></span> -->
-            <img *ngIf="!this.isClustured" style="height:25px " src="../../assets/images/markers/Cluster.png" />
-            <img *ngIf="this.isClustured" style="height:25px " src="../../assets/images/markers/decluster.png" />
+    <button *ngIf="config.decluster" style="height:25px" type="button" class="info" (click)="declusterMap()" data-toggle="tooltip" title="Decluster trailers">
+            <img *ngIf="config.isClustured" style="height:25px " src="../../assets/images/markers/decluster.png" />
+    </button>
+    <button *ngIf="config.decluster" style="height:25px" type="button" class="info" (click)="declusterMap()" data-toggle="tooltip" title="Cluster trailers">
+            <img *ngIf="!config.isClustured" style="height:25px " src="../../assets/images/markers/Cluster.png" />
     </button>
 </div>
 <div id="gmHistoryModal" [hidden]="showModal" class="modal fade" role="dialog">

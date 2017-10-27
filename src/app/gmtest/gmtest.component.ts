@@ -31,12 +31,13 @@ export class Gmtest {
     markerCluster:any;
     maxZoomLevel=18;
     minimumClusterSize=11;
-    isClustured=true;
+    // isClustured=true;
     mcOptions={};
     markerList: any = {
         yellowMark: '../../assets/images/markers/trailer-yellow.png',
         redMark: '../../assets/images/markers/trailer-red.png',
         greenMark: '../../assets/images/markers/trailer-green.png',
+        purpleMark: '../../assets/images/markers/trailer-purple.png'
     };
     selectedMarker: any = { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" };
     history = {
@@ -47,11 +48,11 @@ export class Gmtest {
     action: any = { heading: "Geocode", body: "Please enter a valid location." };
 
     mapIcon(trailer: any) {
-        let utilized = "STD,SPU";
+        let utilized = "STD,SPU,DSP";
         let planned = "PLN,PLNLD";
         //check for pool trailers
         if (trailer.isPool == 1) {
-            return this.markerList.yellowMark;
+            return this.markerList.purpleMark;
         }//check for inactive
         else if (this.isInactive(trailer.lastPingDate)) {
             return this.markerList.redMark;
@@ -251,51 +252,7 @@ export class Gmtest {
 
         this.markerCluster = new MarkerClusterer(this.map, this.markers,
             this.mcOptions);
-        google.maps.event.addListener(this.markerCluster, "mouseover", function (cluster) {
-            console.log('test');
-            var markers = cluster.getMarkers();
-            var content = '';
-            let bag={red:0,green:0,yellow:0};
-            let red=0,green=0,yellow=0;
-            markers.forEach(element => {
-                if (element.color == "yellow") {
-                    bag.yellow++;
-                    yellow++
-                } else if (element.color == "red") {
-                    bag.red++;
-                    red++;
-                } else if (element.color == "green") {
-                    bag.green++;
-                    green++;
-                }
-            });
-            console.log(bag);
-            var content = '<div class="infowindow" style="width:100px;padding:0px;height:50px;overflow:hidden;">' +
-            '<div class="row header" style="border-bottom: 2px solid gray;padding:0px 0px 0px 30px">' +
-            '<div class="row head1" style="font-weight:normal;font-size:14px;color:black">AVL: <b>' + bag.green+ '</b></div>' +
-            '<div class="row head2" style="font-weight:normal;font-size:14px;color:black">PLANNED: <b>' + bag.yellow + '</b></div>' +
-            '<div class="row head3" style="font-weight:normal;font-size:14px;color:black">OTHERS: <b>' + bag.red + '</b></div>' +
-            '</div>' +
-            '</div>';
-            var info = new google.maps.MVCObject;
-            info.set('position', cluster.center_);
-            var infowindow = new google.maps.InfoWindow();
-            let ctrl=this
-            infowindow.close();
-            infowindow.setContent(content);
-            infowindow.open(this.map, info);
-            cluster.infow=infowindow;
-        });
-        
-        google.maps.event.addListener(this.markerCluster, "mouseout", function (cluster) {
-            console.log('out');
-            var info = new google.maps.MVCObject;
-            info.set('position', cluster.center_);
-            var infowindow = new google.maps.InfoWindow();
-            let ctrl=this
-            cluster.infow.close();
-            
-        });
+        this.addClusterEvents();
 
         if(this.config.marker>0){
             setTimeout(function () {
@@ -307,6 +264,65 @@ export class Gmtest {
         }
         
 
+    }
+
+    private addClusterEvents() {
+        google.maps.event.addListener(this.markerCluster, "mouseover", function(cluster) {
+            console.log('test');
+            var markers = cluster.getMarkers();
+            var content = '';
+            let bag = { red: 0, green: 0, yellow: 0 };
+            let red = 0, green = 0, yellow = 0;
+            markers.forEach(element => {
+                if (element.color == "yellow") {
+                    bag.yellow++;
+                    yellow++;
+                }
+                else if (element.color == "red") {
+                    bag.red++;
+                    red++;
+                }
+                else if (element.color == "green") {
+                    bag.green++;
+                    green++;
+                }
+            });
+            console.log(bag);
+            var content = '<div class="infowindow" style="width:125px;padding:0px;height:60px;overflow:hidden;">' +
+                '<div class="row header" style="padding:0px 0px 0px 30px">' +
+                '<div class="row head1" style="font-weight:normal;font-size:14px;color:black;margin-bottom: 5px;">' +
+                '<div style="float: left;width: 10px;height: 10px;margin-top: 3px;margin-right: 5px;background: #15c922;"></div>' +
+                '<span style="float: left;">AVAILABLE: <b>' + bag.green + '</b></span>' +
+                '</div>' +
+                '<div class="row head2" style="font-weight:normal;font-size:14px;color:black;margin-bottom: 5px;">' +
+                '<div style="float: left;width: 10px;height: 10px;margin-top: 3px;margin-right: 5px;background: #ddd506;"></div>' +
+                '<span style="float: left;">UTILIZED: <b>' + bag.yellow + '</b></span>' +
+                '</div>' +
+                '<div class="row head3" style="font-weight:normal;font-size:14px;color:black;margin-bottom: 5px;">' +
+                '<div style="float: left;width: 10px;height: 10px;margin-top: 3px;margin-right: 5px;background: #fa3447;"></div>' +
+                '<span style="float: left;">OTHERS: <b>' + bag.red + '</b></span>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+            var info = new google.maps.MVCObject;
+            info.set('position', cluster.center_);
+            var infowindow = new google.maps.InfoWindow();
+            let ctrl = this;
+            infowindow.close();
+            infowindow.setContent(content);
+            infowindow.open(this.map, info);
+            cluster.infow = infowindow;
+        });
+        google.maps.event.addListener(this.markerCluster, "mouseout", function(cluster) {
+            console.log('out');
+            var info = new google.maps.MVCObject;
+            info.set('position', cluster.center_);
+            cluster.infow.close();
+        });
+        google.maps.event.addListener(this.markerCluster, "click", function(cluster) {
+            console.log('cluster clicked');
+            cluster.infow.close();
+        });
     }
 
     restrictZoom() {
@@ -373,7 +389,7 @@ export class Gmtest {
         google.maps.event.addListener(marker, 'click', function () {
             //this.selectMarker(marker);
 
-            ob.selectMarker(item);
+            ob.selectMarker(item,marker);
             //console.log(ob.selectedMarker);
             //$('#historyModal').modal('show');
             //this.map.setZoom(10);
@@ -381,10 +397,11 @@ export class Gmtest {
         });
     }
 
-    selectMarker(item) {
+    selectMarker(item,marker) {
 
         this.selectedMarker = item;
         this.config.selectedMarker=this.selectedMarker;
+        this.infowindow.close();
         this.emit("markerSelected");
         //this.getTrailerHistory();
         //$('#gmHistoryModal').modal('show');
@@ -622,29 +639,34 @@ export class Gmtest {
     declusterMap() {
         var ctrl = this;
        
-        if(this.isClustured){
+        if(this.config.isClustured){
             this.unclusterMap();
-            this.isClustured=false;
+            this.config.isClustured=false;
         }else{
             this.clusterMap();
-            this.isClustured=true;
+            this.config.isClustured=true;
         }
         
     }
 
     clusterMap() {
+        //remove all markers
         this.markers.forEach(element => {
-            element.setOptions({ map: null, visible: false });
+            element.setOptions({ map: null, visible: true });
         });
 
+        //add to cluster
         this.markerCluster = new MarkerClusterer(this.map, this.markers, this.mcOptions);
-        //this.markerCluster.refresh();
+        //add cluster events 
+        this.addClusterEvents();
+        
     }
 
     unclusterMap() {
+        //clear markers from cluster
         this.markerCluster.clearMarkers();
-        // markerCluster.refresh();
-
+        
+        //add marker to map directly
         for (var i = 0; i < this.markers.length; i++) {
             this.markers[i].setOptions({ map: this.map, visible: true });
         }
