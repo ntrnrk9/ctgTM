@@ -27,8 +27,8 @@ export class YardDashComponent implements OnInit {
   tDate=new Date();
 
   constructor(private http: Http, private cdr: ChangeDetectorRef) {
-    this.getOrderStats();
-    this.getFutureAVLOrders();
+    this.getShedTrailers();
+    this.getDOTDueTrailers();
     //this.getStateTrailersStatus();
   }
 
@@ -301,114 +301,7 @@ export class YardDashComponent implements OnInit {
     }
   };
 
-  // events
-  public chartClicked(e: any): void {
-    console.log(e);
-  }
-
-  public chartHovered(e: any): void {
-    console.log(e);
-  }
-
-  closeHistory() {
-    if (this.tableToShow == 1) {
-      this.toShowPlnVsActTable = true;
-    } else if (this.tableToShow == 2) {
-      this.toShowPlnVsActNAPTable = true;
-    } else if (this.tableToShow == 3) {
-      this.toShowFutAvlTable = true;
-    }
-    this.historyConfig.showHistory = false;
-  }
-
-  showTrHistory(item) {
-    this.selectedOrder = item;
-    this.toShowFutAvlTable = false;
-    this.toShowPlnVsActTable = false;
-    this.toShowPlnVsActNAPTable = false;
-
-
-    // var orderLat=34.040537;
-    // var orderLng=-117.728784;
-
-    // var tmwLat=34.040301;
-    // var tmwLng=-117.729578;
-
-    // var tmsLat=34.040322;
-    // var tmsLng=-117.728956;
-
-    var orderLat = item.orderLatitude;
-    var orderLng = item.orderLongitude;
-
-    var tmwLat = item.tMWTrailerLatitude;
-    var tmwLng = item.tMWTrailerLongitude;
-
-    var tmsLat = item.tMSTrailerLatitude;
-    var tmsLng = item.tMSTrailerLongitude;
-
-    this.mapTrailers = [];
-    this.mapTrailers[0] = {
-      latitude: tmwLat,
-      longitude: tmwLng,
-      trailerID: item.tMWOrderTrailerID
-    };
-    this.mapTrailers[1] = {
-      latitude: tmsLat,
-      longitude: tmsLng,
-      trailerID: item.tMSTrailerID
-    };
-
-    this.trMapConfig.lat = orderLat;
-    this.trMapConfig.lng = orderLng;
-
-
-    this.historyConfig['trailer'] = item;
-    this.historyConfig.showHistory = true;
-    this.getTrailerPingHistory(item);
-  }
-
-  getTrailerPingHistory(item: any) {
-    this.historyConfig.allTraillerSubSet = [];
-    this.historyConfig.dataSet = [];
-    this.historyConfig.backupATS = [];
-    this.historyConfig.backupDS = [];
-    this.historyConfig.thResp = false;
-    let url = config.baseUrl + "/HomeService/api/TrailerPingHistory?trailerID=" + item;
-    //let url = config.baseUrl + "/HomeService/api/TrailerHistory?trailerID=" + this.selectedMarker.trailerID;
-    this.http.get(url).map(res => res.json())
-      .subscribe(
-      (data) => {
-        console.log("StatesTrailerCounts data recieved");
-        this.historyConfig.dataSet = data.dataSet;
-        this.historyConfig.backupDS = data.dataSet;
-        if (data.dataSet.length > 0) {
-
-          for (let i = 0; i < data.dataSet.length; i++) {
-            var item = data.dataSet[i];
-
-            if (item.eventDateValues.length > 0) {
-              for (let j = 0; j < item.eventDateValues.length; j++) {
-                var ent = item.eventDateValues[j];
-                ent['eDate'] = item.eventDate;
-                this.historyConfig.allTraillerSubSet.push(ent);
-                this.historyConfig.backupATS.push(ent);
-
-              }
-            }
-
-          }
-        }
-        console.log(this.historyConfig);
-        this.historyConfig.thResp = true;
-      }, //For Success Response
-      (err) => {
-        console.log("StatesTrailerCounts error recieved");
-        this.historyConfig.thResp = true;
-      } //For Error Response
-      );
-  }
-
-  getOrderStats() {
+  getShedTrailers() {
     let url = config.baseUrl + "/YardMGMTService/api/ShedTrailers";
     //let url = config.baseUrl + "/HomeService/api/OrderTrailerTrack";
     this.OrderStatsResp = false;
@@ -461,6 +354,7 @@ export class YardDashComponent implements OnInit {
           }
            else { }
         });
+        
         if (data.dataSet.length > 0) {
           //this.lotSize=data.dataSet.length;
           this.plnVsActdata = bag;
@@ -479,7 +373,7 @@ export class YardDashComponent implements OnInit {
       );
   }
 
-  getFutureAVLOrders() {
+  getDOTDueTrailers() {
     let url=config.baseUrl + "/YardMGMTService/api/DOTDueTrailers"
     //let url = config.baseUrl + "/HomeService/api/FutureAVLOrders";
     this.FutureAVLOrdersResp = false;
@@ -501,30 +395,24 @@ export class YardDashComponent implements OnInit {
           };
           bag.values.push(obj);
         }
-        
+
+        let dataExist=false;
+     
         data.dataSet.forEach(element => {
           if(element.dOTDueDays<=7){
+            dataExist=true;
             bag.values[element.dOTDueDays-1].list.push(element);
             bag.values[element.dOTDueDays-1].value++;
           }
         });
-
-        console.log(bag);
-        this.futAvlOrder = data.dataSet;
-        //var bag = { key: "", values: [] }
-        // this.futAvlOrder.forEach(element => {
-        //   var obj = {
-        //     "label": "",
-        //     "value": 0,
-        //     "list": []
-        //   };
-        //   obj.label = element.orderStartDate;
-        //   obj.value = element.orderStartDateValues.length;
-        //   obj.list = element.orderStartDateValues;
-        //   bag.values.push(obj);
-        // });
         this.futAvlData = [];
-        this.futAvlData.push(bag);
+        this.futAvlOrder = data.dataSet;
+        
+        if (dataExist) {
+          console.log(bag);  
+          this.futAvlData.push(bag);
+        }
+
         this.FutureAVLOrdersResp = true;
 
       }, //For Success Response
@@ -532,94 +420,6 @@ export class YardDashComponent implements OnInit {
         console.log("getFutureAVLOrders error recieved");
         this.FutureAVLOrdersResp = true;
 
-      } //For Error Response
-      );
-  }
-
-  syncWithTMW(item) {
-    let headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
-    let options = new RequestOptions({ headers: headers });
-    let url = config.baseUrl + "/HomeService/api/UpdateTMWTrailerInOrderAllocation";
-    this.doDataSyncResp = false;
-    var body = { "OAID": item.oAID, "tMSTrailerID": item.tMSTrailerID, "tMWOrderTrailerID": item.tMWOrderTrailerID };
-
-    this.http.post(url, body, options).map(res => res.json())
-      .subscribe(
-      (data) => {
-        console.log("doDataSync data recieved");
-        this.doDataSyncResp = true;
-        if (data.status == 1) {
-          this.action.heading = "Data Sync.";
-          this.action.body = "Successfully synchronized data in TMS";
-          $('#result').modal('show');
-          this.toShowFutAvlTable = false;
-          this.toShowPlnVsActTable = false;
-          this.toShowPlnVsActNAPTable = false;
-          this.historyConfig.showHistory = false;
-          this.getOrderStats();
-        } else {
-          this.action.heading = "Data Sync.";
-          this.action.body = "Error in synchronizing data in TMS";
-          $('#result').modal('show');
-        }
-
-      }, //For Success Response
-      (err) => {
-        console.log("doDataSync error recieved");
-        this.doDataSyncResp = true;
-        this.action.heading = "Data Sync.";
-        this.action.body = "Error in synchronizing data";
-        $('result').modal('show');
-      } //For Error Response
-      );
-  }
-
-  allocateInTMW(item) {
-
-    var creds = "username=" + config.username + "&password=" + config.password;
-
-    let authToken = "Basic";
-    let headers = new Headers({ 'Accept': 'application/json' });
-    headers.append('Authorization', 'Basic ' +
-      btoa(config.username + ':' + config.password));
-
-    //let options = new RequestOptions({ headers: headers });
-    let options = {
-      headers: headers
-    };
-    let postBody = {
-      "order": item.orderID,
-      "trailer": item.tMSTrailerID,
-      "legs": []
-    };
-    //let url = config.ctgApiUrl + "/assets/order/"+this.selectedOrder.number+"/legs";
-    let url = config.ctgApiUrl + "/assets/order/assign_trailer";
-    this.doDataSyncResp = false;
-
-    this.http.post(url, postBody, options).map(res => res.json())
-      .subscribe(
-      (data) => {
-        console.log("allocateInTMW data recieved");
-        this.doDataSyncResp = true;
-        if (data.trailer == item.tMSTrailerID) {
-          console.log("TMS Trailers matches with TMW Trailer");
-          this.action.heading = "Data Sync.";
-          this.action.body = "Successfully synchronized data in TMS";
-          $('#result').modal('show');
-        } else {
-          console.log("TMS Trailers do not match with TMW Trailer");
-          this.action.heading = "Data Sync.";
-          this.action.body = "Error in synchronizing data in TMS";
-          $('#result').modal('show');
-        }
-        //this.allocateInTMS();
-      }, //For Success Response
-      (err) => {
-        console.log("allocateInTMW error recieved");
-        this.action.heading = "Data Sync.";
-        this.action.body = "Error in synchronizing data in TMS";
-        $('#result').modal('show');
-        this.doDataSyncResp = true;
       } //For Error Response
       );
   }
@@ -633,35 +433,6 @@ export class YardDashComponent implements OnInit {
       if (this.gRowCount > this.allTrailer.length) {
         this.gRowCount = this.allTrailer.length;
       }
-    }
-  }
-
-  readyDdata() {
-    var one = { length: 0, list: [] };
-    var two = { length: 0, list: [] };
-    var three = { length: 0, list: [] };
-    var four = { length: 0, list: [] };
-    for (let i = 0; i < this.dataSet.length; i++) {
-      var item = this.dataSet[i];
-      if (item.isMovingAsPlanned == 1) {
-        one.length++;
-        one.list.push(item);
-      } else if (item.isMovingAsPlanned == 2) {
-        two.length++;
-        two.list.push(item);
-      } else if (item.isMovingAsPlanned == 3) {
-        three.length++;
-        three.list.push(item);
-      } else if (item.isMovingAsPlanned == 4) {
-        four.length++;
-        four.list.push(item);
-      }
-
-      this.pack.push(one);
-      this.pack.push(two);
-      this.pack.push(three);
-      this.pack.push(four);
-      this.barChartData[0].data = [one.length, two.length, three.length, four.length]
     }
   }
 

@@ -8,9 +8,14 @@
             <div style="text-align: left;padding-top: 10px;">
               <label style="font-size: 25px;font-weight: normal;">Shed status - {{(tDate.getMonth() + 1) + '/' + tDate.getDate() + '/' + tDate.getFullYear()}}</label>
             </div>
-            <div>
+            <div *ngIf="lotSize!=0">
               <nvd3 [options]="plnVsActoptions" [data]="plnVsActdata"></nvd3>
             </div>
+            <div *ngIf="lotSize==0" class="centered" style="
+                      height: 300px;
+                      font-weight: bold;
+                      font-size: 19px;
+                  "> No Data Available</div>
           </div>
           <div class="col-md-5" style="padding-top:0px;">
             <table class="table table-striped">
