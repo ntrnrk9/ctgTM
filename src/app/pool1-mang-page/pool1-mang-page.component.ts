@@ -1103,7 +1103,7 @@ export class Pool1MangPageComponent {
                     console.log("updatePool success msg recieved");
                     this.action.heading = "Update Pool";
                     this.action.body = "Pool updated successfully!";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                     //this.restoreEdit.csr = this.poolToEdit.csr;
                     //this.restoreEdit.planner = this.poolToEdit.planner;
                     //this.restoreEdit.reqPoolCount = this.poolToEdit.reqPoolCount;
@@ -1114,7 +1114,7 @@ export class Pool1MangPageComponent {
                     console.log("updatePool error recieved");
                     this.action.heading = "Update Pool";
                     this.action.body = "Error in updating pool.";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                 } //For Error Response
                 );
             $('#editModal').modal('hide');
@@ -1258,7 +1258,7 @@ export class Pool1MangPageComponent {
                     if (resp[0].status == 1) {
                         this.action.heading = "Add Pool";
                         this.action.body = "Pool added successfully!";
-                        this.hideresult=false;
+                        $('#result').modal('show');//this.hideresult=false;
                         object.getAllPool();
                         object.getAllCompanyForAddPool();
                         object.getAllCompany();
@@ -1267,14 +1267,14 @@ export class Pool1MangPageComponent {
                         console.log("insertPool error recieved");
                         this.action.heading = "Add Pool";
                         this.action.body = "Error in adding pool.";
-                        this.hideresult=false;
+                        $('#result').modal('show');//this.hideresult=false;
                     }
                 }, //For Success Response
                 (err) => {
                     console.log("insertPool error recieved");
                     this.action.heading = "Add Pool";
                     this.action.body = "Error in adding pool.";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                 } //For Error Response
                 );
             this.cancelAdd();
@@ -1345,21 +1345,21 @@ export class Pool1MangPageComponent {
                     if (resp.status == 1) {
                         this.action.heading = "Add Planner";
                         this.action.body = "Planner added successfully!";
-                        this.hideresult=false;                        
+                        $('#result').modal('show');//this.hideresult=false;                        
                         this.getAllPlanner();
                     }
                     else {
                         console.log("insert Planner error recieved");
                         this.action.heading = "Add Planner";
                         this.action.body = "Error in adding Planner.";
-                        this.hideresult=false;                        
+                        $('#result').modal('show');//this.hideresult=false;                        
                     }
                 }, //For Success Response
                 (err) => {
                     console.log("insert Planner error recieved");
                     this.action.heading = "Add Planner";
                     this.action.body = "Error in adding Planner.";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                 } //For Error Response
                 );
 
@@ -1416,26 +1416,26 @@ export class Pool1MangPageComponent {
                     if (resp.status == 1) {
                         this.action.heading = "Update Planner";
                         this.action.body = "Planner Updated successfully!";              
-                        this.hideresult=false;
+                        $('#result').modal('show');//this.hideresult=false;
                         this.getAllPlanner();
                     }else if (resp.status == 2) {
                         this.action.heading = "Update Planner";
                         this.action.body = "Planner Code already exists.!";
-                        this.hideresult=false;
+                        $('#result').modal('show');//this.hideresult=false;
                         this.getAllPlanner();
                     }
                     else {
                         console.log("update Planner error recieved");
                         this.action.heading = "Update Planner";
                         this.action.body = "Error in updating Planner.";
-                        this.hideresult=false;
+                        $('#result').modal('show');//this.hideresult=false;
                     }
                 }, //For Success Response
                 (err) => {
                     console.log("update Planner error recieved");
                     this.action.heading = "Update Planner";
                     this.action.body = "Error in updating Planner.";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                 } //For Error Response
                 );
 
@@ -1508,21 +1508,21 @@ export class Pool1MangPageComponent {
                     if (resp.status == 1) {
                         this.action.heading = "Add CSR";
                         this.action.body = "CSR added successfully!";
-                        this.hideresult=false;
+                        $('#result').modal('show');//this.hideresult=false;
                         this.getAllCsr();
                     }
                     else {
                         console.log("insert CSR error recieved");
                         this.action.heading = "Add CSR";
                         this.action.body = "Error in adding CSR.";
-                        this.hideresult=false;
+                        $('#result').modal('show');//this.hideresult=false;
                     }
                 }, //For Success Response
                 (err) => {
                     console.log("insert CSR error recieved");
                     this.action.heading = "Add CSR";
                     this.action.body = "Error in adding CSR.";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                 } //For Error Response
                 );
 
@@ -1570,26 +1570,26 @@ export class Pool1MangPageComponent {
                     if (resp.status == 1) {
                         this.action.heading = "Update CSR";
                         this.action.body = "CSR updated successfully!";
-                        this.hideresult=false;
+                        $('#result').modal('show');//this.hideresult=false;
                         this.getAllCsr();
                     }else if (resp.status == 2) {
                         this.action.heading = "Update CSR";
                         this.action.body = "No change to update.!";
-                        this.hideresult=false;
+                        $('#result').modal('show');//this.hideresult=false;
                         this.getAllCsr();
                     }
                     else {
                         console.log("update csr error recieved");
                         this.action.heading = "Update Pool";
                         this.action.body = "Error in updating CSR.";
-                        this.hideresult=false;
+                        $('#result').modal('show');//this.hideresult=false;
                     }
                 }, //For Success Response
                 (err) => {
                     console.log("insertPool error recieved");
                     this.action.heading = "Add Pool";
                     this.action.body = "Error in adding pool.";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                 } //For Error Response
                 );
 
@@ -1612,14 +1612,14 @@ export class Pool1MangPageComponent {
                     console.log("deletePool success recieved");
                     this.action.heading = "Delete CSR";
                     this.action.body = "CSR deleted successfully!";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                     this.getAllCsr();
                 }
                 else {
                     console.log("delete CSR error recieved");
                     this.action.heading = "Delete CSR";
                     this.action.body = "Error in deleting CSR.";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                 }
 
             }, //For Success Response
@@ -1627,7 +1627,7 @@ export class Pool1MangPageComponent {
                 console.log("delete CSR error recieved");
                 this.action.heading = "Delete CSR";
                 this.action.body = "Error in deleting CSR.";
-                this.hideresult=false;
+                $('#result').modal('show');//this.hideresult=false;
             } //For Error Response
             );
     }
@@ -1647,14 +1647,14 @@ export class Pool1MangPageComponent {
                     console.log("delete Planner success recieved");
                     this.action.heading = "Delete planner";
                     this.action.body = "Planner deleted successfully!";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                     this.getAllPlanner();
                 }
                 else {
                     console.log("delete Planner error recieved");
                     this.action.heading = "Delete planner";
                     this.action.body = "Error in deleting planner.";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                 }
 
             }, //For Success Response
@@ -1662,7 +1662,7 @@ export class Pool1MangPageComponent {
                 console.log("delete Planner error recieved");
                 this.action.heading = "Delete planner";
                 this.action.body = "Error in deleting planner.";
-                this.hideresult=false;
+                $('#result').modal('show');//this.hideresult=false;
             } //For Error Response
             );
     }
@@ -1788,14 +1788,14 @@ export class Pool1MangPageComponent {
                     console.log("deletePool success recieved");
                     this.action.heading = "Delete Pool";
                     this.action.body = "Pool deleted successfully!";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                     this.getAllPool();
                 }
                 else {
                     console.log("deletePool error recieved");
                     this.action.heading = "Delete Pool";
                     this.action.body = "Error in deleting pool.";
-                    this.hideresult=false;
+                    $('#result').modal('show');//this.hideresult=false;
                 }
 
             }, //For Success Response
@@ -1803,7 +1803,7 @@ export class Pool1MangPageComponent {
                 console.log("deletePool error recieved");
                 this.action.heading = "Delete Pool";
                 this.action.body = "Error in deleting pool.";
-                this.hideresult=false;
+                $('#result').modal('show');//this.hideresult=false;
             } //For Error Response
             );
     }

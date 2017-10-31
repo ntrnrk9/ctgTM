@@ -11,6 +11,7 @@ body {
     font-family: "Trebuchet MS" !important;
     background-color:#fafafa;
      margin-bottom: 40px;
+     padding-right:0px !important;
 }
 
 .page-container {
