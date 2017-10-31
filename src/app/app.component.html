@@ -1,8 +1,22 @@
-<header>head</header>
+<!-- <header>head</header>
 <div class="container">
     <div [ngSwitch]="toShowTab">
-    <mainTabs *ngSwitchCase=2></mainTabs>
-    <app-login *ngSwitchCase=1 [config]="loginConfig" (configChange)="login()"></app-login>
+        <mainTabs *ngSwitchCase=2></mainTabs>
+        <app-login *ngSwitchCase=1 [config]="loginConfig" (configChange)="login()"></app-login>
     </div>
 </div>
-<footer1></footer1>
+<footer1></footer1> -->
+
+<div *ngIf="toShowTab==2">
+    <header>head</header>
+    <div class="container">
+        <div>
+            <mainTabs></mainTabs>
+        </div>
+    </div>
+    <footer1></footer1>
+</div>
+<div *ngIf="toShowTab==1">
+    <app-login [config]="loginConfig" (configChange)="login()"></app-login>
+    <footer1></footer1>
+</div>
