@@ -343,6 +343,14 @@ export class TrailerDashComponent implements OnInit {
     let map = new Map();
     let trTypeMap = new Map();
     this.typeChartLabels = [];
+    let counts={
+      pool:[],
+      inact:[],
+      utl:[],
+      pln:[],
+      oth:[],
+      avl:[],
+    }
     for (var i = 0; i < this.trailers.length; i++) {
       var item = this.trailers[i];
       if (!map.has(item.trailerStatus)) {
@@ -356,7 +364,7 @@ export class TrailerDashComponent implements OnInit {
       if (cmp == 'UNKNOWN') {
         cmp = "CVEN";
       }
-      var key = this.trStatus(item);
+      var key = this.trStatus(item,counts);
       if (key == "UTL") {
         key = "POOL";
       }
@@ -387,7 +395,8 @@ export class TrailerDashComponent implements OnInit {
         this.segByCountryData.canada[cmp.toLowerCase()].push(item);
       }
     }
-
+    console.log('counts');
+    console.log(counts);
     this.prepAllCmpData();
 
     this.segData.cven.byType = this.segrigateTrailerByType(this.segData.cven.list, 'CVEN');
@@ -456,32 +465,55 @@ export class TrailerDashComponent implements OnInit {
     }
   }
 
-  trStatus(trailer: any) {
+  trStatus(trailer: any,counts) {
     let utilized = "STD,SPU,DSP";
     let planned = "PLN,PLNLD";
+    
+    
     //check for pool trailers
     if (trailer.isPool == 1) {
+      if (trailer.trailerStatus == "PEND") {
+        counts.pool.push(trailer);
+      }
       return "POOL";
     }//check for inactive
     else if (this.isInactive(trailer.lastPingDate)) {
+      if (trailer.trailerStatus == "PEND") {
+        counts.inact.push(trailer);
+      }
       return "INACT";
 
     }//check for utilized
     else if (utilized.includes(trailer.trailerStatus)) {
+      if (trailer.trailerStatus == "PEND") {
+        counts.utl.push(trailer);
+      }
       return "UTL";
     }//check for planned
     else if (planned.includes(trailer.trailerStatus)) {
+      if (trailer.trailerStatus == "PEND") {
+        counts.pln.push(trailer);
+      }
       return "PLN";
     }//check for available
     else if (trailer.trailerStatus == "AVL") {
       if (trailer.dOTDueDays <= 7 || trailer.isShedTrailer) {
+        if (trailer.trailerStatus == "PEND") {
+          counts.oth.push(trailer);
+        }
         return "OTH";
       } else {
+        if (trailer.trailerStatus == "PEND") {
+          counts.avl.push(trailer);
+        }
         return "AVL";
       }
 
     }//rest are others 
     else {
+      if (trailer.trailerStatus == "PEND") {
+        counts.oth.push(trailer);
+      }
       return "OTH";
     }
   }
@@ -705,8 +737,8 @@ export class TrailerDashComponent implements OnInit {
     if (raw.scrollTop + raw.offsetHeight > raw.scrollHeight) {
 
       this.gRowCount += 100;
-      if (this.gRowCount > this.allTrailer.length) {
-        this.gRowCount = this.allTrailer.length;
+      if (this.gRowCount > this.allTrailler.length) {
+        this.gRowCount = this.allTrailler.length;
       }
     }
   }
@@ -753,7 +785,11 @@ export class TrailerDashComponent implements OnInit {
       this.showSplit=true;
     } else {
       this.selectedLable = item.key;
+      if(id=='split'){
+        this.showSplit=true;  
+      }else{
       this.showSplit=false;
+      }
     }
     this.allTrailler = item.list;
     this.showGrid = true;
@@ -764,6 +800,14 @@ export class TrailerDashComponent implements OnInit {
     let bag = [];
     this.sublotSize=item.y;
     this.sublotLable=item.key;
+    let counts={
+      pool:[],
+      inact:[],
+      utl:[],
+      pln:[],
+      oth:[],
+      avl:[],
+    }
     if (type == 0) {
       this.pointerPos='40%';
       var pool = { key: 'Pool', y: 0, list: [] };
@@ -772,10 +816,10 @@ export class TrailerDashComponent implements OnInit {
       var dsp = { key: 'DSP', y: 0, list: [] };
 
       item.list.forEach(element => {
-        if (this.trStatus(element) == "POOL") {
+        if (this.trStatus(element,counts) == "POOL") {
           pool.list.push(element);
 
-        } else if (this.trStatus(element) == "UTL") {
+        } else if (this.trStatus(element,counts) == "UTL") {
           if(element.trailerStatus=="STD"){
             std.list.push(element);  
           }else if(element.trailerStatus=="SPU"){
@@ -802,21 +846,27 @@ export class TrailerDashComponent implements OnInit {
       let bag=[];
       var dot = { key: 'DOT in 7 days', y: 0, list: [] };
       var inShed = { key: 'In Shed', y: 0, list: [] };
+      var pend = { key: 'PEND', y: 0, list: [] };
 
       item.list.forEach(element => {
-        if (element.dOTDueDays <= 7) {
-          dot.list.push(element);
-        }else
-        if (element.isShedTrailer) {
+        if (element.trailerStatus == "PEND") {
+          pend.list.push(element);
+        } else if (element.isShedTrailer) {
           inShed.list.push(element);
-        }                
+        } else if (element.dOTDueDays <= 7) {
+          dot.list.push(element);
+        }
       });
 
     inShed.y = inShed.list.length;
     dot.y = dot.list.length;
+    pend.y = pend.list.length;
     this.strTypeChartData.push(inShed);
     this.strTypeChartData.push(dot);
+    this.strTypeChartData.push(pend);
     }
+
+    console.log(counts);
   }
 
   public isInactive(item) {

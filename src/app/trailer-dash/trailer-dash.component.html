@@ -106,7 +106,7 @@
           </div>
           <div class="col-md-4" style="padding-top:0px;">
             <table class="table table-striped">
-              <tr id={{item.key}} *ngFor="let i=index;let item of trStatusChartdata" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item,id)">
+              <tr id={{item.key}} *ngFor="let i=index;let item of trStatusChartdata" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item,'byStatus')">
                 <td>
                   <span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span>
                 </td>
@@ -160,7 +160,7 @@
         </div>
         <div class="col-md-4" style="padding-top:0px;">
           <table class="table table-striped">
-            <tr *ngFor="let i=index;let item of trTypeChartData" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item)">
+            <tr *ngFor="let i=index;let item of trTypeChartData" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item,'bytype')">
               <td><span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span></td>
               <td><span class="pull-left">{{item.key}}</span><br><span style="font-size:19px">{{item.y}}</span></td>
             </tr>
@@ -204,7 +204,7 @@
             <div class="col-md-4" style="padding-top:0px;">
               <button type="button" class="splitClose" data-dismiss="modal" style="position: absolute;right: 15px;" (click)="showSplit=false">&times;</button>
               <table class="table table-striped">
-                <tr *ngFor="let i=index;let item of strTypeChartData" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item)">
+                <tr *ngFor="let i=index;let item of strTypeChartData" style="padding-bottom: 20px;cursor: pointer" (click)="getGridData(item,'split')">
                   <td>
                     <span class="lBox pull-left" [ngStyle]="{'background': nvd3Colors[i]}"></span>
                   </td>

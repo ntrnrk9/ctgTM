@@ -241,3 +241,8 @@ svg text {
     border-right-color: #fafafa;
     border-left-width: 0;
 }
+
+.slide{
+    -webkit-transition: width 2s; /* For Safari 3.1 to 6.0 */
+    transition: width 2s;
+}
