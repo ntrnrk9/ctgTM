@@ -8,7 +8,7 @@
 <footer1></footer1> -->
 
 <div *ngIf="toShowTab==2">
-    <header>head</header>
+    <header [config]="headConfig" (configChange)="logout()">head</header>
     <div class="container">
         <div>
             <mainTabs></mainTabs>

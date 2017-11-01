@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component,Input,Output,EventEmitter } from '@angular/core';
+import { MasterServService } from '../service/master-serv.service';
 
+declare var $: any;
 @Component({
     selector: 'header',
     templateUrl: 'header.component.html',
@@ -7,7 +9,34 @@ import { Component } from '@angular/core';
     moduleId: module.id
 })
 export class HeaderComponent {
+    @Input() config;
+    @Output() configChange = new EventEmitter<any>();
+
     private name = 'HeaderComponent';
+    private user:String="";
+
+    constructor(private masterServ:MasterServService) {
+    }
+
+    ngOnInit() {
+        this.user=this.masterServ.$sessionUser;
+        $('#user').popover({ 
+            html : true,
+            placement : "bottom",
+            content: $('#dd').html()
+         });
+    }
+
+    emit(event:any) { 
+        this.configChange.emit(this.config);
+        console.log(this.config);
+    }
+
+    logout(){
+        this.config.isLoggedOut=true;
+        this.emit("logout");
+    }
+
 }
 
 // This code copy to app.module.ts

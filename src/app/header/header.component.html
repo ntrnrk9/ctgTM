@@ -1,7 +1,30 @@
 ﻿<div class="header">
     <div class="container">
-        <span style="float:left;width:100px;margin-right:10px"><img width="100" src="../../assets/images/logo.png" /></span>
-        <h3 style="color:black"><b>Trailer Management</b></h3>
+        <div class="pull-left" style="width:400px">
+            <span style="float:left;width:100px;margin-right:10px">
+                <img width="100" src="../../assets/images/logo.png" />
+            </span>
+            <h3 style="color:black">
+                <b>Trailer Management</b>
+            </h3>
+        </div>
+        <div class="pull-right">
+            <div style="margin-top: 23px; float: left;margin-right: 10px">
+                <b>{{user}}</b>
+                <!-- <b>dasf</b> -->
+            </div>
+            <!-- <img id="user" style="width: 25px;margin-top: 20px" src="../../assets/images/user.png"/>
+            <button style="display: none" id="dd" class="lblLI" (click)="logout()">Logout1</button> -->
+            <div class="dropdown pull-left pm-select-cont" style="width:auto;">
+                <img class="pointer" style="width: 25px;margin-top: 20px" src="../../assets/images/user.png" data-toggle="dropdown" />
+                <div class="dropdown-menu dropdown-menu-right sel-dd">
+                    <ul class="sel-dd-ul">
+                        <li (click)="logout()" class="pointer">
+                            <label class="lblLI">Logout</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-

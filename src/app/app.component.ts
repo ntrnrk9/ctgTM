@@ -10,10 +10,19 @@ import 'rxjs/add/operator/map';
 export class AppComponent {
   title = 'app';
   toShowTab = 1;
-  loginConfig={isValid:false};
-  login(){
-    if(this.loginConfig.isValid){
-      this.toShowTab=2;
+  loginConfig = { isValid: false };
+  headConfig = { isLoggedOut: false };
+
+  logout() {
+    if (this.headConfig.isLoggedOut) {
+      this.toShowTab = 1;
     }
   }
+
+  login() {
+    if (this.loginConfig.isValid) {
+      this.toShowTab = 2;
+    }
+  }
+  
 }
