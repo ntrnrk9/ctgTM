@@ -1266,7 +1266,8 @@ export class AllocationPageComponent {
 
 
         let options = new RequestOptions({ headers: headers });
-        let url = config.ctgApiUrl + "/assets/orders/AVL";
+        // let url = config.ctgApiUrl + "/assets/orders/AVL";
+        let url = "https://api.drivenanalyticsolutions.com/ctg" + "/assets/orders/AVL";
         //let url = config.ctgApiUrl + "/assets/orders/avl?start="+fDate+"&end="+eDate;
         this.http.get(url, {
             headers: headers
@@ -1566,7 +1567,8 @@ export class AllocationPageComponent {
             "trailerID": this.selectedTrailer.trailerID,
             "trailerType": this.selectedTrailer.trailerType,
             "trailerName": this.selectedTrailer.trailerName,
-            'updatedBy':this.masterServ.$sessionUser
+            'updatedBy':this.masterServ.$sessionUser,
+            'tMSTrailerID':""
         };
         //let url="https://ctgtest.com/AllocationService/api/OrderDetails";
         let url = config.baseUrl + "/AllocationService/api/InsertOrderAllocation";
