@@ -29,7 +29,7 @@
                 <tbody class="ddtbody">
                     <tr *ngFor="let i=index;let item of items" class="pointer">
                         <td style="vertical-align:top">
-                            <input class="pull-left inpLI" type="checkbox" id="cc_{{i}}" name="cc_{{i}}" value="" [checked]="item.selected" (change)="item.selected=$event.target.checked;multiSelect()"
+                            <input class="pull-left inpLI" type="checkbox" id="cc_{{i}}" name="cc_{{i}}" value="" [checked]="item.selected" (change)="item.selected=$event.target.checked;selectItem(item)"
                             />
                         </td>
                         <td class="full">

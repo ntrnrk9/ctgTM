@@ -17,9 +17,14 @@ export class SingleselectComponent implements OnInit {
   constructor() { }
 
   selectItem(item: any) {
-    console.log("searchFilter: " + JSON.stringify(item[this.key]));
-    this.selectedItem = this.cloneObj(item);
-    this.emit();
+    if (this.config.multisel) {
+      this.multiSelect();
+      this.emit("itemSelected");
+    } else {
+      console.log("searchFilter: " + JSON.stringify(item[this.key]));
+      this.selectedItem = this.cloneObj(item);
+      this.emit("itemSelected");
+    }
   }
 
   multiSelect() {
@@ -48,11 +53,10 @@ export class SingleselectComponent implements OnInit {
       }
 
     }
-
-    this.emit();
   }
 
-  emit() {
+  emit(event) {
+    this.config.event=event;
     this.selectedItemChange.emit(this.selectedItem);
   }
 
@@ -62,8 +66,10 @@ export class SingleselectComponent implements OnInit {
     }
   }
 
-  ngOnChange() {
-    this.ngOnInit()
+  ngOnChanges(changes: any) {
+    if(this.config.multisel){
+      this.multiSelect();
+    }
   }
 
   cloneObj(list: any) {
