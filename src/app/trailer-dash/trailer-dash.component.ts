@@ -364,7 +364,8 @@ export class TrailerDashComponent implements OnInit {
       if (cmp == 'UNKNOWN') {
         cmp = "CVEN";
       }
-      var key = this.trStatus(item,counts);
+      // var key = this.trStatus(item,counts);
+      var key = this.trStatus(item);
       if (key == "UTL") {
         key = "POOL";
       }
@@ -465,7 +466,7 @@ export class TrailerDashComponent implements OnInit {
     }
   }
 
-  trStatus(trailer: any,counts) {
+  trStatus(trailer: any) {
     let utilized = "STD,SPU,DSP";
     let planned = "PLN,PLNLD";
     
@@ -473,38 +474,38 @@ export class TrailerDashComponent implements OnInit {
     //check for pool trailers
     if (trailer.isPool == 1) {
       if (trailer.trailerStatus == "PEND") {
-        counts.pool.push(trailer);
+        // counts.pool.push(trailer);
       }
       return "POOL";
     }//check for inactive
     else if (this.isInactive(trailer.lastPingDate)) {
       if (trailer.trailerStatus == "PEND") {
-        counts.inact.push(trailer);
+        // counts.inact.push(trailer);
       }
       return "INACT";
 
     }//check for utilized
     else if (utilized.includes(trailer.trailerStatus)) {
       if (trailer.trailerStatus == "PEND") {
-        counts.utl.push(trailer);
+        // counts.utl.push(trailer);
       }
       return "UTL";
     }//check for planned
     else if (planned.includes(trailer.trailerStatus)) {
       if (trailer.trailerStatus == "PEND") {
-        counts.pln.push(trailer);
+        // counts.pln.push(trailer);
       }
       return "PLN";
     }//check for available
     else if (trailer.trailerStatus == "AVL") {
       if (trailer.dOTDueDays <= 7 || trailer.isShedTrailer) {
         if (trailer.trailerStatus == "PEND") {
-          counts.oth.push(trailer);
+          // counts.oth.push(trailer);
         }
         return "OTH";
       } else {
         if (trailer.trailerStatus == "PEND") {
-          counts.avl.push(trailer);
+          // counts.avl.push(trailer);
         }
         return "AVL";
       }
@@ -512,7 +513,7 @@ export class TrailerDashComponent implements OnInit {
     }//rest are others 
     else {
       if (trailer.trailerStatus == "PEND") {
-        counts.oth.push(trailer);
+        // counts.oth.push(trailer);
       }
       return "OTH";
     }
@@ -543,12 +544,19 @@ export class TrailerDashComponent implements OnInit {
       var item = { key: 'Utilized', y: lot.byStatus.POOL.length, list: lot.byStatus.POOL };
       lotSize += lot.byStatus.POOL.length
       this.trStatusChartdata.push(item);
-      var item = { key: 'Inactive', y: lot.byStatus.INACT.length, list: lot.byStatus.INACT };
-      lotSize += lot.byStatus.INACT.length
+      // var item = { key: 'Inactive', y: lot.byStatus.INACT.length, list: lot.byStatus.INACT };
+      // lotSize += lot.byStatus.INACT.length
+      // this.trStatusChartdata.push(item);
+      // var item = { key: 'Others', y: lot.byStatus.OTH.length, list: lot.byStatus.OTH };
+      // lotSize += lot.byStatus.OTH.length
+      // this.trStatusChartdata.push(item);
+      let bag=[];
+      bag=bag.concat(lot.byStatus.INACT);
+      bag=bag.concat(lot.byStatus.OTH);
+      item = { key: 'Others', y: bag.length, list: bag };
+      lotSize += bag.length
       this.trStatusChartdata.push(item);
-      var item = { key: 'Others', y: lot.byStatus.OTH.length, list: lot.byStatus.OTH };
-      lotSize += lot.byStatus.OTH.length
-      this.trStatusChartdata.push(item);
+
 
       this.trTypeChartData = [];
       lot.byType.forEach(element => {
@@ -572,12 +580,19 @@ export class TrailerDashComponent implements OnInit {
       lotSize += bag.length;
       this.trStatusChartdata.push(item1);
 
-      bag = this.filterByState(lot.byStatus.INACT);
-      item1 = { key: 'Inactive', y: bag.length, list: bag };
-      lotSize += bag.length;
-      this.trStatusChartdata.push(item1);
+      // bag = this.filterByState(lot.byStatus.INACT);
+      // item1 = { key: 'Inactive', y: bag.length, list: bag };
+      // lotSize += bag.length;
+      // this.trStatusChartdata.push(item1);
 
+      // bag = this.filterByState(lot.byStatus.OTH);
+      // item1 = { key: 'Others', y: bag.length, list: bag };
+      // lotSize += bag.length;
+      // this.trStatusChartdata.push(item1);
+
+      let inactBag = this.filterByState(lot.byStatus.INACT);
       bag = this.filterByState(lot.byStatus.OTH);
+      bag=bag.concat(inactBag);
       item1 = { key: 'Others', y: bag.length, list: bag };
       lotSize += bag.length;
       this.trStatusChartdata.push(item1);
@@ -816,10 +831,11 @@ export class TrailerDashComponent implements OnInit {
       var dsp = { key: 'DSP', y: 0, list: [] };
 
       item.list.forEach(element => {
-        if (this.trStatus(element,counts) == "POOL") {
+        // if (this.trStatus(element,counts) == "POOL") {
+        if (this.trStatus(element) == "POOL") {
           pool.list.push(element);
-
-        } else if (this.trStatus(element,counts) == "UTL") {
+        // } else if (this.trStatus(element,counts) == "UTL") {  
+        } else if (this.trStatus(element) == "UTL") {
           if(element.trailerStatus=="STD"){
             std.list.push(element);  
           }else if(element.trailerStatus=="SPU"){
@@ -841,15 +857,19 @@ export class TrailerDashComponent implements OnInit {
       this.strTypeChartData.push(spu);
       this.strTypeChartData.push(pool);
     } else {
-      this.pointerPos='70%';
+      this.pointerPos='55%';
       let map = new Map();
       let bag=[];
+      var inact = { key: 'Inactive', y: 0, list: [] };
       var dot = { key: 'DOT in 7 days', y: 0, list: [] };
       var inShed = { key: 'In Shed', y: 0, list: [] };
       var pend = { key: 'PEND', y: 0, list: [] };
 
       item.list.forEach(element => {
-        if (element.trailerStatus == "PEND") {
+        if (this.trStatus(element) == "INACT") {
+          inact.list.push(element);
+        }
+        else if (element.trailerStatus == "PEND") {
           pend.list.push(element);
         } else if (element.isShedTrailer) {
           inShed.list.push(element);
@@ -861,6 +881,8 @@ export class TrailerDashComponent implements OnInit {
     inShed.y = inShed.list.length;
     dot.y = dot.list.length;
     pend.y = pend.list.length;
+    inact.y = inact.list.length;
+    this.strTypeChartData.push(inact);
     this.strTypeChartData.push(inShed);
     this.strTypeChartData.push(dot);
     this.strTypeChartData.push(pend);

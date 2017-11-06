@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { GmapjsComponent } from '../gmapjs/gmapjs.component';
 import { Gmtest } from '../gmtest/gmtest.component';
+import { SingleselectComponent } from '../singleselect/singleselect.component';
 
 declare var google: any;
 declare var MarkerClusterer: any;
@@ -19,6 +20,7 @@ import * as config from '../configs/configs';
 export class TrackTrailerComponent {
     //@ViewChild(GmapjsComponent) gmapJs: any;
     @ViewChild(Gmtest) gmapJs: any;
+    @ViewChild(SingleselectComponent) selectComp: any;
     //gmapJs: any;
     private name = 'TrackTrailerComponent';
     selectedState: any = "alabama";
@@ -35,7 +37,13 @@ export class TrackTrailerComponent {
 
     selectedMarker: any = { "trailerID": "25002", "trailerType": "UNK", "latitude": 33.86423, "longitude": -81.03682, "location": "Cayce,SC", "landmark": "Cayce", "trailerStatus": "Planned", "idleDuration": 0.0, "lastMovementDate": "UNKNOWN", "dotDate": "UNKNOWN", "iotInfo": "INACTIVE", "compliance": "", "roadWorthiness": "" };
     stateList: any = [{ "stateDesc": "Alaska", "stateCode": "AK", "country": "USA" }, { "stateDesc": "Alabama", "stateCode": "AL", "country": "USA" }, { "stateDesc": "Arkansas", "stateCode": "AR", "country": "USA" }, { "stateDesc": "Arizona", "stateCode": "AZ", "country": "USA" }, { "stateDesc": "California", "stateCode": "CA", "country": "USA" }, { "stateDesc": "Colorado", "stateCode": "CO", "country": "USA" }, { "stateDesc": "Connecticut", "stateCode": "CT", "country": "USA" }, { "stateDesc": "District of Columbia", "stateCode": "DC", "country": "USA" }, { "stateDesc": "Delaware", "stateCode": "DE", "country": "USA" }, { "stateDesc": "Florida", "stateCode": "FL", "country": "USA" }, { "stateDesc": "Georgia", "stateCode": "GA", "country": "USA" }, { "stateDesc": "Hawaii", "stateCode": "HA", "country": "USA" }, { "stateDesc": "Iowa", "stateCode": "IA", "country": "USA" }, { "stateDesc": "Idaho", "stateCode": "ID", "country": "USA" }, { "stateDesc": "Illinois", "stateCode": "IL", "country": "USA" }, { "stateDesc": "Indiana", "stateCode": "IN", "country": "USA" }, { "stateDesc": "Kansas", "stateCode": "KS", "country": "USA" }, { "stateDesc": "Kentucky", "stateCode": "KY", "country": "USA" }, { "stateDesc": "Louisiana", "stateCode": "LA", "country": "USA" }, { "stateDesc": "Massachusetts", "stateCode": "MA", "country": "USA" }, { "stateDesc": "Maryland", "stateCode": "MD", "country": "USA" }, { "stateDesc": "Maine", "stateCode": "ME", "country": "USA" }, { "stateDesc": "Michigan", "stateCode": "MI", "country": "USA" }, { "stateDesc": "Minnesota", "stateCode": "MN", "country": "USA" }, { "stateDesc": "Missouri", "stateCode": "MO", "country": "USA" }, { "stateDesc": "Mississippi", "stateCode": "MS", "country": "USA" }, { "stateDesc": "Montana", "stateCode": "MT", "country": "USA" }, { "stateDesc": "North Carolina", "stateCode": "NC", "country": "USA" }, { "stateDesc": "North Dakota", "stateCode": "ND", "country": "USA" }, { "stateDesc": "Nebraska", "stateCode": "NE", "country": "USA" }, { "stateDesc": "New Hampshire", "stateCode": "NH", "country": "USA" }, { "stateDesc": "New Jersey", "stateCode": "NJ", "country": "USA" }, { "stateDesc": "New Mexico", "stateCode": "NM", "country": "USA" }, { "stateDesc": "Nevada", "stateCode": "NV", "country": "USA" }, { "stateDesc": "New York", "stateCode": "NY", "country": "USA" }, { "stateDesc": "Ohio", "stateCode": "OH", "country": "USA" }, { "stateDesc": "Oklahoma", "stateCode": "OK", "country": "USA" }, { "stateDesc": "Oregon", "stateCode": "OR", "country": "USA" }, { "stateDesc": "Pennsylvania", "stateCode": "PA", "country": "USA" }, { "stateDesc": "Rhode Island", "stateCode": "RI", "country": "USA" }, { "stateDesc": "South Carolina", "stateCode": "SC", "country": "USA" }, { "stateDesc": "South Dakota", "stateCode": "SD", "country": "USA" }, { "stateDesc": "Tennessee", "stateCode": "TN", "country": "USA" }, { "stateDesc": "Texas", "stateCode": "TX", "country": "USA" }, { "stateDesc": "Utah", "stateCode": "UT", "country": "USA" }, { "stateDesc": "Virginia", "stateCode": "VA", "country": "USA" }, { "stateDesc": "Vermont", "stateCode": "VT", "country": "USA" }, { "stateDesc": "Washington", "stateCode": "WA", "country": "USA" }, { "stateDesc": "Wisconsin", "stateCode": "WI", "country": "USA" }, { "stateDesc": "West Virginia", "stateCode": "WV", "country": "USA" }, { "stateDesc": "Wyoming", "stateCode": "WY", "country": "USA" }];
-    trStatusList: any = [{ status: "Select a status", value: -1 }, { status: "Available", value: 2 }, { status: "Planned", value: 1 }, { status: "Pool", value: 3 }, { status: "Others", value: 0 }]
+    trStatusList: any = [{ status: "Select a status", value: -1 }, { status: "Available", value: 2 }, { status: "Utilized", value: 1 },
+     { status: "Pool", value: 3 }, { status: "Others", value: 0 }];
+    trStatusList1: any = [{ lable: "Available", value: "avl", selected: true }, { lable: "Planned", value: "pln", selected: true },
+                          { lable: "DSP", value: "dsp", selected: true }, { lable: "STD", value: "std", selected: true }, { lable: "SPU", value: "spu", selected: true },
+                          { lable: "Pool", value: "pool", selected: true }, { lable: "Inactive", value: "inact", selected: true }, { lable: "Inshed", value: "inshed", selected: true },
+                          { lable: "DOT 7 days", value: "dot", selected: true }, { lable: "PEND", value: "pend", selected: true }];
+    trByStatus:any={avl:[],pln:[],dsp:[],std:[],spu:[],pool:[],inact:[],inshed:[],dot:[],pend:[]};                      
     milesList: any = [{ lable: "50 Miles", value: 50 }, { lable: "100 Miles", value: 100 }, { lable: "150 Miles", value: 150 }];
     selectedMiles = { lable: "150 Miles", value: 150 };
     cmpList: any = [{ lable: "Covenant", value: "CVEN", selected: true }, { lable: "SRT", value: "SRT", selected: false }, { lable: "STAR", value: "STAR", selected: false }];
@@ -46,7 +54,15 @@ export class TrackTrailerComponent {
         filter: false,
         multisel: true,
         singleSelLabel:"Company",
-        multiSelLabel:"company(s) selected"
+        multiSelLabel:"company(s) selected",
+        event:""
+    };
+    trStatusSelectConfig = {
+        filter: false,
+        multisel: true,
+        singleSelLabel:"Select a status",
+        multiSelLabel:"status selected",
+        event:""
     };
     modeSelectConfig = {
         filter: false
@@ -64,7 +80,7 @@ export class TrackTrailerComponent {
     geocoder = new google.maps.Geocoder();
     zone: NgZone;
     action: any = { heading: "", body: "" };
-    mapConfig: any = { lat: 36.090240, lng: -95.712891, mapType: 'roadmap', marker: -1 };
+    mapConfig: any = { lat: 36.090240, lng: -95.712891, mapType: 'roadmap', marker: -1,decluster:true,isClustured:true };
     historyConfig: any = { showHistory: false, allTraillerSubSet: [], dataSet: [], backupDS: [], backupATS: [] };
     allTrailers_bu = [];
     //allTrailers: any=[];
@@ -141,6 +157,7 @@ export class TrackTrailerComponent {
         });
     }
     constructor(private http: Http, private cdr: ChangeDetectorRef) {
+        // this.ifDatanotAvl();
         this.getStateTrailersStatus();
         //this.getStateTrailersStatus();
         // setTimeout(() => {
@@ -183,7 +200,7 @@ export class TrackTrailerComponent {
         if (item == 2) {
             this.searchID = "";
             this.custID = "";
-            this.selectedTrStatus = { status: "Select a status", value: -1 };
+            //this.selectedTrStatus = { status: "Select a status", value: -1 };
             //this.selectTrStatus(this.selectedTrStatus);
         } else if (item == 3) {
             this.searchID = "";
@@ -193,12 +210,12 @@ export class TrackTrailerComponent {
         } else if (item == 4) {
             this.searchID = "";
             this.bylocation = "";
-            this.selectedTrStatus = { status: "Select a status", value: -1 };
+            //this.selectedTrStatus = { status: "Select a status", value: -1 };
         }
         else {
             this.bylocation = "";
             this.custID = "";
-            this.selectedTrStatus = { status: "Select a status", value: -1 };
+            //this.selectedTrStatus = { status: "Select a status", value: -1 };
             //this.selectTrStatus(this.selectedTrStatus);
         }
 
@@ -207,8 +224,10 @@ export class TrackTrailerComponent {
         if (this.bylocation.length > 0) {
             this.getvalue();
             this.mapConfig.marker=-1;
+            this.mapConfig.polygon = undefined;
         } else if (this.searchID.length > 0) {
             this.searchByID();
+            this.mapConfig.polygon = undefined;
         } else if (this.custID.length > 0) {
             this.searchByCustID();
             this.mapConfig.marker=-1;
@@ -261,6 +280,7 @@ export class TrackTrailerComponent {
 
 
     getvalue() {
+        this.resetTrStatusSelection();
         this.mapConfig.marker = -1;
         var input = $('#ctgGeoCode').val();
         console.log(input);
@@ -315,6 +335,7 @@ export class TrackTrailerComponent {
     }
 
     setByLocation() {
+        this.resetTrStatusSelection();
         this.filterMapByCmp();
         var input = $('#ctgGeoCode').val();
         this.mapConfig.marker = -1;
@@ -333,6 +354,17 @@ export class TrackTrailerComponent {
         }
     }
 
+    resetTrStatusSelection(){
+        this.trStatusList1.forEach(element => {
+            element.selected=true;
+        });
+        this.selectComp.multiSelect();
+    }
+    resetCmpSelection(){
+        this.cmpList= [{ lable: "Covenant", value: "CVEN", selected: true }, { lable: "SRT", value: "SRT", selected: false }, { lable: "STAR", value: "STAR", selected: false }];
+        // this.selectComp.multiSelect();
+    }
+
     reset() {
         this.bylocation = "";
         this.searchID = "";
@@ -341,8 +373,10 @@ export class TrackTrailerComponent {
         this.searchMake = "";
         this.searchTrYear = "";
         this.selectedModel = { lable: "All types", value: "-1" };
-        this.mapConfig = { lat: 36.090240, lng: -95.712891, mapType: 'roadmap' };
+        this.mapConfig = { lat: 36.090240, lng: -95.712891, mapType: 'roadmap',decluster:true,isClustured:true  };
         this.selectedMiles = { lable: "150 Miles", value: 150 };
+        this.resetCmpSelection();
+        this.resetTrStatusSelection();
         //this.selectedCmp = { lable: "Covenant", value: "CVEN", selected: true };
         this.selectCmp(this.selectedCmp);
 
@@ -352,7 +386,7 @@ export class TrackTrailerComponent {
             this.disableLoc = false;
             this.disableTS = false;
         } else {
-            this.selectedTrStatus = { status: "Available", value: 2 };
+            //this.selectedTrStatus = { status: "Available", value: 2 };
             this.disableLoc = true;
             this.disableStatus = false;
             this.disableTS = true;
@@ -375,6 +409,22 @@ export class TrackTrailerComponent {
         return clone;
     }
 
+    ifDatanotAvl(){
+        let data;//=config.tr;
+        console.log("StatesTrailerCounts data recieved");
+        this.allTrailers = data;
+        this.allTrailers_bu = data;
+        this.trailerStatusResp = true;
+        //this.selectCmp(this.selectedCmp);
+        this.filterMapByCmp();
+        this.segTrByStatus(this.allTrailers);
+        this.allTraillerSubSet1 = this.cloneObj(this.allTrailers);
+        this.selectTrStatus(this.selectedTrStatus);
+        this.allTrailers;
+        this.allTraillerSubSet;
+        this.trByStatus;
+    }
+
     getStateTrailersStatus() {
         this.trailerStatusResp = false;
         //let url="http://61.16.133.244/HomeService/api/StatesTrailerCounts";
@@ -388,6 +438,7 @@ export class TrackTrailerComponent {
                 this.trailerStatusResp = true;
                 //this.selectCmp(this.selectedCmp);
                 this.filterMapByCmp();
+                this.segTrByStatus(this.allTrailers);
                 this.allTraillerSubSet1 = this.cloneObj(this.allTrailers);
                 this.selectTrStatus(this.selectedTrStatus);
             }, //For Success Response
@@ -526,6 +577,7 @@ export class TrackTrailerComponent {
             );
     }
     searchByID() {
+        this.resetTrStatusSelection();
         this.selectedID = "";
         var index = -1;
         this.searchID = this.searchID.toUpperCase();
@@ -610,7 +662,7 @@ export class TrackTrailerComponent {
 
 
     searchByCustID() {
-
+        this.resetTrStatusSelection();
         //this.gmapJs.drawPoly();
         //this.allTraillerSubSet=[];
         //this.allTraillerSubSet=this.mapConfig.trailesInBound;
@@ -709,7 +761,7 @@ export class TrackTrailerComponent {
     }
 
     trStatus(trailer: any) {
-        let utilized = "STD,SPU";
+        let utilized = "STD,SPU,DSP";
         let planned = "PLN,PLNLD";
         //check for pool trailers
         if (trailer.isPool == 1) {
@@ -738,52 +790,128 @@ export class TrackTrailerComponent {
         }
     }
 
+    segTrByStatus(list:any){
+        this.trByStatus={avl:[],pln:[],dsp:[],std:[],spu:[],pool:[],inact:[],inshed:[],dot:[],pend:[]};
+        list.forEach(element => {
+            if(element.trailerID=="R17276"){
+                console.log("found");
+            }
+            let status=this.trStatus(element);
+            switch (status) {
+                case "pln":
+                    this.trByStatus.pln.push(element);
+                    break;
+                case "avl":
+                    this.trByStatus.avl.push(element);
+                    break;
+                case "pool":
+                    this.trByStatus.pool.push(element);
+                    break;
+                case "inact":
+                    this.trByStatus.inact.push(element);
+                    break;
+                case "oth":
+                    {
+                        if(element.trailerStatus=="PEND"){
+                            this.trByStatus.pend.push(element);
+                        }else if(element.isShedTrailer){
+                            this.trByStatus.inshed.push(element);
+                        }else if(element.dOTDueDays<=7){
+                            this.trByStatus.dot.push(element);
+                        }
+                        break;
+                    }
+                case "utz":
+                    {
+                        if (element.trailerStatus == "DSP") {
+                            this.trByStatus.dsp.push(element);
+                        } else if (element.trailerStatus == "STD") {
+                            this.trByStatus.std.push(element);
+                        } else if (element.trailerStatus =="SPU") {
+                            this.trByStatus.spu.push(element);
+                        }
+                        break;
+                    }
+                default:
+                    break;
+            }
+        });
+    }
+
+    trStatusSelChanged(){
+        this.mapConfig.lat= 36.090240;
+        this.mapConfig.lng= -95.712891;
+        this.mapConfig.zoom=4;
+        this.mapConfig.mapType='roadmap';
+        this.mapConfig.marker=-1;
+        this.mapConfig.polygon=null;
+        if (this.trStatusSelectConfig.event == "itemSelected") {
+            this.searchID = "";
+            this.bylocation = "";
+            this.custID = "";
+            this.selectTrStatus(this.selectedTrStatus);
+        }
+    }
+
     selectTrStatus(item: any) {
         this.allTraillerSubSet = [];
         this.selectedTrStatus = item;
-        for (var i = 0; i < this.allTrailers.length; i++) {
-            var obj = this.allTrailers[i];
-            switch (this.selectedTrStatus.value) {
-                case 1:
-                    {
-                        if (this.trStatus(obj)=="pln")
-                            this.allTraillerSubSet.push(obj);
-                    }
-                    break;
-                case 2:
-                    {
-                        if (this.trStatus(obj)=="avl")
-                            this.allTraillerSubSet.push(obj);
-                    }
-                    break;
-                case 3:
-                    {
-                        if (this.trStatus(obj)=="pool")
-                            this.allTraillerSubSet.push(obj);
-                    }
-                    break;
-                case 0:
-                    {
-                        let other="oth,inact,utz";
-                        if (other.includes(this.trStatus(obj)))
-                            this.allTraillerSubSet.push(obj);
-                    }
-                    break;
-                case -1:
-                    {
-
-                        this.allTraillerSubSet.push(obj);
-                    }
-                    break;
-
+        let bag=[];
+        this.trStatusList1.forEach(element => {
+            if(element.value!=="" && element.selected){
+                bag=bag.concat(this.trByStatus[element.value]);
             }
-        }
+        });
+        this.allTrailers=bag;
+        this.allTraillerSubSet=bag;
+        // for (var i = 0; i < this.allTrailers.length; i++) {
+        //     var obj = this.allTrailers[i];
+        //     switch (this.selectedTrStatus.value) {
+        //         case 1:
+        //             {
+        //                 let utilized="pln,utz";
+        //                 if (utilized.includes(this.trStatus(obj)))
+        //                     this.allTraillerSubSet.push(obj);
+        //             }
+        //             break;
+        //         case 2:
+        //             {
+        //                 if (this.trStatus(obj)=="avl")
+        //                     this.allTraillerSubSet.push(obj);
+        //             }
+        //             break;
+        //         case 3:
+        //             {
+        //                 if (this.trStatus(obj)=="pool")
+        //                     this.allTraillerSubSet.push(obj);
+        //             }
+        //             break;
+        //         case 0:
+        //             {
+        //                 let other="oth,inact";
+        //                 if (other.includes(this.trStatus(obj)))
+        //                     this.allTraillerSubSet.push(obj);
+        //             }
+        //             break;
+        //         case -1:
+        //             {
+
+        //                 this.allTraillerSubSet.push(obj);
+        //             }
+        //             break;
+
+        //     }
+        // }
     }
     selectCmp(item) {
         this.selectedCmp = item;
         this.filterMapByCmp();
+        this.allTrailers;
+        this.segTrByStatus(this.allTrailers);
+        this.trByStatus;
         if (this.bylocation.length == 0 && this.custID.length == 0 && this.searchID.length == 0) {
             this.mapConfig.marker=-1;
+            this.mapConfig.polygon=null;
             this.selectTrStatus(this.selectedTrStatus);
             //this.allTraillerSubSet=this.filterGridByCmp(this.allTrailers);
         } else {
@@ -792,9 +920,11 @@ export class TrackTrailerComponent {
                 this.getvalue();
                 this.selectMiles(this.selectedMiles);
             } else if (this.searchID.length > 0) {
+                this.mapConfig.polygon = undefined;
                 this.searchByID();
                 this.allTraillerSubSet = this.filterGridByCmp(this.allTraillerSubSet);
             } else if (this.custID.length > 0) {
+                this.mapConfig.polygon = undefined;
                 this.mapConfig.marker=-1;
                 this.searchByCustID();
                 this.allTraillerSubSet = this.filterGridByCmp(this.allTraillerSubSet);
@@ -989,7 +1119,7 @@ export class TrackTrailerComponent {
 	"isPool": 0,
 	"country": "USA",
 	"isShedTrailer": 0,
-	"dOTDueDays": 0}];
+    "dOTDueDays": 0}];
 }
 
 // This code copy to app.module.ts

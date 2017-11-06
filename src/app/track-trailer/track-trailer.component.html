@@ -59,8 +59,8 @@
                         <span class="pull-left" style="margin-left:15px;padding-top:5px">Or</span>
                         <span (keyup.enter)="searchByCustID()"><input  class="ctg-textbox pull-left" style="margin-left:10px;width:120px" type="text" placeholder="Customer ID" [(ngModel)]="custID"
                     (ngModelChange)="toggleSearch(4)"  /></span>
-                        <span class="pull-left" style="margin-left:15px;padding-top:5px" *ngIf="!mgToggleFlag">Or</span>
-                        <div (ngModelChange)="toggleSearch(3)" class="dropdown pull-left pm-select-cont pointer" style="margin-left:10px;" *ngIf="!mgToggleFlag">
+                        <span class="pull-left" style="margin-left:15px;padding-top:5px" >Or</span>
+                        <!-- <div (ngModelChange)="toggleSearch(3)" class="dropdown pull-left pm-select-cont pointer" style="margin-left:10px;" *ngIf="!mgToggleFlag">
                             <input class="filters dropdown-toggle" style="width:120px" type="button" data-toggle="dropdown" value={{selectedTrStatus.status}}
                             />
                             <span class="caret" data-toggle="dropdown"></span>
@@ -72,7 +72,8 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> -->
+                        <div class="pull-left" style="margin-left:10px;width:170px"><app-singleselect [items]="trStatusList1" [config]="trStatusSelectConfig" [(selectedItem)]="selectedTrStatus" [key]="'lable'" (selectedItemChange)="trStatusSelChanged()"></app-singleselect></div>
                         <!-- <button class="pull-left pm-addBut" type="button" style="margin-left:15px" (click)="search()">Search</button> -->
                     </div>
                     

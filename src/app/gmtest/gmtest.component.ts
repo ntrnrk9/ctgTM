@@ -59,7 +59,7 @@ export class Gmtest {
 
         }//check for utilized
         else if (utilized.includes(trailer.trailerStatus)) {
-            return this.markerList.yellowMark;
+            return this.markerList.purpleMark;
         }//check for planned
         else if (planned.includes(trailer.trailerStatus)) {
             return this.markerList.yellowMark;
@@ -250,9 +250,15 @@ export class Gmtest {
         }
         var obj=this;
 
-        this.markerCluster = new MarkerClusterer(this.map, this.markers,
-            this.mcOptions);
-        this.addClusterEvents();
+        // this.markerCluster = new MarkerClusterer(this.map, this.markers,
+        //     this.mcOptions);
+        // this.addClusterEvents();
+
+        if(this.config.isClustured){
+            this.clusterMap();
+        }else{
+            this.unclusterMap();
+        }
 
         if(this.config.marker>0){
             setTimeout(function () {
@@ -490,9 +496,14 @@ export class Gmtest {
 
     reset() {
         this.map.setZoom(4);
+        this.config.lat=36.090240;
+        this.config.lng=-95.712891;
+        this.config.zoom=4;
+        this.config.mapType='roadmap';
         var myCenter = new google.maps.LatLng(36.090240, -95.712891);
         this.map.setCenter(myCenter);
         this.map.setMapTypeId('roadmap');
+        this.emit("mapReset");
     }
 
     getTrailerHistory() {
@@ -646,7 +657,7 @@ export class Gmtest {
             this.clusterMap();
             this.config.isClustured=true;
         }
-        
+      this.emit("cluster/uncluster");  
     }
 
     clusterMap() {
@@ -664,7 +675,9 @@ export class Gmtest {
 
     unclusterMap() {
         //clear markers from cluster
-        this.markerCluster.clearMarkers();
+        if (this.markerCluster) {
+            this.markerCluster.clearMarkers();
+        }
         
         //add marker to map directly
         for (var i = 0; i < this.markers.length; i++) {
