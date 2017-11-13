@@ -45,6 +45,7 @@ import 'nvd3';
 import { YardDashComponent } from './yard-dash/yard-dash.component';
 import { YardCheckComponent } from './yard-check/yard-check.component';
 import { LoginComponent } from './login/login.component';
+import { AdminPageComponent } from './admin-page/admin-page.component';
 
 @NgModule({
     imports: [BrowserModule, HttpModule, CommonModule, FormsModule,MyDatePickerModule, NgxPaginationModule,ChartsModule,NvD3Module,
@@ -61,7 +62,7 @@ import { LoginComponent } from './login/login.component';
         FilterCPipe, FilterArrayPipe,
         SearchfilterComponent, GmapjsComponent,AlloTrGmap,Gmtest, HistoryPageComponent, SingleselectComponent
         , HomeMainComponent, TrailerDashComponent, 
-        OrderDashComponent, YardDashComponent, YardCheckComponent, LoginComponent
+        OrderDashComponent, YardDashComponent, YardCheckComponent, LoginComponent, AdminPageComponent
     ],
     providers: [MasterServService],
     bootstrap: [AppComponent]

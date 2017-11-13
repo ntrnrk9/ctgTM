@@ -27,7 +27,8 @@ export class HeaderComponent {
          });
     }
 
-    emit(event:any) { 
+    emit(event:any) {
+        this.config.event=event; 
         this.configChange.emit(this.config);
         console.log(this.config);
     }
@@ -35,6 +36,18 @@ export class HeaderComponent {
     logout(){
         this.config.isLoggedOut=true;
         this.emit("logout");
+    }
+    
+    adminSettings(){
+        this.config.isAdminSetting=true;
+        this.emit("adminSetting");
+
+    }
+
+    home(){
+        this.config.isAdminSetting=false;
+        this.emit("home");
+
     }
 
 }

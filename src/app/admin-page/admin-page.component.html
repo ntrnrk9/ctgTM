@@ -1,0 +1,48 @@
+<p>
+    admin-page works!
+</p>
+<div class="tabContainer">
+    <div class="col-md-12 page-heading" style="padding:0px;margin-bottom: 20px;">
+        <button style="height:40px;background: #062a53" type="button" class="pm-addBut pull-left" (click)="backToPool()">Home </button>
+        <div class="pull-left" style="padding:10px">
+            <b>Admin panel</b>
+        </div>
+    </div>
+    <div>
+        <div class="col-md-4">
+            <div class="container" style="border: 1px solid #dedede;">
+                <label class="kpiLable">Upload Pool Details </label>
+                <div class="uploadCont">
+                    <input type="text" placeholder="File path" style="width:100%" />
+                    <input type="file" id="poolFileBut" class="hidden"/>
+                    <button class="pm-addBut" style="margin-top:10px" (click)="upload(1)">Upload</button>
+                    <button class="pm-addBut" (click)="download(1)">Download template</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="container" style="border: 1px solid #dedede;">
+                <label class="kpiLable">Upload CSR Details </label>
+                <div class="uploadCont">
+                    <input type="text" placeholder="File path" style="width:100%" />
+                    <input type="file" id="csrFileBut" (click)="upload(2)" class="hidden"/>
+                    <button class="pm-addBut" style="margin-top:10px">Upload</button>
+                    <button class="pm-addBut" (click)="download(2)">Download template</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="container" style="border: 1px solid #dedede;">
+                <label class="kpiLable">Upload Planner Details </label>
+                <div class="uploadCont">
+                    <input type="text" placeholder="File path" style="width:100%" />
+                    <input type="file" id="plannerFileBut" (click)="upload(3)" class="hidden"/>
+                    <button class="pm-addBut" style="margin-top:10px">Upload</button>
+                    <button class="pm-addBut" (click)="download(3)">Download template</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

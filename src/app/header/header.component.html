@@ -22,6 +22,12 @@
                         <li (click)="logout()" class="pointer">
                             <label class="lblLI">Logout</label>
                         </li>
+                        <li *ngIf="!config.isAdminSetting" (click)="adminSettings()" class="pointer">
+                            <label class="lblLI">Admin settings</label>
+                        </li>
+                        <li *ngIf="config.isAdminSetting" (click)="home()" class="pointer">
+                            <label class="lblLI">Home</label>
+                        </li>
                     </ul>
                 </div>
             </div>

@@ -9,13 +9,37 @@ import 'rxjs/add/operator/map';
 })
 export class AppComponent {
   title = 'app';
-  toShowTab = 1;
-  loginConfig = { isValid: false };
-  headConfig = { isLoggedOut: false };
+  toShowTab = 2;
+  loginConfig = { isValid: false, };
+  headConfig = { isLoggedOut: false,event:"",isAdminSetting:false };
+  toShowAdmin=true;
+
+  userMenuSelect() {
+    if (this.headConfig.event == "logout") {
+      this.logout();
+
+    } else if (this.headConfig.event == "adminSetting") {
+      this.adminSettings();
+    }else if (this.headConfig.event == "home") {
+      this.homePage();
+    }
+  }
 
   logout() {
     if (this.headConfig.isLoggedOut) {
       this.toShowTab = 1;
+    }
+  }
+
+  adminSettings() {
+    if (this.headConfig.isAdminSetting) {
+      this.toShowAdmin = true;
+    }
+  }
+  
+  homePage() {
+    if (!this.headConfig.isAdminSetting) {
+      this.toShowAdmin = false;
     }
   }
 
