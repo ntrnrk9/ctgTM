@@ -1,9 +1,6 @@
-<p>
-    admin-page works!
-</p>
 <div class="tabContainer">
     <div class="col-md-12 page-heading" style="padding:0px;margin-bottom: 20px;">
-        <button style="height:40px;background: #062a53" type="button" class="pm-addBut pull-left" (click)="backToPool()">Home </button>
+        <button style="height:40px;background: #062a53" type="button" class="pm-addBut pull-left" (click)="goToHome()">Home </button>
         <div class="pull-left" style="padding:10px">
             <b>Admin panel</b>
         </div>
@@ -13,9 +10,10 @@
             <div class="container" style="border: 1px solid #dedede;">
                 <label class="kpiLable">Upload Pool Details </label>
                 <div class="uploadCont">
-                    <input type="text" placeholder="File path" style="width:100%" />
-                    <input type="file" id="poolFileBut" class="hidden"/>
-                    <button class="pm-addBut" style="margin-top:10px" (click)="upload(1)">Upload</button>
+                    <input type="text" placeholder="Choose a file" style="width:100%" [(ngModel)]="poolFileName" readonly/>
+                    <input type="file" class="hidden" id="poolFileBut" (change)="getFileToUpload($event,1)" accept=".csv" />
+                    <button class="pm-addBut" style="margin-top:10px" (click)="triggerUpload(1)">Browse</button>
+                    <button class="pm-addBut" style="margin-top:10px" (click)="uploadFile(1)">Upload</button>
                     <button class="pm-addBut" (click)="download(1)">Download template</button>
                 </div>
             </div>
@@ -25,9 +23,10 @@
             <div class="container" style="border: 1px solid #dedede;">
                 <label class="kpiLable">Upload CSR Details </label>
                 <div class="uploadCont">
-                    <input type="text" placeholder="File path" style="width:100%" />
-                    <input type="file" id="csrFileBut" (click)="upload(2)" class="hidden"/>
-                    <button class="pm-addBut" style="margin-top:10px">Upload</button>
+                    <input type="text" placeholder="File path" style="width:100%" [(ngModel)]="csrFileName" readonly/>
+                    <input type="file" class="hidden" id="csrFileBut" (change)="getFileToUpload($event,2)" accept=".csv" />
+                    <button class="pm-addBut" style="margin-top:10px" (click)="triggerUpload(2)">Browse</button>
+                    <button class="pm-addBut" style="margin-top:10px" (click)="uploadFile(2)">Upload</button>
                     <button class="pm-addBut" (click)="download(2)">Download template</button>
                 </div>
             </div>
@@ -37,10 +36,34 @@
             <div class="container" style="border: 1px solid #dedede;">
                 <label class="kpiLable">Upload Planner Details </label>
                 <div class="uploadCont">
-                    <input type="text" placeholder="File path" style="width:100%" />
-                    <input type="file" id="plannerFileBut" (click)="upload(3)" class="hidden"/>
-                    <button class="pm-addBut" style="margin-top:10px">Upload</button>
+                    <input type="text" placeholder="File path" style="width:100%" [(ngModel)]="plannerFileName" readonly/>
+                    <input type="file" class="hidden" id="plannerFileBut" (change)="getFileToUpload($event,3)" accept=".csv" />
+                    <button class="pm-addBut" style="margin-top:10px" (click)="triggerUpload(3)">Browse</button>
+                    <button class="pm-addBut" style="margin-top:10px" (click)="uploadFile(3)">Upload</button>
                     <button class="pm-addBut" (click)="download(3)">Download template</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- result dialog box -->
+    <div class="modal fade" id="result" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header page-heading" style="padding:5px">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{action.heading}}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{{action.body}}
+                        <a href="#details" data-toggle="collapse">Details</a>
+                    </p>
+                    <div id="details" class="collapse">
+                        <p [innerHTML]="action.details" style="word-wrap: break-word"></p>
+                    </div>
+                </div>
+                <div class="modal-footer page-footer">
+                    <button type="button" class="pm-addBut" data-dismiss="modal">Ok</button>
                 </div>
             </div>
         </div>
