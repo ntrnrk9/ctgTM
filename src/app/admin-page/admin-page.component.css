@@ -32,9 +32,9 @@ h1 {
 .uploadCont{
     width: 100%;
     /* border: 1px solid #dedede; */
-    height: 150px;
+    /* height: 150px; */
     margin-bottom: 20px;
-    padding:10px
+    /* padding:10px */
 }
 
 .pm-addBut {
@@ -42,6 +42,7 @@ h1 {
     background: #d2232a;
     color: white;
     height: 30px;
+    padding: 0px 15px;
 }
 
 .kpiLable{
@@ -50,4 +51,16 @@ h1 {
 }
 .hidden{
     display: none !important;
+}
+
+.close{
+    opacity:1;
+    color:white;
+}
+
+.histLoader{
+    text-align: center;
+    /* padding: 20px; */
+    /* border: 1px solid silver; */
+    /* border-top: none */
 }
