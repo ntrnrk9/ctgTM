@@ -9,19 +9,24 @@ import 'rxjs/add/operator/map';
 })
 export class AppComponent {
   title = 'app';
-  toShowTab = 2;
+  toShowTab = 1;
   loginConfig = { isValid: false, };
-  headConfig = { isLoggedOut: false,event:"",isAdminSetting:false };
-  toShowAdmin=true;
+  headConfig = { isLoggedOut: false,event:"",isAdmin:false };
+  adminConfig={event:"", showAdminPanel:false};
+  toShowAdmin=false;
 
   userMenuSelect() {
     if (this.headConfig.event == "logout") {
       this.logout();
 
     } else if (this.headConfig.event == "adminSetting") {
-      this.adminSettings();
-    }else if (this.headConfig.event == "home") {
-      this.homePage();
+      this.goToAdminPanel();
+    }
+  }
+
+  adminEvent() {
+    if (this.adminConfig.event == "closeAdmin") {
+      this.goToHomePage();
     }
   }
 
@@ -31,16 +36,14 @@ export class AppComponent {
     }
   }
 
-  adminSettings() {
-    if (this.headConfig.isAdminSetting) {
+  goToAdminPanel() {
       this.toShowAdmin = true;
-    }
+      this.headConfig.isAdmin=false;
   }
   
-  homePage() {
-    if (!this.headConfig.isAdminSetting) {
-      this.toShowAdmin = false;
-    }
+  goToHomePage() {
+    this.toShowAdmin = false;
+    this.headConfig.isAdmin=true;
   }
 
   login() {

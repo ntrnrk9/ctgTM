@@ -12,7 +12,7 @@
     <div class="container">
         <div>
             <mainTabs *ngIf="!toShowAdmin"></mainTabs>
-            <app-admin-page *ngIf="toShowAdmin"></app-admin-page>
+            <app-admin-page [config]="adminConfig" *ngIf="toShowAdmin" (configChange)="adminEvent()"></app-admin-page>
         </div>
     </div>
     <footer1></footer1>

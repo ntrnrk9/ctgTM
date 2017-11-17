@@ -2,6 +2,7 @@ import { Component,Input,Output,EventEmitter } from '@angular/core';
 import { MasterServService } from '../service/master-serv.service';
 
 declare var $: any;
+import * as propConfig from '../configs/configs';
 @Component({
     selector: 'header',
     templateUrl: 'header.component.html',
@@ -19,12 +20,13 @@ export class HeaderComponent {
     }
 
     ngOnInit() {
+        this.toShowAdminScreen();
         this.user=this.masterServ.$sessionUser;
-        $('#user').popover({ 
-            html : true,
-            placement : "bottom",
-            content: $('#dd').html()
-         });
+        // $('#user').popover({ 
+        //     html : true,
+        //     placement : "bottom",
+        //     content: $('#dd').html()
+        //  });
     }
 
     emit(event:any) {
@@ -33,19 +35,31 @@ export class HeaderComponent {
         console.log(this.config);
     }
 
+    toShowAdminScreen(){
+        let user=this.masterServ.$sessionUserID;
+
+        propConfig.adminList.forEach(element => {
+            if(user.toUpperCase()==element.id.toUpperCase()){
+                this.config.isAdmin=true;
+            }
+        });
+
+        
+    }
+
     logout(){
         this.config.isLoggedOut=true;
         this.emit("logout");
     }
     
     adminSettings(){
-        this.config.isAdminSetting=true;
+        this.config.isAdmin=true;
         this.emit("adminSetting");
 
     }
 
     home(){
-        this.config.isAdminSetting=false;
+        this.config.isAdmin=false;
         this.emit("home");
 
     }

@@ -19,14 +19,11 @@
                 <img class="pointer" style="width: 25px;margin-top: 20px" src="../../assets/images/user.png" data-toggle="dropdown" />
                 <div class="dropdown-menu dropdown-menu-right sel-dd">
                     <ul class="sel-dd-ul">
+                        <li *ngIf="config.isAdmin" (click)="adminSettings()" class="pointer">
+                            <label class="lblLI">Admin panel</label>
+                        </li>
                         <li (click)="logout()" class="pointer">
                             <label class="lblLI">Logout</label>
-                        </li>
-                        <li *ngIf="!config.isAdminSetting" (click)="adminSettings()" class="pointer">
-                            <label class="lblLI">Admin settings</label>
-                        </li>
-                        <li *ngIf="config.isAdminSetting" (click)="home()" class="pointer">
-                            <label class="lblLI">Home</label>
                         </li>
                     </ul>
                 </div>
