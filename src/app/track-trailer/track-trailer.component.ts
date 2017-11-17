@@ -222,7 +222,7 @@ export class TrackTrailerComponent {
     }
     search() {
         if (this.bylocation.length > 0) {
-            this.getvalue();
+            this.searchByLocation();
             this.mapConfig.marker=-1;
             this.mapConfig.polygon = undefined;
         } else if (this.searchID.length > 0) {
@@ -279,7 +279,7 @@ export class TrackTrailerComponent {
 
 
 
-    getvalue() {
+    searchByLocation() {
         this.resetTrStatusSelection();
         this.mapConfig.marker = -1;
         var input = $('#ctgGeoCode').val();
@@ -917,7 +917,7 @@ export class TrackTrailerComponent {
         } else {
             if (this.bylocation.length > 0) {
                 this.mapConfig.marker=-1;
-                this.getvalue();
+                this.searchByLocation();
                 this.selectMiles(this.selectedMiles);
             } else if (this.searchID.length > 0) {
                 this.mapConfig.polygon = undefined;
