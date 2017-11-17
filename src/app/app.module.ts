@@ -24,7 +24,7 @@ import { TableComponent } from './table/table.component';
 import { PoolMangPageComponent } from './pool-mang-page/pool-mang-page.component';
 import { AllocationPageComponent } from './allocation-page/allocation-page.component';
 import { Pool1MangPageComponent } from './pool1-mang-page/pool1-mang-page.component';
-import { Footer1Component } from './footer1/footer1.component';
+import { FooterComponent } from './footer/footer.component';
 import { SearchfilterComponent } from './searchfilter/searchfilter.component';
 import { GmapjsComponent } from './gmapjs/gmapjs.component';
 //import { HttpInject } from './injectables/httpInject';
@@ -58,7 +58,7 @@ import { AdminPageComponent } from './admin-page/admin-page.component';
         TrackTrailerComponent, GmapsComponent,
         YardMangPageComponent, TableComponent,
         AllocationPageComponent, PoolMangPageComponent,
-        Pool1MangPageComponent, Footer1Component,
+        Pool1MangPageComponent, FooterComponent,
         FilterCPipe, FilterArrayPipe,
         SearchfilterComponent, GmapjsComponent,AlloTrGmap,Gmtest, HistoryPageComponent, SingleselectComponent
         , HomeMainComponent, TrailerDashComponent, 

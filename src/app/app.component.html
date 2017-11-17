@@ -5,7 +5,7 @@
         <app-login *ngSwitchCase=1 [config]="loginConfig" (configChange)="login()"></app-login>
     </div>
 </div>
-<footer1></footer1> -->
+<footer></footer> -->
 
 <div *ngIf="toShowTab==2">
     <header [config]="headConfig" (configChange)="userMenuSelect()">head</header>
@@ -15,9 +15,9 @@
             <app-admin-page [config]="adminConfig" *ngIf="toShowAdmin" (configChange)="adminEvent()"></app-admin-page>
         </div>
     </div>
-    <footer1></footer1>
+    <footer></footer>
 </div>
 <div *ngIf="toShowTab==1">
     <app-login [config]="loginConfig" (configChange)="login()"></app-login>
-    <footer1></footer1>
+    <footer></footer>
 </div>
