@@ -71,6 +71,7 @@ export class LoginComponent implements OnInit {
           this.user = (data.ADUser.cn);
           this.masterServ.$sessionUser=(this.user);
           this.masterServ.$authToken=(this.authToken);
+          this.masterServ.$sessionUserID=(this.username);
           this.verifyToken();
 
         } else {
