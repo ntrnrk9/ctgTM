@@ -15,12 +15,12 @@ var Footer1Component = (function () {
 }());
 Footer1Component = __decorate([
     core_1.Component({
-        selector: 'footer1',
-        templateUrl: 'footer1.component.html',
-        styleUrls: ['footer1.component.css'],
+        selector: 'footer',
+        templateUrl: 'footer.component.html',
+        styleUrls: ['footer.component.css'],
         moduleId: module.id
     })
 ], Footer1Component);
 exports.Footer1Component = Footer1Component;
 // This code copy to app.module.ts
-//# sourceMappingURL=footer1.component.js.map
+//# sourceMappingURL=footer.component.js.map

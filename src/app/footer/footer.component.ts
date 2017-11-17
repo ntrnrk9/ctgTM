@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'footer1',
-    templateUrl: 'footer1.component.html',
-    styleUrls: [ 'footer1.component.css'],
+    selector: 'footer',
+    templateUrl: 'footer.component.html',
+    styleUrls: [ 'footer.component.css'],
     moduleId: module.id
 })
-export class Footer1Component {
+export class FooterComponent {
     private name = 'Footer1Component';
 }
 
