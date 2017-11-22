@@ -53,15 +53,19 @@ export class TrackTrailerComponent {
     cmpSelectConfig = {
         filter: false,
         multisel: true,
+        showSelectionCount:true,
         singleSelLabel:"Company",
         multiSelLabel:"company(s) selected",
+        defaultLabel:"Company",
         event:""
     };
     trStatusSelectConfig = {
         filter: false,
         multisel: true,
+        showSelectionCount:false,
         singleSelLabel:"Select a status",
-        multiSelLabel:"status selected",
+        multiSelLabel:"status(s) selected",
+        defaultLabel:"Select trailer status(s)",
         event:""
     };
     modeSelectConfig = {
