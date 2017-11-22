@@ -23,7 +23,6 @@ import { YardMangPageComponent } from './yard-mang-page/yard-mang-page.component
 import { TableComponent } from './table/table.component';
 import { PoolMangPageComponent } from './pool-mang-page/pool-mang-page.component';
 import { AllocationPageComponent } from './allocation-page/allocation-page.component';
-import { Pool1MangPageComponent } from './pool1-mang-page/pool1-mang-page.component';
 import { FooterComponent } from './footer/footer.component';
 import { SearchfilterComponent } from './searchfilter/searchfilter.component';
 import { GmapjsComponent } from './gmapjs/gmapjs.component';
@@ -58,10 +57,10 @@ import { AdminPageComponent } from './admin-page/admin-page.component';
         TrackTrailerComponent, GmapsComponent,
         YardMangPageComponent, TableComponent,
         AllocationPageComponent, PoolMangPageComponent,
-        Pool1MangPageComponent, FooterComponent,
+        FooterComponent,
         FilterCPipe, FilterArrayPipe,
-        SearchfilterComponent, GmapjsComponent,AlloTrGmap,Gmtest, HistoryPageComponent, SingleselectComponent
-        , HomeMainComponent, TrailerDashComponent, 
+        SearchfilterComponent, GmapjsComponent, AlloTrGmap, Gmtest, HistoryPageComponent, SingleselectComponent
+        , HomeMainComponent, TrailerDashComponent,
         OrderDashComponent, YardDashComponent, YardCheckComponent, LoginComponent, AdminPageComponent
     ],
     providers: [MasterServService],
