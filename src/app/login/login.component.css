@@ -1,5 +1,5 @@
 .loginFields{
-    width:345px;
+    width:425px;
     border-radius: 5px;
     height: 40px;
     border: 1px solid silver;
@@ -9,7 +9,7 @@
 .loginBut{
     height: 40px;
     border: none;
-    width: 345px;
+    width: 425px;
     border-radius: 5px;
     background: #d2232a;
     color: white;
