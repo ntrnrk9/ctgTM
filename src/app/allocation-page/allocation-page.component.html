@@ -95,8 +95,8 @@
                                 <tr bgcolor="#f7f8fc" class="app-table-tr full">
                                     <ng-container *ngFor="let con of orders.column">
                                         <th *ngIf="selectedOrStatus.value!='PLN'" [ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
-                                        <th *ngIf="selectedOrStatus.value=='PLN' && con.name=='Order remark'"[ngStyle]="{'width':con.width}" style="text-align:center;">Action</th>
-                                        <th *ngIf="selectedOrStatus.value=='PLN' && con.name!='Order remark'"[ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
+                                        <th *ngIf="selectedOrStatus.value=='PLN' && con.name=='Order remarks'"[ngStyle]="{'width':con.width}" style="text-align:center;">Action</th>
+                                        <th *ngIf="selectedOrStatus.value=='PLN' && con.name!='Order remarks'"[ngStyle]="{'width':con.width}" style="text-align:center;">{{con.name}}</th>
                                     </ng-container>
                                 </tr>
                             </thead>

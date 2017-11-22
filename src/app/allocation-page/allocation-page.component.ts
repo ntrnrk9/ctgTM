@@ -27,7 +27,7 @@ export class AllocationPageComponent {
             ["Available", "2343443", "05-20-2017 08:30", "Chattanooga ", "Walmart", "Atlanta,GA", "Buford,GA", "SOLO", "2342345", "SID", "all set",],
             ["Available", "2343444", "05-20-2017 09:30", "West depot", "Fedex", "Ontario OH", "Bufford,GA", "SOLO", "2342345", "SID", "all set",],
             ["Available", "2343445", "05-20-2017 10:30", "CTG ", "VH Transport", "Bentonville,AR", "Bufford,GA", "SOLO", "2342345", "SID", "all set",]],
-        column: ["Status", "Order#", "Order date", "Origin name", "Bill to party", "Origin city", "Destination city", "Service", "Ref#", "Ref type", "Order remark", "Action"]
+        column: ["Status", "Order#", "Order date", "Origin name", "Bill to party", "Origin city", "Destination city", "Service", "Ref#", "Ref type", "Order remarks", "Action"]
     };
 
 
@@ -100,7 +100,7 @@ export class AllocationPageComponent {
 
     orders = {
         column: [{ name: "Order ID", width: "11%" },{ name: "Movement no.", width: "11%" },{ name: "Bill to party", width: "11%" }, { name: "Origin city", width: "11%" }, { name: "Destination city", width: "11%" }, { name: "Order origin point", width: "11%" },
-        { name: "Order start date", width: "11%" }, { name: "Order end date", width: "11%" }, { name: "Order remark", width: "12%" } ],
+        { name: "Order start date", width: "11%" }, { name: "Order end date", width: "11%" }, { name: "Order remarks", width: "12%" } ],
         groups: [{ "pID": 41, "poolID": "AMAJOL", "cmpID": "AMAJOL", "planner": "COOPER", "csr": "Jacob", "reqPoolCount": 16, "avaiPoolCount": 4, "variance": 12, "stateCode": "IL", "stateName": "Illinois", "companyName": "AMAZON - MDW2", "cityName": "Joliet", "isShipper": "Y", "active": "Y", "isReceiver": "N", "brand": "CVEN" }, { "pID": 42, "poolID": "AMAKEN02", "cmpID": "AMAKEN02", "planner": "WILL", "csr": "Ryan", "reqPoolCount": 15, "avaiPoolCount": 6, "variance": 9, "stateCode": "WI", "stateName": "Wisconsin", "companyName": "AMAZON - MKE1", "cityName": "Kenosha", "isShipper": "Y", "active": "Y", "isReceiver": "Y", "brand": "CVEN" }]
     };
 
