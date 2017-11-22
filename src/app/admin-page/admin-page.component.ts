@@ -22,7 +22,7 @@ export class AdminPageComponent implements OnInit {
   csrTemplate = config.baseUrl + '/assets/upload-templates/CSR.csv';
   plannerTemplate = config.baseUrl + '/assets/upload-templates/Planner.csv';
   poolTemplate = config.baseUrl + '/assets/upload-templates/Pools.csv';
-  tradeInTemplate = config.baseUrl + '/assets/upload-templates/Pools.csv';
+  tradeInTemplate = config.baseUrl + '/assets/upload-templates/TradeTrailers.csv';
 
   csrFileToUpLoad: File;
   plannerFileToUpLoad: File;
@@ -32,7 +32,7 @@ export class AdminPageComponent implements OnInit {
   csrFUendURL = "/AdminService/api/UploadCSR";
   plannerFUendURL = "/AdminService/api/UploadPlanner";
   poolFUendURL = "/AdminService/api/UploadPool";
-  tradeInFUendURL = "/AdminService/api/UploadPool";
+  tradeInFUendURL = "/AdminService/api/UploadTradeTrailers";
 
   poolFileName: string = "";
   csrFileName: string = "";
@@ -99,7 +99,7 @@ export class AdminPageComponent implements OnInit {
         break;
       case 4:
         link.href = this.tradeInTemplate;
-        link.download = "tradeIn.csv";
+        link.download = "TradeTrailers.csv";
         break;
       default:
         break;

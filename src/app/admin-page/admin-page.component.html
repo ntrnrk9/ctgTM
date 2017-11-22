@@ -11,9 +11,9 @@
                 <label class="kpiLable">Upload Pool Details </label>
                 <div class="uploadCont">
                     <div style="width:100%">
-                        <input type="text" placeholder="Choose a file" style="width:80%" [(ngModel)]="poolFileName" readonly/>
+                        <input type="text" placeholder="Choose a file" style="width:75%" [(ngModel)]="poolFileName" readonly/>
                         <input #poolFileBut type="file" *ngIf="resetPoolFileSelection" class="hidden" id="poolFileBut" (change)="getFileToUpload($event,1)" accept=".csv" />
-                        <button class="pm-addBut" style="margin-top:10px;width:18%;padding:0px" (click)="triggerUpload(1)">Browse</button>
+                        <button class="pm-addBut" style="margin-top:10px;width:23%;padding:0px" (click)="triggerUpload(1)">Browse</button>
                     </div>
                     <button class="pm-addBut" style="margin-top:10px" (click)="uploadFile(1)">Upload</button>
                     <button class="pm-addBut" style="margin-left: 8px;" (click)="download(1)">Download template</button>
@@ -26,9 +26,9 @@
                 <label class="kpiLable">Upload CSR Details </label>
                 <div class="uploadCont">
                     <div style="width:100%">
-                        <input type="text" placeholder="Choose a file" style="width:80%" [(ngModel)]="csrFileName" readonly/>
+                        <input type="text" placeholder="Choose a file" style="width:75%" [(ngModel)]="csrFileName" readonly/>
                         <input #csrFileBut type="file" class="hidden" id="csrFileBut" (change)="getFileToUpload($event,2)" accept=".csv" />
-                        <button class="pm-addBut" style="margin-top:10px;width:18%;padding:0px" (click)="triggerUpload(2)">Browse</button>
+                        <button class="pm-addBut" style="margin-top:10px;width:23%;padding:0px" (click)="triggerUpload(2)">Browse</button>
                     </div>
                     <button class="pm-addBut" style="margin-top:10px" (click)="uploadFile(2)">Upload</button>
                     <button class="pm-addBut" style="margin-left: 8px;"(click)="download(2)">Download template</button>
@@ -41,9 +41,9 @@
                 <label class="kpiLable">Upload Planner Details </label>
                 <div class="uploadCont">
                     <div style="width:100%">
-                        <input type="text" placeholder="Choose a file" style="width:80%" [(ngModel)]="plannerFileName" readonly/>
+                        <input type="text" placeholder="Choose a file" style="width:75%" [(ngModel)]="plannerFileName" readonly/>
                         <input #plannerFileBut type="file" class="hidden" id="plannerFileBut" (change)="getFileToUpload($event,3)" accept=".csv" />
-                        <button class="pm-addBut" style="margin-top:10px;width:18%;padding:0px" (click)="triggerUpload(3)">Browse</button>
+                        <button class="pm-addBut" style="margin-top:10px;width:23%;padding:0px" (click)="triggerUpload(3)">Browse</button>
                     </div>
                     <button class="pm-addBut" style="margin-top:10px" (click)="uploadFile(3)">Upload</button>
                     <button class="pm-addBut" style="margin-left: 8px;" (click)="download(3)">Download template</button>
@@ -55,10 +55,10 @@
                 <label class="kpiLable">Upload Trade-In Trailers </label>
                 <div class="uploadCont">
                     <div style="width:100%">
-                        <input type="text" placeholder="Choose a file" style="width:80%" [(ngModel)]="tradeInFileName" readonly/>
+                        <input type="text" placeholder="Choose a file" style="width:75%" [(ngModel)]="tradeInFileName" readonly/>
                         <input #tradeInFileBut type="file" class="hidden" id="tradeInFileBut" (change)="getFileToUpload($event,4)" accept=".csv"
                         />
-                        <button class="pm-addBut" style="margin-top:10px;width:18%;padding:0px" (click)="triggerUpload(4)">Browse</button>
+                        <button class="pm-addBut" style="margin-top:10px;width:23%;padding:0px" (click)="triggerUpload(4)">Browse</button>
                     </div>
                     <button class="pm-addBut" style="margin-top:10px" (click)="uploadFile(4)">Upload</button>
                     <button class="pm-addBut" style="margin-left: 8px;" (click)="download(4)">Download template</button>
