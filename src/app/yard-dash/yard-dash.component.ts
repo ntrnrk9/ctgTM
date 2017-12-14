@@ -36,7 +36,7 @@ export class YardDashComponent implements OnInit {
     let ctrl = this;
     this.futAvlOptions.chart.discretebar.dispatch.elementClick = function (e) {
       //console.log('click-init ' + JSON.stringify(e));
-      ctrl.futAvlOrderchartClicked(e);
+      ctrl.dotchartClicked(e);
     };
     this.futAvlOptions.chart.yAxis['tickFormat'] = function (e) {
       //console.log('click-init ' + JSON.stringify(e));
@@ -44,7 +44,7 @@ export class YardDashComponent implements OnInit {
     };
     this.plnVsActoptions.chart.pie.dispatch.elementClick = function (e) {
       //console.log('click-init ' + JSON.stringify(e));
-      ctrl.plnVsActchartClicked(e);
+      ctrl.shedStatuschartClicked(e);
     };
 
     this.plnVsActoptions.chart['color'] = function (d, i) {
@@ -129,7 +129,7 @@ export class YardDashComponent implements OnInit {
   pack = [];
 
 
-  futAvlOrderchartClicked(e) {
+  dotchartClicked(e) {
     this.gRowCount = 50;
     this.allTrailer = e.data.list;
     this.tableToShow = 3;
@@ -157,7 +157,7 @@ export class YardDashComponent implements OnInit {
       this.plnVsActGrid.column[9].name="Date closed";      
     }
   }
-  plnVsActchartClicked(e) {
+  shedStatuschartClicked(e) {
     this.gRowCount = 50;
     this.allTrailer = e.data.list;
     this.tableToShow = 2;

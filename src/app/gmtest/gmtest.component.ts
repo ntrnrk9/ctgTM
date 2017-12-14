@@ -208,6 +208,8 @@ export class Gmtest {
                     marker.color="red";
                 }else if(icon==this.markerList.greenMark){
                     marker.color="green";
+                }else if(icon==this.markerList.purpleMark){
+                    marker.color="purple";
                 }    
                 marker.tr=tr;    
                 var ob = this.createinfoWinContent(tr);
@@ -277,8 +279,8 @@ export class Gmtest {
             console.log('test');
             var markers = cluster.getMarkers();
             var content = '';
-            let bag = { red: 0, green: 0, yellow: 0 };
-            let red = 0, green = 0, yellow = 0;
+            let bag = { red: 0, green: 0, yellow: 0,purple:0 };
+            let red = 0, green = 0, yellow = 0,purple=0;
             markers.forEach(element => {
                 if (element.color == "yellow") {
                     bag.yellow++;
@@ -291,10 +293,13 @@ export class Gmtest {
                 else if (element.color == "green") {
                     bag.green++;
                     green++;
+                }else if (element.color == "purple") {
+                    bag.purple++;
+                    purple++;
                 }
             });
             console.log(bag);
-            var content = '<div class="infowindow" style="width:125px;padding:0px;height:60px;overflow:hidden;">' +
+            var content = '<div class="infowindow" style="width:125px;padding:0px;height:100px;overflow:hidden;">' +
                 '<div class="row header" style="padding:0px 0px 0px 30px">' +
                 '<div class="row head1" style="font-weight:normal;font-size:14px;color:black;margin-bottom: 5px;">' +
                 '<div style="float: left;width: 10px;height: 10px;margin-top: 3px;margin-right: 5px;background: #15c922;"></div>' +
@@ -302,12 +307,17 @@ export class Gmtest {
                 '</div>' +
                 '<div class="row head2" style="font-weight:normal;font-size:14px;color:black;margin-bottom: 5px;">' +
                 '<div style="float: left;width: 10px;height: 10px;margin-top: 3px;margin-right: 5px;background: #ddd506;"></div>' +
-                '<span style="float: left;">UTILIZED: <b>' + bag.yellow + '</b></span>' +
+                '<span style="float: left;">PLANNED: <b>' + bag.yellow + '</b></span>' +
+                '</div>' +
+                '<div class="row head3" style="font-weight:normal;font-size:14px;color:black;margin-bottom: 5px;">' +
+                '<div style="float: left;width: 10px;height: 10px;margin-top: 3px;margin-right: 5px;background: #9D29FF;"></div>' +
+                '<span style="float: left;">UTILIZED: <b>' + bag.purple + '</b></span>' +
                 '</div>' +
                 '<div class="row head3" style="font-weight:normal;font-size:14px;color:black;margin-bottom: 5px;">' +
                 '<div style="float: left;width: 10px;height: 10px;margin-top: 3px;margin-right: 5px;background: #fa3447;"></div>' +
                 '<span style="float: left;">OTHERS: <b>' + bag.red + '</b></span>' +
                 '</div>' +
+                
                 '</div>' +
                 '</div>';
             var info = new google.maps.MVCObject;
